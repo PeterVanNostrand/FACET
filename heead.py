@@ -3,8 +3,8 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import StratifiedKFold
 
-from isolation_forest import IsolationForest
-from logistic_regression import LogisticRegression
+from detectors.isolation_forest import IsolationForest
+from aggregators.logistic_regression import LogisticRegression
 
 
 class HEEAD():
