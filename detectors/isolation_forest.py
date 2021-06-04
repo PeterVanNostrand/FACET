@@ -12,5 +12,5 @@ class IsolationForest(Detector):
     def predict(self, x):
         return self.model.predict(x)
 
-    def get_candidate_examples(self, x):
+    def get_candidate_examples(self, x, y):
         pass

@@ -34,8 +34,8 @@ class Detector(ABC):
         pass
 
     '''
-    Returns minimally modified versions of x that result in this detector changing its prediction such that y=f(x), y'=f(x'), y'!=y
+    Returns minimally modified versions of x that result in this detector changing its prediction to the class y
     '''
     @abstractmethod
-    def get_candidate_examples(self, x):
+    def get_candidate_examples(self, x, y):
         pass

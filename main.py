@@ -1,5 +1,6 @@
 import numpy as np
 from heead import HEEAD
+import matplotlib.pyplot as plt
 
 
 def load_data():
@@ -33,7 +34,7 @@ if __name__ == "__main__":
     x, y = load_data()
 
     # Create, train, and predict with the model
-    model = HEEAD(config=["IsolationForest", "IsolationForest"], agg="LogisticRegression")
+    model = HEEAD(config=["RandomForest", "RandomForest"], agg="LogisticRegression")
     model.train(x, y)
     preds = model.predict(x)
 
@@ -47,3 +48,6 @@ if __name__ == "__main__":
     print("fp:", fp)
     print("tn:", tn)
     print("fn:", fn)
+
+    model.explain(x[0])
+    plt.savefig("tree.png")

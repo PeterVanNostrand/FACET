@@ -3,8 +3,12 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import StratifiedKFold
 
-from detectors.isolation_forest import IsolationForest
+# Aggregator classes
 from aggregators.logistic_regression import LogisticRegression
+
+# Detector classes
+from detectors.isolation_forest import IsolationForest
+from detectors.random_forest import RandomForest
 
 
 class HEEAD():
@@ -13,6 +17,9 @@ class HEEAD():
         for detector_type in config:
             if detector_type == "IsolationForest":
                 d = IsolationForest()
+                self.detectors.append(d)
+            elif detector_type == "RandomForest":
+                d = RandomForest()
                 self.detectors.append(d)
             else:
                 print("Unknown detector type of " + detector_type)
@@ -47,14 +54,18 @@ class HEEAD():
         final_preds = self.aggregator.aggregate(preds)
         return final_preds
 
+    def explain(self, x):
+        for i in range(self.ndetectors):
+            self.detectors[i].get_candidate_examples(x, y=1)
+
     def __train_detectors(self, x, y):
         # split data evenly among detectors and train them
         skf = StratifiedKFold(n_splits=self.ndetectors, shuffle=True)
         i = 0
         for train_index, test_index in skf.split(x, y):
             xd = x[train_index]
-            yd = y[test_index]
-            self.detectors[i].train(x)
+            yd = y[train_index]
+            self.detectors[i].train(xd, yd)
             i = i + 1
 
     def __train_aggregator(self, x, y):
