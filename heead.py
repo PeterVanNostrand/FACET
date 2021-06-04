@@ -10,11 +10,14 @@ from aggregators.logistic_regression import LogisticRegression
 from detectors.isolation_forest import IsolationForest
 from detectors.random_forest import RandomForest
 
+# Explainer classes
+from explainers.best_candidate import BestCandidate
+
 
 class HEEAD():
-    def __init__(self, config=None, agg=None):
+    def __init__(self, dets=None, agg=None, expl=None):
         self.detectors = []
-        for detector_type in config:
+        for detector_type in dets:
             if detector_type == "IsolationForest":
                 d = IsolationForest()
                 self.detectors.append(d)
@@ -30,8 +33,16 @@ class HEEAD():
             self.aggregator = LogisticRegression()
         else:
             print("Unknown aggregator type of " + agg)
-            print("using logistic regression")
+            print("using logistic regression aggregator")
             self.aggregator = LogisticRegression()
+
+        if expl == "BestCandidate":
+            print("")
+            self.explainer = BestCandidate()
+        else:
+            print("Unknown explainer type of " + agg)
+            print("using best candidate explainer")
+            self.explainer = BestCandidate()
 
     def train(self, x, y=None):
         # Use semi-supervised approach to train aggregator using 5% of data, use remainder as unsupervised for detectors
@@ -55,8 +66,7 @@ class HEEAD():
         return final_preds
 
     def explain(self, x):
-        for i in range(self.ndetectors):
-            self.detectors[i].get_candidate_examples(x, y=1)
+        self.explainer.explain(x, self.detectors, self.aggregator)
 
     def __train_detectors(self, x, y):
         # split data evenly among detectors and train them
