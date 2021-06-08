@@ -14,8 +14,8 @@ def load_data():
     norm_class = 1
     anom_class = 2
 
-    norm_idx = np.where(y == 1)[0]
-    anom_idx = np.where(y == 2)[0]
+    norm_idx = np.where(y == norm_class)[0]
+    anom_idx = np.where(y == anom_class)[0]
 
     y[norm_idx] = 1
     y[anom_idx] = -1
@@ -24,6 +24,9 @@ def load_data():
 
     x = x[keep_idxs]
     y = y[keep_idxs]
+
+    x = x[:80]
+    y = y[:80]
 
     return x, y
 
@@ -34,7 +37,8 @@ if __name__ == "__main__":
     x, y = load_data()
 
     # Create, train, and predict with the model
-    model = HEEAD(config=["RandomForest", "RandomForest"], agg="LogisticRegression")
+    model = HEEAD(detectors=["RandomForest", "RandomForest"],
+                  aggregator="LogisticRegression", explainer="BestCandidate")
     model.train(x, y)
     preds = model.predict(x)
 
@@ -49,5 +53,19 @@ if __name__ == "__main__":
     print("tn:", tn)
     print("fn:", fn)
 
-    model.explain(x[0])
-    plt.savefig("tree.png")
+    accuracy = (tp + tn) / (tp + fp + tn + fn)
+    precision = tp / (tp + fp)
+    recall = tp / (tp + fn)
+    f1 = 2 * (precision * recall) / (precision + recall)
+
+    print()
+    print("accuracy:", accuracy)
+    print("precision:", precision)
+    print("recall", recall)
+    print("f1:", f1)
+
+    explanations = model.explain(x, y)
+
+    conversion_rate = 1 - (np.isnan(explanations).any(axis=1).sum() / x.shape[0])
+    print()
+    print("conversion rate:", conversion_rate)

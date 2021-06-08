@@ -1,7 +1,7 @@
 import numpy as np
 
 from sklearn.model_selection import train_test_split
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import KFold
 
 # Aggregator classes
 from aggregators.logistic_regression import LogisticRegression
@@ -15,9 +15,9 @@ from explainers.best_candidate import BestCandidate
 
 
 class HEEAD():
-    def __init__(self, dets=None, agg=None, expl=None):
+    def __init__(self, detectors=None, aggregator=None, explainer=None):
         self.detectors = []
-        for detector_type in dets:
+        for detector_type in detectors:
             if detector_type == "IsolationForest":
                 d = IsolationForest()
                 self.detectors.append(d)
@@ -29,18 +29,18 @@ class HEEAD():
                 continue
         self.ndetectors = len(self.detectors)
 
-        if agg == "LogisticRegression":
+        if aggregator == "LogisticRegression":
             self.aggregator = LogisticRegression()
         else:
-            print("Unknown aggregator type of " + agg)
+            print("Unknown aggregator type of " + aggregator)
             print("using logistic regression aggregator")
             self.aggregator = LogisticRegression()
 
-        if expl == "BestCandidate":
+        if explainer == "BestCandidate":
             print("")
             self.explainer = BestCandidate()
         else:
-            print("Unknown explainer type of " + agg)
+            print("Unknown explainer type of " + explainer)
             print("using best candidate explainer")
             self.explainer = BestCandidate()
 
@@ -65,14 +65,14 @@ class HEEAD():
         final_preds = self.aggregator.aggregate(preds)
         return final_preds
 
-    def explain(self, x):
-        self.explainer.explain(x, self.detectors, self.aggregator)
+    def explain(self, x, y):
+        return self.explainer.explain(x, y, self.detectors, self.aggregator)
 
     def __train_detectors(self, x, y):
         # split data evenly among detectors and train them
-        skf = StratifiedKFold(n_splits=self.ndetectors, shuffle=True)
+        kf = KFold(n_splits=self.ndetectors, shuffle=True)
         i = 0
-        for train_index, test_index in skf.split(x, y):
+        for train_index, test_index in kf.split(x, y):
             xd = x[train_index]
             yd = y[train_index]
             self.detectors[i].train(xd, yd)

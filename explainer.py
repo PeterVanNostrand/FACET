@@ -17,7 +17,7 @@ class Explainer(ABC):
         pass
 
     @abstractmethod
-    def explain(self, x, detectors, aggregator):
+    def explain(self, x, y, detectors, aggregator):
         '''
         Function to perform explanation synthesis for the given samples using the provided detectors and aggregator
         '''
