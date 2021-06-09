@@ -37,7 +37,7 @@ if __name__ == "__main__":
     x, y = load_data()
 
     # Create, train, and predict with the model
-    model = HEEAD(detectors=["RandomForest", "RandomForest"],
+    model = HEEAD(detectors=["RandomForest"],
                   aggregator="LogisticRegression", explainer="BestCandidate")
     model.train(x, y)
     preds = model.predict(x)

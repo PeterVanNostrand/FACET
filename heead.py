@@ -61,6 +61,10 @@ class HEEAD():
             else:
                 preds = np.stack((preds, pd), axis=1)
 
+        # handle case of one detector
+        if len(preds.shape) == 1:
+            preds = preds.reshape(preds.shape[0], 1)
+
         # aggregate the results
         final_preds = self.aggregator.aggregate(preds)
         return final_preds
@@ -70,13 +74,16 @@ class HEEAD():
 
     def __train_detectors(self, x, y):
         # split data evenly among detectors and train them
-        kf = KFold(n_splits=self.ndetectors, shuffle=True)
-        i = 0
-        for train_index, test_index in kf.split(x, y):
-            xd = x[train_index]
-            yd = y[train_index]
-            self.detectors[i].train(xd, yd)
-            i = i + 1
+        if self.ndetectors == 1:
+            self.detectors[0].train(x, y)
+        else:
+            kf = KFold(n_splits=self.ndetectors, shuffle=True)
+            i = 0
+            for train_index, test_index in kf.split(x, y):
+                xd = x[train_index]
+                yd = y[train_index]
+                self.detectors[i].train(xd, yd)
+                i = i + 1
 
     def __train_aggregator(self, x, y):
         # make predictions using detectors
@@ -87,6 +94,10 @@ class HEEAD():
                 preds = pd
             else:
                 preds = np.stack((preds, pd), axis=1)
+
+        # handle case of one detector
+        if len(preds.shape) == 1:
+            preds = preds.reshape(preds.shape[0], 1)
 
         # perform the aggregator training
         self.aggregator.train(preds, y)
