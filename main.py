@@ -1,6 +1,9 @@
 import numpy as np
 from heead import HEEAD
 import matplotlib.pyplot as plt
+from utilities.metrics import conversion_rate
+from utilities.metrics import confusion_matrix
+from utilities.metrics import mean_distance
 
 
 def load_data():
@@ -28,6 +31,11 @@ def load_data():
     x = x[:80]
     y = y[:80]
 
+    # normalize x on [0, 1]
+    max_value = np.max(x, axis=0)
+    min_value = np.min(x, axis=0)
+    x = (x - min_value) / (max_value - min_value)
+
     return x, y
 
 
@@ -37,35 +45,17 @@ if __name__ == "__main__":
     x, y = load_data()
 
     # Create, train, and predict with the model
-    model = HEEAD(detectors=["RandomForest"],
+    model = HEEAD(detectors=["RandomForest", "RandomForest"],
                   aggregator="LogisticRegression", explainer="BestCandidate")
     model.train(x, y)
     preds = model.predict(x)
 
-    # Compute performance metrics
-    tp = np.where((preds == 1) & (y == 1))[0].shape[0]  # true inliers
-    fp = np.where((preds == 1) & (y == -1))[0].shape[0]  # false inliers
-    tn = np.where((preds == -1) & (y == -1))[0].shape[0]  # true outliers
-    fn = np.where((preds == -1) & (y == 1))[0].shape[0]  # false outlier
+    # anomaly detection performance
+    print(confusion_matrix(preds, y))
 
-    print("tp:", tp)
-    print("fp:", fp)
-    print("tn:", tn)
-    print("fn:", fn)
-
-    accuracy = (tp + tn) / (tp + fp + tn + fn)
-    precision = tp / (tp + fp)
-    recall = tp / (tp + fn)
-    f1 = 2 * (precision * recall) / (precision + recall)
-
-    print()
-    print("accuracy:", accuracy)
-    print("precision:", precision)
-    print("recall", recall)
-    print("f1:", f1)
-
+    # generate the explanations
     explanations = model.explain(x, y)
 
-    conversion_rate = 1 - (np.isnan(explanations).any(axis=1).sum() / x.shape[0])
-    print()
-    print("conversion rate:", conversion_rate)
+    # explanation performance
+    print("conversion rate:", conversion_rate(explanations))
+    print("mean distance: ", mean_distance(x, explanations))

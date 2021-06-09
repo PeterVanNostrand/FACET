@@ -130,28 +130,17 @@ class TreeContraster():
 
         Returns
         -------
-        examples   : an array of contrastive examples, one for each sample in 'x'. The example for each instance in `x` is chosen using the given distance_metric
+        examples   : a list of arrays of contrastive examples, one list item for each sample in 'x'
         '''
 
-        # select the distance function which corresonds to the provided distance metric
-        if distance_metric == "Euclidean":
-            distance_fn = euclidean_distance
-        else:
-            print("Unknown distance function {}, using Euclidean distance".format(distance_metric))
-            distance_fn = euclidean_distance
-
-        examples = np.empty(shape=x.shape)  # output array for generated examples
+        examples = []                # output list for generated examples
         for i in range(x.shape[0]):  # for each instance in the array x
-            instance = x[i]         # get the instance
-            label = y[i]            # and its corresponding label
+            instance = x[i]          # get the instance
+            label = y[i]             # and its corresponding label
 
             # generate contrastive examples for that instance
             instance_examples = self.contrast_instance(instance, label, difference)
-            # compute the distance between each instance and its examples
-            distances = distance_fn(instance, instance_examples)
-            # find the most similar example according to the distance function
-            minimal_index = np.argmin(distances)
-            # and select that as the example for this instance
-            examples[i] = instance_examples[minimal_index]
+
+            examples.append(instance_examples)
 
         return examples

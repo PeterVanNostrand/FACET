@@ -8,7 +8,7 @@ class Explainer(ABC):
     '''
 
     @abstractmethod
-    def __init__(self, hyperparameters=None):
+    def __init__(self, model, distance_metric="Euclidean", hyperparameters=None):
         '''
         Function to instantiate the explanation method being used.
         Hyparameters should be a dictionary which contains the neccesary configuration values for the method.
@@ -17,7 +17,7 @@ class Explainer(ABC):
         pass
 
     @abstractmethod
-    def explain(self, x, y, detectors, aggregator):
+    def explain(self, x, y):
         '''
         Function to perform explanation synthesis for the given samples using the provided detectors and aggregator
         '''

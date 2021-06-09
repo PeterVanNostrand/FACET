@@ -37,12 +37,11 @@ class HEEAD():
             self.aggregator = LogisticRegression()
 
         if explainer == "BestCandidate":
-            print("")
-            self.explainer = BestCandidate()
+            self.explainer = BestCandidate(model=self)
         else:
             print("Unknown explainer type of " + explainer)
             print("using best candidate explainer")
-            self.explainer = BestCandidate()
+            self.explainer = BestCandidate(model=self)
 
     def train(self, x, y=None):
         # Use semi-supervised approach to train aggregator using 5% of data, use remainder as unsupervised for detectors
@@ -70,7 +69,7 @@ class HEEAD():
         return final_preds
 
     def explain(self, x, y):
-        return self.explainer.explain(x, y, self.detectors, self.aggregator)
+        return self.explainer.explain(x, y)
 
     def __train_detectors(self, x, y):
         # split data evenly among detectors and train them
