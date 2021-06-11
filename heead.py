@@ -15,14 +15,14 @@ from explainers.best_candidate import BestCandidate
 
 
 class HEEAD():
-    def __init__(self, detectors=None, aggregator=None, explainer=None):
+    def __init__(self, detectors=None, aggregator=None, explainer=None, hyperparameters=None):
         self.detectors = []
         for detector_type in detectors:
             if detector_type == "IsolationForest":
-                d = IsolationForest()
+                d = IsolationForest(hyperparameters=hyperparameters)
                 self.detectors.append(d)
             elif detector_type == "RandomForest":
-                d = RandomForest()
+                d = RandomForest(hyperparameters=hyperparameters)
                 self.detectors.append(d)
             else:
                 print("Unknown detector type of " + detector_type)

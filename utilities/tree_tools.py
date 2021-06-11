@@ -114,7 +114,7 @@ class TreeContraster():
 
         return np.array(instance_examples)
 
-    def construct_examples(self, x, y, difference=0.01, distance_metric="Euclidean"):
+    def construct_examples(self, x, y, difference=0.01):
         '''
         A function to contruct a set of contrastive examples for the tree `t` such that each example has a predicted class different than that of `x`.
         This is done by making minimal modifications to x such that it follows a path from the root of `t` to a leaf node with a predicted class other

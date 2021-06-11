@@ -35,7 +35,7 @@ def conversion_rate(examples):
     return 1 - ((examples == np.inf).any(axis=1).sum() / examples.shape[0])
 
 
-def confusion_matrix(preds, y):
+def classification_metrics(preds, y, verbose=True):
     out_string = ""
 
     # Compute performance metrics
@@ -61,7 +61,11 @@ def confusion_matrix(preds, y):
                 "| recall    | {r:0.4f} |\n" +
                 "| f1        | {f:0.4f} |\n").format(a=accuracy, p=precision, r=recall, f=f1)
     out_string = confusion_matrix + "\n" + stastics
-    return out_string
+
+    if verbose:
+        print(out_string)
+
+    return accuracy, precision, recall, f1
 
 
 def mean_distance(x, xprime, distance_metric="Euclidean"):
