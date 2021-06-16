@@ -27,7 +27,7 @@ def euclidean_distance(x, xprime):
     return distance
 
 
-def conversion_rate(examples):
+def coverage(examples):
     '''
     Returns the ratio of samples for which a valid contrastive example could be found
     '''
@@ -81,5 +81,11 @@ def mean_distance(x, xprime, distance_metric="Euclidean"):
     x = x[~idx_bad_examples]
     xprime = xprime[~idx_bad_examples]
 
-    dists = distance_fn(x, xprime)
-    return np.average(dists)
+    if xprime.shape[0] == 0:
+        print("No valid examples found")
+        avg_dists = np.nan
+    else:
+        dists = distance_fn(x, xprime)
+        avg_dists = np.average(dists)
+
+    return avg_dists

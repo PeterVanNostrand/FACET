@@ -2,16 +2,16 @@ import numpy as np
 from numpy.core.fromnumeric import var
 from heead import HEEAD
 import matplotlib.pyplot as plt
-from utilities.metrics import conversion_rate
+from utilities.metrics import coverage
 from utilities.metrics import classification_metrics
 from utilities.metrics import mean_distance
 from dataset import load_data
 from experiments import vary_difference
 
 
-def simple_run():
+def simple_run(dataset_name):
     # Load the dataset
-    x, y = load_data("thyroid")
+    x, y = load_data(dataset_name)
 
     # Create, train, and predict with the model
     model = HEEAD(detectors=["RandomForest"], aggregator="LogisticRegression", explainer="BestCandidate")
@@ -25,9 +25,9 @@ def simple_run():
     explanations = model.explain(x, y)
 
     # explanation performance
-    print("conversion rate:", conversion_rate(explanations))
+    print("coverage:", coverage(explanations))
     print("mean distance: ", mean_distance(x, explanations))
 
 
 if __name__ == "__main__":
-    vary_difference()
+    simple_run("thyroid")

@@ -1,4 +1,4 @@
-from explainer import Explainer
+from explainers.explainer import Explainer
 from sklearn.ensemble import IsolationForest as skIsolationForest
 import numpy as np
 from utilities.metrics import euclidean_distance

@@ -1,5 +1,5 @@
 from sys import prefix
-from detector import Detector
+from detectors.detector import Detector
 from sklearn.ensemble import RandomForestClassifier as skRandomForestClassifier
 from sklearn import tree
 import numpy as np

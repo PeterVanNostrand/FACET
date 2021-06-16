@@ -15,6 +15,9 @@ The code in this repository was developed using Python 3.8.8 and uses the follow
 
 ## Data Sources
 
-| Dataset Name | Abbreviated Name | # Points | # Dimensions | Source |
-|--------------|------------|----------|--------------|--------|
-| [Thyroid Disease Dataset] | `thyroid` | 3772 | 6 | [StonyBrook ODDS](http://odds.cs.stonybrook.edu/thyroid-disease-dataset/)
+| Dataset Name | Abbreviated Name | # Points | # Dimensions | # Outliers | Source |
+|--------------|------------------|----------|--------------|------------|--------|
+| Thyroid Disease Dataset | `thyroid` | 3772 | 6 | 93 (2.5%) | [StonyBrook ODDS](http://odds.cs.stonybrook.edu/thyroid-disease-dataset/) |
+| Wisconsin-Breast Cancer Diagnostics Dataset | `wbc` | 278 | 30 | 21 (5.6%) | [StonyBrook ODDS](http://odds.cs.stonybrook.edu/wbc/) |
+| Cardiotocogrpahy Dataset | `cardio` | 1831 | 21 | 176 (9.6%) | [StonyBrook ODDS](http://odds.cs.stonybrook.edu/cardiotocogrpahy-dataset/) |
+| Musk | `musk` | 3062 | 166 | 97 (3.2%) | [StonyBrook ODDS](http://odds.cs.stonybrook.edu/musk-dataset/) |

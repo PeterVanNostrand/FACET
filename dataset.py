@@ -20,12 +20,21 @@ def load_data(dataset_name, normalize=True):
     '''
     if dataset_name == "thyroid":
         return load_thyroid(normalize)
+    elif dataset_name == "wbc":
+        return load_wbc(normalize)
+    elif dataset_name == "cardio":
+        return load_cardio(normalize)
+    elif dataset_name == "musk":
+        return load_musk(normalize)
     else:
         print("Unknown Dataset! Using thyroid")
 
 
-def load_thyroid(normalize=True):
-    data_dict = sio.loadmat("./data/thyroid/thyroid.mat")
+def util_load_stonybrook(matpath, normalize=True):
+    '''
+    A utility method for loading any data matrix formatted as in the StonyBrook Outlier Detection Datasets (ODDS)
+    '''
+    data_dict = sio.loadmat(matpath)
     x = data_dict["X"]
     y = data_dict["y"]
 
@@ -49,6 +58,22 @@ def load_thyroid(normalize=True):
         x = (x - min_value) / (max_value - min_value)
 
     return x, y
+
+
+def load_thyroid(normalize=True):
+    return util_load_stonybrook("./data/thyroid/thyroid.mat", normalize)
+
+
+def load_wbc(normalize=True):
+    return util_load_stonybrook("./data/wbc/wbc.mat", normalize)
+
+
+def load_cardio(normalize=True):
+    return util_load_stonybrook("./data/cardio/cardio.mat", normalize)
+
+
+def load_musk(normalize=True):
+    return util_load_stonybrook("./data/musk/musk.mat", normalize)
 
 
 def load_iris(normalize=True):

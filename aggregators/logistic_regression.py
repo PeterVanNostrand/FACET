@@ -1,4 +1,4 @@
-from aggregator import Aggregator
+from aggregators.aggregator import Aggregator
 from sklearn.linear_model import LogisticRegression as skLogisticRegression
 
 
