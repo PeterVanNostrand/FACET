@@ -63,31 +63,65 @@ def vary_difference():
     '''
     Experiment to observe the effect of the difference value using in decision tree explanation
     '''
-    # Load the dataset
-    x, y = load_data("thyroid", normalize=True)
-    xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=0.2, shuffle=True)
+    for ds_name in ["cardio", "musk", "thyroid", "wbc"]:
+        # Load the dataset
+        x, y = load_data(ds_name, normalize=True)
+        xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=0.2, shuffle=True)
 
-    # dataframe to store results of all experimental runs
-    results = pd.DataFrame(columns=["difference", "accuracy", "precision",
-                           "recall", "f1", "coverage_ratio", "mean_distance"])
-    check_create_directory("./results/vary-difference/")
+        # dataframe to store results of all experimental runs
+        results = pd.DataFrame(columns=["difference", "accuracy", "precision",
+                                        "recall", "f1", "coverage_ratio", "mean_distance"])
+        check_create_directory("./results/vary-difference/")
 
-    # differences = [0.01, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
-    differences = [0.01, 0.1]
+        differences = [0.01, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 
-    for diff in differences:
-        # Create, train, and predict with the model
-        params = {
-            "rf_difference": diff,
-            "rf_distance": "Euclidean",
-            "rf_k": 1
-        }
-        model = HEEAD(detectors=["RandomForest"], aggregator="LogisticRegression",
-                      explainer="BestCandidate", hyperparameters=params)
-        diff_val = {"difference": diff}
-        run_perf = execute_run(model, xtrain, xtest, ytrain, ytest)
-        run_result = {**diff_val, **run_perf}
-        results = results.append(run_result, ignore_index=True)
+        for diff in differences:
+            # Create, train, and predict with the model
+            params = {
+                "rf_difference": diff,
+                "rf_distance": "Euclidean",
+                "rf_k": 1
+            }
+            model = HEEAD(detectors=["RandomForest"], aggregator="LogisticRegression",
+                          explainer="BestCandidate", hyperparameters=params)
+            diff_val = {"difference": diff}
+            run_perf = execute_run(model, xtrain, xtest, ytrain, ytest)
+            run_result = {**diff_val, **run_perf}
+            results = results.append(run_result, ignore_index=True)
 
-    # save the results
-    results.to_csv("./results/vary-difference/thyroid.csv")
+        # save the results
+        results.to_csv("./results/vary-difference/" + ds_name + ".csv")
+
+
+def vary_k():
+    '''
+    Experiment to observe the effect of the difference value using in decision tree explanation
+    '''
+    for ds_name in ["cardio", "musk", "thyroid", "wbc"]:
+        # Load the dataset
+        x, y = load_data(ds_name, normalize=True)
+        xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=0.2, shuffle=True)
+
+        # dataframe to store results of all experimental runs
+        results = pd.DataFrame(columns=["difference", "accuracy", "precision",
+                                        "recall", "f1", "coverage_ratio", "mean_distance"])
+        check_create_directory("./results/vary-k/")
+
+        ks = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15]
+
+        for k in ks:
+            # Create, train, and predict with the model
+            params = {
+                "rf_difference": 0.01,
+                "rf_distance": "Euclidean",
+                "rf_k": k
+            }
+            model = HEEAD(detectors=["RandomForest"], aggregator="LogisticRegression",
+                          explainer="BestCandidate", hyperparameters=params)
+            diff_val = {"k": k}
+            run_perf = execute_run(model, xtrain, xtest, ytrain, ytest)
+            run_result = {**diff_val, **run_perf}
+            results = results.append(run_result, ignore_index=True)
+
+        # save the results
+        results.to_csv("./results/vary-k/" + ds_name + ".csv")

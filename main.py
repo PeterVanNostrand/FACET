@@ -7,6 +7,7 @@ from utilities.metrics import classification_metrics
 from utilities.metrics import mean_distance
 from dataset import load_data
 from experiments import vary_difference
+from experiments import vary_k
 
 
 def simple_run(dataset_name):
@@ -30,4 +31,5 @@ def simple_run(dataset_name):
 
 
 if __name__ == "__main__":
-    simple_run("thyroid")
+    vary_difference()
+    # vary_k()
