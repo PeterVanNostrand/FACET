@@ -10,7 +10,6 @@ from tqdm import tqdm
 
 class RandomForest(Detector):
     def __init__(self, hyperparameters=None):
-        self.model = skRandomForestClassifier()
         if hyperparameters is not None:
             # difference value for explanation
             if hyperparameters.get("rf_difference") is None:
@@ -35,10 +34,21 @@ class RandomForest(Detector):
                 self.k = 1
             else:
                 self.k = hyperparameters.get("rf_k")
+
+            # number of trees
+            if hyperparameters.get("rf_ntrees") is None:
+                print("No rf_ntrees set, using default ntrees=100")
+                self.ntrees = 100
+            else:
+                self.ntrees = hyperparameters.get("rf_ntrees")
         else:
             self.difference = 0.01
             self.distance_fn = euclidean_distance
             self.k = 1
+            self.ntrees = 100
+
+        # create the classifier
+        self.model = skRandomForestClassifier(n_estimators=self.ntrees)
 
     def train(self, x, y=None):
         self.model.fit(x, y)

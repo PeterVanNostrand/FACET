@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import numpy as np
 
 from sklearn.model_selection import train_test_split
 
@@ -103,7 +104,7 @@ def vary_k():
         xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=0.2, shuffle=True)
 
         # dataframe to store results of all experimental runs
-        results = pd.DataFrame(columns=["difference", "accuracy", "precision",
+        results = pd.DataFrame(columns=["k", "accuracy", "precision",
                                         "recall", "f1", "coverage_ratio", "mean_distance"])
         check_create_directory("./results/vary-k/")
 
@@ -114,7 +115,8 @@ def vary_k():
             params = {
                 "rf_difference": 0.01,
                 "rf_distance": "Euclidean",
-                "rf_k": k
+                "rf_k": k,
+                "explainer_k": k
             }
             model = HEEAD(detectors=["RandomForest"], aggregator="LogisticRegression",
                           explainer="BestCandidate", hyperparameters=params)
@@ -125,3 +127,91 @@ def vary_k():
 
         # save the results
         results.to_csv("./results/vary-k/" + ds_name + ".csv")
+
+
+def vary_dim():
+    '''
+    Experiment to observe the effect of the the number of features on explanation
+    '''
+    for ds_name in ["cardio", "musk", "thyroid", "wbc"]:
+        num_iters = 1
+        runs_complete = 0
+
+        # dataframe to store results of each datasets runs
+        results = pd.DataFrame(columns=["n_features", "accuracy", "precision",
+                               "recall", "f1", "coverage_ratio", "mean_distance"])
+        check_create_directory("./results/vary-dim/")
+
+        for i in range(num_iters):
+            # Load the dataset
+            x, y = load_data(ds_name, normalize=True)
+
+            # randomly shuffle the order of the columns
+            np.random.shuffle(np.transpose(x))
+
+            xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=0.2, shuffle=True)
+
+            # try first 1 feature, first 2 feature, ... , first n features
+            for n in range(2, x.shape[1]):
+                # Create, train, and predict with the model
+                params = {
+                    "rf_difference": 0.01,
+                    "rf_distance": "Euclidean",
+                    "rf_k": 1,
+                    "rf_ntrees": 100
+                }
+                model = HEEAD(detectors=["RandomForest"], aggregator="LogisticRegression",
+                              explainer="BestCandidate", hyperparameters=params)
+                diff_val = {"n_features": n}
+                run_perf = execute_run(model, xtrain[:, :n], xtest[:, :n], ytrain, ytest)
+                run_result = {**diff_val, **run_perf}
+                results = results.append(run_result, ignore_index=True)
+                runs_complete += 1
+                print("runs complete:", runs_complete)
+
+        print("finished", ds_name)
+
+        # save the results
+        results.to_csv("./results/vary-dim/" + ds_name + ".csv")
+
+
+def vary_ntrees():
+    '''
+    Experiment to observe the effect of the the number of features on explanation
+    '''
+    for ds_name in ["cardio", "musk", "thyroid", "wbc"]:
+        num_iters = 1
+        runs_complete = 0
+
+        # dataframe to store results of each datasets runs
+        results = pd.DataFrame(columns=["n_trees", "accuracy", "precision",
+                               "recall", "f1", "coverage_ratio", "mean_distance"])
+        check_create_directory("./results/vary-ntrees/")
+
+        for i in range(num_iters):
+            # Load the dataset
+            x, y = load_data(ds_name, normalize=True)
+            xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=0.2, shuffle=True)
+
+            max_trees = 100
+            for n in range(1, max_trees):
+                # Create, train, and predict with the model
+                params = {
+                    "rf_difference": 0.01,
+                    "rf_distance": "Euclidean",
+                    "rf_k": 1,
+                    "rf_ntrees": n
+                }
+                model = HEEAD(detectors=["RandomForest"], aggregator="LogisticRegression",
+                              explainer="BestCandidate", hyperparameters=params)
+                diff_val = {"n_trees": n}
+                run_perf = execute_run(model, xtrain[:, :n], xtest[:, :n], ytrain, ytest)
+                run_result = {**diff_val, **run_perf}
+                results = results.append(run_result, ignore_index=True)
+                runs_complete += 1
+                print("runs complete:", runs_complete)
+
+        print("finished", ds_name)
+
+        # save the results
+        results.to_csv("./results/vary-ntrees/" + ds_name + ".csv")

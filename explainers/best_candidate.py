@@ -7,6 +7,7 @@ from utilities.metrics import euclidean_distance
 class BestCandidate(Explainer):
     def __init__(self, model, distance_metric="Euclidean", hyperparameters=None):
         self.model = model
+        self.hyperparameters = hyperparameters
 
         # select the distance function which corresonds to the provided distance metric
         if distance_metric == "Euclidean":
@@ -35,19 +36,24 @@ class BestCandidate(Explainer):
         nfeatures = x.shape[1]
         ndetectors = self.model.ndetectors
 
+        if self.hyperparameters is None or self.hyperparameters.get("explainer_k") is None:
+            k = 1
+        else:
+            k = self.hyperparameters.get("explainer_k")
+
         # an array to store the candidates proposed by each detector
-        candidate_examples = np.empty(shape=(ndetectors, nsamples, nfeatures))
+        candidate_examples = np.empty(shape=(ndetectors, (nsamples * k), nfeatures))
         # an array to store the distance between each of the candidates and the corresponding sample of x
-        candidate_dists = np.empty(shape=(ndetectors, nsamples))
+        candidate_dists = np.empty(shape=(ndetectors, (nsamples * k)))
         # an arry to store the models predicted class for each of the candidates
-        candidate_preds = np.empty(shape=(ndetectors, nsamples))
+        candidate_preds = np.empty(shape=(ndetectors, (nsamples * k)))
 
         # for each detector
         for i in range(ndetectors):
             print("explaining detector", i)
 
             # get the candidates for this detector
-            det_candidates = self.model.detectors[i].get_candidate_examples(x, y)
+            det_candidates = self.model.detectors[i].get_candidate_examples(x, y).reshape(((nsamples * k), nfeatures))
             candidate_examples[i] = det_candidates
 
             # predict and save the class for each candidate using the model
@@ -62,7 +68,7 @@ class BestCandidate(Explainer):
             candidate_examples[i][idx_unchaged_class] = np.tile(np.inf, (nfeatures,))
 
             # compute and save the distance for each candidate
-            candidate_dists[i] = self.distance_fn(x, det_candidates)
+            candidate_dists[i] = self.distance_fn(np.repeat(x, repeats=k, axis=0), det_candidates)
 
         # find which model suggests the best candidate for each sample
         idx_best_example = np.argmin(candidate_dists, axis=0)
