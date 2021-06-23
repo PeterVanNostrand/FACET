@@ -33,5 +33,5 @@ if __name__ == "__main__":
     # vary_difference()
     # vary_k()
     # vary_dim()
-    # vary_ntrees()
-    simple_run("musk")
+    vary_ntrees()
+    # simple_run("musk")

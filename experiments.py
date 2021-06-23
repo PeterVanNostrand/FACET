@@ -81,7 +81,8 @@ def vary_difference():
             params = {
                 "rf_difference": diff,
                 "rf_distance": "Euclidean",
-                "rf_k": 1
+                "rf_k": 1,
+                "rf_ntrees": 20
             }
             model = HEEAD(detectors=["RandomForest"], aggregator="LogisticRegression",
                           explainer="BestCandidate", hyperparameters=params)
@@ -116,7 +117,8 @@ def vary_k():
                 "rf_difference": 0.01,
                 "rf_distance": "Euclidean",
                 "rf_k": k,
-                "explainer_k": k
+                "explainer_k": k,
+                "rf_ntrees": 20
             }
             model = HEEAD(detectors=["RandomForest"], aggregator="LogisticRegression",
                           explainer="BestCandidate", hyperparameters=params)
@@ -134,7 +136,7 @@ def vary_dim():
     Experiment to observe the effect of the the number of features on explanation
     '''
     for ds_name in ["cardio", "musk", "thyroid", "wbc"]:
-        num_iters = 1
+        num_iters = 5
         runs_complete = 0
 
         # dataframe to store results of each datasets runs
@@ -158,7 +160,7 @@ def vary_dim():
                     "rf_difference": 0.01,
                     "rf_distance": "Euclidean",
                     "rf_k": 1,
-                    "rf_ntrees": 100
+                    "rf_ntrees": 20
                 }
                 model = HEEAD(detectors=["RandomForest"], aggregator="LogisticRegression",
                               explainer="BestCandidate", hyperparameters=params)
@@ -180,7 +182,7 @@ def vary_ntrees():
     Experiment to observe the effect of the the number of features on explanation
     '''
     for ds_name in ["cardio", "musk", "thyroid", "wbc"]:
-        num_iters = 1
+        num_iters = 5
         runs_complete = 0
 
         # dataframe to store results of each datasets runs
