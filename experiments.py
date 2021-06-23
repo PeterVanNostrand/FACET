@@ -255,7 +255,7 @@ def vary_nfeatures():
             f.write("\t" + k + ": " + str(params[k]) + "\n")
         f.write("}\n")
 
-    for ds_name in ["musk"]:
+    for ds_name in ["thyroid", "cardio", "wbc", "musk"]:
         print("starting", ds_name)
         runs_complete = 0
 
