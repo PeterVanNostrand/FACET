@@ -220,7 +220,7 @@ def vary_k():
         print("finished", ds_name)
 
 
-def vary_nfeatures():
+def vary_dim():
     '''
     Experiment to observe the effect of the the number of features on explanation
     '''
