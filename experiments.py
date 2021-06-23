@@ -3,7 +3,6 @@ import re
 
 import pandas as pd
 import numpy as np
-from tqdm import tqdm
 
 from sklearn.model_selection import train_test_split
 
@@ -256,7 +255,7 @@ def vary_nfeatures():
             f.write("\t" + k + ": " + str(params[k]) + "\n")
         f.write("}\n")
 
-    for ds_name in ["thyroid", "cardio", "wbc", "musk"]:
+    for ds_name in ["musk"]:
         print("starting", ds_name)
         runs_complete = 0
 

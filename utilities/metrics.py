@@ -47,7 +47,7 @@ def classification_metrics(preds, y, verbose=True):
     accuracy = (tp + tn) / (tp + fp + tn + fn)
     precision = tp / (tp + fp)
     recall = tp / (tp + fn)
-    f1 = 2 * (precision * recall) / (precision + recall)
+    f1 = 2 * ((precision * recall) / (precision + recall))
 
     confusion_matrix = ("| act \ pred | Norm | Anom |\n" +
                         "|------------|------|------|\n" +
