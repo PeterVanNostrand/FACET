@@ -50,8 +50,6 @@ class BestCandidate(Explainer):
 
         # for each detector
         for i in range(ndetectors):
-            print("explaining detector", i)
-
             # get the candidates for this detector
             det_candidates = self.model.detectors[i].get_candidate_examples(x, y).reshape(((nsamples * k), nfeatures))
             candidate_examples[i] = det_candidates

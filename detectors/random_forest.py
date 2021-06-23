@@ -5,7 +5,6 @@ from sklearn import tree
 import numpy as np
 from utilities.tree_tools import TreeContraster
 from utilities.metrics import euclidean_distance
-from tqdm import tqdm
 
 
 class RandomForest(Detector):
@@ -80,7 +79,7 @@ class RandomForest(Detector):
         all_examples = [[]] * x.shape[0]  # a list to store the array of examples, one for each example
 
         # for each tree, get an example for each sample in x
-        for t in tqdm(trees, desc="Walking RF Trees"):
+        for t in trees:
             # get an array of candidate examples for each instance in x
             helper = TreeContraster(t)
             tree_examples = helper.construct_examples(x, y, self.difference)
@@ -93,7 +92,7 @@ class RandomForest(Detector):
                     all_examples[i] = np.vstack([all_examples[i], tree_examples[i]])
 
         # for each sample pick the top k best candidates that result in a changed class
-        for i in tqdm(range(x.shape[0]), desc="Finding best k DT candiates"):
+        for i in range(x.shape[0]):
             # get the info for that sample
             instance = x[i]
             label = y[i]
