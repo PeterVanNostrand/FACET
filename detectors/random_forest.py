@@ -125,3 +125,19 @@ class RandomForest(Detector):
                 final_examples = final_examples.squeeze()
 
         return final_examples
+
+    def get_tree_information(self):
+        trees = self.model.estimators_
+        sum_nnodes = 0
+        sum_nleaves = 0
+        sum_depth = 0
+        for t in trees:
+            sum_nnodes += t.tree_.node_count
+            sum_nleaves += t.get_n_leaves()
+            sum_depth += t.get_depth()
+
+        avg_nnodes = sum_nnodes / self.ntrees
+        avg_nleaves = sum_nleaves / self.ntrees
+        avg_depth = sum_depth / self.ntrees
+
+        return avg_nnodes, avg_nleaves, avg_depth

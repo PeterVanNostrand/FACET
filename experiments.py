@@ -119,7 +119,7 @@ def vary_difference():
             f.write("\t" + k + ": " + str(params[k]) + "\n")
         f.write("}\n")
 
-    for ds_name in ["cardio", "musk", "thyroid", "wbc"]:
+    for ds_name in ["thyroid", "cardio", "wbc", "musk"]:
         runs_complete = 0
         # Load the dataset
         x, y = load_data(ds_name, normalize=True)
@@ -188,7 +188,7 @@ def vary_k():
             f.write("\t" + k + ": " + str(params[k]) + "\n")
         f.write("}\n")
 
-    for ds_name in ["cardio", "musk", "thyroid", "wbc"]:
+    for ds_name in ["thyroid", "cardio", "wbc", "musk"]:
         runs_complete = 0
         # Load the dataset
         x, y = load_data(ds_name, normalize=True)
@@ -221,7 +221,7 @@ def vary_k():
         print("finished", ds_name)
 
 
-def vary_dim():
+def vary_nfeatures():
     '''
     Experiment to observe the effect of the the number of features on explanation
     '''
@@ -229,7 +229,7 @@ def vary_dim():
     run_id, run_path = check_create_directory("./results/vary-dim/")
 
     # run configuration
-    num_iters = 10
+    num_iters = 5
 
     dets = ["RandomForest"]
     agg = "LogisticRegression"
@@ -256,12 +256,13 @@ def vary_dim():
             f.write("\t" + k + ": " + str(params[k]) + "\n")
         f.write("}\n")
 
-    for ds_name in ["cardio", "musk", "thyroid", "wbc"]:
+    for ds_name in ["thyroid", "cardio", "wbc", "musk"]:
+        print("starting", ds_name)
         runs_complete = 0
 
         # dataframe to store results of each datasets runs
         results = pd.DataFrame(columns=["n_features", "accuracy", "precision",
-                               "recall", "f1", "coverage_ratio", "mean_distance"])
+                               "recall", "f1", "coverage_ratio", "mean_distance", "avg_nnodes", "avg_nleaves", "avg_depth"])
 
         for i in range(num_iters):
             # Load the dataset
@@ -277,9 +278,17 @@ def vary_dim():
                 model = HEEAD(detectors=dets, aggregator=agg, explainer=expl, hyperparameters=params)
                 run_perf = execute_run(model, xtrain[:, :n], xtest[:, :n], ytrain, ytest)
 
+                # get metrics of random forest trees
+                avg_nnodes, avg_nleaves, avg_depth = model.detectors[0].get_tree_information()
+
                 # store results
-                diff_val = {"n_features": n}
-                run_result = {**diff_val, **run_perf}
+                ind_var = {"n_features": n}
+                tree_stats = {
+                    "avg_nnodes": avg_nnodes,
+                    "avg_nleaves": avg_nleaves,
+                    "avg_depth": avg_depth
+                }
+                run_result = {**ind_var, **run_perf, **tree_stats}
                 results = results.append(run_result, ignore_index=True)
 
                 # log progress
@@ -328,7 +337,7 @@ def vary_ntrees():
             f.write("\t" + k + ": " + str(params[k]) + "\n")
         f.write("}\n")
 
-    for ds_name in ["cardio", "musk", "thyroid", "wbc"]:
+    for ds_name in ["thyroid", "cardio", "wbc", "musk"]:
         x, y = load_data(ds_name, normalize=True)
         # dataframe to store results of each datasets runs
         results = pd.DataFrame(columns=["n_trees", "accuracy", "precision",
