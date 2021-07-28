@@ -21,6 +21,14 @@ def simple_run(dataset_name):
     # anomaly detection performance
     accuracy, precision, recall, f1 = classification_metrics(preds, y, verbose=True)
 
+    # Q-stastic
+    Q, qs = model.detectors[0].compute_qs(x, y)
+    print("Q-Statistic:", Q)
+
+    # jaccard similarity
+    J, jaccards = model.detectors[0].compute_jaccard()
+    print("Jaccard Index:", J)
+
     # generate the explanations
     explanations = model.explain(x, y)
 

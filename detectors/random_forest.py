@@ -44,7 +44,7 @@ class RandomForest(Detector):
             self.difference = 0.01
             self.distance_fn = euclidean_distance
             self.k = 1
-            self.ntrees = 100
+            self.ntrees = 20
 
         # create the classifier
         self.model = skRandomForestClassifier(n_estimators=self.ntrees)
@@ -141,3 +141,84 @@ class RandomForest(Detector):
         avg_depth = sum_depth / self.ntrees
 
         return avg_nnodes, avg_nleaves, avg_depth
+
+    def compute_qs(self, x, y):
+        '''
+        A method for computing the Q-Statistics of the Random Forest ensemble
+
+        Parameters
+        ----------
+        x : a set of data samples
+        y : the labels which correspond to the samples in x
+
+        Returns
+        -------
+        Q : the Q-Statistic for the ensemble
+        qs : the q stastic for each pair in the ensemble
+        '''
+
+        npairs = (int)((self.ntrees * (self.ntrees - 1)) / 2)
+        qs = np.empty(shape=(npairs,))
+
+        trees = self.model.estimators_
+        index = 0
+        for i in range(self.ntrees):
+            for k in range(i+1, self.ntrees):
+                qs[index] = self.compute_q_pair(trees[i], trees[k], x, y)
+                index += 1
+
+        Q = np.average(qs)
+        return Q, qs
+
+    def compute_q_pair(self, t1, t2, data, labels):
+        # The Q-Statistic is defined as
+        #         (N^11 * N^00) - (N^01 * N^10)
+        # Q_i,k = -----------------------------
+        #         (N^11 * N^00) + (N^01 * N^10)
+
+        preds1 = t1.predict(data)
+        preds2 = t2.predict(data)
+
+        # y_i,j=1 iff detector i correctly recognizes sample j, 0 otherwise
+        y1 = (preds1 == labels) * 1
+        y2 = (preds2 == labels) * 1
+
+        # Where N^ab is the number of elements where yi=a and yk=b
+        n11 = np.logical_and((y1 == 1), (y2 == 1)).sum()
+        n00 = np.logical_and((y1 == 0), (y2 == 0)).sum()
+        n01 = np.logical_and((y1 == 0), (y2 == 1)).sum()
+        n10 = np.logical_and((y1 == 1), (y2 == 0)).sum()
+
+        Qik = ((n11 * n00) - (n01 * n10)) / ((n11*n00) + (n01 * n10))
+
+        return Qik
+
+    def compute_jaccard(self):
+        npairs = (int)((self.ntrees * (self.ntrees - 1)) / 2)
+        jaccards = np.empty(shape=(npairs,))
+
+        trees = self.model.estimators_
+        index = 0
+        for i in range(self.ntrees):
+            for k in range(i+1, self.ntrees):
+                jaccards[index] = self.compute_jaccard_pair(trees[i], trees[k])
+                index += 1
+
+        J = np.average(jaccards)
+        return J, jaccards
+
+    def compute_jaccard_pair(self, t1, t2):
+        # The Jaccard similarity between two sets is given as
+        #     |A intersect B|
+        # J = ---------------
+        #     |A   union   B|
+
+        # get the features used be each tree, f[i]>0 iff t uses feature i
+        f1 = t1.feature_importances_
+        f2 = t1.feature_importances_
+
+        a_intersect_b = np.logical_and((f1 > 0), (f2 > 0)).sum()
+        a_union_b = np.logical_or((f1 > 0), (f2 > 0)).sum()
+
+        Jik = a_intersect_b / a_union_b
+        return Jik

@@ -261,7 +261,7 @@ def vary_dim():
 
         # dataframe to store results of each datasets runs
         results = pd.DataFrame(columns=["n_features", "accuracy", "precision",
-                               "recall", "f1", "coverage_ratio", "mean_distance", "avg_nnodes", "avg_nleaves", "avg_depth"])
+                               "recall", "f1", "coverage_ratio", "mean_distance", "avg_nnodes", "avg_nleaves", "avg_depth", "q", "jaccard"])
 
         for i in range(num_iters):
             # Load the dataset
@@ -287,7 +287,13 @@ def vary_dim():
                     "avg_nleaves": avg_nleaves,
                     "avg_depth": avg_depth
                 }
-                run_result = {**ind_var, **run_perf, **tree_stats}
+                Q, qs = model.detectors[0].compute_qs(xtest[:, :n], ytest)
+                J, jaccards = model.detectors[0].compute_jaccard()
+                diversity_info = {
+                    "q": Q,
+                    "jaccard": J
+                }
+                run_result = {**ind_var, **run_perf, **tree_stats, **diversity_info}
                 results = results.append(run_result, ignore_index=True)
 
                 # log progress
