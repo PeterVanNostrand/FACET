@@ -39,10 +39,10 @@ def classification_metrics(preds, y, verbose=True):
     out_string = ""
 
     # Compute performance metrics
-    tp = np.where((preds == 1) & (y == 1))[0].shape[0]  # true inliers
-    fp = np.where((preds == 1) & (y == -1))[0].shape[0]  # false inliers
-    tn = np.where((preds == -1) & (y == -1))[0].shape[0]  # true outliers
-    fn = np.where((preds == -1) & (y == 1))[0].shape[0]  # false outlier
+    tp = np.where((preds == 0) & (y == 0))[0].shape[0]  # true inliers
+    fp = np.where((preds == 0) & (y == 1))[0].shape[0]  # false inliers
+    tn = np.where((preds == 1) & (y == 1))[0].shape[0]  # true outliers
+    fn = np.where((preds == 1) & (y == 0))[0].shape[0]  # false outlier
 
     accuracy = (tp + tn) / (tp + fp + tn + fn)
     precision = tp / (tp + fp)

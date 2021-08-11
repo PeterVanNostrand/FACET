@@ -220,7 +220,7 @@ def vary_k():
         print("finished", ds_name)
 
 
-def vary_dim():
+def vary_dim(explainer):
     '''
     Experiment to observe the effect of the the number of features on explanation
     '''
@@ -232,7 +232,7 @@ def vary_dim():
 
     dets = ["RandomForest"]
     agg = "LogisticRegression"
-    expl = "BestCandidate"
+    expl = explainer
     params = {
         "rf_difference": 0.01,
         "rf_distance": "Euclidean",

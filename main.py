@@ -14,7 +14,7 @@ def simple_run(dataset_name):
     x, y = load_data(dataset_name)
 
     # Create, train, and predict with the model
-    model = HEEAD(detectors=["RandomForest"], aggregator="LogisticRegression", explainer="BestCandidate")
+    model = HEEAD(detectors=["RandomForest"], aggregator="LogisticRegression", explainer="GraphMerge")
     model.train(x, y)
     preds = model.predict(x)
 
@@ -22,8 +22,8 @@ def simple_run(dataset_name):
     accuracy, precision, recall, f1 = classification_metrics(preds, y, verbose=True)
 
     # Q-stastic
-    Q, qs = model.detectors[0].compute_qs(x, y)
-    print("Q-Statistic:", Q)
+    # Q, qs = model.detectors[0].compute_qs(x, y)
+    # print("Q-Statistic:", Q)
 
     # jaccard similarity
     J, jaccards = model.detectors[0].compute_jaccard()
@@ -32,14 +32,21 @@ def simple_run(dataset_name):
     # generate the explanations
     explanations = model.explain(x, y)
 
-    # explanation performance
-    print("coverage:", coverage(explanations))
-    print("mean distance: ", mean_distance(x, explanations))
+    # measure model performance
+    accuracy, precision, recall, f1 = classification_metrics(preds, y, verbose=False)
+    print("accuracy:", accuracy)
+    print("precision:", precision)
+    print("recall:", recall)
+    print("f1:", f1)
+    coverage_ratio = coverage(explanations)
+    print("coverage_ratio:", coverage_ratio)
+    mean_dist = mean_distance(x, explanations)
+    print("mean_dist:", mean_dist)
 
 
 if __name__ == "__main__":
     # vary_difference()
     # vary_k()
-    vary_dim()
+    vary_dim(explainer="GraphMerge")
     # vary_ntrees()
-    # simple_run("thyroid")
+    # simple_run("musk")

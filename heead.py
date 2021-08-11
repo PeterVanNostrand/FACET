@@ -12,6 +12,7 @@ from detectors.random_forest import RandomForest
 
 # Explainer classes
 from explainers.best_candidate import BestCandidate
+from explainers.graph_merge import GraphMerge
 
 
 class HEEAD():
@@ -38,6 +39,8 @@ class HEEAD():
 
         if explainer == "BestCandidate":
             self.explainer = BestCandidate(model=self, hyperparameters=hyperparameters)
+        elif explainer == "GraphMerge":
+            self.explainer = GraphMerge(model=self, hyperparameters=hyperparameters)
         else:
             print("Unknown explainer type of " + explainer)
             print("using best candidate explainer")

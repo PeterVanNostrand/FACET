@@ -52,15 +52,15 @@ def util_load_stonybrook(matpath, normalize=True):
     x = data_dict["X"]
     y = data_dict["y"].astype('int')
 
-    normal_class = 0
-    anomaly_class = 1
+    # normal_class = 0
+    # anomaly_class = 1
 
     # make anomaly label -1, normal label 1
-    idx_normal = (y == normal_class)
-    idx_anomaly = (y == anomaly_class)
+    # idx_normal = (y == normal_class)
+    # idx_anomaly = (y == anomaly_class)
 
-    y[idx_normal] = 1
-    y[idx_anomaly] = -1
+    # y[idx_normal] = 1
+    # y[idx_anomaly] = -1
 
     # make y have dimension (nsamples,)
     y = np.squeeze(y)
@@ -88,15 +88,15 @@ def load_http(normalize=True):
         x = f["X"][()].T
         y = f["y"][()].T.squeeze().astype('int')
 
-    normal_class = 0
-    anomaly_class = 1
+    # normal_class = 0
+    # anomaly_class = 1
 
     # make anomaly label -1, normal label 1
-    idx_normal = (y == normal_class)
-    idx_anomaly = (y == anomaly_class)
+    # idx_normal = (y == normal_class)
+    # idx_anomaly = (y == anomaly_class)
 
-    y[idx_normal] = 1
-    y[idx_anomaly] = -1
+    # y[idx_normal] = 1
+    # y[idx_anomaly] = -1
 
     # make y have dimension (nsamples,)
     y = np.squeeze(y)
@@ -152,8 +152,8 @@ def load_iris(normalize=True):
     idx_normal = (y == normal_class)
     idx_anomaly = (y == anomal_class)
 
-    y[idx_normal] = 1
-    y[idx_anomaly] = -1
+    # y[idx_normal] = 1
+    # y[idx_anomaly] = -1
 
     keep_idxs = np.append(idx_normal, idx_anomaly)
 
