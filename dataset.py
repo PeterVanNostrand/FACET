@@ -1,7 +1,26 @@
 import numpy as np
+import pandas as pd
 import scipy.io as sio
 import h5py
 from sklearn import datasets as skdatasets
+
+# a list of the abbreviated name for all datasets
+all_datasets = ["annthyroid", "cardio", "http", "mulcross", "musk",
+                "pendigits", "satimage", "shuttle", "thyroid", "wbc"]
+
+# the dimensions of each dataset
+ds_dimensions = {
+    'annthyroid': (7200, 6),
+    'cardio': (1831, 21),
+    'http': (567498, 3),
+    'mulcross': (262144, 4),
+    'musk': (3062, 166),
+    'pendigits': (6870, 16),
+    'satimage': (5803, 36),
+    'shuttle': (49097, 9),
+    'thyroid': (3772, 6),
+    'wbc': (378, 30)
+}
 
 
 def load_data(dataset_name, normalize=True):
@@ -16,7 +35,7 @@ def load_data(dataset_name, normalize=True):
     Returns
     -------
     x : the dataset samples with shape (nsamples, nfeatures)
-    y : the dataset labels with shape (nsamples,)
+    y : the dataset labels with shape (nsamples,) containing 0 to represent a normal label and 1 for an anomaly label
     '''
 
     if dataset_name == "annthyroid":
@@ -44,6 +63,27 @@ def load_data(dataset_name, normalize=True):
         return load_thyroid(normalize)
 
 
+def validate_labels(ds_names):
+    '''
+    Utility function for checking that all datset's labels are imported correctly. All datasetset should use 0 to represent normal, and 1 for anomalies and contain no other values in the returned y array
+
+    Parameters
+    ----------
+    ds_names : a list of dataset names to evaluate e.g. ds_names = ["thyroid", "musk"] see README for abbreviated names
+
+    Returns
+    -------
+    failed_ds : a list of dataset names which return labels other than 0 or 1
+    '''
+    failed_ds = []
+    for ds in ds_names:
+        x, y = load_data(ds)
+        if not np.logical_or(y == 0, y == 1).all():
+            failed_ds.append(ds)
+
+    return failed_ds
+
+
 def util_load_stonybrook(matpath, normalize=True):
     '''
     A utility method for loading any data matrix formatted as in the StonyBrook Outlier Detection Datasets (ODDS)
@@ -51,16 +91,6 @@ def util_load_stonybrook(matpath, normalize=True):
     data_dict = sio.loadmat(matpath)
     x = data_dict["X"]
     y = data_dict["y"].astype('int')
-
-    # normal_class = 0
-    # anomaly_class = 1
-
-    # make anomaly label -1, normal label 1
-    # idx_normal = (y == normal_class)
-    # idx_anomaly = (y == anomaly_class)
-
-    # y[idx_normal] = 1
-    # y[idx_anomaly] = -1
 
     # make y have dimension (nsamples,)
     y = np.squeeze(y)
@@ -87,18 +117,6 @@ def load_http(normalize=True):
     with h5py.File("./data/http/http.mat", "r") as f:
         x = f["X"][()].T
         y = f["y"][()].T.squeeze().astype('int')
-
-    # normal_class = 0
-    # anomaly_class = 1
-
-    # make anomaly label -1, normal label 1
-    # idx_normal = (y == normal_class)
-    # idx_anomaly = (y == anomaly_class)
-
-    # y[idx_normal] = 1
-    # y[idx_anomaly] = -1
-
-    # make y have dimension (nsamples,)
     y = np.squeeze(y)
 
     if normalize:
@@ -111,8 +129,19 @@ def load_http(normalize=True):
 
 
 def load_mulcross(normalize=True):
-    # TODO
-    return None
+    # load the dataset from a csv
+    mulcross_df = pd.read_csv("./data/mulcross/mulcross.csv")
+
+    # extract the feature columns to x
+    x = mulcross_df[["V1", "V2", "V3", "V4"]].to_numpy()
+
+    # convert text labels 'Normal' and 'Anomlay' to 0.0 and 1.0 respectively
+    mulcross_df["y"] = 0
+    idx_anomaly = mulcross_df["Target"] == "'Anomaly'"
+    mulcross_df.loc[idx_anomaly, "y"] = 1
+    y = mulcross_df["y"].to_numpy()
+
+    return x, y
 
 
 def load_musk(normalize=True):
@@ -151,9 +180,6 @@ def load_iris(normalize=True):
 
     idx_normal = (y == normal_class)
     idx_anomaly = (y == anomal_class)
-
-    # y[idx_normal] = 1
-    # y[idx_anomaly] = -1
 
     keep_idxs = np.append(idx_normal, idx_anomaly)
 

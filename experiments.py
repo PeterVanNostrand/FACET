@@ -3,11 +3,13 @@ import re
 
 import pandas as pd
 import numpy as np
+from tqdm.auto import tqdm
 
 from sklearn.model_selection import train_test_split
 
 from heead import HEEAD
 from dataset import load_data
+from dataset import ds_dimensions
 
 from utilities.metrics import coverage
 from utilities.metrics import classification_metrics
@@ -220,7 +222,7 @@ def vary_k():
         print("finished", ds_name)
 
 
-def vary_dim(explainer):
+def vary_dim(ds_names, explainer):
     '''
     Experiment to observe the effect of the the number of features on explanation
     '''
@@ -229,7 +231,6 @@ def vary_dim(explainer):
 
     # run configuration
     num_iters = 5
-
     dets = ["RandomForest"]
     agg = "LogisticRegression"
     expl = explainer
@@ -255,17 +256,23 @@ def vary_dim(explainer):
             f.write("\t" + k + ": " + str(params[k]) + "\n")
         f.write("}\n")
 
-    for ds_name in ["thyroid", "cardio", "wbc", "musk"]:
-        print("starting", ds_name)
-        runs_complete = 0
+    # compute the total number of runs for this experiment
+    total_runs = 0
+    for ds in ds_names:
+        total_runs += (ds_dimensions[ds][1] - 1) * num_iters
 
+    # perform the experiment
+    print("Varying Dim", ds_names)
+    progress_bar = tqdm(total=total_runs, desc="Overall Progress", position=0)
+    for ds in ds_names:
         # dataframe to store results of each datasets runs
         results = pd.DataFrame(columns=["n_features", "accuracy", "precision",
                                "recall", "f1", "coverage_ratio", "mean_distance", "avg_nnodes", "avg_nleaves", "avg_depth", "q", "jaccard"])
+        progress_bar_ds = tqdm(total=(ds_dimensions[ds][1] - 1) * num_iters, desc=ds, leave=False)
 
         for i in range(num_iters):
             # Load the dataset
-            x, y = load_data(ds_name, normalize=True)
+            x, y = load_data(ds, normalize=True)
 
             # randomly shuffle the order of the columns
             np.random.shuffle(np.transpose(x))
@@ -297,11 +304,13 @@ def vary_dim(explainer):
                 results = results.append(run_result, ignore_index=True)
 
                 # log progress
-                runs_complete += 1
-                print("\truns complete:", runs_complete)
+                progress_bar.update()
+                progress_bar_ds.update()
         # save the results
-        results.to_csv(run_path + "/" + ds_name + ".csv")
-        print("finished", ds_name)
+        results.to_csv(run_path + "/" + ds + ".csv")
+        progress_bar_ds.close()
+    progress_bar.close()
+    print("Finished varying dimension")
 
 
 def vary_ntrees():

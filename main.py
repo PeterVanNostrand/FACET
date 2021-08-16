@@ -6,6 +6,7 @@ from utilities.metrics import coverage
 from utilities.metrics import classification_metrics
 from utilities.metrics import mean_distance
 from dataset import load_data
+from dataset import all_datasets
 from experiments import *
 
 
@@ -47,6 +48,6 @@ def simple_run(dataset_name):
 if __name__ == "__main__":
     # vary_difference()
     # vary_k()
-    vary_dim(explainer="GraphMerge")
+    # vary_dim(all_datasets, explainer="GraphMerge")
     # vary_ntrees()
-    # simple_run("musk")
+    simple_run("thyroid")
