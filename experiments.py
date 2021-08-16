@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 
 from heead import HEEAD
 from dataset import load_data
-from dataset import ds_dimensions
+from dataset import DS_DIMENSIONS
 
 from utilities.metrics import coverage
 from utilities.metrics import classification_metrics
@@ -259,7 +259,7 @@ def vary_dim(ds_names, explainer):
     # compute the total number of runs for this experiment
     total_runs = 0
     for ds in ds_names:
-        total_runs += (ds_dimensions[ds][1] - 1) * num_iters
+        total_runs += (DS_DIMENSIONS[ds][1] - 1) * num_iters
 
     # perform the experiment
     print("Varying Dim", ds_names)
@@ -268,7 +268,7 @@ def vary_dim(ds_names, explainer):
         # dataframe to store results of each datasets runs
         results = pd.DataFrame(columns=["n_features", "accuracy", "precision",
                                "recall", "f1", "coverage_ratio", "mean_distance", "avg_nnodes", "avg_nleaves", "avg_depth", "q", "jaccard"])
-        progress_bar_ds = tqdm(total=(ds_dimensions[ds][1] - 1) * num_iters, desc=ds, leave=False)
+        progress_bar_ds = tqdm(total=(DS_DIMENSIONS[ds][1] - 1) * num_iters, desc=ds, leave=False)
 
         for i in range(num_iters):
             # Load the dataset

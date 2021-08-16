@@ -5,11 +5,11 @@ import h5py
 from sklearn import datasets as skdatasets
 
 # a list of the abbreviated name for all datasets
-all_datasets = ["annthyroid", "cardio", "http", "mulcross", "musk",
+DS_NAMES = ["annthyroid", "cardio", "http", "mulcross", "musk",
                 "pendigits", "satimage", "shuttle", "thyroid", "wbc"]
 
 # the dimensions of each dataset
-ds_dimensions = {
+DS_DIMENSIONS = {
     'annthyroid': (7200, 6),
     'cardio': (1831, 21),
     'http': (567498, 3),
