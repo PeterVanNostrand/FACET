@@ -1,8 +1,10 @@
 import os
 import re
+import pandas as pd
+from dataset import DS_NAMES
 
 
-def get_latest_directory(dir_path="./results"):
+def get_latest_results_directory(dir_path="./results"):
     '''
     Utility function for finding the directory of the latest run
 
@@ -33,3 +35,30 @@ def get_latest_directory(dir_path="./results"):
     max_run_path = os.path.join(os.path.abspath(dir_path), max_run_dir)
 
     return max_run_id, max_run_path
+
+
+def make_fig_directory(run_id):
+    fig_output_path = "run-{:03d}".format(run_id)
+    try:
+        os.makedirs(fig_output_path)
+    except FileExistsError:
+        pass
+
+    return fig_output_path
+
+
+def load_results(run_path):
+    file_names = os.listdir(run_path)
+    found_ds = []
+    for name in file_names:
+        x = re.match("(.*)[.]csv", name)
+        if x is not None:
+            match_text = x.group(1)
+            if match_text in DS_NAMES:
+                found_ds.append(match_text)
+
+    results = {}
+    for ds in found_ds:
+        results[ds] = pd.read_csv(run_path + "/" + ds + ".csv").groupby(["n_features"]).mean().reset_index()
+
+    return found_ds, results
