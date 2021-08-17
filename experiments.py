@@ -272,9 +272,11 @@ def vary_dim(ds_names, explainer):
                                "recall", "f1", "coverage_ratio", "mean_distance", "avg_nnodes", "avg_nleaves", "avg_depth", "q", "jaccard"])
         progress_bar_ds = tqdm(total=(DS_DIMENSIONS[ds][1] - 1) * num_iters, desc=ds, leave=False)
 
+        x_orig, y_orig = load_data(ds, normalize=True)
         for i in range(num_iters):
             # Load the dataset
-            x, y = load_data(ds, normalize=True)
+            x = x_orig.copy()
+            y = y_orig.copy()
 
             # randomly shuffle the order of the columns
             np.random.shuffle(np.transpose(x))

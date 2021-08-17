@@ -50,6 +50,11 @@ def simple_run(dataset_name):
 if __name__ == "__main__":
     # vary_difference()
     # vary_k()
-    vary_dim(["thyroid"], explainer="GraphMerge")
+    run_ds = DS_NAMES.copy()
+    run_ds.remove("http")
+    run_ds.remove("mulcross")
+    run_ds.remove("annthyroid")
+    run_ds.remove("cardio")
+    vary_dim(run_ds, explainer="GraphMerge")
     # vary_ntrees()
     # simple_run("thyroid")
