@@ -67,6 +67,7 @@ def execute_run(model, xtrain, xtest, ytrain, ytest):
     accuracy, precision, recall, f1 = classification_metrics(preds, ytest, verbose=False)
     coverage_ratio = coverage(explanations)
     mean_dist = mean_distance(xtest, explanations)
+    mean_length = (xtest == explanations).sum(axis=1).mean()
 
     # save the performance
     run_perf = {
@@ -75,7 +76,8 @@ def execute_run(model, xtrain, xtest, ytrain, ytest):
         "recall": recall,
         "f1": f1,
         "coverage_ratio": coverage_ratio,
-        "mean_distance": mean_dist
+        "mean_distance": mean_dist,
+        "mean_length": mean_length
     }
 
     return run_perf

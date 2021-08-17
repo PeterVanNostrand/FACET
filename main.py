@@ -43,11 +43,13 @@ def simple_run(dataset_name):
     print("coverage_ratio:", coverage_ratio)
     mean_dist = mean_distance(x, explanations)
     print("mean_dist:", mean_dist)
+    mean_length = (x == explanations).sum(axis=1).mean()
+    print("mean_length", mean_length)
 
 
 if __name__ == "__main__":
     # vary_difference()
     # vary_k()
-    # vary_dim(ALL_DS_NAMES, explainer="GraphMerge")
+    vary_dim(["thyroid"], explainer="GraphMerge")
     # vary_ntrees()
-    simple_run("thyroid")
+    # simple_run("thyroid")
