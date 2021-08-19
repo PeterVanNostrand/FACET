@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def euclidean_distance(x, xprime):
+def dist_euclidean(x, xprime):
     '''
     Computes the euclidean distance between `x` and `xprime`
 
@@ -24,6 +24,29 @@ def euclidean_distance(x, xprime):
         sos_diff = np.sum(squared_diff)
 
     distance = np.sqrt(sos_diff)
+    return distance
+
+
+def dist_features_changed(x, xprime):
+    '''
+    Computes the euclidean distance between `x` and `xprime`
+
+    Parameters
+    ----------
+    x      : a array of dimension d
+    xprime : an array of dimension d+1
+
+    Returns
+    -------
+    distance : an array of dimension d+1 containing the number of features changed between x and each example in xprime
+    '''
+    if len(xprime.shape) == 3:
+        distance = (x != xprime).sum(axis=2)
+    elif len(xprime.shape) == 2:
+        distance = (x != xprime).sum(axis=1)
+    else:
+        distance = (x != xprime).sum()
+
     return distance
 
 
@@ -68,13 +91,15 @@ def classification_metrics(preds, y, verbose=True):
     return accuracy, precision, recall, f1
 
 
-def mean_distance(x, xprime, distance_metric="Euclidean"):
+def average_distance(x, xprime, distance_metric="Euclidean"):
     # select the distance function which corresonds to the provided distance metric
     if distance_metric == "Euclidean":
-        distance_fn = euclidean_distance
+        distance_fn = dist_euclidean
+    elif distance_metric == "FeaturesChanged":
+        distance_fn = dist_features_changed
     else:
-        print("Unknown distance function {}, using Euclidean distance for mean distance".format(distance_metric))
-        distance_fn = euclidean_distance
+        print("Unknown distance function {}, using Euclidean distance for average distance".format(distance_metric))
+        distance_fn = dist_euclidean
 
     # exclude cases where no example was found
     idx_bad_examples = (xprime == np.inf).any(axis=1)

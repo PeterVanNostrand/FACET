@@ -1,0 +1,15 @@
+varying the number of features
+
+iterations: 5
+
+detectors: RandomForest, 
+aggregator: LogisticRegression
+explainer: GraphMerge
+
+hyperparameters{
+	rf_difference: 0.01
+	rf_distance: FeaturesChanged
+	rf_k: 1
+	rf_ntrees: 20
+	expl_distance: FeaturesChanged
+}

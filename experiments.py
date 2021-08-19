@@ -11,9 +11,8 @@ from heead import HEEAD
 from dataset import load_data
 from dataset import DS_DIMENSIONS
 
-from utilities.metrics import coverage
+from utilities.metrics import average_distance, coverage
 from utilities.metrics import classification_metrics
-from utilities.metrics import mean_distance
 
 
 def check_create_directory(dir_path="./results"):
@@ -66,8 +65,8 @@ def execute_run(model, xtrain, xtest, ytrain, ytest):
     # measure model performance
     accuracy, precision, recall, f1 = classification_metrics(preds, ytest, verbose=False)
     coverage_ratio = coverage(explanations)
-    mean_dist = mean_distance(xtest, explanations)
-    mean_length = (xtest == explanations).sum(axis=1).mean()
+    mean_dist = average_distance(xtest, explanations, distance_metric="Euclidean")
+    mean_length = average_distance(xtest, explanations, distance_metric="FeaturesChanged")
 
     # save the performance
     run_perf = {
@@ -224,7 +223,7 @@ def vary_k():
         print("finished", ds_name)
 
 
-def vary_dim(ds_names, explainer):
+def vary_dim(ds_names, explainer="BestCandidate", distance="Euclidean"):
     '''
     Experiment to observe the effect of the the number of features on explanation
     '''
@@ -238,9 +237,10 @@ def vary_dim(ds_names, explainer):
     expl = explainer
     params = {
         "rf_difference": 0.01,
-        "rf_distance": "Euclidean",
+        "rf_distance": distance,
         "rf_k": 1,
-        "rf_ntrees": 20
+        "rf_ntrees": 20,
+        "expl_distance": distance
     }
 
     # save the run information

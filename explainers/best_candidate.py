@@ -1,20 +1,26 @@
 from explainers.explainer import Explainer
 from sklearn.ensemble import IsolationForest as skIsolationForest
 import numpy as np
-from utilities.metrics import euclidean_distance
+from utilities.metrics import dist_euclidean
+from utilities.metrics import dist_features_changed
 
 
 class BestCandidate(Explainer):
-    def __init__(self, model, distance_metric="Euclidean", hyperparameters=None):
+    def __init__(self, model, hyperparameters=None):
         self.model = model
         self.hyperparameters = hyperparameters
 
-        # select the distance function which corresonds to the provided distance metric
-        if distance_metric == "Euclidean":
-            self.distance_fn = euclidean_distance
+        # distance metric for explanation
+        if hyperparameters.get("expl_distance") is None:
+            print("No expl_distance function set, using Euclidean")
+            self.distance_fn = dist_euclidean
+        elif hyperparameters.get("expl_distance") == "Euclidean":
+            self.distance_fn = dist_euclidean
+        elif hyperparameters.get("expl_distance") == "FeaturesChanged":
+            self.distance_fn = dist_features_changed
         else:
-            print("Unknown distance function {}, using Euclidean distance for explainer".format(distance_metric))
-            self.distance_fn = euclidean_distance
+            print("Unknown expl_distance function {}, using Euclidean distance".format(hyperparameters.get("expl_distance")))
+            self.distance_fn = dist_euclidean
 
     def explain(self, x, y):
         '''

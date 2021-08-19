@@ -1,6 +1,6 @@
 
 import numpy as np
-from utilities.metrics import euclidean_distance
+from utilities.metrics import dist_euclidean
 
 
 def get_best_of_tree(t, rf, x, y):

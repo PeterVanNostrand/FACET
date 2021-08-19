@@ -6,7 +6,7 @@ import numpy as np
 from utilities.tree_tools import TreeContraster
 from utilities.tree_tools import get_best_of_tree
 
-from utilities.metrics import euclidean_distance
+from utilities.metrics import dist_euclidean, dist_features_changed
 
 import multiprocessing as mp
 from functools import partial
@@ -25,12 +25,14 @@ class RandomForest(Detector):
             # distance metric for explanation
             if hyperparameters.get("rf_distance") is None:
                 print("No rf_distance function set, using Euclidean")
-                self.distance_fn = euclidean_distance
+                self.distance_fn = dist_euclidean
             elif hyperparameters.get("rf_distance") == "Euclidean":
-                self.distance_fn = euclidean_distance
+                self.distance_fn = dist_euclidean
+            elif hyperparameters.get("rf_distance") == "FeaturesChanged":
+                self.distance_fn = dist_features_changed
             else:
                 print("Unknown rf_distance function {}, using Euclidean distance".format(hyperparameters.get("rf_distance")))
-                self.distance_fn = euclidean_distance
+                self.distance_fn = dist_euclidean
 
             # k for explanation
             if hyperparameters.get("rf_k") is None:
@@ -47,7 +49,7 @@ class RandomForest(Detector):
                 self.ntrees = hyperparameters.get("rf_ntrees")
         else:
             self.difference = 0.01
-            self.distance_fn = euclidean_distance
+            self.distance_fn = dist_euclidean
             self.k = 1
             self.ntrees = 20
 
@@ -130,7 +132,7 @@ class RandomForest(Detector):
 
         return final_examples
 
-    def get_candidate_examples_treewise(self, x, y):
+    def get_candidate_examples_treewise(self, x, y, tree_ids):
         '''
         A function for getting the best contrastive example from each tree for each of the samples of `x`. The *best* examples are those which result in a change of predicted class on that tree and have a minimal change from `x[i]`
 
@@ -145,10 +147,17 @@ class RandomForest(Detector):
         '''
 
         trees = self.model.estimators_
-        num_proc = np.min((self.ntrees, mp.cpu_count()))
+        trees_to_explain = []
+        for i in range(len(trees)):
+            if i in tree_ids:
+                trees_to_explain.append(trees[i])
+
+        # spawn several threads to explain trees in parallel
+        n_availible_threads = np.max((mp.cpu_count() - 2, 1))  # cap thread usage to leave at 2 free for the user
+        num_proc = np.min((len(trees_to_explain), n_availible_threads))  # create 1 thread per tree up to cap
         with mp.Pool(num_proc) as p:
             my_func = partial(get_best_of_tree, rf=self, x=x, y=y)
-            results = p.map(my_func, trees)
+            results = p.map(my_func, trees_to_explain)
 
         all_examples = np.stack(results)
         return all_examples
