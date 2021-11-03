@@ -317,7 +317,7 @@ def vary_dim(ds_names, explainer="BestCandidate", distance="Euclidean"):
     print("Finished varying dimension")
 
 
-def vary_ntrees():
+def vary_ntrees(ds_names, explainer="BestCandidate", distance="Euclidean"):
     '''
     Experiment to observe the effect of the the number of features on explanation
     '''
@@ -327,15 +327,16 @@ def vary_ntrees():
     # run configuration
     min_trees = 1
     max_trees = 100
-    num_iters = 10
+    num_iters = 1
     dets = ["RandomForest"]
     agg = "LogisticRegression"
-    expl = "BestCandidate"
+    expl = explainer
     params = {
         "rf_difference": 0.01,
-        "rf_distance": "Euclidean",
+        "rf_distance": distance,
         "rf_k": 1,
-        "rf_ntrees": min_trees
+        "rf_ntrees": min_trees,
+        "expl_distance": distance
     }
 
     # save the run information
@@ -355,14 +356,14 @@ def vary_ntrees():
             f.write("\t" + k + ": " + str(params[k]) + "\n")
         f.write("}\n")
 
-    for ds_name in ["thyroid", "cardio", "wbc", "musk"]:
-        x, y = load_data(ds_name, normalize=True)
+    for ds in ds_names:
+        x, y = load_data(ds, normalize=True)
         # dataframe to store results of each datasets runs
         results = pd.DataFrame(columns=["n_trees", "accuracy", "precision",
                                "recall", "f1", "coverage_ratio", "mean_distance"])
         runs_complete = 0
 
-        for n in range(min_trees, max_trees + 1):
+        for n in range(min_trees, max_trees + 1, 10):
             params["rf_ntrees"] = n
             for i in range(num_iters):
                 # random split the data
@@ -381,5 +382,5 @@ def vary_ntrees():
                 runs_complete += 1
                 print("\truns complete:", runs_complete)
         # save the results for this dataset
-        results.to_csv(run_path + "/" + ds_name + ".csv")
-        print("finished", ds_name)
+        results.to_csv(run_path + "/" + ds + ".csv")
+        print("finished", ds)

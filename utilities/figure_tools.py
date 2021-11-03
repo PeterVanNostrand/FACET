@@ -47,7 +47,7 @@ def make_fig_directory(run_id):
     return fig_output_path
 
 
-def load_results(run_path):
+def load_results(run_path, group_field="n_features"):
     file_names = os.listdir(run_path)
     found_ds = []
     for name in file_names:
@@ -59,6 +59,6 @@ def load_results(run_path):
 
     results = {}
     for ds in found_ds:
-        results[ds] = pd.read_csv(run_path + "/" + ds + ".csv").groupby(["n_features"]).mean().reset_index()
+        results[ds] = pd.read_csv(run_path + "/" + ds + ".csv").groupby([group_field]).mean().reset_index()
 
     return found_ds, results

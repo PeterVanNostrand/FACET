@@ -1,0 +1,17 @@
+varying the number of trees
+
+min trees: 1
+max trees: 100
+iterations: 1
+
+detectors: RandomForest, 
+aggregator: LogisticRegression
+explainer: GraphMerge
+
+hyperparameters{
+	rf_difference: 0.01
+	rf_distance: Euclidean
+	rf_k: 1
+	rf_ntrees: 1
+	expl_distance: Euclidean
+}

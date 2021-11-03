@@ -64,7 +64,7 @@ if __name__ == "__main__":
     run_ds = DS_NAMES.copy()
     run_ds.remove("http")
     run_ds.remove("mulcross")
-    vary_dim(run_ds, explainer="GraphMerge", distance="Euclidean")
+    vary_ntrees(run_ds, explainer="GraphMerge", distance="Euclidean")
     # vary_dim(["thyroid"], explainer="BestCandidate", distance="FeaturesChanged")
     # vary_ntrees()
     # simple_run("thyroid")
