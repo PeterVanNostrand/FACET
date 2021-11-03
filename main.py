@@ -59,12 +59,5 @@ def simple_run(dataset_name):
 
 
 if __name__ == "__main__":
-    # vary_difference()
-    # vary_k()
     run_ds = DS_NAMES.copy()
-    run_ds.remove("http")
-    run_ds.remove("mulcross")
-    vary_ntrees(run_ds, explainer="GraphMerge", distance="Euclidean")
-    # vary_dim(["thyroid"], explainer="BestCandidate", distance="FeaturesChanged")
-    # vary_ntrees()
-    # simple_run("thyroid")
+    compare_methods(run_ds)

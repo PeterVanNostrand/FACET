@@ -5,7 +5,7 @@ from sklearn.linear_model import LogisticRegression as skLogisticRegression
 class LogisticRegression(Aggregator):
 
     def __init__(self, hyperparameters=None):
-        self.model = skLogisticRegression()
+        self.model = skLogisticRegression(solver="lbfgs")
 
     def train(self, preds, y):
         self.model.fit(preds, y)

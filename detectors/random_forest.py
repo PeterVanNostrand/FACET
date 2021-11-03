@@ -47,6 +47,11 @@ class RandomForest(Detector):
                 self.ntrees = 100
             else:
                 self.ntrees = hyperparameters.get("rf_ntrees")
+
+            if hyperparameters.get("rf_threads") is not None:
+                self.threads = hyperparameters.get("rf_threads")
+            else:
+                self.threads = np.max((mp.cpu_count() - 2, 1))  # cap thread usage to leave at 2 free for the user
         else:
             self.difference = 0.01
             self.distance_fn = dist_euclidean
@@ -153,8 +158,7 @@ class RandomForest(Detector):
                 trees_to_explain.append(trees[i])
 
         # spawn several threads to explain trees in parallel
-        n_availible_threads = np.max((mp.cpu_count() - 2, 1))  # cap thread usage to leave at 2 free for the user
-        num_proc = np.min((len(trees_to_explain), n_availible_threads))  # create 1 thread per tree up to cap
+        num_proc = np.min((len(trees_to_explain), self.threads))  # create 1 thread per tree up to cap
         with mp.Pool(num_proc) as p:
             my_func = partial(get_best_of_tree, rf=self, x=x, y=y)
             results = p.map(my_func, trees_to_explain)

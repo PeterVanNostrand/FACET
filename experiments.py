@@ -3,6 +3,7 @@ import re
 
 import pandas as pd
 import numpy as np
+import time
 from tqdm.auto import tqdm
 
 from sklearn.model_selection import train_test_split
@@ -384,3 +385,119 @@ def vary_ntrees(ds_names, explainer="BestCandidate", distance="Euclidean"):
         # save the results for this dataset
         results.to_csv(run_path + "/" + ds + ".csv")
         print("finished", ds)
+
+
+def compare_methods(ds_names, explainers=["BestCandidate", "GraphMerge"], distance="Euclidean"):
+    '''
+    Experiment to compare the performanec of different explanation methods
+    '''
+    # output directory
+    run_id, run_path = check_create_directory("./results/compare-methods/")
+
+    # run configuration
+    num_iters = 5
+    dets = ["RandomForest"]
+    agg = "NoAggregator"
+    params = {
+        "rf_difference": 0.01,
+        "rf_distance": distance,
+        "rf_k": 1,
+        "rf_ntrees": 20,
+        "rf_threads": 1,
+        "expl_distance": distance
+    }
+
+    # save the run information
+    with open(run_path + "/" + "config.txt", 'a') as f:
+        f.write("comparing explanation methods\n\n")
+        f.write("iterations: {:d}\n\n".format(num_iters))
+        f.write("detectors: ")
+        for d in dets:
+            f.write(d + ", ")
+        f.write("\n")
+        f.write("aggregator: " + agg + "\n")
+        f.write("explainers: ")
+        for e in explainers:
+            f.write(e + ", ")
+        f.write("\n")
+        f.write("hyperparameters{\n")
+        for k in params.keys():
+            f.write("\t" + k + ": " + str(params[k]) + "\n")
+        f.write("}\n")
+
+    # compute the total number of runs for this experiment
+    total_runs = len(ds_names) * len(explainers) * num_iters
+
+    # perform the experiment
+    print("Comparing Explainers")
+    print("\tExplainers:", explainers)
+    print("\tDatasets:", ds_names)
+    progress_bar = tqdm(total=total_runs, desc="Overall Progress", position=0)
+
+    for ds in ds_names:
+        # dataframe to store results of each datasets runs
+        results = pd.DataFrame(columns=["explainer", "n_samples", "n_features", "accuracy", "precision",
+                               "recall", "f1", "avg_nnodes", "avg_nleaves", "avg_depth", "q", "jaccard", "coverage_ratio", "mean_distance", "mean_length", "runtime"])
+        progress_bar_ds = tqdm(total=len(explainers) * num_iters, desc=ds, leave=False)
+
+        for i in range(num_iters):
+            x, y = load_data(ds, normalize=True)
+            xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=0.2, shuffle=True)
+
+            # Create and train the model
+            model = HEEAD(detectors=dets, aggregator=agg, hyperparameters=params)
+            model.train(xtrain, ytrain)
+            preds = model.predict(xtest)
+
+            # compute forest metrics
+            accuracy, precision, recall, f1 = classification_metrics(preds, ytest, verbose=False)
+            avg_nnodes, avg_nleaves, avg_depth = model.detectors[0].get_tree_information()
+            Q, qs = model.detectors[0].compute_qs(xtest, ytest)
+            J, jaccards = model.detectors[0].compute_jaccard()
+            n_samples = DS_DIMENSIONS[ds][0]
+            n_features = DS_DIMENSIONS[ds][1]
+
+            for expl in explainers:
+                model.set_explainer(expl, hyperparameters=params)
+                start = time.time()
+                explanations = model.explain(xtest, preds)
+                end = time.time()
+                runtime = end-start  # wall time in seconds
+
+                # Compute explanation metrics
+                coverage_ratio = coverage(explanations)
+                mean_dist = average_distance(xtest, explanations, distance_metric="Euclidean")
+                mean_length = average_distance(xtest, explanations, distance_metric="FeaturesChanged")
+
+                # Save results
+                # save the performance
+                run_result = {
+                    "explainer": expl,
+                    "n_samples": n_samples,
+                    "n_features": n_features,
+                    "accuracy": accuracy,
+                    "precision": precision,
+                    "recall": recall,
+                    "f1": f1,
+                    "avg_nnodes": avg_nnodes,
+                    "avg_nleaves": avg_nleaves,
+                    "avg_depth": avg_depth,
+                    "q": Q,
+                    "jaccard": J,
+                    "coverage_ratio": coverage_ratio,
+                    "mean_distance": mean_dist,
+                    "mean_length": mean_length,
+                    "runtime": runtime
+                }
+                results = results.append(run_result, ignore_index=True)
+
+                # log progress
+                progress_bar.update()
+                progress_bar_ds.update()
+
+        # save the results for this ds
+        results.to_csv(run_path + "/" + ds + ".csv", index=False)
+        progress_bar_ds.close()
+
+    progress_bar.close()
+    print("Finished comparing explainers")

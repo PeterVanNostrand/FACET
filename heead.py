@@ -5,6 +5,7 @@ from sklearn.model_selection import KFold
 
 # Aggregator classes
 from aggregators.logistic_regression import LogisticRegression
+from aggregators.no_aggregator import NoAggregator
 
 # Detector classes
 from detectors.isolation_forest import IsolationForest
@@ -32,11 +33,17 @@ class HEEAD():
 
         if aggregator == "LogisticRegression":
             self.aggregator = LogisticRegression()
+        elif aggregator == "NoAggregator":
+            self.aggregator = NoAggregator()
         else:
             print("Unknown aggregator type of " + aggregator)
             print("using logistic regression aggregator")
             self.aggregator = LogisticRegression()
 
+        if explainer:
+            self.set_explainer(explainer, hyperparameters)
+
+    def set_explainer(self, explainer, hyperparameters):
         if explainer == "BestCandidate":
             self.explainer = BestCandidate(model=self, hyperparameters=hyperparameters)
         elif explainer == "GraphMerge":
