@@ -1,0 +1,6 @@
+explainer,n_samples,n_features,accuracy,precision,recall,f1,avg_nnodes,avg_nleaves,avg_depth,q,jaccard,coverage_ratio,mean_distance,mean_length,runtime
+BestCandidate,3772,6,1,1,1,1,29.5,15.25,6.75,0,0.815087719,1,0.084594922,2.15,0.062000275
+BestCandidate,3772,6,1,1,1,1,20.9,10.95,5.6,0.015789474,0.763508772,1,0.084782784,2.05,0.049001455
+BestCandidate,3772,6,1,1,1,1,25.2,13.1,6.2,0,0.799473684,1,0.101233587,2,0.056003332
+BestCandidate,3772,6,1,1,1,1,27.9,14.45,6.25,0,0.797017544,1,0.086221836,2.05,0.061996937
+BestCandidate,3772,6,1,1,1,1,25.5,13.25,5.7,0,0.781403509,1,0.120689801,1.95,0.055999994

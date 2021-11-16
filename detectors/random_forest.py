@@ -22,6 +22,12 @@ class RandomForest(Detector):
             else:
                 self.difference = hyperparameters.get("rf_difference")
 
+            # max depth
+            if hyperparameters.get("rf_maxdepth") is None:
+                self.maxdepth = None
+            else:
+                self.maxdepth = hyperparameters.get("rf_maxdepth")
+
             # distance metric for explanation
             if hyperparameters.get("rf_distance") is None:
                 print("No rf_distance function set, using Euclidean")
@@ -52,6 +58,7 @@ class RandomForest(Detector):
                 self.threads = hyperparameters.get("rf_threads")
             else:
                 self.threads = np.max((mp.cpu_count() - 2, 1))  # cap thread usage to leave at 2 free for the user
+                print("using rf_threads:", self.threads)
         else:
             self.difference = 0.01
             self.distance_fn = dist_euclidean
@@ -59,7 +66,7 @@ class RandomForest(Detector):
             self.ntrees = 20
 
         # create the classifier
-        self.model = skRandomForestClassifier(n_estimators=self.ntrees)
+        self.model = skRandomForestClassifier(n_estimators=self.ntrees, max_depth=self.maxdepth)
 
     def train(self, x, y=None):
         self.model.fit(x, y)

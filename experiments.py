@@ -387,7 +387,7 @@ def vary_ntrees(ds_names, explainer="BestCandidate", distance="Euclidean"):
         print("finished", ds)
 
 
-def compare_methods(ds_names, explainers=["BestCandidate", "GraphMerge"], distance="Euclidean"):
+def compare_methods(ds_names, explainers=["BestCandidate", "GraphMerge"], distance="Euclidean", num_iters=5, eval_samples=None, test_size=0.2):
     '''
     Experiment to compare the performanec of different explanation methods
     '''
@@ -395,7 +395,6 @@ def compare_methods(ds_names, explainers=["BestCandidate", "GraphMerge"], distan
     run_id, run_path = check_create_directory("./results/compare-methods/")
 
     # run configuration
-    num_iters = 5
     dets = ["RandomForest"]
     agg = "NoAggregator"
     params = {
@@ -404,7 +403,13 @@ def compare_methods(ds_names, explainers=["BestCandidate", "GraphMerge"], distan
         "rf_k": 1,
         "rf_ntrees": 20,
         "rf_threads": 1,
-        "expl_distance": distance
+        "rf_maxdepth": 5,
+        "expl_distance": distance,
+        "ocean_norm": 2,
+        "mace_maxtime": 300,
+        "num_iters": num_iters,
+        "eval_samples": eval_samples,
+        "test_size": test_size
     }
 
     # save the run information
@@ -436,13 +441,22 @@ def compare_methods(ds_names, explainers=["BestCandidate", "GraphMerge"], distan
 
     for ds in ds_names:
         # dataframe to store results of each datasets runs
-        results = pd.DataFrame(columns=["explainer", "n_samples", "n_features", "accuracy", "precision",
-                               "recall", "f1", "avg_nnodes", "avg_nleaves", "avg_depth", "q", "jaccard", "coverage_ratio", "mean_distance", "mean_length", "runtime"])
+        results = pd.DataFrame(
+            columns=[
+                "explainer", "n_samples", "n_samples_explained", "n_features", "accuracy", "precision", "recall", "f1", "avg_nnodes", "avg_nleaves", "avg_depth", "q", "jaccard", "coverage_ratio", "mean_distance", "mean_length", "runtime"
+            ])
         progress_bar_ds = tqdm(total=len(explainers) * num_iters, desc=ds, leave=False)
 
         for i in range(num_iters):
             x, y = load_data(ds, normalize=True)
-            xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=0.2, shuffle=True)
+            xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=test_size, shuffle=True)
+            n_samples = DS_DIMENSIONS[ds][0]
+            n_features = DS_DIMENSIONS[ds][1]
+
+            if eval_samples is not None:
+                xtest = xtest[:eval_samples]
+                ytest = ytest[:eval_samples]
+                n_samples = eval_samples
 
             # Create and train the model
             model = HEEAD(detectors=dets, aggregator=agg, hyperparameters=params)
@@ -454,8 +468,6 @@ def compare_methods(ds_names, explainers=["BestCandidate", "GraphMerge"], distan
             avg_nnodes, avg_nleaves, avg_depth = model.detectors[0].get_tree_information()
             Q, qs = model.detectors[0].compute_qs(xtest, ytest)
             J, jaccards = model.detectors[0].compute_jaccard()
-            n_samples = DS_DIMENSIONS[ds][0]
-            n_features = DS_DIMENSIONS[ds][1]
 
             for expl in explainers:
                 model.set_explainer(expl, hyperparameters=params)
@@ -474,6 +486,7 @@ def compare_methods(ds_names, explainers=["BestCandidate", "GraphMerge"], distan
                 run_result = {
                     "explainer": expl,
                     "n_samples": n_samples,
+                    "n_samples_explained": xtest.shape[0],
                     "n_features": n_features,
                     "accuracy": accuracy,
                     "precision": precision,

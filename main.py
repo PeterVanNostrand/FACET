@@ -60,4 +60,4 @@ def simple_run(dataset_name):
 
 if __name__ == "__main__":
     run_ds = DS_NAMES.copy()
-    compare_methods(run_ds)
+    compare_methods(["thyroid"], num_iters=1, explainers=["MACE"])

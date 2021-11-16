@@ -1,0 +1,3 @@
+explainer,n_samples,n_features,accuracy,precision,recall,f1,avg_nnodes,avg_nleaves,avg_depth,q,jaccard,coverage_ratio,mean_distance,mean_length,runtime
+OCEAN,49097,9,1.0,1.0,1.0,1.0,33.8,17.4,8.0,0.0,0.7067690058479531,1.0,1.1314392087770027,3.35,2.426001787185669
+GraphMerge,49097,9,1.0,1.0,1.0,1.0,33.8,17.4,8.0,0.0,0.7067690058479531,1.0,0.012293130284339112,1.5,1.0479984283447266

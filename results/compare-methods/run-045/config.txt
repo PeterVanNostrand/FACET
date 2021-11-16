@@ -1,0 +1,15 @@
+comparing explanation methods
+
+iterations: 1
+
+detectors: RandomForest, 
+aggregator: NoAggregator
+explainers: MACE, GraphMerge, BestCandidate, OCEAN, 
+hyperparameters{
+	rf_difference: 0.01
+	rf_distance: Euclidean
+	rf_k: 1
+	rf_ntrees: 20
+	rf_threads: 1
+	expl_distance: Euclidean
+}

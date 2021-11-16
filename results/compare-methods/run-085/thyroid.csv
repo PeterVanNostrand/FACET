@@ -1,0 +1,2 @@
+explainer,n_samples,n_samples_explained,n_features,accuracy,precision,recall,f1,avg_nnodes,avg_nleaves,avg_depth,q,jaccard,coverage_ratio,mean_distance,mean_length,runtime
+MACE,2,2,6,1.0,1.0,1.0,1.0,23.2,12.1,4.95,0.0,0.7619298245614035,0.0,,,305.1300265789032
