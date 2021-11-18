@@ -1,7 +1,0 @@
-Run 46: 20 samples OCEAN-L2
-Run 68: 20% test set OCEAN-L2
-
-Good datasets
-Thyroid
-Cardio
-Annthyroid?

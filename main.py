@@ -60,4 +60,6 @@ def simple_run(dataset_name):
 
 if __name__ == "__main__":
     run_ds = DS_NAMES.copy()
-    compare_methods(["thyroid"], num_iters=1, explainers=["MACE"])
+    run_ds.remove("http")
+    run_ds.remove("mulcross")
+    compare_methods(run_ds, num_iters=10, explainers=["GraphMerge", "BestCandidate"])

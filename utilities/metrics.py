@@ -62,10 +62,10 @@ def classification_metrics(preds, y, verbose=True):
     out_string = ""
 
     # Compute performance metrics
-    tp = np.where((preds == 0) & (y == 0))[0].sum()  # true inliers
-    fp = np.where((preds == 0) & (y == 1))[0].sum()  # false inliers
-    tn = np.where((preds == 1) & (y == 1))[0].sum()  # true outliers
-    fn = np.where((preds == 1) & (y == 0))[0].sum()  # false outlier
+    tp = np.sum((preds == 1) & (y == 1))  # true outliers
+    fp = np.sum((preds == 1) & (y == 0))  # false outliers
+    tn = np.sum((preds == 0) & (y == 0))  # true inliers
+    fn = np.sum((preds == 0) & (y == 1))  # false inliers
 
     accuracy = (tp + tn) / (tp + fp + tn + fn)
     precision = tp / (tp + fp)
@@ -107,7 +107,7 @@ def average_distance(x, xprime, distance_metric="Euclidean"):
     xprime = xprime[~idx_bad_examples]
 
     if xprime.shape[0] == 0:
-        print("No valid examples found")
+        # print("No valid examples found")
         avg_dists = np.nan
     else:
         dists = distance_fn(x, xprime)

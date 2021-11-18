@@ -97,9 +97,9 @@ VALID_MUTABILITY_TYPES = {
     True,
     False}
 
-RANDOM_SEED = 54321
-seed(RANDOM_SEED)  # set the random seed so that the random permutations can be reproduced again
-np.random.seed(RANDOM_SEED)
+# RANDOM_SEED = 54321
+# seed(RANDOM_SEED)  # set the random seed so that the random permutations can be reproduced again
+# np.random.seed(RANDOM_SEED)
 
 
 class Dataset(object):
@@ -507,11 +507,16 @@ class Dataset(object):
             if preprocessing is not None:
                 assert with_meta == False, 'This feature is not built yet...'
 
+            # X_train, X_test, y_train, y_test = train_test_split(
+            #     all_data,
+            #     all_true_labels,
+            #     test_size=.2,
+            #     random_state=RANDOM_SEED)
+
             X_train, X_test, y_train, y_test = train_test_split(
                 all_data,
                 all_true_labels,
-                test_size=.2,
-                random_state=RANDOM_SEED)
+                test_size=.2)
 
             # ordering of next two lines matters (shouldn't overwrite input_cols); silly code... :|
             U_train = X_train[self.getMetaAttributeNames()]
@@ -526,11 +531,16 @@ class Dataset(object):
             all_data = balanced_data_frame.loc[:, input_cols]
             all_true_labels = balanced_data_frame.loc[:, output_col]
 
+            # X_train, X_test, y_train, y_test = train_test_split(
+            #     all_data,
+            #     all_true_labels,
+            #     train_size=.7,
+            #     random_state=RANDOM_SEED)
+
             X_train, X_test, y_train, y_test = train_test_split(
                 all_data,
                 all_true_labels,
-                train_size=.7,
-                random_state=RANDOM_SEED)
+                train_size=.7)
 
             # TODO (2020.05.18): this should be updated so as NOT to update meta variables
             if preprocessing == 'standardize':

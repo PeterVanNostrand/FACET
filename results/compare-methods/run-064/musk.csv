@@ -1,2 +1,0 @@
-explainer,n_samples,n_features,accuracy,precision,recall,f1,avg_nnodes,avg_nleaves,avg_depth,q,jaccard,coverage_ratio,mean_distance,mean_length,runtime
-OCEAN,3062,166,1.0,1.0,1.0,1.0,3.2,2.1,1.1,0.0,0.03684210526315789,1.0,0.6156167403219488,6.15,0.5580003261566162

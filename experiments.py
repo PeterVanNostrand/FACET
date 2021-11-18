@@ -1,3 +1,4 @@
+from sklearn.model_selection import train_test_split
 import os
 import re
 
@@ -6,7 +7,6 @@ import numpy as np
 import time
 from tqdm.auto import tqdm
 
-from sklearn.model_selection import train_test_split
 
 from heead import HEEAD
 from dataset import load_data
@@ -404,6 +404,7 @@ def compare_methods(ds_names, explainers=["BestCandidate", "GraphMerge"], distan
         "rf_ntrees": 20,
         "rf_threads": 1,
         "rf_maxdepth": 5,
+        "rf_greedy": False,
         "expl_distance": distance,
         "ocean_norm": 2,
         "mace_maxtime": 300,
@@ -437,19 +438,20 @@ def compare_methods(ds_names, explainers=["BestCandidate", "GraphMerge"], distan
     print("Comparing Explainers")
     print("\tExplainers:", explainers)
     print("\tDatasets:", ds_names)
-    progress_bar = tqdm(total=total_runs, desc="Overall Progress", position=0)
+    progress_bar = tqdm(total=total_runs, desc="Overall Progress", position=0, disable=True)
 
     for ds in ds_names:
+        print("DS:", ds)
         # dataframe to store results of each datasets runs
         results = pd.DataFrame(
             columns=[
                 "explainer", "n_samples", "n_samples_explained", "n_features", "accuracy", "precision", "recall", "f1", "avg_nnodes", "avg_nleaves", "avg_depth", "q", "jaccard", "coverage_ratio", "mean_distance", "mean_length", "runtime"
             ])
-        progress_bar_ds = tqdm(total=len(explainers) * num_iters, desc=ds, leave=False)
+        progress_bar_ds = tqdm(total=len(explainers) * num_iters, desc=ds, leave=False, disable=True)
 
+        x, y = load_data(ds, normalize=True)
         for i in range(num_iters):
-            x, y = load_data(ds, normalize=True)
-            xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=test_size, shuffle=True)
+            xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=test_size, shuffle=True, random_state=None)
             n_samples = DS_DIMENSIONS[ds][0]
             n_features = DS_DIMENSIONS[ds][1]
 
@@ -500,7 +502,7 @@ def compare_methods(ds_names, explainers=["BestCandidate", "GraphMerge"], distan
                     "coverage_ratio": coverage_ratio,
                     "mean_distance": mean_dist,
                     "mean_length": mean_length,
-                    "runtime": runtime
+                    "runtime": runtime,
                 }
                 results = results.append(run_result, ignore_index=True)
 

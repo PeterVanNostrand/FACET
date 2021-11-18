@@ -1,3 +1,0 @@
-explainer,n_samples,n_features,accuracy,precision,recall,f1,avg_nnodes,avg_nleaves,avg_depth,q,jaccard,coverage_ratio,mean_distance,mean_length,runtime
-OCEAN,262144,4,1.0,1.0,1.0,1.0,9.3,5.15,2.95,0.0,0.5605263157894737,0.09999999999999998,2.85027073639323,3.0,0.5740504264831543
-GraphMerge,262144,4,1.0,1.0,1.0,1.0,9.3,5.15,2.95,0.0,0.5605263157894737,1.0,1.0646646030101443,1.15,0.9820001125335693
