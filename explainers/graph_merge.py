@@ -28,11 +28,13 @@ class GraphMerge(Explainer):
             self.distance_fn = dist_euclidean
 
         # greedy sythesis
-        if hyperparameters.get("rf_greedy") is None:
-            print("No rf_greedy set, defaulting to False")
+        if hyperparameters.get("expl_greedy") is None:
+            print("No expl_greedy set, defaulting to False")
             self.greedy = False
         else:
-            self.greedy = hyperparameters.get("rf_greedy")
+            self.greedy = hyperparameters.get("expl_greedy")
+
+        self.build_graph()
 
     def explain(self, x, y):
         '''
@@ -50,37 +52,19 @@ class GraphMerge(Explainer):
         '''
 
         # !WARNING : This method only defined for an ensemble containing only a single random forest detector
-        if self.greedy:
-            return self.explain_greedy(x, y)
-        else:
-            return self.explain_majority(x, y)
-
-    def explain_majority(self, x, y):
-        # build a graph to represent the feature similarities between trees
+        # if self.greedy:
+        #     return self.explain_greedy(x, y)
+        # else:
+        #     return self.explain_majority(x, y)
         rf_detector = self.model.detectors[0]
-        adjacency = rf_detector.get_tree_adjacency()
-        adjacency = np.floor(adjacency)  # consider only fully disjoint trees for merging
-
-        # create a graph from the adjacency matrix using networkx
-        G = nx.Graph(adjacency)
-
-        # identify the largest set of trees which are fully disjoint in the features they use this is done by finding the largest complete (i.e. fully connectected) subgraph
-        # returns a set of node indices representing trees in the forest
-        fully_disjoint_trees = list(clique.max_clique(G))
-
-        # keep enough disjoint trees to form a majority
-        n_majority = (int)(np.floor(rf_detector.ntrees / 2) + 1)
-        # fully_disjoint_trees = fully_disjoint_trees[:n_majority]
-        print("fully disjoint trees:", fully_disjoint_trees)
-
         xprime = x.copy()  # an array for the constructed contrastive examples
 
         # get a candidate contrastive example for each sample from each of the disjoint trees
-        candidates = rf_detector.get_candidate_examples_treewise(x, y, fully_disjoint_trees)
+        candidates = rf_detector.get_candidate_examples_treewise(x, y, self.trees_to_explain)
 
         i = 0
-        for i in range(len(fully_disjoint_trees)):
-            tree_id = fully_disjoint_trees[i]
+        for i in range(len(self.trees_to_explain)):
+            tree_id = self.trees_to_explain[i]
 
             # merge the examples from each tree into xprime, taking only the features which that tree used
             features_used = rf_detector.get_features_used(tree_id)
@@ -93,46 +77,80 @@ class GraphMerge(Explainer):
 
         return xprime
 
-    def explain_greedy(self, x, y):
+    def build_graph(self):
         # build a graph to represent the feature similarities between trees
         rf_detector = self.model.detectors[0]
         adjacency = rf_detector.get_tree_adjacency()
         adjacency = np.floor(adjacency)  # consider only fully disjoint trees for merging
 
         # create a graph from the adjacency matrix using networkx
-        G = nx.Graph(adjacency)
+        self.G = nx.Graph(adjacency)
 
         # identify the largest set of trees which are fully disjoint in the features they use this is done by finding the largest complete (i.e. fully connectected) subgraph
         # returns a set of node indices representing trees in the forest
-        fully_disjoint_trees = list(clique.max_clique(G))
-
-        # keep enough disjoint trees to form a majority
+        self.fully_disjoint_trees = list(clique.max_clique(self.G))
         n_majority = (int)(np.floor(rf_detector.ntrees / 2) + 1)
-        xprime = x.copy()  # an array for the constructed contrastive examples
+        self.trees_to_explain = self.fully_disjoint_trees[:n_majority]
 
-        nmerges = np.zeros(x.shape[0])
-        has_unexplained = True
-        unexplained = np.tile(True, x.shape[0])
+    def get_clique(self):
+        return self.fully_disjoint_trees
 
-        i = 0
-        while i < len(fully_disjoint_trees) and has_unexplained:
-            # get a candidate contrastive example for each sample from each of the disjoint trees
-            tree_id = fully_disjoint_trees[i]
-            candidates = rf_detector.get_candidate_examples_treewise(
-                x[unexplained], y[unexplained], [fully_disjoint_trees[i]])
+    # def explain_majority(self, x, y):
+    #     rf_detector = self.model.detectors[0]
+    #     # keep enough disjoint trees to form a majority
+    #     n_majority = (int)(np.floor(rf_detector.ntrees / 2) + 1)
+    #     fully_disjoint_trees = self.fully_disjoint_trees[:n_majority]
 
-            # merge the examples from the tree into xprime, taking only the features which that tree used, only for unexplained samples
-            features_used = rf_detector.get_features_used(tree_id)
-            xprime[unexplained][:, features_used] = candidates[0, :, features_used].T
-            nmerges[unexplained] += 1
+    #     xprime = x.copy()  # an array for the constructed contrastive examples
 
-            preds = self.model.predict(xprime[unexplained])
-            unexplained[unexplained] = (preds == y[unexplained])
+    #     # get a candidate contrastive example for each sample from each of the disjoint trees
+    #     candidates = rf_detector.get_candidate_examples_treewise(x, y, fully_disjoint_trees)
 
-            i += 1
+    #     i = 0
+    #     for i in range(len(fully_disjoint_trees)):
+    #         tree_id = fully_disjoint_trees[i]
 
-        preds = self.model.predict(xprime)
-        failed_explanation = (preds == y)
-        xprime[failed_explanation] = np.tile(np.inf, x.shape[1])
+    #         # merge the examples from each tree into xprime, taking only the features which that tree used
+    #         features_used = rf_detector.get_features_used(tree_id)
+    #         xprime[:, features_used] = candidates[i, :, features_used].T
+    #         i += 1
 
-        return xprime
+    #     preds = self.model.predict(xprime)
+    #     failed_explanation = (preds == y)
+    #     xprime[failed_explanation] = np.tile(np.inf, x.shape[1])
+
+    #     return xprime
+
+    # def explain_greedy(self, x, y):
+    #     rf_detector = self.model.detectors[0]
+    #     xprime = x.copy()  # an array for the constructed contrastive examples
+
+    #     nmerges = np.zeros(x.shape[0])
+    #     has_unexplained = True
+    #     unexplained = np.tile(True, x.shape[0])
+
+    #     i = 0
+    #     while i < len(self.fully_disjoint_trees) and has_unexplained:
+    #         # get a candidate contrastive example for each sample from each of the disjoint trees
+    #         tree_id = self.fully_disjoint_trees[i]
+    #         candidates = rf_detector.get_candidate_examples_treewise(
+    #             x[unexplained], y[unexplained], [self.fully_disjoint_trees[i]])
+
+    #         # merge the examples from the tree into xprime, taking only the features which that tree used, only for unexplained samples
+    #         features_used = rf_detector.get_features_used(tree_id)
+    #         xprime[unexplained][:, features_used] = candidates[0, :, features_used].T
+    #         nmerges[unexplained] += 1
+
+    #         preds = self.model.predict(xprime[unexplained])
+    #         unexplained[unexplained] = (preds == y[unexplained])
+
+    #         if(unexplained.sum() == 0):
+    #             has_unexplained = False
+
+    #         i += 1
+
+    #     preds = self.model.predict(xprime)
+    #     failed_explanation = (preds == y)
+    #     xprime[failed_explanation] = np.tile(np.inf, x.shape[1])
+
+    #     return xprime

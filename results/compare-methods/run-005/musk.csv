@@ -1,0 +1,3 @@
+explainer,n_samples,n_samples_explained,n_features,accuracy,precision,recall,f1,avg_nnodes,avg_nleaves,avg_depth,q,jaccard,coverage_ratio,mean_distance,mean_length,runtime
+GraphMerge,3062,613,166,1.0,1.0,1.0,1.0,3.2,2.1,1.1,0.0,0.02368421052631579,1.0,1.0756126604069156,11.0,1.6571176052093506
+BestCandidate,3062,613,166,1.0,1.0,1.0,1.0,3.2,2.1,1.1,0.0,0.02368421052631579,0.0,,,1.0709998607635498

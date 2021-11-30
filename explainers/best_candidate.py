@@ -82,4 +82,12 @@ class BestCandidate(Explainer):
         for i in range(x.shape[0]):
             best_examples[i] = candidate_examples[idx_best_example[i]][i]
 
+        # check that all examples return correct class
+        idx_inf = (best_examples == np.inf).any(axis=1)
+        best_examples[idx_inf] = np.tile(0, (nfeatures,))
+        preds = self.model.predict(best_examples)
+        failed_explanation = (preds == y)
+        best_examples[failed_explanation] = np.tile(np.inf, x.shape[1])
+        best_examples[idx_inf] = np.tile(np.inf, x.shape[1])
+
         return best_examples

@@ -1,0 +1,22 @@
+comparing explanation methods
+
+iterations: 10
+
+detectors: RandomForest, 
+aggregator: NoAggregator
+explainers: GraphMerge, BestCandidate, 
+hyperparameters{
+	rf_difference: 0.01
+	rf_distance: Euclidean
+	rf_k: 1
+	rf_ntrees: 20
+	rf_threads: 1
+	rf_maxdepth: 5
+	rf_greedy: False
+	expl_distance: Euclidean
+	ocean_norm: 2
+	mace_maxtime: 300
+	num_iters: 10
+	eval_samples: None
+	test_size: 0.2
+}

@@ -403,8 +403,8 @@ def compare_methods(ds_names, explainers=["BestCandidate", "GraphMerge"], distan
         "rf_k": 1,
         "rf_ntrees": 20,
         "rf_threads": 1,
-        "rf_maxdepth": 5,
-        "rf_greedy": False,
+        "rf_maxdepth": None,
+        "expl_greedy": False,
         "expl_distance": distance,
         "ocean_norm": 2,
         "mace_maxtime": 300,
@@ -445,9 +445,9 @@ def compare_methods(ds_names, explainers=["BestCandidate", "GraphMerge"], distan
         # dataframe to store results of each datasets runs
         results = pd.DataFrame(
             columns=[
-                "explainer", "n_samples", "n_samples_explained", "n_features", "accuracy", "precision", "recall", "f1", "avg_nnodes", "avg_nleaves", "avg_depth", "q", "jaccard", "coverage_ratio", "mean_distance", "mean_length", "runtime"
+                "explainer", "n_samples", "n_samples_explained", "n_features", "accuracy", "precision", "recall", "f1", "avg_nnodes", "avg_nleaves", "avg_depth", "q", "jaccard", "coverage_ratio", "mean_distance", "mean_length", "runtime", "clique_size", "init_time"
             ])
-        progress_bar_ds = tqdm(total=len(explainers) * num_iters, desc=ds, leave=False, disable=True)
+        progress_bar_ds = tqdm(total=len(explainers) * num_iters, desc=ds, leave=False)
 
         x, y = load_data(ds, normalize=True)
         for i in range(num_iters):
@@ -472,11 +472,19 @@ def compare_methods(ds_names, explainers=["BestCandidate", "GraphMerge"], distan
             J, jaccards = model.detectors[0].compute_jaccard()
 
             for expl in explainers:
+                start_build = time.time()
                 model.set_explainer(expl, hyperparameters=params)
+                end_build = time.time()
+                if expl == "GraphMerge":
+                    clique_members = model.explainer.get_clique()
+                    clique_size = len(clique_members)
+                else:
+                    clique_size = -1
                 start = time.time()
                 explanations = model.explain(xtest, preds)
                 end = time.time()
                 runtime = end-start  # wall time in seconds
+                init_time = end_build - start_build
 
                 # Compute explanation metrics
                 coverage_ratio = coverage(explanations)
@@ -503,6 +511,8 @@ def compare_methods(ds_names, explainers=["BestCandidate", "GraphMerge"], distan
                     "mean_distance": mean_dist,
                     "mean_length": mean_length,
                     "runtime": runtime,
+                    "clique_size": clique_size,
+                    "init_time": init_time,
                 }
                 results = results.append(run_result, ignore_index=True)
 

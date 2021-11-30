@@ -1,4 +1,8 @@
 import numpy as np
+from sklearn.metrics import precision_score
+from sklearn.metrics import recall_score
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import f1_score
 
 
 def dist_euclidean(x, xprime):
@@ -62,20 +66,26 @@ def classification_metrics(preds, y, verbose=True):
     out_string = ""
 
     # Compute performance metrics
-    tp = np.sum((preds == 1) & (y == 1))  # true outliers
-    fp = np.sum((preds == 1) & (y == 0))  # false outliers
-    tn = np.sum((preds == 0) & (y == 0))  # true inliers
-    fn = np.sum((preds == 0) & (y == 1))  # false inliers
+    # tp = np.sum((preds == 1) & (y == 1))  # true outliers
+    # fp = np.sum((preds == 1) & (y == 0))  # false outliers
+    # tn = np.sum((preds == 0) & (y == 0))  # true inliers
+    # fn = np.sum((preds == 0) & (y == 1))  # false inliers
 
-    accuracy = (tp + tn) / (tp + fp + tn + fn)
-    precision = tp / (tp + fp)
-    recall = tp / (tp + fn)
-    f1 = 2 * ((precision * recall) / (precision + recall))
+    # accuracy = (tp + tn) / (tp + fp + tn + fn)
+    # precision = tp / (tp + fp)
+    # recall = tp / (tp + fn)
+    # f1 = 2 * ((precision * recall) / (precision + recall))
 
-    confusion_matrix = ("| act \ pred | Norm | Anom |\n" +
-                        "|------------|------|------|\n" +
-                        "|       Norm | {tp:4d} | {fn:4d} |\n" +
-                        "|       Anom | {fp:4d} | {tn:4d} |\n").format(tp=tp, fn=fn, fp=fp, tn=tn)
+    accuracy = accuracy_score(y, preds)
+    precision = precision_score(y, preds)
+    recall = recall_score(y, preds)
+    f1 = f1_score(y, preds)
+
+    # confusion_matrix = ("| act \ pred | Norm | Anom |\n" +
+    #                     "|------------|------|------|\n" +
+    #                     "|       Norm | {tp:4d} | {fn:4d} |\n" +
+    #                     "|       Anom | {fp:4d} | {tn:4d} |\n").format(tp=tp, fn=fn, fp=fp, tn=tn)
+    confusion_matrix = ""
 
     stastics = ("|  Metric   | Value  |\n" +
                 "|-----------|--------|\n" +
