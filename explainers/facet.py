@@ -209,20 +209,56 @@ class FACET(Explainer):
         # how many paths in t2 does it conflict with?
         collision_paths = []
 
+        n_resolveable_collisions = 0
+        n_unresolveable_collisions = 0
+
         for feature_i in range(nfeatures):
             if shared_features[feature_i]:  # if the feature is shared
                 for p1 in t1_paths:
                     if self.consider_path(p1, feature_i, counter_class):
                         n_overlap_paths = 0
+                        one_resolveable = False
                         for p2 in t2_paths:
                             if self.consider_path(p2, feature_i, counter_class):
                                 n_overlap_paths += 1
+                                resolveable = self.walk_check_paths(p1, p2, feature_i)
+                                if resolveable:
+                                    one_resolveable = True
+                        if one_resolveable:
+                            n_resolveable_collisions += 1
+                        else:
+                            n_unresolveable_collisions += 1
+
                         collision_paths.append([feature_i, n_overlap_paths, len(t2_paths)])
 
         collision_paths_arr = np.array(collision_paths)
         n_paths = len(t1_paths)
         n_path_pairs = len(t1_paths) * len(t2_paths)
         return collision_paths_arr, n_paths, n_path_pairs
+
+    def walk_check_paths(self, p1, p2, feature_i):
+        '''
+        Find the nodes in p1 and p2 which condition and feature_i and check that they don't have conflicting conditions
+        For two nodes n1 and n2 which condition feature i n1: x[i] <> a, n2: x[i] <> b, assuming a < b. Return false if the unresolveable condition n1: x[i] < a, n2: x[i] > b is found and true otherwise.
+        '''
+        idx1 = (p1[:, 1:2] == feature_i).squeeze()
+        idx2 = (p2[:, 1:2] == feature_i).squeeze()
+
+        all_resolveable = True
+
+        for cond1, thresh1 in p1[idx1, 2:4]:
+            for cond2, thresh2 in p2[idx2, 2:4]:
+                if thresh1 < thresh2:
+                    fails = (cond2 == 1) and (cond1 == 0)
+                elif thresh1 == thresh2:
+                    fails = (cond1 != cond2)
+                elif thresh1 > thresh2:
+                    fails = (cond1 == 1) and (cond2 == 0)
+
+                if fails:
+                    all_resolveable = False
+
+        return all_resolveable
 
     def consider_path(self, p, feature, counter_class=1):
         pred_class = p[-1:, -1:][0][0]
