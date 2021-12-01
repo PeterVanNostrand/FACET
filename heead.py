@@ -13,9 +13,9 @@ from detectors.random_forest import RandomForest
 
 # Explainer classes
 from explainers.best_candidate import BestCandidate
-from explainers.graph_merge import GraphMerge
 from explainers.ocean import OCEAN
 from explainers.mace import MACE
+from explainers.facet import FACET
 
 
 class HEEAD():
@@ -48,12 +48,12 @@ class HEEAD():
     def set_explainer(self, explainer, hyperparameters):
         if explainer == "BestCandidate":
             self.explainer = BestCandidate(model=self, hyperparameters=hyperparameters)
-        elif explainer == "GraphMerge":
-            self.explainer = GraphMerge(model=self, hyperparameters=hyperparameters)
         elif explainer == "OCEAN":
             self.explainer = OCEAN(model=self, hyperparameters=hyperparameters)
         elif explainer == "MACE":
             self.explainer = MACE(model=self, hyperparameters=hyperparameters)
+        elif explainer == "FACET":
+            self.explainer = FACET(model=self, hyperparameters=hyperparameters)
         else:
             print("Unknown explainer type of " + explainer)
             print("using best candidate explainer")

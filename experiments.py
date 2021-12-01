@@ -14,6 +14,7 @@ from dataset import DS_DIMENSIONS
 
 from utilities.metrics import average_distance, coverage
 from utilities.metrics import classification_metrics
+from utilities.tree_tools import compute_jaccard
 
 
 def check_create_directory(dir_path="./results"):
@@ -300,7 +301,7 @@ def vary_dim(ds_names, explainer="BestCandidate", distance="Euclidean"):
                     "avg_depth": avg_depth
                 }
                 Q, qs = model.detectors[0].compute_qs(xtest[:, :n], ytest)
-                J, jaccards = model.detectors[0].compute_jaccard()
+                J, jaccards = compute_jaccard(model.detectors[0])
                 diversity_info = {
                     "q": Q,
                     "jaccard": J
@@ -387,7 +388,7 @@ def vary_ntrees(ds_names, explainer="BestCandidate", distance="Euclidean"):
         print("finished", ds)
 
 
-def compare_methods(ds_names, explainers=["BestCandidate", "GraphMerge"], distance="Euclidean", num_iters=5, eval_samples=None, test_size=0.2):
+def compare_methods(ds_names, explainers=["BestCandidate", "FACET"], distance="Euclidean", num_iters=5, eval_samples=None, test_size=0.2):
     '''
     Experiment to compare the performanec of different explanation methods
     '''
@@ -403,14 +404,15 @@ def compare_methods(ds_names, explainers=["BestCandidate", "GraphMerge"], distan
         "rf_k": 1,
         "rf_ntrees": 20,
         "rf_threads": 1,
-        "rf_maxdepth": None,
+        "rf_maxdepth": 3,
         "expl_greedy": False,
         "expl_distance": distance,
         "ocean_norm": 2,
         "mace_maxtime": 300,
         "num_iters": num_iters,
         "eval_samples": eval_samples,
-        "test_size": test_size
+        "test_size": test_size,
+        "facet_graphtype": "NonDisjoint"
     }
 
     # save the run information
@@ -469,13 +471,13 @@ def compare_methods(ds_names, explainers=["BestCandidate", "GraphMerge"], distan
             accuracy, precision, recall, f1 = classification_metrics(preds, ytest, verbose=False)
             avg_nnodes, avg_nleaves, avg_depth = model.detectors[0].get_tree_information()
             Q, qs = model.detectors[0].compute_qs(xtest, ytest)
-            J, jaccards = model.detectors[0].compute_jaccard()
+            J, jaccards = compute_jaccard(model.detectors[0])
 
             for expl in explainers:
                 start_build = time.time()
                 model.set_explainer(expl, hyperparameters=params)
                 end_build = time.time()
-                if expl == "GraphMerge":
+                if expl == "FACET":
                     clique_members = model.explainer.get_clique()
                     clique_size = len(clique_members)
                 else:

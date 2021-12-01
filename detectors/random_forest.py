@@ -279,55 +279,6 @@ class RandomForest(Detector):
 
         return Qik
 
-    def compute_jaccard(self):
-        '''
-        Computes the pairwise jaccard index for all pairs of trees and returns the forest wide average
-
-        Returns
-        -------
-        J : the pairwise jaccard index averaged over all pairs of trees in the forest
-        jaccards : an array containing the pairwise jaccard index for every combination of two trees in the forest
-        '''
-        npairs = (int)((self.ntrees * (self.ntrees - 1)) / 2)
-        jaccards = np.empty(shape=(npairs,))
-
-        trees = self.model.estimators_
-        index = 0
-        for i in range(self.ntrees):
-            for k in range(i+1, self.ntrees):
-                jaccards[index] = self.compute_jaccard_pair(trees[i], trees[k])
-                index += 1
-
-        J = np.average(jaccards)
-        return J, jaccards
-
-    def compute_jaccard_pair(self, t1, t2):
-        '''
-        Computes the jaccard similarity of the feature sets used by the given trees
-
-        Parameters
-        ----------
-        t1 : a sklearn decision tree classifier
-        t2 : a second sklearn decision tree classifier
-
-        Returns
-        -------
-        Jik : The jaccard similarity between the feature sets used by `t1` and `t2`. The Jaccard similarity between two sets is given as `J = |A intersect B| / |A   union   B|`
-        '''
-
-        # get the features used be each tree, f[i]>0 iff t uses feature i
-        f1 = t1.feature_importances_
-        f2 = t2.feature_importances_
-
-        # determine the cardinality of the intersection and union of the feature sets
-        a_intersect_b = np.logical_and((f1 > 0), (f2 > 0)).sum()
-        a_union_b = np.logical_or((f1 > 0), (f2 > 0)).sum()
-
-        # compute the jaccard index
-        Jik = a_intersect_b / a_union_b
-
-        return Jik
-
     def compute_n_features(self):
         '''
         Computes the mean number of features used by all trees in the forest
@@ -345,28 +296,3 @@ class RandomForest(Detector):
 
         avg_features_used = np.average(n_features_used)
         return avg_features_used
-
-    def get_tree_adjacency(self):
-        '''
-        Treating the trees in the forest as a graph, with each tree being a node, define an edge as weight 1.0 between two trees if they use a fully disjoint set of features as 0.0 if they use exactly the same set of features
-
-        Returns
-        -------
-        adjacency : a matrix of shape [ntrees, ntrees] with each element adjacency[i][j] representing the weight of the edge in a graph between nodes i and j. The diagonal of the matrix is set to zero to prevent loops 
-        '''
-        trees = self.model.estimators_
-
-        # Build matrix for tree subset similarity using jaccard index
-        similarity = np.zeros(shape=(self.ntrees, self.ntrees))
-
-        trees = self.model.estimators_
-        for i in range(self.ntrees):
-            for k in range(i+1, self.ntrees):
-                jik = self.compute_jaccard_pair(trees[i], trees[k])
-                similarity[i][k] = jik
-                similarity[k][i] = jik
-
-        adjacency = (1.0 - similarity)
-        np.fill_diagonal(adjacency, 0)  # remove self edges
-
-        return adjacency

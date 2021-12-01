@@ -160,3 +160,55 @@ class TreeContraster():
             examples.append(instance_examples)
 
         return examples
+
+
+def compute_jaccard(rf_detector):
+    '''
+    Computes the pairwise jaccard index for all pairs of trees and returns the forest wide average
+
+    Returns
+    -------
+    J : the pairwise jaccard index averaged over all pairs of trees in the forest
+    jaccards : an array containing the pairwise jaccard index for every combination of two trees in the forest
+    '''
+    trees = rf_detector.model.estimators_
+    ntrees = len(trees)
+    npairs = (int)((ntrees * (ntrees - 1)) / 2)
+    jaccards = np.empty(shape=(npairs,))
+
+    index = 0
+    for i in range(ntrees):
+        for k in range(i+1, ntrees):
+            jaccards[index] = compute_jaccard_pair(trees[i], trees[k])
+            index += 1
+
+    J = np.average(jaccards)
+    return J, jaccards
+
+
+def compute_jaccard_pair(t1, t2):
+    '''
+    Computes the jaccard similarity of the feature sets used by the given trees
+
+    Parameters
+    ----------
+    t1 : a sklearn decision tree classifier
+    t2 : a second sklearn decision tree classifier
+
+    Returns
+    -------
+    Jik : The jaccard similarity between the feature sets used by `t1` and `t2`. The Jaccard similarity between two sets is given as `J = |A intersect B| / |A   union   B|`
+    '''
+
+    # get the features used be each tree, f[i]>0 iff t uses feature i
+    f1 = t1.feature_importances_
+    f2 = t2.feature_importances_
+
+    # determine the cardinality of the intersection and union of the feature sets
+    a_intersect_b = np.logical_and((f1 > 0), (f2 > 0)).sum()
+    a_union_b = np.logical_or((f1 > 0), (f2 > 0)).sum()
+
+    # compute the jaccard index
+    Jik = a_intersect_b / a_union_b
+
+    return Jik

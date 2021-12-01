@@ -80,7 +80,7 @@ class GraphMerge(Explainer):
     def build_graph(self):
         # build a graph to represent the feature similarities between trees
         rf_detector = self.model.detectors[0]
-        adjacency = rf_detector.get_tree_adjacency()
+        adjacency = self.get_tree_adjacency()
         adjacency = np.floor(adjacency)  # consider only fully disjoint trees for merging
 
         # create a graph from the adjacency matrix using networkx
