@@ -1,3 +1,4 @@
+from re import T
 from numpy.core.numeric import full
 from explainers.explainer import Explainer
 from sklearn.ensemble import IsolationForest as skIsolationForest
@@ -44,7 +45,7 @@ class FACET(Explainer):
         if self.graph_type == "Disjoint":
             return self.explain_disjoint(x, y)
         else:
-            return self.explain_nondisjoint
+            return self.explain_nondisjoint(x, y)
 
     def explain_disjoint(self, x, y):
         # !WARNING : This method only defined for an ensemble containing only a single random forest detector
@@ -99,7 +100,12 @@ class FACET(Explainer):
         self.trees_to_explain = self.fully_disjoint_trees[:n_majority]
 
     def explain_nondisjoint(self, x, y):
-        pass
+        # TODO implement, temporarilty returning a copy of the data
+        xprime = x.copy()  # an array for the constructed contrastive examples
+        preds = self.model.predict(xprime)
+        failed_explanation = (preds == y)
+        xprime[failed_explanation] = np.tile(np.inf, x.shape[1])
+        return xprime
 
     def get_clique(self):
         return self.fully_disjoint_trees
@@ -143,7 +149,7 @@ class FACET(Explainer):
 
         Returns
         -------
-        adjacency : a matrix of shape [ntrees, ntrees] with each element adjacency[i][j] representing the weight of the edge in a graph between nodes i and j. The diagonal of the matrix is set to zero to prevent loops 
+        adjacency : a matrix of shape [ntrees, ntrees] with each element adjacency[i][j] representing the weight of the edge in a graph between nodes i and j. The diagonal of the matrix is set to zero to prevent loops
         '''
         trees = rf_detector.model.estimators_
         ntrees = len(trees)
@@ -165,17 +171,19 @@ class FACET(Explainer):
     def compute_nondisjoint_adjacency(self, rf_detector):
         trees = rf_detector.model.estimators_
         ntrees = len(trees)
+        self.build_paths(trees)
 
         # Build matrix for tree subset similarity using jaccard index
         adjacency = np.zeros(shape=(ntrees, ntrees))
-        all_collisions = []
-        total_paths = 0
-        total_path_pairs = 0
+
+        possible_merges = [[{} for _ in range(ntrees)] for _ in range(ntrees)]
+        all_stats = []
 
         for i in range(ntrees):
-            for k in range(i+1, ntrees):
+            for k in range(ntrees):
                 t1 = trees[i]
                 t2 = trees[k]
+
                 f1 = t1.feature_importances_
                 f2 = t2.feature_importances_
 
@@ -184,61 +192,143 @@ class FACET(Explainer):
                 # if shared_features.sum() == 0:
                 #     adjacency[i][k] = 1
                 #     adjacency[k][i] = 1
-                # else:
-                collision_paths, n_paths, n_path_pairs = self.check_resolveable(t1, t2, shared_features)
-                total_paths += n_paths
-                total_path_pairs += n_path_pairs
 
-                if shared_features.sum() > 0:
-                    all_collisions.append(collision_paths)
+                is_resolveable, t1_t2_merges, stats = self.check_resolveable(i, k, shared_features)
+                if is_resolveable:
+                    adjacency[i][k] = 1
+                    adjacency[k][i] = 1
+                if(i != k):
+                    possible_merges[i][k] = t1_t2_merges
+                    all_stats.append(stats)
+                else:
+                    all_stats.append(np.array([0, 0, 0]))
 
         np.fill_diagonal(adjacency, 0)  # remove self edges
-        collisions = np.vstack(all_collisions)
+        n_mergeable_paths, n_unmergeable_paths, n_merges = self.merge_stats(possible_merges, np.vstack(all_stats))
+        n_valid_pairs = all_stats[:, 0:1].sum()
+        n_mergeable_pairs = all_stats[:, 1:2].sum()
+        n_unmergeable_pairs = all_stats[:, 2:3].sum()
 
         return adjacency
 
-    def check_resolveable(self, t1, t2, shared_features):
+    def build_paths(self, trees):
+        ntrees = len(trees)
+        all_paths = [[] for _ in range(ntrees)]
+        for i in range(ntrees):
+            all_paths[i] = self.__in_order_path(t=trees[i], built_paths=[])
+        self.all_paths = all_paths
+
+    def merge_stats(self, possible_merges, all_stats):
+        n_mergeable_paths = 0
+        n_unmergeable_paths = 0
+        n_merges = 0
+
+        ntrees = len(possible_merges)
+        for i in range(ntrees):
+            for k in range(ntrees):
+                for p1_id, merge_paths in possible_merges[i][k].items():
+                    n_merges += len(merge_paths)
+                    if len(merge_paths) == 0:
+                        n_unmergeable_paths += 1
+                    else:
+                        n_mergeable_paths += 1
+
+        return n_mergeable_paths, n_unmergeable_paths, n_merges
+
+    def check_resolveable(self, i, k, shared_features):
+
         nfeatures = len(shared_features)
-        resolveable = [True] * nfeatures
+        t1_paths = self.all_paths[i]
+        t2_paths = self.all_paths[k]
 
-        t1_paths = self.__in_order_path(t=t1, built_paths=[])
-        t2_paths = self.__in_order_path(t2, built_paths=[])
-        counter_class = 0
+        mergeable_paths = {}
+        n_path_combos = 0
+        n_mergable_combos = 0
+        n_unmergable_combos = 0
 
-        # for a countefactual path in t1 which contains a shared feature
-        # how many paths in t2 does it conflict with?
-        collision_paths = []
-
-        n_resolveable_collisions = 0
+        # check that each path in t1 can be sythesized with at least one path in t2
+        all_sythesizeable = True
+        total_paths = len(t1_paths)
+        n_collisions = 0
         n_unresolveable_collisions = 0
-
-        for feature_i in range(nfeatures):
-            if shared_features[feature_i]:  # if the feature is shared
-                for p1 in t1_paths:
-                    if self.consider_path(p1, feature_i, counter_class):
-                        n_overlap_paths = 0
-                        one_resolveable = False
-                        for p2 in t2_paths:
-                            if self.consider_path(p2, feature_i, counter_class):
-                                n_overlap_paths += 1
-                                resolveable = self.walk_check_paths(p1, p2, feature_i)
-                                if resolveable:
-                                    one_resolveable = True
-                        if one_resolveable:
-                            n_resolveable_collisions += 1
+        for p1 in t1_paths:
+            one_sythesizeable = False
+            p1_collision = False
+            n1 = p1[-1:, 0:1][0][0]
+            mergeable_paths[n1] = []
+            for p2 in t2_paths:
+                n2 = p2[-1:, 0:1][0][0]
+                if self.same_outcome(p1, p2):
+                    n_path_combos += 1
+                    feature_resolveable = np.array([False] * nfeatures)
+                    for fi in range(nfeatures):  # feature i
+                        if self.share_feature(p1, p2, fi):
+                            feature_resolveable[fi] = self.is_resolveable(p1, p2, fi)
+                            p1_collision = True
                         else:
-                            n_unresolveable_collisions += 1
+                            feature_resolveable[fi] = True
+                    path_resolveable = feature_resolveable.all()
+                    if path_resolveable:
+                        mergeable_paths[n1].append(n2)
+                        one_sythesizeable = True
+                        n_mergable_combos += 1
+                    else:
+                        n_unmergable_combos += 1
 
-                        collision_paths.append([feature_i, n_overlap_paths, len(t2_paths)])
+            # record statistics
+            if p1_collision:
+                n_collisions += 1
+            if not one_sythesizeable:
+                all_sythesizeable = False
+                n_unresolveable_collisions += 1
 
-        collision_paths_arr = np.array(collision_paths)
-        n_paths = len(t1_paths)
-        n_path_pairs = len(t1_paths) * len(t2_paths)
-        return collision_paths_arr, n_paths, n_path_pairs
+        # print("total {}, collisions: {}, unresolveable: {}".format(total_paths, n_collisions, n_unresolveable_collisions))
 
-    def walk_check_paths(self, p1, p2, feature_i):
+        stats = np.array([n_path_combos, n_mergable_combos, n_unmergable_combos])
+
+        return all_sythesizeable, mergeable_paths, stats
+
+    def share_feature(self, p1, p2, fi):
         '''
-        Find the nodes in p1 and p2 which condition and feature_i and check that they don't have conflicting conditions
+        Returns true if the two paths both use feature_i in at least one node, false otherwise.
+
+        Parameters
+        ----------
+        p1, p2: array results from __in_order_path
+        fi: int index of feature i
+        '''
+        p1_features = p1[:, 1:2]
+        p2_features = p2[:, 1:2]
+
+        return (fi in p1_features) and (fi in p2_features)
+
+        # if the feature is not shared between trees there can be no collision
+        if not shared_features[feature_i]:
+            return False
+        else:
+            # check if both paths lead to the counterfactual class and
+            # use the collision feature in at least one of their nodes
+            consider_p1 = self.consider_path(p1, feature_i, counter_class)
+            consider_p2 = self.consider_path(p2, feature_i, counter_class)
+            return (consider_p1 and consider_p2)
+
+    def has_collision(self, p1, p2, shared_features, feature_i, counter_class):
+        '''
+        Returns true if the two paths have a collision, false otherwise. A collision occurs when two paths lead to the same type of leaf node and share at least one feature in their critical
+        '''
+        # if the feature is not shared between trees there can be no collision
+        if not shared_features[feature_i]:
+            return False
+        else:
+            # check if both paths lead to the counterfactual class and
+            # use the collision feature in at least one of their nodes
+            consider_p1 = self.consider_path(p1, feature_i, counter_class)
+            consider_p2 = self.consider_path(p2, feature_i, counter_class)
+            return (consider_p1 and consider_p2)
+
+    def is_resolveable(self, p1, p2, feature_i):
+        '''
+        Find the nodes in p1 and p2 which condition feature_i and check that they don't have conflicting conditions
         For two nodes n1 and n2 which condition feature i n1: x[i] <> a, n2: x[i] <> b, assuming a < b. Return false if the unresolveable condition n1: x[i] < a, n2: x[i] > b is found and true otherwise.
         '''
         idx1 = (p1[:, 1:2] == feature_i).squeeze()
@@ -259,6 +349,15 @@ class FACET(Explainer):
                     all_resolveable = False
 
         return all_resolveable
+
+    def same_outcome(self, p1, p2):
+        '''
+        Returns true if and only if p1 and p2 lead to leaf nodes of the same class.
+        '''
+        p1_pred = p1[-1:, -1:][0][0]
+        p2_pred = p2[-1:, -1:][0][0]
+
+        return (p1_pred == p2_pred)
 
     def consider_path(self, p, feature, counter_class=1):
         pred_class = p[-1:, -1:][0][0]

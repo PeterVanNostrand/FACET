@@ -7,3 +7,5 @@ For colliding paths they collide with 1.58 paths on average of the average avail
 There are 8521 total pairs of paths
 Of these 1549 pairs have some form of collisions (counter class 0)
 For colliding path they collide with 2.66 paths on average of the average available 6.61 (~40.29)
+
+There are only 10 cases where a path from tree i cannot find a path from tree j to synthesize with.
