@@ -204,7 +204,8 @@ class FACET(Explainer):
                     all_stats.append(np.array([0, 0, 0]))
 
         np.fill_diagonal(adjacency, 0)  # remove self edges
-        n_mergeable_paths, n_unmergeable_paths, n_merges = self.merge_stats(possible_merges, np.vstack(all_stats))
+        n_mergeable_paths, n_unmergeable_paths, n_merges = self.merge_stats(possible_merges)
+        all_stats = np.vstack(all_stats)
         n_valid_pairs = all_stats[:, 0:1].sum()
         n_mergeable_pairs = all_stats[:, 1:2].sum()
         n_unmergeable_pairs = all_stats[:, 2:3].sum()
@@ -218,7 +219,7 @@ class FACET(Explainer):
             all_paths[i] = self.__in_order_path(t=trees[i], built_paths=[])
         self.all_paths = all_paths
 
-    def merge_stats(self, possible_merges, all_stats):
+    def merge_stats(self, possible_merges):
         n_mergeable_paths = 0
         n_unmergeable_paths = 0
         n_merges = 0
