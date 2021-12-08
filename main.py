@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from utilities.metrics import coverage
 from utilities.metrics import classification_metrics
 from utilities.metrics import average_distance
+from utilities.tree_tools import compute_jaccard
 from dataset import load_data
 from dataset import DS_NAMES
 from experiments import *
@@ -21,13 +22,17 @@ def simple_run(dataset_name):
         "rf_distance": distance,
         "rf_k": 1,
         "rf_ntrees": 20,
-        "expl_distance": distance
+        "rf_threads": 8,
+        "rf_maxdepth": 5,
+        "expl_greedy": False,
+        "expl_distance": distance,
+        "facet_graphtype": "Disjoint"
     }
 
     # Create, train, and predict with the model
-    model = HEEAD(detectors=["RandomForest"], aggregator="LogisticRegression",
-                  explainer="BestCandidate", hyperparameters=params)
+    model = HEEAD(detectors=["RandomForest"], aggregator="NoAggregator", hyperparameters=params)
     model.train(x, y)
+    model.set_explainer("FACET", hyperparameters=params)
     preds = model.predict(x)
 
     # anomaly detection performance
@@ -38,7 +43,7 @@ def simple_run(dataset_name):
     # print("Q-Statistic:", Q)
 
     # jaccard similarity
-    J, jaccards = model.detectors[0].compute_jaccard()
+    J, jaccards = compute_jaccard(model.detectors[0])
     print("Jaccard Index:", J)
 
     # generate the explanations
@@ -59,7 +64,8 @@ def simple_run(dataset_name):
 
 
 if __name__ == "__main__":
-    run_ds = DS_NAMES.copy()
-    run_ds.remove("http")
-    run_ds.remove("mulcross")
-    compare_methods(["thyroid"], num_iters=1, explainers=["FACET"])
+    # run_ds = DS_NAMES.copy()
+    # run_ds.remove("http")
+    # run_ds.remove("mulcross")
+    # compare_methods(["spambase"], num_iters=1, explainers=["FACET"])
+    simple_run("spambase")

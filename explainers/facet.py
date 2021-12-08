@@ -152,6 +152,7 @@ class FACET(Explainer):
         adjacency : a matrix of shape [ntrees, ntrees] with each element adjacency[i][j] representing the weight of the edge in a graph between nodes i and j. The diagonal of the matrix is set to zero to prevent loops
         '''
         trees = rf_detector.model.estimators_
+
         ntrees = len(trees)
 
         # Build matrix for tree subset similarity using jaccard index

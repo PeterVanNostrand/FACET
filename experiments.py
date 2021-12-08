@@ -412,7 +412,7 @@ def compare_methods(ds_names, explainers=["BestCandidate", "FACET"], distance="E
         "num_iters": num_iters,
         "eval_samples": eval_samples,
         "test_size": test_size,
-        "facet_graphtype": "NonDisjoint"
+        "facet_graphtype": "Disjoint"
     }
 
     # save the run information

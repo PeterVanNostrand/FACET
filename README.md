@@ -18,6 +18,16 @@ The code in this repository was developed using Python 3.8.8 and uses the follow
 
 ## Data Sources
 
+| Dataset Name                                  | Abbreviated Name | # Points | # Dimensions | nClass                   | Source                                                                                  | Features      |
+| --------------------------------------------- | ---------------- | -------- | ------------ | ------------------------ | --------------------------------------------------------------------------------------- | ------------- |
+| Vertebral Column Data Set                     | `vertibral`      | 310      | 6            | 2                        | [UCI](https://archive.ics.uci.edu/ml/datasets/vertebral+column)                         | real          |
+| MAGIC Gamma Telescope Data Set                | `magic`          | 19020    | 10           | 2                        | [UCI](https://archive.ics.uci.edu/ml/datasets/MAGIC+Gamma+Telescope)                    | real          |
+| Breast Cancer Wisconsin (Diagnostic) Data Set | `cancer`         | 699      | 9            | 2                        | [UCI](https://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Wisconsin+%28Diagnostic%29) | real          |
+| Glass Identification Data Set                 | `glass`          | 214      | 9            | 6 (2 float vs non-float) | [UCI](https://archive.ics.uci.edu/ml/datasets/Glass+Identification)                     | real          |
+| Spambase                                      | `spambase`       | 4600     | 57           | 2                        | [UCI](https://archive.ics.uci.edu/ml/datasets/Spambase)                                 | real, integer |
+
+## Anomaly Detection Data Sources
+
 | Dataset Name                                | Abbreviated Name | # Points | # Dimensions | # Outliers  | Source                                                                     | Features |
 | ------------------------------------------- | ---------------- | -------- | ------------ | ----------- | -------------------------------------------------------------------------- | -------- |
 | Annthyroid                                  | `annthyroid`     | 7200     | 6            | 534 (7.42%) | [StonyBrook ODDS](http://odds.cs.stonybrook.edu/annthyroid-dataset/)       | real     |
