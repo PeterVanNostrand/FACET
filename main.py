@@ -64,8 +64,8 @@ def simple_run(dataset_name):
 
 
 if __name__ == "__main__":
-    # run_ds = DS_NAMES.copy()
-    # run_ds.remove("http")
-    # run_ds.remove("mulcross")
-    # compare_methods(["spambase"], num_iters=1, explainers=["FACET"])
-    simple_run("spambase")
+    run_ds = DS_NAMES.copy()
+    run_ds.remove("spambase")
+    compare_methods(['cancer', 'magic', 'vertebral', 'glass'], num_iters=5,
+                    explainers=["FACET", "BestCandidate", "OCEAN"])
+    # simple_run("vertebral")

@@ -5,10 +5,28 @@ import h5py
 from sklearn import datasets as skdatasets
 
 # a list of the abbreviated name for all classification datasets
-DS_NAMES = ["spambase"]
+DS_NAMES = [
+    "cancer",
+    "glass",
+    "magic",
+    "spambase",
+    "vertebral"
+]
+
+DS_PATHS = {
+    "cancer": "data/cancer/wdbc.data",
+    "glass": "data/glass/glass.data",
+    "magic": "data/magic/magic04.data",
+    "spambase": "data/spambase/spambase.data",
+    "vertebral": "data/vertebral/column_2C.dat"
+}
 
 DS_DIMENSIONS = {
-    "spambase": (4600, 57)
+    "cancer": (568, 30),
+    "glass": (162, 9),
+    "magic": (19019, 10),
+    "spambase": (4600, 57),
+    "vertebral": (309, 6)
 }
 
 # a list of the abbreviated name for all anomaly detection datasets
@@ -42,10 +60,6 @@ ANOM_DS_PATHS = {
     "wbc": "data/anomaly-detection/wbc/wbc.mat"
 }
 
-DS_PATHS = {
-    "spambase": "data/spambase/spambase.data"
-}
-
 
 def load_data(dataset_name, normalize=True):
     '''
@@ -61,8 +75,92 @@ def load_data(dataset_name, normalize=True):
     x : the dataset samples with shape (nsamples, nfeatures)
     y : the dataset labels with shape (nsamples,) containing 0 to represent a normal label and 1 for an anomaly label
     '''
+    if dataset_name == "cancer":
+        return util_load_cancer(normalize)
+    if dataset_name == "glass":
+        return util_load_glass(normalize)
+    if dataset_name == "magic":
+        return util_load_magic(normalize)
     if dataset_name == "spambase":
         return util_load_spambase(normalize)
+    if dataset_name == "vertebral":
+        return util_load_vertebral(normalize)
+
+
+def util_load_cancer(normalize=True):
+    data = pd.read_csv(DS_PATHS["cancer"]).to_numpy()
+    ids = data[:, 0:1]
+    labels = data[:, 1:2].squeeze()  # lables of M=Malignant, B=Benign
+
+    # label malignant as 1, benign as 0
+    y = np.zeros(labels.shape[0], dtype=int)
+    y[labels == "M"] = 1
+    x = data[:, 2:].astype(float)
+
+    if normalize:
+        # normalize x on [0, 1]
+        max_value = np.max(x, axis=0)
+        min_value = np.min(x, axis=0)
+        x = (x - min_value) / (max_value - min_value)
+
+    return x, y
+
+
+def util_load_glass(normalize=True):
+    data = pd.read_csv(DS_PATHS["glass"]).to_numpy()
+    ids = data[:, 0:1]
+    labels = data[:, -1:].squeeze()
+
+    # glass has 6 classes which correspond to six types of glass
+    # 1 building_windows_float_processed
+    # 2 building_windows_non_float_processed
+    # 3 vehicle_windows_float_processed
+    # 4 vehicle_windows_non_float_processed (none in this database)
+    # 5 containers
+    # 6 tableware
+    # 7 headlamps
+    # We aim to train a binary classifier to differentiate between float and nonfloat glass
+    float_classes = [1, 3]
+    nonfloat_classes = [2, 4]
+
+    is_float = np.isin(labels, float_classes)
+    is_nonfloat = np.isin(labels, nonfloat_classes)
+
+    # label float as 1, nonfloat as 0
+    y = np.zeros(labels.shape[0], dtype=int)
+    y[is_float] = 1
+
+    x = data[:, 1:-1].astype(float)
+
+    # drop all samples that are not float or nonfloat (keeps ~75% of dataset)
+    y = y[is_float | is_nonfloat]
+    x = x[is_float | is_nonfloat]
+
+    if normalize:
+        # normalize x on [0, 1]
+        max_value = np.max(x, axis=0)
+        min_value = np.min(x, axis=0)
+        x = (x - min_value) / (max_value - min_value)
+
+    return x, y
+
+
+def util_load_magic(normalize):
+    data = pd.read_csv(DS_PATHS["magic"]).to_numpy()
+    labels = data[:, -1:].squeeze()  # lables of g=gamma (signal), h=hadron (background)
+
+    # label gamma (signal) as 1, benign as 0
+    y = np.zeros(labels.shape[0], dtype=int)
+    y[labels == "g"] = 1
+    x = data[:, :-1].astype(float)
+
+    if normalize:
+        # normalize x on [0, 1]
+        max_value = np.max(x, axis=0)
+        min_value = np.min(x, axis=0)
+        x = (x - min_value) / (max_value - min_value)
+
+    return x, y
 
 
 def util_load_spambase(normalize=True):
@@ -70,7 +168,25 @@ def util_load_spambase(normalize=True):
     data = pd.read_csv(path).to_numpy()
     ncols = data.shape[1]
     x = data[:, :-1]
-    y = data[:, -1:].squeeze()
+    y = data[:, -1:].squeeze().astype('int')
+    if normalize:
+        # normalize x on [0, 1]
+        max_value = np.max(x, axis=0)
+        min_value = np.min(x, axis=0)
+        x = (x - min_value) / (max_value - min_value)
+
+    return x, y
+
+
+def util_load_vertebral(normalize=True):
+    data = pd.read_csv(DS_PATHS["vertebral"], delim_whitespace=True).to_numpy()
+    labels = data[:, -1:].squeeze()  # lables of g=gamma (signal), h=hadron (background)
+
+    # label gamma (signal) as 1, benign as 0
+    y = np.zeros(labels.shape[0], dtype=int)
+    y[labels == "AB"] = 1
+    x = data[:, :-1].astype(float)
+
     if normalize:
         # normalize x on [0, 1]
         max_value = np.max(x, axis=0)

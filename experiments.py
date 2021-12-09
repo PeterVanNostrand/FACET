@@ -404,7 +404,7 @@ def compare_methods(ds_names, explainers=["BestCandidate", "FACET"], distance="E
         "rf_k": 1,
         "rf_ntrees": 20,
         "rf_threads": 1,
-        "rf_maxdepth": 3,
+        "rf_maxdepth": 5,
         "expl_greedy": False,
         "expl_distance": distance,
         "ocean_norm": 2,
