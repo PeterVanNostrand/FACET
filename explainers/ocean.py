@@ -16,6 +16,9 @@ class OCEAN(Explainer):
         else:
             self.objectiveNorm = hyperparameters.get("ocean_norm")
 
+    def prepare(self):
+        pass
+
     def explain(self, x, y):
         xprime = x.copy()  # an array for the constructed contrastive examples
 

@@ -11,164 +11,146 @@ import matplotlib.pyplot as plt
 from sklearn import tree
 
 
-class FACET(Explainer):
+class FACETPaths(Explainer):
     def __init__(self, model, hyperparameters=None):
         self.model = model
         self.parse_hyperparameters(hyperparameters)
-        self.build_graph()
 
-    def build_graph(self):
+    def prepare(self):
         rf_detector = self.model.detectors[0]
-        adjacency = self.compute_adjacency(rf_detector)
-        adjacency = np.floor(adjacency)  # consider only fully disjoint trees for merging
+        rf_trees = rf_detector.model.estimators_
+        rf_ntrees = len(rf_trees)
+        rf_nclasses = rf_detector.model.n_classes_
+        rf_nfeatures = len(rf_detector.model.feature_importances_)
 
-        # create a graph from the adjacency matrix using networkx
-        self.G = nx.Graph(adjacency)
+        self.build_paths(rf_trees)
+        self.index_paths()
+        self.find_synthesizeable_paths(rf_trees)
+        self.build_graph(rf_trees, rf_nclasses)
 
-        # identify the largest set of trees which are fully disjoint in the features they use this is done by finding the largest complete (i.e. fully connectected) subgraph
-        # returns a set of node indices representing trees in the forest
-        self.fully_disjoint_trees = list(clique.max_clique(self.G))
-        n_majority = (int)(np.floor(rf_detector.ntrees / 2) + 1)
-        self.trees_to_explain = self.fully_disjoint_trees[:n_majority]
+    def build_graph(self, trees, nclasses):
+        ntrees = len(trees)
+        adjacencys = self.compute_adjacencys(trees, nclasses)
+        # adjacency = np.floor(adjacency)  # consider only fully disjoint trees for merging
 
-    def explain(self, x, y):
+        # # create a graph from the adjacency matrix using networkx
+        # self.G = nx.Graph(adjacency)
+
+        # self.fully_disjoint_trees = list(clique.max_clique(self.G))
+        # n_majority = (int)(np.floor(ntrees / 2) + 1)
+        # self.trees_to_explain = self.fully_disjoint_trees[:n_majority]
+
+    def compute_adjacencys(self, trees, nclasses):
+        ntrees = len(trees)
+        total_paths = 0
+        for i in range(ntrees):
+            total_paths += len(self.all_paths[i])
+
+        # Build matrix for tree subset similarity using jaccard index
+        adjacencys = np.zeros(shape=(nclasses, total_paths, total_paths))
+
+        for i in range(ntrees):
+            for j in range(ntrees):
+                if(i != j):
+                    pass
+
+        # np.fill_diagonal(adjacency, 0)  # remove self edges
+
+        return adjacencys
+
+    def build_paths(self, trees):
         '''
-        Parameters
-        ----------
-        x               : an array of samples, dimensions (nsamples, nfeatures)
-        y               : an array of labels which correspond to the labels, (nsamples, )
+        Walks each tree and extracts each path from root to leaf into a data structure. Each tree is represented as a list of paths, with each path stored into an array
 
         Returns
         -------
-        xprime : an array of contrastive examples with dimensions (nsamples, nfeatures)
+        all_paths: a list of length ntrees
         '''
-        # TODO implement, temporarilty returning a copy of the data
-        xprime = x.copy()  # an array for the constructed contrastive examples
-        preds = self.model.predict(xprime)
-        failed_explanation = (preds == y)
-        xprime[failed_explanation] = np.tile(np.inf, x.shape[1])
-        return xprime
-
-    def compute_adjacency(self, rf_detector):
-        trees = rf_detector.model.estimators_
-        ntrees = len(trees)
-        self.build_paths(trees)
-
-        # Build matrix for tree subset similarity using jaccard index
-        adjacency = np.zeros(shape=(ntrees, ntrees))
-
-        possible_merges = [[{} for _ in range(ntrees)] for _ in range(ntrees)]
-        all_stats = []
-
-        for i in range(ntrees):
-            for k in range(ntrees):
-                t1 = trees[i]
-                t2 = trees[k]
-
-                f1 = t1.feature_importances_
-                f2 = t2.feature_importances_
-
-                shared_features = (f1 > 0) & (f2 > 0)
-
-                # if shared_features.sum() == 0:
-                #     adjacency[i][k] = 1
-                #     adjacency[k][i] = 1
-
-                is_resolveable, t1_t2_merges, stats = self.check_resolveable(i, k, shared_features)
-                if is_resolveable:
-                    adjacency[i][k] = 1
-                    adjacency[k][i] = 1
-                if(i != k):
-                    possible_merges[i][k] = t1_t2_merges
-                    all_stats.append(stats)
-                else:
-                    all_stats.append(np.array([0, 0, 0]))
-
-        np.fill_diagonal(adjacency, 0)  # remove self edges
-        n_mergeable_paths, n_unmergeable_paths, n_merges = self.merge_stats(possible_merges)
-        all_stats = np.vstack(all_stats)
-        n_valid_pairs = all_stats[:, 0:1].sum()
-        n_mergeable_pairs = all_stats[:, 1:2].sum()
-        n_unmergeable_pairs = all_stats[:, 2:3].sum()
-
-        return adjacency
-
-    def build_paths(self, trees):
         ntrees = len(trees)
         all_paths = [[] for _ in range(ntrees)]
         for i in range(ntrees):
             all_paths[i] = self.__in_order_path(t=trees[i], built_paths=[])
+
         self.all_paths = all_paths
 
-    def merge_stats(self, possible_merges):
-        n_mergeable_paths = 0
-        n_unmergeable_paths = 0
-        n_merges = 0
+    def index_paths(self):
+        '''
+        Each path in tree_i can be uniquely identified by the node_id of its leaf node.
+        Here we build a data structure which takes that leaf_id and maps it to the index of that path within the trees list of paths
+        '''
+        ntrees = len(self.all_paths)
+        leaf_to_index = [{} for _ in range(ntrees)]
+        index_to_leaf = [{} for _ in range(ntrees)]
+        for i in range(ntrees):
+            ti_paths = self.all_paths[i]
+            for j in range(len(ti_paths)):
+                pj = ti_paths[j]
+                pj_leafid = int(pj[-1:, 0:1][0][0])
+                leaf_to_index[i][pj_leafid] = j
+                index_to_leaf[i][j] = pj_leafid
 
-        ntrees = len(possible_merges)
+        # index to path can also be done by array lookup
+        # leafid = self.all_paths[t1id][index][-1:,0:1][0][0]
+
+        self.leaf_to_index = leaf_to_index
+        self.index_to_leaf = index_to_leaf
+
+    def find_synthesizeable_paths(self, trees):
+        '''
+        '''
+        ntrees = len(trees)
+        sythesizable_paths = [[{} for _ in range(ntrees)] for _ in range(ntrees)]
         for i in range(ntrees):
             for k in range(ntrees):
-                for p1_id, merge_paths in possible_merges[i][k].items():
-                    n_merges += len(merge_paths)
-                    if len(merge_paths) == 0:
-                        n_unmergeable_paths += 1
-                    else:
-                        n_mergeable_paths += 1
+                if(i != k):
+                    t1_t2_merges = self.get_merges(t1_id=i, t2_id=k)
+                    sythesizable_paths[i][k] = t1_t2_merges
 
-        return n_mergeable_paths, n_unmergeable_paths, n_merges
+        self.sythesizable_paths = sythesizable_paths
 
-    def check_resolveable(self, i, k, shared_features):
+    def get_merges(self, t1_id, t2_id):
+        '''
+        For each path p in t1, identifies all paths in t2 which are mergable with p
 
-        nfeatures = len(shared_features)
-        t1_paths = self.all_paths[i]
-        t2_paths = self.all_paths[k]
+        Returns
+        ----------
+        t1_merges: a list of lists which maps path ids from t1 to a list of path ids from t2
+                   mergeable_paths[t1pi] = [t2pj, t2pk, t2pl, ...] 
+        '''
+        t1_paths = self.all_paths[t1_id]
+        t2_paths = self.all_paths[t2_id]
 
-        mergeable_paths = {}
-        n_path_combos = 0
-        n_mergable_combos = 0
-        n_unmergable_combos = 0
+        t1_merges = []
 
-        # check that each path in t1 can be sythesized with at least one path in t2
-        all_sythesizeable = True
-        total_paths = len(t1_paths)
-        n_collisions = 0
-        n_unresolveable_collisions = 0
+        # for each path in tree 1
         for p1 in t1_paths:
-            one_sythesizeable = False
-            p1_collision = False
-            n1 = p1[-1:, 0:1][0][0]
-            mergeable_paths[n1] = []
+            p1_id = p1[-1:, 0:1][0][0]
+
+            p1_merges = []
+
+            # for each path in tree 2
             for p2 in t2_paths:
-                n2 = p2[-1:, 0:1][0][0]
-                if self.same_outcome(p1, p2):
-                    n_path_combos += 1
-                    feature_resolveable = np.array([False] * nfeatures)
-                    for fi in range(nfeatures):  # feature i
-                        if self.share_feature(p1, p2, fi):
-                            feature_resolveable[fi] = self.is_resolveable(p1, p2, fi)
-                            p1_collision = True
-                        else:
-                            feature_resolveable[fi] = True
-                    path_resolveable = feature_resolveable.all()
-                    if path_resolveable:
-                        mergeable_paths[n1].append(n2)
-                        one_sythesizeable = True
-                        n_mergable_combos += 1
-                    else:
-                        n_unmergable_combos += 1
+                p2_id = p2[-1:, 0:1][0][0]
 
-            # record statistics
-            if p1_collision:
-                n_collisions += 1
-            if not one_sythesizeable:
-                all_sythesizeable = False
-                n_unresolveable_collisions += 1
+                p1_pred = p1[-1:, -1:][0][0]
+                p2_pred = p2[-1:, -1:][0][0]
 
-        # print("total {}, collisions: {}, unresolveable: {}".format(total_paths, n_collisions, n_unresolveable_collisions))
+                # if both paths lead to leafs of the same class
+                if p1_pred == p2_pred:
+                    p1_features = p1[:-1, 1:2]
+                    p2_features = p2[:-1, 1:2]
+                    shared_features = np.intersect1d(p1_features, p2_features)
 
-        stats = np.array([n_path_combos, n_mergable_combos, n_unmergable_combos])
+                    mergable = True
+                    # check that all shared features are resolveable collisions
+                    for feature_i in shared_features:
+                        mergable = mergable and self.is_resolveable(p1, p2, feature_i)
 
-        return all_sythesizeable, mergeable_paths, stats
+                    if mergable:
+                        p1_merges.append(p2_id)
+            t1_merges.append(p1_merges)
+
+        return t1_merges
 
     def share_feature(self, p1, p2, fi):
         '''
@@ -184,15 +166,14 @@ class FACET(Explainer):
 
         return (fi in p1_features) and (fi in p2_features)
 
-        # if the feature is not shared between trees there can be no collision
-        if not shared_features[feature_i]:
-            return False
-        else:
-            # check if both paths lead to the counterfactual class and
-            # use the collision feature in at least one of their nodes
-            consider_p1 = self.consider_path(p1, feature_i, counter_class)
-            consider_p2 = self.consider_path(p2, feature_i, counter_class)
-            return (consider_p1 and consider_p2)
+    def same_outcome(self, p1, p2):
+        '''
+        Returns true if and only if p1 and p2 lead to leaf nodes of the same class.
+        '''
+        p1_pred = p1[-1:, -1:][0][0]
+        p2_pred = p2[-1:, -1:][0][0]
+
+        return (p1_pred == p2_pred)
 
     def has_collision(self, p1, p2, shared_features, feature_i, counter_class):
         '''
@@ -232,15 +213,6 @@ class FACET(Explainer):
 
         return all_resolveable
 
-    def same_outcome(self, p1, p2):
-        '''
-        Returns true if and only if p1 and p2 lead to leaf nodes of the same class.
-        '''
-        p1_pred = p1[-1:, -1:][0][0]
-        p2_pred = p2[-1:, -1:][0][0]
-
-        return (p1_pred == p2_pred)
-
     def consider_path(self, p, feature, counter_class=1):
         pred_class = p[-1:, -1:][0][0]
         path_features = p[:, 1:2]
@@ -252,11 +224,18 @@ class FACET(Explainer):
         tree.plot_tree(t2)
         plt.savefig(path + "t2.png")
 
-    def __in_order_path(self, t, built_paths=[], node_id=0, path=[], path_string=""):
+    def __in_order_path(self, t, built_paths=[], node_id=0, path=[]):
         '''
-        An algorithm for pre-order binary tree traversal. This walks throuhg the entire tree generating a list of paths from the root node to a leaf
-        and recording the final classification of the leaf node for that path. Paths are stored as `p = [f, g, h, i, j]` where each letter reprsents the
-        node_id taken in that path, with `f` being the root node and `j` being the leaf node
+        An algorithm for pre-order binary tree traversal. This walks through the entire tree enumerating each paths the root node to a leaf.
+
+        Each path is represented by an array of nodes
+        Each node is reprsented by a tuple
+            For internal nodes this is
+                [node_id, feature, cond, threshold]
+            While for leaf nodes this is
+                [node_id, -1, -1, class_id]
+            Where cond is 0 for (<= )and 1 for (>)
+        The tree is reprsented as a list of these arrays
 
         Parameters
         ----------
@@ -264,20 +243,11 @@ class FACET(Explainer):
         built_paths : the return values, a list of tuples (`class_id` = integer class ID, `path=[f, g, h, i, j]`)
         node_id     : the `node_id` to start traversal at, defaults to root node of tree (`node_id=0`)
         path        : the starting path up to by not including the node referenced by `node_id`, defaults to empty
-        path_string : a running text explanation of the features and values used to split along the path
-        verbose     : when true prints `path_string` during execution, `default=False`
 
         Returns
         -------
         None : see the output parameter `built_paths`
         '''
-
-        # build list of paths, each path is represented by a list of nodes
-        # Each node is reprsented by a tuple. For internal nodes this is
-        #     [node_id, feature, cond, threshold]
-        # While for leaf nodes this is
-        #     [node_id, -1, -1, class_id]
-        # Where cond is 0 for (<= )and 1 for (>)
 
         # process current node
         feature = t.tree_.feature[node_id]
@@ -305,6 +275,24 @@ class FACET(Explainer):
             finished_path = np.array(path)
             built_paths.append(finished_path)
             return built_paths
+
+    def explain(self, x, y):
+        '''
+        Parameters
+        ----------
+        x               : an array of samples, dimensions (nsamples, nfeatures)
+        y               : an array of labels which correspond to the labels, (nsamples, )
+
+        Returns
+        -------
+        xprime : an array of contrastive examples with dimensions (nsamples, nfeatures)
+        '''
+        # TODO implement, temporarilty returning a copy of the data
+        xprime = x.copy()  # an array for the constructed contrastive examples
+        preds = self.model.predict(xprime)
+        failed_explanation = (preds == y)
+        xprime[failed_explanation] = np.tile(np.inf, x.shape[1])
+        return xprime
 
     def get_clique(self):
         return self.fully_disjoint_trees

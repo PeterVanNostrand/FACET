@@ -12,8 +12,9 @@ from utilities.tree_tools import compute_jaccard_pair
 class FACETTrees(Explainer):
     def __init__(self, model, hyperparameters=None):
         self.model = model
-
         self.parse_hyperparameters(hyperparameters)
+
+    def prepare(self):
         self.build_graph()
 
     def build_graph(self):

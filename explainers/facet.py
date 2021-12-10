@@ -18,8 +18,9 @@ from sklearn import tree
 class FACET(Explainer):
     def __init__(self, model, hyperparameters=None):
         self.model = model
-
         self.parse_hyperparameters(hyperparameters)
+
+    def prepare(self):
         self.build_graph()
 
     def build_graph(self):

@@ -17,6 +17,13 @@ class Explainer(ABC):
         pass
 
     @abstractmethod
+    def prepare(self):
+        '''
+        Function to initialize the explainer, called after the model is trained.
+        '''
+        pass
+
+    @abstractmethod
     def explain(self, x, y):
         '''
         Function to perform explanation synthesis for the given samples using the provided detectors and aggregator

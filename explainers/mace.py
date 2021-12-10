@@ -18,6 +18,9 @@ class MACE(Explainer):
         else:
             self.maxtime = hyperparameters.get("mace_maxtime")
 
+    def prepare(self):
+        pass
+
     def explain(self, x, y):
         xprime = x.copy()  # an array for the constructed contrastive examples
 
