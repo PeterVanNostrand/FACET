@@ -1,3 +1,4 @@
+from typing_extensions import ParamSpec
 import numpy as np
 
 from sklearn.model_selection import train_test_split
@@ -12,10 +13,12 @@ from detectors.isolation_forest import IsolationForest
 from detectors.random_forest import RandomForest
 
 # Explainer classes
+from explainers import *
 from explainers.best_candidate import BestCandidate
 from explainers.ocean import OCEAN
 from explainers.mace import MACE
 from explainers.facet import FACET
+from explainers.facet_trees import FACETTrees
 
 
 class HEEAD():
@@ -54,6 +57,8 @@ class HEEAD():
             self.explainer = MACE(model=self, hyperparameters=hyperparameters)
         elif explainer == "FACET":
             self.explainer = FACET(model=self, hyperparameters=hyperparameters)
+        elif explainer == "FACETTrees":
+            self.explainer = FACETTrees(model=self, hyperparameters=hyperparameters)
         else:
             print("Unknown explainer type of " + explainer)
             print("using best candidate explainer")

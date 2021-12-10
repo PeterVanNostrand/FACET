@@ -296,3 +296,6 @@ class RandomForest(Detector):
 
         avg_features_used = np.average(n_features_used)
         return avg_features_used
+
+    def get_trees(self):
+        return self.model.estimators_
