@@ -22,8 +22,8 @@ def simple_run(dataset_name):
         "rf_distance": distance,
         "rf_k": 1,
         "rf_ntrees": 20,
-        "rf_threads": 8,
         "rf_maxdepth": 5,
+        "rf_threads": 8,
         "expl_greedy": False,
         "expl_distance": distance,
         "facet_graphtype": "Disjoint"
@@ -68,4 +68,4 @@ if __name__ == "__main__":
     # run_ds.remove("spambase")
     # compare_methods(['cancer', 'magic', 'vertebral', 'glass'], num_iters=5,
     #                 explainers=["FACETTrees", "BestCandidate", "OCEAN"])
-    simple_run("vertebral")
+    simple_run("magic")

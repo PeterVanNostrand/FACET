@@ -3,7 +3,7 @@ from explainers.explainer import Explainer
 import numpy as np
 
 import networkx as nx
-from networkx.algorithms.approximation import clique
+from networkx.algorithms.approximation import max_clique as get_max_clique
 
 from utilities.metrics import dist_euclidean
 from utilities.metrics import dist_features_changed
@@ -30,32 +30,33 @@ class FACETPaths(Explainer):
         self.build_graph(rf_trees, rf_nclasses)
 
     def build_graph(self, trees, nclasses):
-        ntrees = len(trees)
-        adjacencys = self.compute_adjacencys(trees, nclasses)
+        adjacencys = self.build_adjacencys(trees, nclasses)
         graphs = []
-        max_cliques_idxs = []
-        max_cliques_paths = []
+        max_cliques = []
         for i in range(nclasses):
             g = nx.Graph(adjacencys[i])
-            clique_path_idxs = list(clique.max_clique(g))
+
+            clique_idxs = list(get_max_clique(g))
             clique_paths = []
-            for idx in clique_path_idxs:
+            for idx in clique_idxs:
                 clique_paths.append(self.idx_to_treepath[idx])
             clique_paths = np.array(clique_paths)
             clique_paths = clique_paths[clique_paths[:, 0].argsort()]
 
             graphs.append(g)
-            max_cliques_idxs.append(clique_path_idxs)
-            max_cliques_paths.append(clique_paths)
+            max_cliques.append(clique_paths)
 
         self.graphs = graphs
-        self.max_cliques_idxs = max_cliques_idxs
-        self.max_cliques_paths = max_cliques_paths
+        self.max_cliques = max_cliques
 
-    def compute_adjacencys(self, trees, nclasses):
+        if(not self.check_cliques(max_cliques)):
+            print("BAD CLIQUE")
+        print("Clique Sizes:")
+        for clique in max_cliques:
+            print("\t {}".format(len(clique)))
+
+    def build_adjacencys(self, trees, nclasses):
         ntrees = len(trees)
-
-        # Build matrix for tree subset similarity using jaccard index
         adjacencys = np.zeros(shape=(nclasses, self.npaths, self.npaths))
 
         for t1_id in range(ntrees):
@@ -99,13 +100,13 @@ class FACETPaths(Explainer):
                 index += 1
             treepath_to_idx.append(treei_to_idx)
 
+        print("Num paths: {}".format(index))
+
         self.npaths = index
         self.treepath_to_idx = treepath_to_idx
         self.idx_to_treepath = idx_to_treepath
 
     def find_synthesizeable_paths(self, trees):
-        '''
-        '''
         ntrees = len(trees)
         sythesizable_paths = [[[] for _ in range(ntrees)] for _ in range(ntrees)]
         for i in range(ntrees):
@@ -129,55 +130,52 @@ class FACETPaths(Explainer):
         t2_paths = self.all_paths[t2_id]
 
         t1_merges = []
-
-        # for each path in tree 1
-        for p1 in t1_paths:
-            p1_id = p1[-1:, 0:1][0][0]
-
+        for p1 in t1_paths:  # for each path in tree 1
             p1_merges = []
 
-            # for each path in tree 2
-            for i in range(len(t2_paths)):
+            for i in range(len(t2_paths)):  # for each path in tree 2
                 p2 = t2_paths[i]
-                p2_id = p2[-1:, 0:1][0][0]
-
-                p1_pred = p1[-1:, -1:][0][0]
-                p2_pred = p2[-1:, -1:][0][0]
-
-                # if both paths lead to leafs of the same class
-                if p1_pred == p2_pred:
-                    p1_features = p1[:-1, 1:2]
-                    p2_features = p2[:-1, 1:2]
-                    shared_features = np.intersect1d(p1_features, p2_features)
-
-                    mergable = True
-                    # check that all shared features are resolveable collisions
-                    for feature_i in shared_features:
-                        mergable = mergable and self.is_resolveable(p1, p2, feature_i)
-
-                    if mergable:
-                        p1_merges.append(i)
+                if self.is_mergable(p1, p2):
+                    p1_merges.append(i)
             t1_merges.append(p1_merges)
 
         return t1_merges
 
-    # def is_mergable(self, p1, p2):
-    #     p1_pred = p1[-1:, -1:][0][0]
-    #     p2_pred = p2[-1:, -1:][0][0]
+    def is_mergable(self, p1, p2):
+        p1_pred = p1[-1:, -1:][0][0]
+        p2_pred = p2[-1:, -1:][0][0]
 
-    #     # if both paths lead to leafs of the same class
-    #     if p1_pred != p2_pred:
-    #         return False
-    #     else:
-    #         p1_features = p1[:-1, 1:2]
-    #         p2_features = p2[:-1, 1:2]
-    #         shared_features = np.intersect1d(p1_features, p2_features)
+        # if both paths lead to leafs of the same class
+        if p1_pred != p2_pred:
+            return False
+        else:
+            p1_features = p1[:-1, 1:2]
+            p2_features = p2[:-1, 1:2]
+            shared_features = np.intersect1d(p1_features, p2_features)
 
-    #         mergable = True
-    #         # check that all shared features are resolveable collisions
-    #         for feature_i in shared_features:
-    #             mergable = mergable and self.is_resolveable(p1, p2, feature_i)
-    #         return mergable
+            mergable = True
+            # check that all shared features are resolveable collisions
+            for feature_i in shared_features:
+                mergable = mergable and self.is_resolveable(p1, p2, feature_i)
+            return mergable
+
+    def check_cliques(self, cliques):
+        '''
+        Returns true iff for each clique, every combination of paths within the clique is synthesizeable
+        '''
+        all_synthesizeable = True
+        for clique in cliques:
+            for i in range(len(clique)):
+                t1_id = clique[i][0]
+                p1_id = clique[i][1]
+                p1 = self.all_paths[t1_id][p1_id]
+                for j in range(i+1, len(clique)):
+                    t2_id = clique[j][0]
+                    p2_id = clique[j][1]
+                    p2 = self.all_paths[t2_id][p2_id]
+                    if not self.is_mergable(p1, p2):
+                        all_synthesizeable = False
+        return all_synthesizeable
 
     def share_feature(self, p1, p2, fi):
         '''
@@ -202,19 +200,24 @@ class FACETPaths(Explainer):
 
         return (p1_pred == p2_pred)
 
-    def has_collision(self, p1, p2, shared_features, feature_i, counter_class):
-        '''
-        Returns true if the two paths have a collision, false otherwise. A collision occurs when two paths lead to the same type of leaf node and share at least one feature in their critical
-        '''
-        # if the feature is not shared between trees there can be no collision
-        if not shared_features[feature_i]:
-            return False
-        else:
-            # check if both paths lead to the counterfactual class and
-            # use the collision feature in at least one of their nodes
-            consider_p1 = self.consider_path(p1, feature_i, counter_class)
-            consider_p2 = self.consider_path(p2, feature_i, counter_class)
-            return (consider_p1 and consider_p2)
+    # def has_collision(self, p1, p2, shared_features, feature_i, counter_class):
+    #     '''
+    #     Returns true if the two paths have a collision, false otherwise. A collision occurs when two paths lead to the same type of leaf node and share at least one feature in their critical
+    #     '''
+    #     # if the feature is not shared between trees there can be no collision
+    #     if not shared_features[feature_i]:
+    #         return False
+    #     else:
+    #         # check if both paths lead to the counterfactual class and
+    #         # use the collision feature in at least one of their nodes
+    #         consider_p1 = self.consider_path(p1, feature_i, counter_class)
+    #         consider_p2 = self.consider_path(p2, feature_i, counter_class)
+    #         return (consider_p1 and consider_p2)
+
+    # def consider_path(self, p, feature, counter_class=1):
+    #     pred_class = p[-1:, -1:][0][0]
+    #     path_features = p[:, 1:2]
+    #     return (pred_class == counter_class and feature in path_features)
 
     def is_resolveable(self, p1, p2, feature_i):
         '''
@@ -239,11 +242,6 @@ class FACETPaths(Explainer):
                     all_resolveable = False
 
         return all_resolveable
-
-    def consider_path(self, p, feature, counter_class=1):
-        pred_class = p[-1:, -1:][0][0]
-        path_features = p[:, 1:2]
-        return (pred_class == counter_class and feature in path_features)
 
     def save_tree_figs(self, t1, t2, path="C:/Users/Peter/Downloads/"):
         tree.plot_tree(t1)
