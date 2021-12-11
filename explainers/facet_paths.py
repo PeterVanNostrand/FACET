@@ -1,3 +1,4 @@
+from networkx.readwrite.json_graph import adjacency
 from explainers.explainer import Explainer
 import numpy as np
 
@@ -31,30 +32,41 @@ class FACETPaths(Explainer):
     def build_graph(self, trees, nclasses):
         ntrees = len(trees)
         adjacencys = self.compute_adjacencys(trees, nclasses)
-        # adjacency = np.floor(adjacency)  # consider only fully disjoint trees for merging
+        graphs = []
+        max_cliques_idxs = []
+        max_cliques_paths = []
+        for i in range(nclasses):
+            g = nx.Graph(adjacencys[i])
+            clique_path_idxs = list(clique.max_clique(g))
+            clique_paths = []
+            for idx in clique_path_idxs:
+                clique_paths.append(self.idx_to_treepath[idx])
+            clique_paths = np.array(clique_paths)
+            clique_paths = clique_paths[clique_paths[:, 0].argsort()]
 
-        # # create a graph from the adjacency matrix using networkx
-        # self.G = nx.Graph(adjacency)
+            graphs.append(g)
+            max_cliques_idxs.append(clique_path_idxs)
+            max_cliques_paths.append(clique_paths)
 
-        # self.fully_disjoint_trees = list(clique.max_clique(self.G))
-        # n_majority = (int)(np.floor(ntrees / 2) + 1)
-        # self.trees_to_explain = self.fully_disjoint_trees[:n_majority]
+        self.graphs = graphs
+        self.max_cliques_idxs = max_cliques_idxs
+        self.max_cliques_paths = max_cliques_paths
 
     def compute_adjacencys(self, trees, nclasses):
         ntrees = len(trees)
-        total_paths = 0
-        for i in range(ntrees):
-            total_paths += len(self.all_paths[i])
 
         # Build matrix for tree subset similarity using jaccard index
-        adjacencys = np.zeros(shape=(nclasses, total_paths, total_paths))
+        adjacencys = np.zeros(shape=(nclasses, self.npaths, self.npaths))
 
-        for i in range(ntrees):
-            for j in range(ntrees):
-                if(i != j):
-                    pass
-
-        # np.fill_diagonal(adjacency, 0)  # remove self edges
+        for t1_id in range(ntrees):
+            for t2_id in range(ntrees):
+                t1_t2_merges = self.sythesizable_paths[t1_id][t2_id]
+                for p1_id in range(len(t1_t2_merges)):
+                    t1p1_index = self.treepath_to_idx[t1_id][p1_id]
+                    t1p1_class = int(self.all_paths[t1_id][p1_id][-1:, 3:][0][0])
+                    for p2_id in t1_t2_merges[p1_id]:
+                        t2p2_index = self.treepath_to_idx[t2_id][p2_id]
+                        adjacencys[t1p1_class][t1p1_index][t2p2_index] = 1
 
         return adjacencys
 
@@ -74,32 +86,28 @@ class FACETPaths(Explainer):
         self.all_paths = all_paths
 
     def index_paths(self):
-        '''
-        Each path in tree_i can be uniquely identified by the node_id of its leaf node.
-        Here we build a data structure which takes that leaf_id and maps it to the index of that path within the trees list of paths
-        '''
         ntrees = len(self.all_paths)
-        leaf_to_index = [{} for _ in range(ntrees)]
-        index_to_leaf = [{} for _ in range(ntrees)]
+        treepath_to_idx = []
+        idx_to_treepath = []
+
+        index = 0
         for i in range(ntrees):
-            ti_paths = self.all_paths[i]
-            for j in range(len(ti_paths)):
-                pj = ti_paths[j]
-                pj_leafid = int(pj[-1:, 0:1][0][0])
-                leaf_to_index[i][pj_leafid] = j
-                index_to_leaf[i][j] = pj_leafid
+            treei_to_idx = []
+            for j in range(len(self.all_paths[i])):
+                treei_to_idx.append(index)
+                idx_to_treepath.append((i, j))
+                index += 1
+            treepath_to_idx.append(treei_to_idx)
 
-        # index to path can also be done by array lookup
-        # leafid = self.all_paths[t1id][index][-1:,0:1][0][0]
-
-        self.leaf_to_index = leaf_to_index
-        self.index_to_leaf = index_to_leaf
+        self.npaths = index
+        self.treepath_to_idx = treepath_to_idx
+        self.idx_to_treepath = idx_to_treepath
 
     def find_synthesizeable_paths(self, trees):
         '''
         '''
         ntrees = len(trees)
-        sythesizable_paths = [[{} for _ in range(ntrees)] for _ in range(ntrees)]
+        sythesizable_paths = [[[] for _ in range(ntrees)] for _ in range(ntrees)]
         for i in range(ntrees):
             for k in range(ntrees):
                 if(i != k):
@@ -129,7 +137,8 @@ class FACETPaths(Explainer):
             p1_merges = []
 
             # for each path in tree 2
-            for p2 in t2_paths:
+            for i in range(len(t2_paths)):
+                p2 = t2_paths[i]
                 p2_id = p2[-1:, 0:1][0][0]
 
                 p1_pred = p1[-1:, -1:][0][0]
@@ -147,10 +156,28 @@ class FACETPaths(Explainer):
                         mergable = mergable and self.is_resolveable(p1, p2, feature_i)
 
                     if mergable:
-                        p1_merges.append(p2_id)
+                        p1_merges.append(i)
             t1_merges.append(p1_merges)
 
         return t1_merges
+
+    # def is_mergable(self, p1, p2):
+    #     p1_pred = p1[-1:, -1:][0][0]
+    #     p2_pred = p2[-1:, -1:][0][0]
+
+    #     # if both paths lead to leafs of the same class
+    #     if p1_pred != p2_pred:
+    #         return False
+    #     else:
+    #         p1_features = p1[:-1, 1:2]
+    #         p2_features = p2[:-1, 1:2]
+    #         shared_features = np.intersect1d(p1_features, p2_features)
+
+    #         mergable = True
+    #         # check that all shared features are resolveable collisions
+    #         for feature_i in shared_features:
+    #             mergable = mergable and self.is_resolveable(p1, p2, feature_i)
+    #         return mergable
 
     def share_feature(self, p1, p2, fi):
         '''
