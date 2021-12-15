@@ -1,3 +1,5 @@
+import math
+from os import replace
 from networkx.readwrite.json_graph import adjacency
 from explainers.explainer import Explainer
 import numpy as np
@@ -10,6 +12,7 @@ from utilities.metrics import dist_features_changed
 
 import matplotlib.pyplot as plt
 from sklearn import tree
+from itertools import combinations
 
 
 class FACETPaths(Explainer):
@@ -200,25 +203,6 @@ class FACETPaths(Explainer):
 
         return (p1_pred == p2_pred)
 
-    # def has_collision(self, p1, p2, shared_features, feature_i, counter_class):
-    #     '''
-    #     Returns true if the two paths have a collision, false otherwise. A collision occurs when two paths lead to the same type of leaf node and share at least one feature in their critical
-    #     '''
-    #     # if the feature is not shared between trees there can be no collision
-    #     if not shared_features[feature_i]:
-    #         return False
-    #     else:
-    #         # check if both paths lead to the counterfactual class and
-    #         # use the collision feature in at least one of their nodes
-    #         consider_p1 = self.consider_path(p1, feature_i, counter_class)
-    #         consider_p2 = self.consider_path(p2, feature_i, counter_class)
-    #         return (consider_p1 and consider_p2)
-
-    # def consider_path(self, p, feature, counter_class=1):
-    #     pred_class = p[-1:, -1:][0][0]
-    #     path_features = p[:, 1:2]
-    #     return (pred_class == counter_class and feature in path_features)
-
     def is_resolveable(self, p1, p2, feature_i):
         '''
         Find the nodes in p1 and p2 which condition feature_i and check that they don't have conflicting conditions
@@ -306,21 +290,88 @@ class FACETPaths(Explainer):
         Parameters
         ----------
         x               : an array of samples, dimensions (nsamples, nfeatures)
-        y               : an array of labels which correspond to the labels, (nsamples, )
+        y               : an array of predicted labels which correspond to the labels, (nsamples, )
 
         Returns
         -------
         xprime : an array of contrastive examples with dimensions (nsamples, nfeatures)
         '''
-        # TODO implement, temporarilty returning a copy of the data
         xprime = x.copy()  # an array for the constructed contrastive examples
+
+        # the number of trees which much aggree for a prediction
+        majority_size = math.floor(len(self.all_paths) / 2) + 1
+
+        # assumimg binary classification [0, 1] set counterfactual class
+        counterfactual_class = ((y - 1) * -1)
+
+        for i in range(x.shape[0]):
+            counter_label = counterfactual_class[i]  # the predicted label to be explained for this instance
+            clique = self.max_cliques[counter_label]  # the set of sythesizeable paths for the predicted class
+
+            if self.mode == "fast":
+                # randomly pick a set of paths to merge, stored as index pairs [[tree_id, path_id]]
+                merge_paths_idxs = clique[np.random.choice(len(clique), size=majority_size, replace=False)]
+                feature_bounds = self.compute_syth_thresholds(merge_paths_idxs, x.shape[1])
+                xprime[i] = self.fit_thresholds(xprime[i], feature_bounds)
+            elif self.mode == "exhaustive":
+                # exhausively test every possible set of paths to merge, keeping the closest explanation
+                min_distance = float("inf")
+                all_sets = combinations(clique, majority_size)
+                for path_set in all_sets:
+                    feature_bounds = self.compute_syth_thresholds(path_set, x.shape[1])
+                    xprime_candidate = self.fit_thresholds(xprime[i].copy(), feature_bounds)
+                    cand_distance = self.distance_fn(x[i], xprime_candidate)
+                    if cand_distance < min_distance:
+                        xprime[i] = xprime_candidate
+                        min_distance = cand_distance
+
+        # check that all counterfactuals result in a different class
         preds = self.model.predict(xprime)
         failed_explanation = (preds == y)
         xprime[failed_explanation] = np.tile(np.inf, x.shape[1])
+
         return xprime
 
-    def get_clique(self):
-        return self.fully_disjoint_trees
+    def compute_syth_thresholds(self, path_idxs, nfeatures):
+        # the minimum and maximum possible values for each feature, represented by pair [min_value, max_value]
+        feature_bounds = [[-float("inf"), float("inf")] for _ in range(nfeatures)]  # min_value < x'[i] < max_value
+
+        for index in path_idxs:
+            tree_id = index[0]
+            path_id = index[1]
+            p = self.all_paths[tree_id][path_id]
+            for i in range(p[:-1, :].shape[0]):
+                feature = int(p[i, 1])
+                condition = int(p[i, 2])
+                threshold = p[i, 3]
+                if condition == 0:  # less than or equal to, update max value to be lower
+                    feature_bounds[feature][1] = min(threshold, feature_bounds[feature][1])
+                else:  # greater than, update min value to be higher
+                    feature_bounds[feature][0] = max(threshold, feature_bounds[feature][0])
+
+        return feature_bounds
+
+    def fit_thresholds(self, xprime, feature_bounds):
+        '''
+        For each feature adjust xprime to meet the sythesized rule set
+        '''
+        for j in range(len(feature_bounds)):
+            min_value = feature_bounds[j][0]
+            max_value = feature_bounds[j][1]
+
+            if(not xprime[j] > min_value):
+                xprime[j] = min((min_value + (min_value * self.offset)), max_value)
+            if(not xprime[j] < max_value):
+                xprime[j] = max((max_value - (max_value * self.offset)), min_value)
+
+        return xprime
+
+    def get_clique_size(self):
+        total_members = 0
+        for clique in self.max_cliques:
+            total_members += len(clique)
+
+        return total_members / len(self.max_cliques)
 
     def parse_hyperparameters(self, hyperparameters):
         self.hyperparameters = hyperparameters
@@ -344,13 +395,18 @@ class FACETPaths(Explainer):
         else:
             self.greedy = hyperparameters.get("expl_greedy")
 
-        # graph type
-        graph_type = hyperparameters.get("facet_graphtype")
-        if graph_type is None:
-            print("facet_graphtype is not set, defaulting to disjoint")
-            self.graph_type = "Disjoint"
-        elif graph_type == "Disjoint" or graph_type == "NonDisjoint":
-            self.graph_type = graph_type
+        # threshold offest for picking new values
+        offset = hyperparameters.get("facet_offset")
+        if offset is None:
+            print("No facet_offset provided, using 0.01")
+            self.offset = 0.01
         else:
-            print("unknown facet_graphtype, defaulting to Disjoint")
-            self.graph_type = "Disjoint"
+            self.offset = offset
+
+        # explanation mode: fast or exhaustive
+        mode = hyperparameters.get("facet_mode")
+        if mode is None:
+            print("No facet_mode provided, using exhaustive")
+            self.mode = "exhaustive"
+        else:
+            self.mode = mode

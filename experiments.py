@@ -388,7 +388,7 @@ def vary_ntrees(ds_names, explainer="BestCandidate", distance="Euclidean"):
         print("finished", ds)
 
 
-def compare_methods(ds_names, explainers=["BestCandidate", "FACET"], distance="Euclidean", num_iters=5, eval_samples=None, test_size=0.2):
+def compare_methods(ds_names, explainers=["BestCandidate", "FACET"], distance="Euclidean", num_iters=5, eval_samples=20, test_size=0.2):
     '''
     Experiment to compare the performanec of different explanation methods
     '''
@@ -404,7 +404,7 @@ def compare_methods(ds_names, explainers=["BestCandidate", "FACET"], distance="E
         "rf_k": 1,
         "rf_ntrees": 20,
         "rf_threads": 1,
-        "rf_maxdepth": 5,
+        "rf_maxdepth": 3,
         "expl_greedy": False,
         "expl_distance": distance,
         "ocean_norm": 2,
@@ -412,7 +412,9 @@ def compare_methods(ds_names, explainers=["BestCandidate", "FACET"], distance="E
         "num_iters": num_iters,
         "eval_samples": eval_samples,
         "test_size": test_size,
-        "facet_graphtype": "Disjoint"
+        "facet_graphtype": "disjoint",
+        "facet_offset": 0.001,
+        "facet_mode": "exhaustive"
     }
 
     # save the run information
@@ -474,12 +476,12 @@ def compare_methods(ds_names, explainers=["BestCandidate", "FACET"], distance="E
             J, jaccards = compute_jaccard(model.detectors[0])
 
             for expl in explainers:
-                start_build = time.time()
                 model.set_explainer(expl, hyperparameters=params)
+                start_build = time.time()
+                model.prepare()
                 end_build = time.time()
-                if expl == "FACET":
-                    clique_members = model.explainer.get_clique()
-                    clique_size = len(clique_members)
+                if expl == "FACETTrees" or expl == "FACETPaths":
+                    clique_size = model.explainer.get_clique_size()
                 else:
                     clique_size = -1
                 start = time.time()

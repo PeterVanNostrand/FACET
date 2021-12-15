@@ -1,3280 +1,2380 @@
 \ Model RandomForestCounterFactualMilp
 \ LP format - for model browsing. Use MPS format to capture full model detail.
 Minimize
-  - 0.0351981170319579 rightMutuallyExclusivePlanesVar_f0_th0
-   - 0.0196265195199085 rightMutuallyExclusivePlanesVar_f0_th0.0860881507396698
-   - 2.9091289364466168e-04 rightMutuallyExclusivePlanesVar_f0_th0.16735537350177765
-   - 0.00112871138677147 rightMutuallyExclusivePlanesVar_f0_th0.16919191926717758
-   - 4.4416944169753479e-04 rightMutuallyExclusivePlanesVar_f0_th0.17676767706871033
-   - 8.5434711770551426e-04 rightMutuallyExclusivePlanesVar_f0_th0.17998163402080536
-   - 6.9060169501943772e-04 rightMutuallyExclusivePlanesVar_f0_th0.18663912266492844
-   - 3.6601281706512235e-04 rightMutuallyExclusivePlanesVar_f0_th0.19260789453983307
-   - 0.00182089514477413 rightMutuallyExclusivePlanesVar_f0_th0.19605141878128052
-   - 0.000296447 rightMutuallyExclusivePlanesVar_f0_th0.21877869218587875
-   - 2.1454860314842384e-04 rightMutuallyExclusivePlanesVar_f0_th0.22451790422201157
-   - 6.15555e-05 rightMutuallyExclusivePlanesVar_f0_th0.22979798167943954
-   - 2.13441e-05 rightMutuallyExclusivePlanesVar_f0_th0.23163452744483948
-   - 2.2956850260862338e-04 rightMutuallyExclusivePlanesVar_f0_th0.23232322931289673
-   + 9.29658e-05 rightMutuallyExclusivePlanesVar_f0_th0.24747474747473858
-   + 0.000287804 rightMutuallyExclusivePlanesVar_f0_th0.2571166232228279
-   + 3.66802e-05 rightMutuallyExclusivePlanesVar_f0_th0.266988068819046
-   + 1.89731e-05 rightMutuallyExclusivePlanesVar_f0_th0.2679063379764557
-   + 3.92099e-05 rightMutuallyExclusivePlanesVar_f0_th0.2683654874563217
-   + 3.05141e-05 rightMutuallyExclusivePlanesVar_f0_th0.2692837566137314
-   + 2.08698e-05 rightMutuallyExclusivePlanesVar_f0_th0.26997245848178864
-   + 1.0593e-05 rightMutuallyExclusivePlanesVar_f0_th0.27043159306049347
-   + 0.000299082 rightMutuallyExclusivePlanesVar_f0_th0.2706611603498459
-   + 0.00275339801144822 rightMutuallyExclusivePlanesVar_f0_th0.2764003723859787
-   + 0.000166958 rightMutuallyExclusivePlanesVar_f0_th0.30739210546016693
-   + 5.64977e-05 rightMutuallyExclusivePlanesVar_f0_th0.30876950919628143
-   + 7.1083840551373857e-04 rightMutuallyExclusivePlanesVar_f0_th0.30922865867614746
-   + 5.4024617026848451e-04 rightMutuallyExclusivePlanesVar_f0_th0.31473828852176666
-   + 0.00618422216120245 rightMutuallyExclusivePlanesVar_f0_th0.31864096224308014
-   + 0.000542037 rightMutuallyExclusivePlanesVar_f0_th0.35353535413742065
-   + 0.00112233565067995 rightMutuallyExclusivePlanesVar_f0_th0.35606060922145844
-   + 0.0266107014075778 rightMutuallyExclusivePlanesVar_f0_th0.361111119389534
-   + 0.0391746193139753 rightMutuallyExclusivePlanesVar_f0_th0.44628100097179413
-   + 0.0284690200623149 rightMutuallyExclusivePlanesVar_f0_th0.5280073583126068
-   + 0.4591266898823828 rightMutuallyExclusivePlanesVar_f0_th0.574839323759079
-   - 0.3635698727098545 rightMutuallyExclusivePlanesVar_f1_th0
-   - 0.029794392786165 rightMutuallyExclusivePlanesVar_f1_th0.41767553985118866
-   - 0.00139533243081197 rightMutuallyExclusivePlanesVar_f1_th0.4975786805152893
-   - 0.00101571473384218 rightMutuallyExclusivePlanesVar_f1_th0.5024213045835495
-   - 3.3271160416359705e-04 rightMutuallyExclusivePlanesVar_f1_th0.5060532540082932
-   - 3.2977616914690866e-04 rightMutuallyExclusivePlanesVar_f1_th0.5072639137506485
-   - 3.2684885219702933e-04 rightMutuallyExclusivePlanesVar_f1_th0.5084745585918427
-   - 0.00398226054308161 rightMutuallyExclusivePlanesVar_f1_th0.509685218334198
-   - 0.000848631 rightMutuallyExclusivePlanesVar_f1_th0.5254237204790115
-   - 0.00337253628689073 rightMutuallyExclusivePlanesVar_f1_th0.5290556848049164
-   - 4.7488057630633469e-04 rightMutuallyExclusivePlanesVar_f1_th0.5447941869497299
-   - 0.00135429180822509 rightMutuallyExclusivePlanesVar_f1_th0.5472154915332794
-   - 4.2798137483624713e-04 rightMutuallyExclusivePlanesVar_f1_th0.5544794201850891
-   - 0.00266754093728677 rightMutuallyExclusivePlanesVar_f1_th0.5569007396697998
-   - 0.00182916959472972 rightMutuallyExclusivePlanesVar_f1_th0.5738498866558075
-   - 0.00150525532385242 rightMutuallyExclusivePlanesVar_f1_th0.5883777141571045
-   - 1.8760836380461179e-04 rightMutuallyExclusivePlanesVar_f1_th0.6041162014007568
-   - 7.6215514686968789e-04 rightMutuallyExclusivePlanesVar_f1_th0.6065375208854675
-   - 6.449007459753774e-04 rightMutuallyExclusivePlanesVar_f1_th0.6186440587043762
-   - 1.4657e-06 rightMutuallyExclusivePlanesVar_f1_th0.6428571343421936
-   + 2.4770083930739431e-04 rightMutuallyExclusivePlanesVar_f1_th0.6440677966101697
-   + 8.20776e-05 rightMutuallyExclusivePlanesVar_f1_th0.6598063111305237
-   + 4.54364e-05 rightMutuallyExclusivePlanesVar_f1_th0.662227600812912
-   + 0.1263125185364912 rightMutuallyExclusivePlanesVar_f1_th0.6634382605552673
-   - 0.5246442524939063 rightMutuallyExclusivePlanesVar_f2_th0
-   - 0.2704477221182339 rightMutuallyExclusivePlanesVar_f2_th0.35301506519317627
-   - 0.00863615891366947 rightMutuallyExclusivePlanesVar_f2_th0.6947236061096191
-   - 0.0180550851194049 rightMutuallyExclusivePlanesVar_f2_th0.7148241400718689
-   - 0.0135223881485986 rightMutuallyExclusivePlanesVar_f2_th0.7650753557682037
-   - 0.00147723655106655 rightMutuallyExclusivePlanesVar_f2_th0.8178391754627228
-   - 2.3515930182057762e-04 rightMutuallyExclusivePlanesVar_f2_th0.8253768682479858
-   - 0.00134466391362795 rightMutuallyExclusivePlanesVar_f2_th0.8266331553459167
-   - 0.00424231940401166 rightMutuallyExclusivePlanesVar_f2_th0.8341708481311798
-   - 1.3730450548401314e-04 rightMutuallyExclusivePlanesVar_f2_th0.8643216192722321
-   - 0.00159086866120289 rightMutuallyExclusivePlanesVar_f2_th0.8655778765678406
-   - 2.604113764118792e-04 rightMutuallyExclusivePlanesVar_f2_th0.8831658065319061
-   - 0.000370887 rightMutuallyExclusivePlanesVar_f2_th0.8869346678256989
-   - 3.4090074984791346e-04 rightMutuallyExclusivePlanesVar_f2_th0.893216073513031
-   - 2.9828830244337543e-04 rightMutuallyExclusivePlanesVar_f2_th0.9007537662982941
-   - 5.68165e-05 rightMutuallyExclusivePlanesVar_f2_th0.9120603203773499
-   + 1.42043e-05 rightMutuallyExclusivePlanesVar_f2_th0.9195979899497487
-   + 0.00105268748546285 rightMutuallyExclusivePlanesVar_f2_th0.9233668446540833
-   + 0.00256937986139553 rightMutuallyExclusivePlanesVar_f2_th0.9522612988948822
-   + 0.00113791454163764 rightMutuallyExclusivePlanesVar_f2_th0.9798994958400726
-   + 0.0016902970658423 rightMutuallyExclusivePlanesVar_f2_th0.9886934757232666
-   - 0.239175550400465 rightMutuallyExclusivePlanesVar_f3_th0
-   - 0.00262772836414716 rightMutuallyExclusivePlanesVar_f3_th0.43989071249961853
-   - 6.71862e-05 rightMutuallyExclusivePlanesVar_f3_th0.48360656201839447
-   + 0.00107497987616482 rightMutuallyExclusivePlanesVar_f3_th0.4918032786885245
-   + 3.8818819289577079e-04 rightMutuallyExclusivePlanesVar_f3_th0.5245901644229889
-   + 0.00320254277074488 rightMutuallyExclusivePlanesVar_f3_th0.5300546586513519
-   + 0.0016124692295739 rightMutuallyExclusivePlanesVar_f3_th0.5601092875003815
-   + 0.00235151893229911 rightMutuallyExclusivePlanesVar_f3_th0.5710382461547852
-   + 0.00391919440365858 rightMutuallyExclusivePlanesVar_f3_th0.5846994519233704
-   + 6.1960789116388866e-04 rightMutuallyExclusivePlanesVar_f3_th0.6038251221179962
-   + 0.00262772755922023 rightMutuallyExclusivePlanesVar_f3_th0.6065573692321777
-   + 0.00212756147961766 rightMutuallyExclusivePlanesVar_f3_th0.6174863278865814
-   + 0.00226194210818343 rightMutuallyExclusivePlanesVar_f3_th0.6256830394268036
-   + 0.00944340405148377 rightMutuallyExclusivePlanesVar_f3_th0.6338797807693481
-   + 9.4806448596493689e-04 rightMutuallyExclusivePlanesVar_f3_th0.6639344394207001
-   + 0.0184015612471382 rightMutuallyExclusivePlanesVar_f3_th0.6666666567325592
-   + 0.0227164257999787 rightMutuallyExclusivePlanesVar_f3_th0.7131147384643555
-   + 0.1865687195236455 rightMutuallyExclusivePlanesVar_f3_th0.7595628499984741
-   - 0.3271948893828041 rightMutuallyExclusivePlanesVar_f4_th0
-   - 0.00557023572306931 rightMutuallyExclusivePlanesVar_f4_th0.35021552443504333
-   - 0.0632652252586948 rightMutuallyExclusivePlanesVar_f4_th0.35991379618644714
-   - 0.00239321216387167 rightMutuallyExclusivePlanesVar_f4_th0.5140086263418198
-   - 0.00149097569579188 rightMutuallyExclusivePlanesVar_f4_th0.5237068831920624
-   - 0.00140736300352079 rightMutuallyExclusivePlanesVar_f4_th0.5301724225282669
-   - 0.00132376033099591 rightMutuallyExclusivePlanesVar_f4_th0.536637932062149
-   - 0.00429989262201638 rightMutuallyExclusivePlanesVar_f4_th0.5431034564971924
-   - 0.00148632604181413 rightMutuallyExclusivePlanesVar_f4_th0.567887932062149
-   - 0.000529503 rightMutuallyExclusivePlanesVar_f4_th0.5786637961864471
-   - 0.0019229334312868 rightMutuallyExclusivePlanesVar_f4_th0.5829741358757019
-   - 9.208266334287279e-04 rightMutuallyExclusivePlanesVar_f4_th0.6023706793785095
-   - 2.9261938244207094e-04 rightMutuallyExclusivePlanesVar_f4_th0.6163793206214905
-   - 1.7998576181945853e-04 rightMutuallyExclusivePlanesVar_f4_th0.6228448152542114
-   - 1.3934246371849382e-04 rightMutuallyExclusivePlanesVar_f4_th0.6282327771186829
-   - 2.78688e-05 rightMutuallyExclusivePlanesVar_f4_th0.6346982717514038
-   - 2.90297e-05 rightMutuallyExclusivePlanesVar_f4_th0.6368534564971924
-   + 4.64486e-06 rightMutuallyExclusivePlanesVar_f4_th0.6422413793103456
-   + 1.9159659247145765e-04 rightMutuallyExclusivePlanesVar_f4_th0.64439657330513
-   + 0.00139343035800487 rightMutuallyExclusivePlanesVar_f4_th0.65625
-   + 0.000458671 rightMutuallyExclusivePlanesVar_f4_th0.682112067937851
-   + 0.00172437054817159 rightMutuallyExclusivePlanesVar_f4_th0.6875
-   + 0.00241528099068362 rightMutuallyExclusivePlanesVar_f4_th0.7036637961864471
-   + 0.00181146020537044 rightMutuallyExclusivePlanesVar_f4_th0.7209051847457886
-   + 0.00119834602782743 rightMutuallyExclusivePlanesVar_f4_th0.7316810488700867
-   + 0.00128195737128655 rightMutuallyExclusivePlanesVar_f4_th0.7381465435028076
-   + 0.00541580374065838 rightMutuallyExclusivePlanesVar_f4_th0.744612067937851
-   + 0.112095669047036 rightMutuallyExclusivePlanesVar_f4_th0.7683189809322357
-   - 0.040723138814869 rightMutuallyExclusivePlanesVar_f5_th0
-   - 0.0677892571207413 rightMutuallyExclusivePlanesVar_f5_th0.040909089148044586
-   - 0.0779958656565709 rightMutuallyExclusivePlanesVar_f5_th0.11818181723356247
-   - 0.0420041359148242 rightMutuallyExclusivePlanesVar_f5_th0.23181817680597305
-   - 0.0101652853080063 rightMutuallyExclusivePlanesVar_f5_th0.3181818202137947
-   - 0.0112396707835277 rightMutuallyExclusivePlanesVar_f5_th0.34545453637838364
-   - 0.00239669591927336 rightMutuallyExclusivePlanesVar_f5_th0.38181817531585693
-   - 0.0115495872522188 rightMutuallyExclusivePlanesVar_f5_th0.3909090906381607
-   - 0.00115702547563986 rightMutuallyExclusivePlanesVar_f5_th0.45000000298023224
-   - 9.9173450272938826e-04 rightMutuallyExclusivePlanesVar_f5_th0.459090918302536
-   - 0.0025 rightMutuallyExclusivePlanesVar_f5_th0.4681818187236786
-   + 2.06612e-05 rightMutuallyExclusivePlanesVar_f5_th0.5181818181818181
-   + 3.0991710414567266e-04 rightMutuallyExclusivePlanesVar_f5_th0.5227272808551788
-   + 0.000991734 rightMutuallyExclusivePlanesVar_f5_th0.5363636314868927
-   + 3.5124155115441916e-04 rightMutuallyExclusivePlanesVar_f5_th0.5545454323291779
-   + 8.2644547312714931e-04 rightMutuallyExclusivePlanesVar_f5_th0.5590909123420715
-   + 0.000475206 rightMutuallyExclusivePlanesVar_f5_th0.5681818127632141
-   + 0.00167355574359574 rightMutuallyExclusivePlanesVar_f5_th0.5727272629737854
-   + 0.00446281102570628 rightMutuallyExclusivePlanesVar_f5_th0.5863636434078217
-   + 0.223037188013723 rightMutuallyExclusivePlanesVar_f5_th0.6136363744735718
-   - 0.0147830338349133 rightMutuallyExclusivePlanesVar_f6_th0
-   - 5.21134e-05 rightMutuallyExclusivePlanesVar_f6_th0.08287596330046654
-   - 2.0242875098676425e-04 rightMutuallyExclusivePlanesVar_f6_th0.08342481032013893
-   - 0.00167726801170678 rightMutuallyExclusivePlanesVar_f6_th0.0856201983988285
-   - 0.000348226 rightMutuallyExclusivePlanesVar_f6_th0.1119648739695549
-   + 7.53083e-06 rightMutuallyExclusivePlanesVar_f6_th0.13062568605927544
-   + 1.5182167505879433e-04 rightMutuallyExclusivePlanesVar_f6_th0.13336992263793945
-   + 1.3013275646042537e-04 rightMutuallyExclusivePlanesVar_f6_th0.14324917644262314
-   + 0.000145496 rightMutuallyExclusivePlanesVar_f6_th0.1476399526000023
-   + 3.4852729087628454e-04 rightMutuallyExclusivePlanesVar_f6_th0.15148188918828964
-   + 1.9519917401187323e-04 rightMutuallyExclusivePlanesVar_f6_th0.15861690789461136
-   + 8.539968868805372e-04 rightMutuallyExclusivePlanesVar_f6_th0.16190999001264572
-   + 2.4249345656391155e-04 rightMutuallyExclusivePlanesVar_f6_th0.1734357848763466
-   + 0.00226256400063784 rightMutuallyExclusivePlanesVar_f6_th0.17618002742528915
-   + 6.7506372355932188e-04 rightMutuallyExclusivePlanesVar_f6_th0.19648737460374832
-   + 0.0456245212149253 rightMutuallyExclusivePlanesVar_f6_th0.20142699778079987
-   + 0.00428625152226255 rightMutuallyExclusivePlanesVar_f6_th0.3556531220674515
-   + 0.00103383255724718 rightMutuallyExclusivePlanesVar_f6_th0.36498352885246277
-   + 0.00531376202769171 rightMutuallyExclusivePlanesVar_f6_th0.36717891693115234
-   + 0.0152469337314865 rightMutuallyExclusivePlanesVar_f6_th0.3781558722257614
-   + 0.6792935709448039 rightMutuallyExclusivePlanesVar_f6_th0.4072447866201401
-   + 0 rightMutuallyExclusivePlanesVar_f7_th0
-   + rightMutuallyExclusivePlanesVar_f7_th0.0
-   - 0.0472972986034619 rightMutuallyExclusivePlanesVar_f8_th0
-   - 0.0228268776695775 rightMutuallyExclusivePlanesVar_f8_th0.09459459781646729
-   - 0.00931336907595075 rightMutuallyExclusivePlanesVar_f8_th0.1621621549129486
-   - 0.00438276207016016 rightMutuallyExclusivePlanesVar_f8_th0.20270270109176636
-   - 0.00292183980726691 rightMutuallyExclusivePlanesVar_f8_th0.22972973436117172
-   - 0.00164353575386038 rightMutuallyExclusivePlanesVar_f8_th0.2567567527294159
-   + 1.8261487332467286e-04 rightMutuallyExclusivePlanesVar_f8_th0.2972972972972973
-   + 0.00273922579927628 rightMutuallyExclusivePlanesVar_f8_th0.31081080436706543
-   + 0.00602629756822999 rightMutuallyExclusivePlanesVar_f8_th0.3513513505458832
-   + 0.0131482787925542 rightMutuallyExclusivePlanesVar_f8_th0.3918918967247009
-   + 0.0438276062140595 rightMutuallyExclusivePlanesVar_f8_th0.44594593346118927
-   + 0.0146092106339875 rightMutuallyExclusivePlanesVar_f8_th0.5540540367364883
-   + 0.016070123231263 rightMutuallyExclusivePlanesVar_f8_th0.5810810774564743
-   + 0.00858290187628115 rightMutuallyExclusivePlanesVar_f8_th0.6081081032752991
-   + 0.0483930009921332 rightMutuallyExclusivePlanesVar_f8_th0.6216216087341309
-   + 0.1999634422465261 rightMutuallyExclusivePlanesVar_f8_th0.6891891956329346
-   + 0.1402483861580474 rightMutuallyExclusivePlanesVar_f8_th0.8918918669223785
-   + 2.350033144147769 Constant
+  - 7.3419415628863045e-04 rightMutuallyExclusivePlanesVar_f0_th0
+   + 0.000399949 rightMutuallyExclusivePlanesVar_f0_th0.027096017351054203
+   + 0.00106282905340596 rightMutuallyExclusivePlanesVar_f0_th0.04709474369883537
+   + 0.00124580694417827 rightMutuallyExclusivePlanesVar_f0_th0.06534229964017868
+   + 1.6824587638127183e-04 rightMutuallyExclusivePlanesVar_f0_th0.0791400857269764
+   + 9.6450229375580343e-04 rightMutuallyExclusivePlanesVar_f0_th0.08073211461305618
+   + 0.000765077 rightMutuallyExclusivePlanesVar_f0_th0.08907450735569
+   + 0.000201955 rightMutuallyExclusivePlanesVar_f0_th0.09496655687689781
+   + 0.000332019 rightMutuallyExclusivePlanesVar_f0_th0.09643839299678802
+   + 0.00394736880009772 rightMutuallyExclusivePlanesVar_f0_th0.09879248961806297
+   + 0.00219774518309056 rightMutuallyExclusivePlanesVar_f0_th0.12242572382092476
+   + 0.0402168367177674 rightMutuallyExclusivePlanesVar_f0_th0.13332924246788025
+   + 0.0427593081872566 rightMutuallyExclusivePlanesVar_f0_th0.2540372759103775
+   + 1.7244511467810753e-04 rightMutuallyExclusivePlanesVar_f0_th0.3341166079044342
+   + 4.1348144859752745e-04 rightMutuallyExclusivePlanesVar_f0_th0.3343973159790039
+   + 3.3142445978992519e-04 rightMutuallyExclusivePlanesVar_f0_th0.33506934344768524
+   + 7.6359848277257614e-04 rightMutuallyExclusivePlanesVar_f0_th0.3356069475412369
+   + 3.47492e-05 rightMutuallyExclusivePlanesVar_f0_th0.33684203028678894
+   + 0.000560519 rightMutuallyExclusivePlanesVar_f0_th0.3368981182575226
+   + 0.00455060611291914 rightMutuallyExclusivePlanesVar_f0_th0.3378014415502548
+   + 0.00273123975253103 rightMutuallyExclusivePlanesVar_f0_th0.34504014253616333
+   + 0.00447861896103338 rightMutuallyExclusivePlanesVar_f0_th0.3493066728115082
+   + 6.30522e-05 rightMutuallyExclusivePlanesVar_f0_th0.35618312656879425
+   + 0.00166477640786054 rightMutuallyExclusivePlanesVar_f0_th0.3562789112329483
+   + 4.6209687849571579e-04 rightMutuallyExclusivePlanesVar_f0_th0.35879792273044586
+   + 0.8360539085433657 rightMutuallyExclusivePlanesVar_f0_th0.35949374735355377
+   - 0.00166282035581237 rightMutuallyExclusivePlanesVar_f1_th0
+   - 8.5132e-07 rightMutuallyExclusivePlanesVar_f1_th0.03974596597254276
+   - 1.87672e-08 rightMutuallyExclusivePlanesVar_f1_th0.040300214663147926
+   - 2.22187e-07 rightMutuallyExclusivePlanesVar_f1_th0.040319718420505524
+   + 0.00353900654507888 rightMutuallyExclusivePlanesVar_f1_th0.04079108517758657
+   + 3.97889e-05 rightMutuallyExclusivePlanesVar_f1_th0.10028063505887985
+   + 5.7979947123837187e-04 rightMutuallyExclusivePlanesVar_f1_th0.10061411932110786
+   + 3.9603042904006423e-04 rightMutuallyExclusivePlanesVar_f1_th0.10527825355529785
+   + 0.00121338423203842 rightMutuallyExclusivePlanesVar_f1_th0.10827904939651489
+   + 0.00213529875500503 rightMutuallyExclusivePlanesVar_f1_th0.11673849821090698
+   + 0.00451386095954487 rightMutuallyExclusivePlanesVar_f1_th0.12969163805246353
+   + 0.00147060853174752 rightMutuallyExclusivePlanesVar_f1_th0.15222343802452087
+   + 0.0049410815242167 rightMutuallyExclusivePlanesVar_f1_th0.15863750129938126
+   + 8.449502645820027e-04 rightMutuallyExclusivePlanesVar_f1_th0.17800937592983246
+   + 0.00158332308365896 rightMutuallyExclusivePlanesVar_f1_th0.18105444312095642
+   + 4.85345e-05 rightMutuallyExclusivePlanesVar_f1_th0.1865893453359604
+   + 0.00248838986927277 rightMutuallyExclusivePlanesVar_f1_th0.1867556944489479
+   + 0.8962876852457781 rightMutuallyExclusivePlanesVar_f1_th0.19504430890083313
+   - 0.00597855432506808 rightMutuallyExclusivePlanesVar_f2_th0
+   + 0.00287850313382592 rightMutuallyExclusivePlanesVar_f2_th0.07732111176818447
+   + 0.0014809318474783 rightMutuallyExclusivePlanesVar_f2_th0.13097279518842697
+   + 0.0012655655238901 rightMutuallyExclusivePlanesVar_f2_th0.1433471292257309
+   + 7.4853361599458695e-04 rightMutuallyExclusivePlanesVar_f2_th0.15232111513614655
+   + 4.5395522410415778e-04 rightMutuallyExclusivePlanesVar_f2_th0.15715552866458893
+   + 4.7462213867124816e-04 rightMutuallyExclusivePlanesVar_f2_th0.15994973480701447
+   + 0.00409165135127026 rightMutuallyExclusivePlanesVar_f2_th0.1627735048532486
+   + 0.0148517703497288 rightMutuallyExclusivePlanesVar_f2_th0.1840626820921898
+   + 0.0326920082300923 rightMutuallyExclusivePlanesVar_f2_th0.2393258437514305
+   + 0.0347994537607735 rightMutuallyExclusivePlanesVar_f2_th0.3200916647911072
+   + 0.0524075712210701 rightMutuallyExclusivePlanesVar_f2_th0.3834860920906067
+   + 0.0744525633429929 rightMutuallyExclusivePlanesVar_f2_th0.4596097022294998
+   + 0.1123100231426881 rightMutuallyExclusivePlanesVar_f2_th0.5469987988471985
+   + 0.1986295794067554 rightMutuallyExclusivePlanesVar_f2_th0.654302179813385
+   + 0.0486414479796629 rightMutuallyExclusivePlanesVar_f2_th0.8063867688179016
+   + 0.2711581505197006 rightMutuallyExclusivePlanesVar_f2_th0.839015394449234
+   - 0.3880185183136697 rightMutuallyExclusivePlanesVar_f3_th0
+   - 0.042515249797299 rightMutuallyExclusivePlanesVar_f3_th0.2571883201599121
+   - 0.00154263548315425 rightMutuallyExclusivePlanesVar_f3_th0.29213546216487885
+   - 0.1226416620815703 rightMutuallyExclusivePlanesVar_f3_th0.2934424430131912
+   - 0.123929720035616 rightMutuallyExclusivePlanesVar_f3_th0.4087396264076233
+   - 0.0310875077667494 rightMutuallyExclusivePlanesVar_f3_th0.5652346909046173
+   - 0.0698499456828918 rightMutuallyExclusivePlanesVar_f3_th0.6186498403549194
+   + 0.0137027525147405 rightMutuallyExclusivePlanesVar_f3_th0.882941243323105
+   - 0.285818801729112 rightMutuallyExclusivePlanesVar_f4_th0
+   - 0.00494130725500502 rightMutuallyExclusivePlanesVar_f4_th0.2475922331213951
+   - 0.0717913038360533 rightMutuallyExclusivePlanesVar_f4_th0.2530745416879654
+   - 0.00888274361320511 rightMutuallyExclusivePlanesVar_f4_th0.3420506715774536
+   - 0.00153461201066231 rightMutuallyExclusivePlanesVar_f4_th0.35464513301849365
+   - 0.00968530446094362 rightMutuallyExclusivePlanesVar_f4_th0.3568676859140396
+   - 0.108736748158251 rightMutuallyExclusivePlanesVar_f4_th0.37124018371105194
+   + 0.0894053417329615 rightMutuallyExclusivePlanesVar_f4_th0.7009927396651354
+   - 0.1715216696365819 rightMutuallyExclusivePlanesVar_f5_th0
+   - 0.0253947877306056 rightMutuallyExclusivePlanesVar_f5_th0.26479703187942505
+   - 0.00379048979857603 rightMutuallyExclusivePlanesVar_f5_th0.3501214534044266
+   - 5.4273266089291915e-04 rightMutuallyExclusivePlanesVar_f5_th0.3697996735572815
+   - 0.00224578529402025 rightMutuallyExclusivePlanesVar_f5_th0.3729969561100006
+   - 0.00315984154169811 rightMutuallyExclusivePlanesVar_f5_th0.3877960294485092
+   - 4.8030031562016772e-04 rightMutuallyExclusivePlanesVar_f5_th0.4171677976846695
+   - 9.49572e-05 rightMutuallyExclusivePlanesVar_f5_th0.42388615012168884
+   - 7.8268032617084327e-04 rightMutuallyExclusivePlanesVar_f5_th0.4253869354724884
+   - 1.7122963708872448e-04 rightMutuallyExclusivePlanesVar_f5_th0.4431868940591812
+   + 0.2956397374333037 rightMutuallyExclusivePlanesVar_f5_th0.45627236833750695
+   - 0.3234343788467623 rightMutuallyExclusivePlanesVar_f6_th0
+   - 0.00795498569083019 rightMutuallyExclusivePlanesVar_f6_th0.42845749855041504
+   - 0.00201876989970566 rightMutuallyExclusivePlanesVar_f6_th0.4549831598997116
+   - 1.1167318779326321e-04 rightMutuallyExclusivePlanesVar_f6_th0.4625789076089859
+   - 0.000147844 rightMutuallyExclusivePlanesVar_f6_th0.4630121737718582
+   - 0.00491729815736446 rightMutuallyExclusivePlanesVar_f6_th0.46358802914619446
+   - 2.88989e-05 rightMutuallyExclusivePlanesVar_f6_th0.4844895005226135
+   - 0.000247619 rightMutuallyExclusivePlanesVar_f6_th0.48462440073490143
+   - 0.000347105 rightMutuallyExclusivePlanesVar_f6_th0.4857873320579529
+   - 3.6974687353989906e-04 rightMutuallyExclusivePlanesVar_f6_th0.4874393343925476
+   - 0.0031720857767656 rightMutuallyExclusivePlanesVar_f6_th0.48922839760780334
+   - 4.6777632437243304e-04 rightMutuallyExclusivePlanesVar_f6_th0.5061003267765045
+   - 6.0799577570224816e-04 rightMutuallyExclusivePlanesVar_f6_th0.508878767490387
+   - 2.6274119400661149e-04 rightMutuallyExclusivePlanesVar_f6_th0.5126359164714813
+   - 1.18112e-05 rightMutuallyExclusivePlanesVar_f6_th0.5143159925937653
+   - 0.00196249521358145 rightMutuallyExclusivePlanesVar_f6_th0.5143923759460449
+   - 0.00400921162035571 rightMutuallyExclusivePlanesVar_f6_th0.5283508598804474
+   + 0.00343751487383095 rightMutuallyExclusivePlanesVar_f6_th0.5916691954583486
+   + 0.024987721370032 rightMutuallyExclusivePlanesVar_f6_th0.6502995193004608
+   + 0.1383088096937694 rightMutuallyExclusivePlanesVar_f6_th0.760267049074173
+   - 0.2940121821579492 rightMutuallyExclusivePlanesVar_f7_th0
+   - 0.0122243531799868 rightMutuallyExclusivePlanesVar_f7_th0.41285035014152527
+   - 0.0101710088288181 rightMutuallyExclusivePlanesVar_f7_th0.46164973080158234
+   + 0.00319616439608531 rightMutuallyExclusivePlanesVar_f7_th0.5625011503692718
+   + 0.1882090790321252 rightMutuallyExclusivePlanesVar_f7_th0.6190357804298401
+   - 0.0424715190807773 rightMutuallyExclusivePlanesVar_f8_th0
+   - 0.0124954675209539 rightMutuallyExclusivePlanesVar_f8_th0.041305555030703545
+   - 2.7494769204505776e-04 rightMutuallyExclusivePlanesVar_f8_th0.0541333332657814
+   - 0.00664956273109191 rightMutuallyExclusivePlanesVar_f8_th0.054419444873929024
+   - 0.0140857365547717 rightMutuallyExclusivePlanesVar_f8_th0.061391666531562805
+   - 0.00326627120623535 rightMutuallyExclusivePlanesVar_f8_th0.07651111111044884
+   - 0.0138059622193905 rightMutuallyExclusivePlanesVar_f8_th0.08008888736367226
+   - 8.6480620370643635e-04 rightMutuallyExclusivePlanesVar_f8_th0.0955333337187767
+   - 0.00640210599711166 rightMutuallyExclusivePlanesVar_f8_th0.09651888906955719
+   - 0.00419058227921687 rightMutuallyExclusivePlanesVar_f8_th0.10388500243425369
+   - 0.00609499295763063 rightMutuallyExclusivePlanesVar_f8_th0.1087755560874939
+   - 0.00112191613565474 rightMutuallyExclusivePlanesVar_f8_th0.11599055305123329
+   - 0.0360286719064069 rightMutuallyExclusivePlanesVar_f8_th0.11733222007751465
+   - 0.0188809971280867 rightMutuallyExclusivePlanesVar_f8_th0.16298333555459976
+   - 0.00144194204121002 rightMutuallyExclusivePlanesVar_f8_th0.1893077716231346
+   - 0.00854733873917307 rightMutuallyExclusivePlanesVar_f8_th0.19140110909938812
+   - 0.0051971947955247 rightMutuallyExclusivePlanesVar_f8_th0.2040816694498062
+   - 8.5277066367078769e-04 rightMutuallyExclusivePlanesVar_f8_th0.21203555166721344
+   - 0.0131468654134744 rightMutuallyExclusivePlanesVar_f8_th0.21335944533348083
+   - 0.00150795247496595 rightMutuallyExclusivePlanesVar_f8_th0.234507218003273
+   - 0.00186877164901429 rightMutuallyExclusivePlanesVar_f8_th0.23702888935804367
+   - 0.0123631121214664 rightMutuallyExclusivePlanesVar_f8_th0.24018388986587524
+   - 0.0141906499120058 rightMutuallyExclusivePlanesVar_f8_th0.26197388768196106
+   - 0.000164308 rightMutuallyExclusivePlanesVar_f8_th0.28935833275318146
+   - 0.00113419185757981 rightMutuallyExclusivePlanesVar_f8_th0.28969332575798035
+   - 0.00453129508006843 rightMutuallyExclusivePlanesVar_f8_th0.2920183390378952
+   - 4.8119468552100531e-04 rightMutuallyExclusivePlanesVar_f8_th0.3015383332967758
+   - 0.0230310814947673 rightMutuallyExclusivePlanesVar_f8_th0.30257222056388855
+   - 0.0183188878085885 rightMutuallyExclusivePlanesVar_f8_th0.3590305596590042
+   - 0.0043929364852596 rightMutuallyExclusivePlanesVar_f8_th0.42267611622810364
+   - 0.00817135501236043 rightMutuallyExclusivePlanesVar_f8_th0.4443711191415787
+   + 0.2164420544444445 rightMutuallyExclusivePlanesVar_f8_th0.5347666666666666
+   - 0.1099796031436439 rightMutuallyExclusivePlanesVar_f9_th0
+   + 0.0065135774391784 rightMutuallyExclusivePlanesVar_f9_th0.3316317281920472
+   + 0.00454961587991237 rightMutuallyExclusivePlanesVar_f9_th0.4123384654521942
+   + 9.0235227328619438e-04 rightMutuallyExclusivePlanesVar_f9_th0.43681344389915466
+   + 0.093223336145124 rightMutuallyExclusivePlanesVar_f9_th0.44101886451244354
+   + 0.3415272650220486 rightMutuallyExclusivePlanesVar_f9_th0.6559600830078125
+   + 2.549972167386327 Constant
 Subject To
- root_constr_y_t401280: y0_t401280 = 1
- flow_0_t401280: y0_t401280 - y1_t401280 - y10_t401280 = 0
- flow_1_t401280: y1_t401280 - y2_t401280 - y3_t401280 = 0
- flow_3_t401280: y3_t401280 - y4_t401280 - y5_t401280 = 0
- flow_5_t401280: y5_t401280 - y6_t401280 - y7_t401280 = 0
- flow_7_t401280: y7_t401280 - y8_t401280 - y9_t401280 = 0
- flow_10_t401280: y10_t401280 - y11_t401280 - y18_t401280 = 0
- flow_11_t401280: y11_t401280 - y12_t401280 - y13_t401280 = 0
- flow_13_t401280: y13_t401280 - y14_t401280 - y15_t401280 = 0
- flow_15_t401280: y15_t401280 - y16_t401280 - y17_t401280 = 0
- root_constr_y_t401281: y0_t401281 = 1
- flow_0_t401281: y0_t401281 - y1_t401281 - y6_t401281 = 0
- flow_1_t401281: y1_t401281 - y2_t401281 - y3_t401281 = 0
- flow_3_t401281: y3_t401281 - y4_t401281 - y5_t401281 = 0
- flow_6_t401281: y6_t401281 - y7_t401281 - y10_t401281 = 0
- flow_7_t401281: y7_t401281 - y8_t401281 - y9_t401281 = 0
- flow_10_t401281: y10_t401281 - y11_t401281 - y16_t401281 = 0
- flow_11_t401281: y11_t401281 - y12_t401281 - y13_t401281 = 0
- flow_13_t401281: y13_t401281 - y14_t401281 - y15_t401281 = 0
- root_constr_y_t401282: y0_t401282 = 1
- flow_0_t401282: y0_t401282 - y1_t401282 - y10_t401282 = 0
- flow_1_t401282: y1_t401282 - y2_t401282 - y3_t401282 = 0
- flow_3_t401282: y3_t401282 - y4_t401282 - y5_t401282 = 0
- flow_5_t401282: y5_t401282 - y6_t401282 - y7_t401282 = 0
- flow_7_t401282: y7_t401282 - y8_t401282 - y9_t401282 = 0
- flow_10_t401282: y10_t401282 - y11_t401282 - y18_t401282 = 0
- flow_11_t401282: y11_t401282 - y12_t401282 - y17_t401282 = 0
- flow_12_t401282: y12_t401282 - y13_t401282 - y16_t401282 = 0
- flow_13_t401282: y13_t401282 - y14_t401282 - y15_t401282 = 0
- root_constr_y_t401283: y0_t401283 = 1
- flow_0_t401283: y0_t401283 - y1_t401283 - y10_t401283 = 0
- flow_1_t401283: y1_t401283 - y2_t401283 - y3_t401283 = 0
- flow_3_t401283: y3_t401283 - y4_t401283 - y9_t401283 = 0
- flow_4_t401283: y4_t401283 - y5_t401283 - y8_t401283 = 0
- flow_5_t401283: y5_t401283 - y6_t401283 - y7_t401283 = 0
- flow_10_t401283: y10_t401283 - y11_t401283 - y18_t401283 = 0
- flow_11_t401283: y11_t401283 - y12_t401283 - y13_t401283 = 0
- flow_13_t401283: y13_t401283 - y14_t401283 - y15_t401283 = 0
- flow_15_t401283: y15_t401283 - y16_t401283 - y17_t401283 = 0
- flow_18_t401283: y18_t401283 - y19_t401283 - y20_t401283 = 0
- root_constr_y_t401284: y0_t401284 = 1
- flow_0_t401284: y0_t401284 - y1_t401284 - y10_t401284 = 0
- flow_1_t401284: y1_t401284 - y2_t401284 - y9_t401284 = 0
- flow_2_t401284: y2_t401284 - y3_t401284 - y6_t401284 = 0
- flow_3_t401284: y3_t401284 - y4_t401284 - y5_t401284 = 0
- flow_6_t401284: y6_t401284 - y7_t401284 - y8_t401284 = 0
- flow_10_t401284: y10_t401284 - y11_t401284 - y14_t401284 = 0
- flow_11_t401284: y11_t401284 - y12_t401284 - y13_t401284 = 0
- flow_14_t401284: y14_t401284 - y15_t401284 - y20_t401284 = 0
- flow_15_t401284: y15_t401284 - y16_t401284 - y19_t401284 = 0
- flow_16_t401284: y16_t401284 - y17_t401284 - y18_t401284 = 0
- flow_20_t401284: y20_t401284 - y21_t401284 - y24_t401284 = 0
- flow_21_t401284: y21_t401284 - y22_t401284 - y23_t401284 = 0
- flow_24_t401284: y24_t401284 - y25_t401284 - y26_t401284 = 0
- root_constr_y_t401285: y0_t401285 = 1
- flow_0_t401285: y0_t401285 - y1_t401285 - y16_t401285 = 0
- flow_1_t401285: y1_t401285 - y2_t401285 - y15_t401285 = 0
- flow_2_t401285: y2_t401285 - y3_t401285 - y8_t401285 = 0
- flow_3_t401285: y3_t401285 - y4_t401285 - y5_t401285 = 0
- flow_5_t401285: y5_t401285 - y6_t401285 - y7_t401285 = 0
- flow_8_t401285: y8_t401285 - y9_t401285 - y12_t401285 = 0
- flow_9_t401285: y9_t401285 - y10_t401285 - y11_t401285 = 0
- flow_12_t401285: y12_t401285 - y13_t401285 - y14_t401285 = 0
- flow_16_t401285: y16_t401285 - y17_t401285 - y18_t401285 = 0
- flow_18_t401285: y18_t401285 - y19_t401285 - y22_t401285 = 0
- flow_19_t401285: y19_t401285 - y20_t401285 - y21_t401285 = 0
- flow_22_t401285: y22_t401285 - y23_t401285 - y26_t401285 = 0
- flow_23_t401285: y23_t401285 - y24_t401285 - y25_t401285 = 0
- root_constr_y_t401286: y0_t401286 = 1
- flow_0_t401286: y0_t401286 - y1_t401286 - y2_t401286 = 0
- flow_2_t401286: y2_t401286 - y3_t401286 - y14_t401286 = 0
- flow_3_t401286: y3_t401286 - y4_t401286 - y9_t401286 = 0
- flow_4_t401286: y4_t401286 - y5_t401286 - y6_t401286 = 0
- flow_6_t401286: y6_t401286 - y7_t401286 - y8_t401286 = 0
- flow_9_t401286: y9_t401286 - y10_t401286 - y13_t401286 = 0
- flow_10_t401286: y10_t401286 - y11_t401286 - y12_t401286 = 0
- flow_14_t401286: y14_t401286 - y15_t401286 - y18_t401286 = 0
- flow_15_t401286: y15_t401286 - y16_t401286 - y17_t401286 = 0
- flow_18_t401286: y18_t401286 - y19_t401286 - y22_t401286 = 0
- flow_19_t401286: y19_t401286 - y20_t401286 - y21_t401286 = 0
- root_constr_y_t401287: y0_t401287 = 1
- flow_0_t401287: y0_t401287 - y1_t401287 - y12_t401287 = 0
- flow_1_t401287: y1_t401287 - y2_t401287 - y3_t401287 = 0
- flow_3_t401287: y3_t401287 - y4_t401287 - y9_t401287 = 0
- flow_4_t401287: y4_t401287 - y5_t401287 - y8_t401287 = 0
- flow_5_t401287: y5_t401287 - y6_t401287 - y7_t401287 = 0
- flow_9_t401287: y9_t401287 - y10_t401287 - y11_t401287 = 0
- flow_12_t401287: y12_t401287 - y13_t401287 - y18_t401287 = 0
- flow_13_t401287: y13_t401287 - y14_t401287 - y15_t401287 = 0
- flow_15_t401287: y15_t401287 - y16_t401287 - y17_t401287 = 0
- flow_18_t401287: y18_t401287 - y19_t401287 - y22_t401287 = 0
- flow_19_t401287: y19_t401287 - y20_t401287 - y21_t401287 = 0
- root_constr_y_t401288: y0_t401288 = 1
- flow_0_t401288: y0_t401288 - y1_t401288 - y14_t401288 = 0
- flow_1_t401288: y1_t401288 - y2_t401288 - y9_t401288 = 0
- flow_2_t401288: y2_t401288 - y3_t401288 - y4_t401288 = 0
- flow_4_t401288: y4_t401288 - y5_t401288 - y6_t401288 = 0
- flow_6_t401288: y6_t401288 - y7_t401288 - y8_t401288 = 0
- flow_9_t401288: y9_t401288 - y10_t401288 - y11_t401288 = 0
- flow_11_t401288: y11_t401288 - y12_t401288 - y13_t401288 = 0
- flow_14_t401288: y14_t401288 - y15_t401288 - y16_t401288 = 0
- flow_16_t401288: y16_t401288 - y17_t401288 - y22_t401288 = 0
- flow_17_t401288: y17_t401288 - y18_t401288 - y19_t401288 = 0
- flow_19_t401288: y19_t401288 - y20_t401288 - y21_t401288 = 0
- flow_22_t401288: y22_t401288 - y23_t401288 - y26_t401288 = 0
- flow_23_t401288: y23_t401288 - y24_t401288 - y25_t401288 = 0
- root_constr_y_t401289: y0_t401289 = 1
- flow_0_t401289: y0_t401289 - y1_t401289 - y12_t401289 = 0
- flow_1_t401289: y1_t401289 - y2_t401289 - y11_t401289 = 0
- flow_2_t401289: y2_t401289 - y3_t401289 - y6_t401289 = 0
- flow_3_t401289: y3_t401289 - y4_t401289 - y5_t401289 = 0
- flow_6_t401289: y6_t401289 - y7_t401289 - y10_t401289 = 0
- flow_7_t401289: y7_t401289 - y8_t401289 - y9_t401289 = 0
- flow_12_t401289: y12_t401289 - y13_t401289 - y14_t401289 = 0
- flow_14_t401289: y14_t401289 - y15_t401289 - y16_t401289 = 0
- flow_16_t401289: y16_t401289 - y17_t401289 - y18_t401289 = 0
- root_constr_y_t401290: y0_t401290 = 1
- flow_0_t401290: y0_t401290 - y1_t401290 - y16_t401290 = 0
- flow_1_t401290: y1_t401290 - y2_t401290 - y11_t401290 = 0
- flow_2_t401290: y2_t401290 - y3_t401290 - y8_t401290 = 0
- flow_3_t401290: y3_t401290 - y4_t401290 - y7_t401290 = 0
- flow_4_t401290: y4_t401290 - y5_t401290 - y6_t401290 = 0
- flow_8_t401290: y8_t401290 - y9_t401290 - y10_t401290 = 0
- flow_11_t401290: y11_t401290 - y12_t401290 - y13_t401290 = 0
- flow_13_t401290: y13_t401290 - y14_t401290 - y15_t401290 = 0
- flow_16_t401290: y16_t401290 - y17_t401290 - y18_t401290 = 0
- flow_18_t401290: y18_t401290 - y19_t401290 - y22_t401290 = 0
- flow_19_t401290: y19_t401290 - y20_t401290 - y21_t401290 = 0
- root_constr_y_t401291: y0_t401291 = 1
- flow_0_t401291: y0_t401291 - y1_t401291 - y14_t401291 = 0
- flow_1_t401291: y1_t401291 - y2_t401291 - y5_t401291 = 0
- flow_2_t401291: y2_t401291 - y3_t401291 - y4_t401291 = 0
- flow_5_t401291: y5_t401291 - y6_t401291 - y7_t401291 = 0
- flow_7_t401291: y7_t401291 - y8_t401291 - y11_t401291 = 0
- flow_8_t401291: y8_t401291 - y9_t401291 - y10_t401291 = 0
- flow_11_t401291: y11_t401291 - y12_t401291 - y13_t401291 = 0
- flow_14_t401291: y14_t401291 - y15_t401291 - y16_t401291 = 0
- flow_16_t401291: y16_t401291 - y17_t401291 - y18_t401291 = 0
- root_constr_y_t401292: y0_t401292 = 1
- flow_0_t401292: y0_t401292 - y1_t401292 - y20_t401292 = 0
- flow_1_t401292: y1_t401292 - y2_t401292 - y9_t401292 = 0
- flow_2_t401292: y2_t401292 - y3_t401292 - y8_t401292 = 0
- flow_3_t401292: y3_t401292 - y4_t401292 - y5_t401292 = 0
- flow_5_t401292: y5_t401292 - y6_t401292 - y7_t401292 = 0
- flow_9_t401292: y9_t401292 - y10_t401292 - y15_t401292 = 0
- flow_10_t401292: y10_t401292 - y11_t401292 - y12_t401292 = 0
- flow_12_t401292: y12_t401292 - y13_t401292 - y14_t401292 = 0
- flow_15_t401292: y15_t401292 - y16_t401292 - y17_t401292 = 0
- flow_17_t401292: y17_t401292 - y18_t401292 - y19_t401292 = 0
- root_constr_y_t401293: y0_t401293 = 1
- flow_0_t401293: y0_t401293 - y1_t401293 - y18_t401293 = 0
- flow_1_t401293: y1_t401293 - y2_t401293 - y9_t401293 = 0
- flow_2_t401293: y2_t401293 - y3_t401293 - y8_t401293 = 0
- flow_3_t401293: y3_t401293 - y4_t401293 - y7_t401293 = 0
- flow_4_t401293: y4_t401293 - y5_t401293 - y6_t401293 = 0
- flow_9_t401293: y9_t401293 - y10_t401293 - y17_t401293 = 0
- flow_10_t401293: y10_t401293 - y11_t401293 - y14_t401293 = 0
- flow_11_t401293: y11_t401293 - y12_t401293 - y13_t401293 = 0
- flow_14_t401293: y14_t401293 - y15_t401293 - y16_t401293 = 0
- root_constr_y_t401294: y0_t401294 = 1
- flow_0_t401294: y0_t401294 - y1_t401294 - y14_t401294 = 0
- flow_1_t401294: y1_t401294 - y2_t401294 - y3_t401294 = 0
- flow_3_t401294: y3_t401294 - y4_t401294 - y9_t401294 = 0
- flow_4_t401294: y4_t401294 - y5_t401294 - y8_t401294 = 0
- flow_5_t401294: y5_t401294 - y6_t401294 - y7_t401294 = 0
- flow_9_t401294: y9_t401294 - y10_t401294 - y13_t401294 = 0
- flow_10_t401294: y10_t401294 - y11_t401294 - y12_t401294 = 0
- flow_14_t401294: y14_t401294 - y15_t401294 - y16_t401294 = 0
- flow_16_t401294: y16_t401294 - y17_t401294 - y20_t401294 = 0
- flow_17_t401294: y17_t401294 - y18_t401294 - y19_t401294 = 0
- root_constr_y_t401295: y0_t401295 = 1
- flow_0_t401295: y0_t401295 - y1_t401295 - y14_t401295 = 0
- flow_1_t401295: y1_t401295 - y2_t401295 - y7_t401295 = 0
- flow_2_t401295: y2_t401295 - y3_t401295 - y6_t401295 = 0
- flow_3_t401295: y3_t401295 - y4_t401295 - y5_t401295 = 0
- flow_7_t401295: y7_t401295 - y8_t401295 - y9_t401295 = 0
- flow_9_t401295: y9_t401295 - y10_t401295 - y13_t401295 = 0
- flow_10_t401295: y10_t401295 - y11_t401295 - y12_t401295 = 0
- flow_14_t401295: y14_t401295 - y15_t401295 - y18_t401295 = 0
- flow_15_t401295: y15_t401295 - y16_t401295 - y17_t401295 = 0
- flow_18_t401295: y18_t401295 - y19_t401295 - y22_t401295 = 0
- flow_19_t401295: y19_t401295 - y20_t401295 - y21_t401295 = 0
- root_constr_y_t401296: y0_t401296 = 1
- flow_0_t401296: y0_t401296 - y1_t401296 - y12_t401296 = 0
- flow_1_t401296: y1_t401296 - y2_t401296 - y11_t401296 = 0
- flow_2_t401296: y2_t401296 - y3_t401296 - y4_t401296 = 0
- flow_4_t401296: y4_t401296 - y5_t401296 - y8_t401296 = 0
- flow_5_t401296: y5_t401296 - y6_t401296 - y7_t401296 = 0
- flow_8_t401296: y8_t401296 - y9_t401296 - y10_t401296 = 0
- flow_12_t401296: y12_t401296 - y13_t401296 - y16_t401296 = 0
- flow_13_t401296: y13_t401296 - y14_t401296 - y15_t401296 = 0
- flow_16_t401296: y16_t401296 - y17_t401296 - y20_t401296 = 0
- flow_17_t401296: y17_t401296 - y18_t401296 - y19_t401296 = 0
- root_constr_y_t401297: y0_t401297 = 1
- flow_0_t401297: y0_t401297 - y1_t401297 - y16_t401297 = 0
- flow_1_t401297: y1_t401297 - y2_t401297 - y15_t401297 = 0
- flow_2_t401297: y2_t401297 - y3_t401297 - y10_t401297 = 0
- flow_3_t401297: y3_t401297 - y4_t401297 - y7_t401297 = 0
- flow_4_t401297: y4_t401297 - y5_t401297 - y6_t401297 = 0
- flow_7_t401297: y7_t401297 - y8_t401297 - y9_t401297 = 0
- flow_10_t401297: y10_t401297 - y11_t401297 - y12_t401297 = 0
- flow_12_t401297: y12_t401297 - y13_t401297 - y14_t401297 = 0
- root_constr_y_t401298: y0_t401298 = 1
- flow_0_t401298: y0_t401298 - y1_t401298 - y8_t401298 = 0
- flow_1_t401298: y1_t401298 - y2_t401298 - y3_t401298 = 0
- flow_3_t401298: y3_t401298 - y4_t401298 - y7_t401298 = 0
- flow_4_t401298: y4_t401298 - y5_t401298 - y6_t401298 = 0
- flow_8_t401298: y8_t401298 - y9_t401298 - y16_t401298 = 0
- flow_9_t401298: y9_t401298 - y10_t401298 - y15_t401298 = 0
- flow_10_t401298: y10_t401298 - y11_t401298 - y14_t401298 = 0
- flow_11_t401298: y11_t401298 - y12_t401298 - y13_t401298 = 0
- flow_16_t401298: y16_t401298 - y17_t401298 - y22_t401298 = 0
- flow_17_t401298: y17_t401298 - y18_t401298 - y19_t401298 = 0
- flow_19_t401298: y19_t401298 - y20_t401298 - y21_t401298 = 0
- root_constr_y_t401299: y0_t401299 = 1
- flow_0_t401299: y0_t401299 - y1_t401299 - y14_t401299 = 0
- flow_1_t401299: y1_t401299 - y2_t401299 - y13_t401299 = 0
- flow_2_t401299: y2_t401299 - y3_t401299 - y8_t401299 = 0
- flow_3_t401299: y3_t401299 - y4_t401299 - y7_t401299 = 0
- flow_4_t401299: y4_t401299 - y5_t401299 - y6_t401299 = 0
- flow_8_t401299: y8_t401299 - y9_t401299 - y10_t401299 = 0
- flow_10_t401299: y10_t401299 - y11_t401299 - y12_t401299 = 0
- flow_14_t401299: y14_t401299 - y15_t401299 - y18_t401299 = 0
- flow_15_t401299: y15_t401299 - y16_t401299 - y17_t401299 = 0
- flow_18_t401299: y18_t401299 - y19_t401299 - y20_t401299 = 0
- flow_20_t401299: y20_t401299 - y21_t401299 - y22_t401299 = 0
- rightMutuallyExclusivePlanesVar_f0_t2_v5: y6_t401282
-   + rightMutuallyExclusivePlanesVar_f0_th0.0860881507396698 <= 1
- rightPlanesDominatesLeftFlowConstr_t2_v5: y7_t401282
-   - rightMutuallyExclusivePlanesVar_f0_th0 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t2_v5: 1e-05 y6_t401282
-   + 0.0860881507396698 rightMutuallyExclusivePlanesVar_f0_th0
-   <= 0.0860881507396698
- rightPlanesDominatesLeftFlowConstr_eps_t2_v5: 1e-05 y7_t401282
-   - 0.0860881507396698 rightMutuallyExclusivePlanesVar_f0_th0.0860881507396698
-   <= 0
- rightPlanesOrderConstr_f0_th0.0860881507396698:
+ root_constr_y_t780: y0_t780 = 1
+ flow_0_t780: y0_t780 - y1_t780 - y8_t780 = 0
+ flow_1_t780: y1_t780 - y2_t780 - y5_t780 = 0
+ flow_2_t780: y2_t780 - y3_t780 - y4_t780 = 0
+ flow_5_t780: y5_t780 - y6_t780 - y7_t780 = 0
+ flow_8_t780: y8_t780 - y9_t780 - y12_t780 = 0
+ flow_9_t780: y9_t780 - y10_t780 - y11_t780 = 0
+ flow_12_t780: y12_t780 - y13_t780 - y14_t780 = 0
+ root_constr_y_t781: y0_t781 = 1
+ flow_0_t781: y0_t781 - y1_t781 - y8_t781 = 0
+ flow_1_t781: y1_t781 - y2_t781 - y5_t781 = 0
+ flow_2_t781: y2_t781 - y3_t781 - y4_t781 = 0
+ flow_5_t781: y5_t781 - y6_t781 - y7_t781 = 0
+ flow_8_t781: y8_t781 - y9_t781 - y12_t781 = 0
+ flow_9_t781: y9_t781 - y10_t781 - y11_t781 = 0
+ flow_12_t781: y12_t781 - y13_t781 - y14_t781 = 0
+ root_constr_y_t782: y0_t782 = 1
+ flow_0_t782: y0_t782 - y1_t782 - y8_t782 = 0
+ flow_1_t782: y1_t782 - y2_t782 - y5_t782 = 0
+ flow_2_t782: y2_t782 - y3_t782 - y4_t782 = 0
+ flow_5_t782: y5_t782 - y6_t782 - y7_t782 = 0
+ flow_8_t782: y8_t782 - y9_t782 - y12_t782 = 0
+ flow_9_t782: y9_t782 - y10_t782 - y11_t782 = 0
+ flow_12_t782: y12_t782 - y13_t782 - y14_t782 = 0
+ root_constr_y_t783: y0_t783 = 1
+ flow_0_t783: y0_t783 - y1_t783 - y8_t783 = 0
+ flow_1_t783: y1_t783 - y2_t783 - y5_t783 = 0
+ flow_2_t783: y2_t783 - y3_t783 - y4_t783 = 0
+ flow_5_t783: y5_t783 - y6_t783 - y7_t783 = 0
+ flow_8_t783: y8_t783 - y9_t783 - y12_t783 = 0
+ flow_9_t783: y9_t783 - y10_t783 - y11_t783 = 0
+ flow_12_t783: y12_t783 - y13_t783 - y14_t783 = 0
+ root_constr_y_t784: y0_t784 = 1
+ flow_0_t784: y0_t784 - y1_t784 - y8_t784 = 0
+ flow_1_t784: y1_t784 - y2_t784 - y5_t784 = 0
+ flow_2_t784: y2_t784 - y3_t784 - y4_t784 = 0
+ flow_5_t784: y5_t784 - y6_t784 - y7_t784 = 0
+ flow_8_t784: y8_t784 - y9_t784 - y12_t784 = 0
+ flow_9_t784: y9_t784 - y10_t784 - y11_t784 = 0
+ flow_12_t784: y12_t784 - y13_t784 - y14_t784 = 0
+ root_constr_y_t785: y0_t785 = 1
+ flow_0_t785: y0_t785 - y1_t785 - y8_t785 = 0
+ flow_1_t785: y1_t785 - y2_t785 - y5_t785 = 0
+ flow_2_t785: y2_t785 - y3_t785 - y4_t785 = 0
+ flow_5_t785: y5_t785 - y6_t785 - y7_t785 = 0
+ flow_8_t785: y8_t785 - y9_t785 - y12_t785 = 0
+ flow_9_t785: y9_t785 - y10_t785 - y11_t785 = 0
+ flow_12_t785: y12_t785 - y13_t785 - y14_t785 = 0
+ root_constr_y_t786: y0_t786 = 1
+ flow_0_t786: y0_t786 - y1_t786 - y8_t786 = 0
+ flow_1_t786: y1_t786 - y2_t786 - y5_t786 = 0
+ flow_2_t786: y2_t786 - y3_t786 - y4_t786 = 0
+ flow_5_t786: y5_t786 - y6_t786 - y7_t786 = 0
+ flow_8_t786: y8_t786 - y9_t786 - y12_t786 = 0
+ flow_9_t786: y9_t786 - y10_t786 - y11_t786 = 0
+ flow_12_t786: y12_t786 - y13_t786 - y14_t786 = 0
+ root_constr_y_t787: y0_t787 = 1
+ flow_0_t787: y0_t787 - y1_t787 - y8_t787 = 0
+ flow_1_t787: y1_t787 - y2_t787 - y5_t787 = 0
+ flow_2_t787: y2_t787 - y3_t787 - y4_t787 = 0
+ flow_5_t787: y5_t787 - y6_t787 - y7_t787 = 0
+ flow_8_t787: y8_t787 - y9_t787 - y12_t787 = 0
+ flow_9_t787: y9_t787 - y10_t787 - y11_t787 = 0
+ flow_12_t787: y12_t787 - y13_t787 - y14_t787 = 0
+ root_constr_y_t788: y0_t788 = 1
+ flow_0_t788: y0_t788 - y1_t788 - y8_t788 = 0
+ flow_1_t788: y1_t788 - y2_t788 - y5_t788 = 0
+ flow_2_t788: y2_t788 - y3_t788 - y4_t788 = 0
+ flow_5_t788: y5_t788 - y6_t788 - y7_t788 = 0
+ flow_8_t788: y8_t788 - y9_t788 - y12_t788 = 0
+ flow_9_t788: y9_t788 - y10_t788 - y11_t788 = 0
+ flow_12_t788: y12_t788 - y13_t788 - y14_t788 = 0
+ root_constr_y_t789: y0_t789 = 1
+ flow_0_t789: y0_t789 - y1_t789 - y8_t789 = 0
+ flow_1_t789: y1_t789 - y2_t789 - y5_t789 = 0
+ flow_2_t789: y2_t789 - y3_t789 - y4_t789 = 0
+ flow_5_t789: y5_t789 - y6_t789 - y7_t789 = 0
+ flow_8_t789: y8_t789 - y9_t789 - y10_t789 = 0
+ flow_10_t789: y10_t789 - y11_t789 - y12_t789 = 0
+ root_constr_y_t790: y0_t790 = 1
+ flow_0_t790: y0_t790 - y1_t790 - y8_t790 = 0
+ flow_1_t790: y1_t790 - y2_t790 - y5_t790 = 0
+ flow_2_t790: y2_t790 - y3_t790 - y4_t790 = 0
+ flow_5_t790: y5_t790 - y6_t790 - y7_t790 = 0
+ flow_8_t790: y8_t790 - y9_t790 - y12_t790 = 0
+ flow_9_t790: y9_t790 - y10_t790 - y11_t790 = 0
+ flow_12_t790: y12_t790 - y13_t790 - y14_t790 = 0
+ root_constr_y_t791: y0_t791 = 1
+ flow_0_t791: y0_t791 - y1_t791 - y8_t791 = 0
+ flow_1_t791: y1_t791 - y2_t791 - y5_t791 = 0
+ flow_2_t791: y2_t791 - y3_t791 - y4_t791 = 0
+ flow_5_t791: y5_t791 - y6_t791 - y7_t791 = 0
+ flow_8_t791: y8_t791 - y9_t791 - y12_t791 = 0
+ flow_9_t791: y9_t791 - y10_t791 - y11_t791 = 0
+ flow_12_t791: y12_t791 - y13_t791 - y14_t791 = 0
+ root_constr_y_t792: y0_t792 = 1
+ flow_0_t792: y0_t792 - y1_t792 - y8_t792 = 0
+ flow_1_t792: y1_t792 - y2_t792 - y5_t792 = 0
+ flow_2_t792: y2_t792 - y3_t792 - y4_t792 = 0
+ flow_5_t792: y5_t792 - y6_t792 - y7_t792 = 0
+ flow_8_t792: y8_t792 - y9_t792 - y12_t792 = 0
+ flow_9_t792: y9_t792 - y10_t792 - y11_t792 = 0
+ flow_12_t792: y12_t792 - y13_t792 - y14_t792 = 0
+ root_constr_y_t793: y0_t793 = 1
+ flow_0_t793: y0_t793 - y1_t793 - y8_t793 = 0
+ flow_1_t793: y1_t793 - y2_t793 - y5_t793 = 0
+ flow_2_t793: y2_t793 - y3_t793 - y4_t793 = 0
+ flow_5_t793: y5_t793 - y6_t793 - y7_t793 = 0
+ flow_8_t793: y8_t793 - y9_t793 - y12_t793 = 0
+ flow_9_t793: y9_t793 - y10_t793 - y11_t793 = 0
+ flow_12_t793: y12_t793 - y13_t793 - y14_t793 = 0
+ root_constr_y_t794: y0_t794 = 1
+ flow_0_t794: y0_t794 - y1_t794 - y8_t794 = 0
+ flow_1_t794: y1_t794 - y2_t794 - y5_t794 = 0
+ flow_2_t794: y2_t794 - y3_t794 - y4_t794 = 0
+ flow_5_t794: y5_t794 - y6_t794 - y7_t794 = 0
+ flow_8_t794: y8_t794 - y9_t794 - y12_t794 = 0
+ flow_9_t794: y9_t794 - y10_t794 - y11_t794 = 0
+ flow_12_t794: y12_t794 - y13_t794 - y14_t794 = 0
+ root_constr_y_t795: y0_t795 = 1
+ flow_0_t795: y0_t795 - y1_t795 - y8_t795 = 0
+ flow_1_t795: y1_t795 - y2_t795 - y5_t795 = 0
+ flow_2_t795: y2_t795 - y3_t795 - y4_t795 = 0
+ flow_5_t795: y5_t795 - y6_t795 - y7_t795 = 0
+ flow_8_t795: y8_t795 - y9_t795 - y12_t795 = 0
+ flow_9_t795: y9_t795 - y10_t795 - y11_t795 = 0
+ flow_12_t795: y12_t795 - y13_t795 - y14_t795 = 0
+ root_constr_y_t796: y0_t796 = 1
+ flow_0_t796: y0_t796 - y1_t796 - y8_t796 = 0
+ flow_1_t796: y1_t796 - y2_t796 - y5_t796 = 0
+ flow_2_t796: y2_t796 - y3_t796 - y4_t796 = 0
+ flow_5_t796: y5_t796 - y6_t796 - y7_t796 = 0
+ flow_8_t796: y8_t796 - y9_t796 - y12_t796 = 0
+ flow_9_t796: y9_t796 - y10_t796 - y11_t796 = 0
+ flow_12_t796: y12_t796 - y13_t796 - y14_t796 = 0
+ root_constr_y_t797: y0_t797 = 1
+ flow_0_t797: y0_t797 - y1_t797 - y8_t797 = 0
+ flow_1_t797: y1_t797 - y2_t797 - y5_t797 = 0
+ flow_2_t797: y2_t797 - y3_t797 - y4_t797 = 0
+ flow_5_t797: y5_t797 - y6_t797 - y7_t797 = 0
+ flow_8_t797: y8_t797 - y9_t797 - y12_t797 = 0
+ flow_9_t797: y9_t797 - y10_t797 - y11_t797 = 0
+ flow_12_t797: y12_t797 - y13_t797 - y14_t797 = 0
+ root_constr_y_t798: y0_t798 = 1
+ flow_0_t798: y0_t798 - y1_t798 - y8_t798 = 0
+ flow_1_t798: y1_t798 - y2_t798 - y5_t798 = 0
+ flow_2_t798: y2_t798 - y3_t798 - y4_t798 = 0
+ flow_5_t798: y5_t798 - y6_t798 - y7_t798 = 0
+ flow_8_t798: y8_t798 - y9_t798 - y12_t798 = 0
+ flow_9_t798: y9_t798 - y10_t798 - y11_t798 = 0
+ flow_12_t798: y12_t798 - y13_t798 - y14_t798 = 0
+ root_constr_y_t799: y0_t799 = 1
+ flow_0_t799: y0_t799 - y1_t799 - y8_t799 = 0
+ flow_1_t799: y1_t799 - y2_t799 - y5_t799 = 0
+ flow_2_t799: y2_t799 - y3_t799 - y4_t799 = 0
+ flow_5_t799: y5_t799 - y6_t799 - y7_t799 = 0
+ flow_8_t799: y8_t799 - y9_t799 - y12_t799 = 0
+ flow_9_t799: y9_t799 - y10_t799 - y11_t799 = 0
+ flow_12_t799: y12_t799 - y13_t799 - y14_t799 = 0
+ rightPlanesOrderConstr_f0_th0.027096017351054203:
    rightMutuallyExclusivePlanesVar_f0_th0
-   - rightMutuallyExclusivePlanesVar_f0_th0.0860881507396698 >= 0
- rightMutuallyExclusivePlanesVar_f0_t6_v6: y7_t401286
-   + rightMutuallyExclusivePlanesVar_f0_th0.16735537350177765 <= 1
- rightPlanesDominatesLeftFlowConstr_t6_v6: y8_t401286
-   - rightMutuallyExclusivePlanesVar_f0_th0.0860881507396698 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t6_v6: 1e-05 y7_t401286
-   + 0.0812672227621078 rightMutuallyExclusivePlanesVar_f0_th0.0860881507396698
-   <= 0.0812672227621078
- rightPlanesDominatesLeftFlowConstr_eps_t6_v6: 1e-05 y8_t401286
-   - 0.0812672227621078 rightMutuallyExclusivePlanesVar_f0_th0.16735537350177765
+   - rightMutuallyExclusivePlanesVar_f0_th0.027096017351054203 >= 0
+ rightMutuallyExclusivePlanesVar_f0_t5_v2: y3_t785
+   + rightMutuallyExclusivePlanesVar_f0_th0.04709474369883537 <= 1
+ rightPlanesDominatesLeftFlowConstr_t5_v2: y4_t785
+   - rightMutuallyExclusivePlanesVar_f0_th0.027096017351054203 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f0_t5_v2: 1e-05 y3_t785
+   + 0.0199987263477812 rightMutuallyExclusivePlanesVar_f0_th0.027096017351054203
+   <= 0.0199987263477812
+ rightPlanesDominatesLeftFlowConstr_eps_t5_v2: 1e-05 y4_t785
+   - 0.0199987263477812 rightMutuallyExclusivePlanesVar_f0_th0.04709474369883537
    <= 0
- rightPlanesOrderConstr_f0_th0.16735537350177765:
-   rightMutuallyExclusivePlanesVar_f0_th0.0860881507396698
-   - rightMutuallyExclusivePlanesVar_f0_th0.16735537350177765 >= 0
- rightMutuallyExclusivePlanesVar_f0_t9_v12: y13_t401289
-   + rightMutuallyExclusivePlanesVar_f0_th0.16919191926717758 <= 1
- rightPlanesDominatesLeftFlowConstr_t9_v12: y14_t401289
-   - rightMutuallyExclusivePlanesVar_f0_th0.16735537350177765 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t9_v12: 1e-05 y13_t401289
-   + 0.00183654576539993 rightMutuallyExclusivePlanesVar_f0_th0.16735537350177765
-   <= 0.00183654576539993
- rightPlanesDominatesLeftFlowConstr_eps_t9_v12: 1e-05 y14_t401289
-   - 0.00183654576539993 rightMutuallyExclusivePlanesVar_f0_th0.16919191926717758
+ rightPlanesOrderConstr_f0_th0.04709474369883537:
+   rightMutuallyExclusivePlanesVar_f0_th0.027096017351054203
+   - rightMutuallyExclusivePlanesVar_f0_th0.04709474369883537 >= 0
+ rightMutuallyExclusivePlanesVar_f0_t4_v5: y6_t784
+   + rightMutuallyExclusivePlanesVar_f0_th0.06534229964017868 <= 1
+ rightPlanesDominatesLeftFlowConstr_t4_v5: y7_t784
+   - rightMutuallyExclusivePlanesVar_f0_th0.04709474369883537 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f0_t4_v5: 1e-05 y6_t784
+   + 0.0182475559413433 rightMutuallyExclusivePlanesVar_f0_th0.04709474369883537
+   <= 0.0182475559413433
+ rightPlanesDominatesLeftFlowConstr_eps_t4_v5: 1e-05 y7_t784
+   - 0.0182475559413433 rightMutuallyExclusivePlanesVar_f0_th0.06534229964017868
    <= 0
- rightPlanesOrderConstr_f0_th0.16919191926717758:
-   rightMutuallyExclusivePlanesVar_f0_th0.16735537350177765
-   - rightMutuallyExclusivePlanesVar_f0_th0.16919191926717758 >= 0
- rightMutuallyExclusivePlanesVar_f0_t15_v19: y20_t401295
-   + rightMutuallyExclusivePlanesVar_f0_th0.17676767706871033 <= 1
- rightPlanesDominatesLeftFlowConstr_t15_v19: y21_t401295
-   - rightMutuallyExclusivePlanesVar_f0_th0.16919191926717758 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t15_v19: 1e-05 y20_t401295
-   + 0.00757575780153275 rightMutuallyExclusivePlanesVar_f0_th0.16919191926717758
-   <= 0.00757575780153275
- rightPlanesDominatesLeftFlowConstr_eps_t15_v19: 1e-05 y21_t401295
-   - 0.00757575780153275 rightMutuallyExclusivePlanesVar_f0_th0.17676767706871033
+ rightPlanesOrderConstr_f0_th0.06534229964017868:
+   rightMutuallyExclusivePlanesVar_f0_th0.04709474369883537
+   - rightMutuallyExclusivePlanesVar_f0_th0.06534229964017868 >= 0
+ rightMutuallyExclusivePlanesVar_f0_t14_v12: y13_t794
+   + rightMutuallyExclusivePlanesVar_f0_th0.0791400857269764 <= 1
+ rightPlanesDominatesLeftFlowConstr_t14_v12: y14_t794
+   - rightMutuallyExclusivePlanesVar_f0_th0.06534229964017868 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f0_t14_v12: 1e-05 y13_t794
+   + 0.0137977860867977 rightMutuallyExclusivePlanesVar_f0_th0.06534229964017868
+   <= 0.0137977860867977
+ rightPlanesDominatesLeftFlowConstr_eps_t14_v12: 1e-05 y14_t794
+   - 0.0137977860867977 rightMutuallyExclusivePlanesVar_f0_th0.0791400857269764
    <= 0
- rightPlanesOrderConstr_f0_th0.17676767706871033:
-   rightMutuallyExclusivePlanesVar_f0_th0.16919191926717758
-   - rightMutuallyExclusivePlanesVar_f0_th0.17676767706871033 >= 0
- rightMutuallyExclusivePlanesVar_f0_t8_v4: y5_t401288
-   + rightMutuallyExclusivePlanesVar_f0_th0.17998163402080536 <= 1
- rightPlanesDominatesLeftFlowConstr_t8_v4: y6_t401288
-   - rightMutuallyExclusivePlanesVar_f0_th0.17676767706871033 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t8_v4: 1e-05 y5_t401288
-   + 0.00321395695209503 rightMutuallyExclusivePlanesVar_f0_th0.17676767706871033
-   <= 0.00321395695209503
- rightPlanesDominatesLeftFlowConstr_eps_t8_v4: 1e-05 y6_t401288
-   - 0.00321395695209503 rightMutuallyExclusivePlanesVar_f0_th0.17998163402080536
+ rightPlanesOrderConstr_f0_th0.0791400857269764:
+   rightMutuallyExclusivePlanesVar_f0_th0.06534229964017868
+   - rightMutuallyExclusivePlanesVar_f0_th0.0791400857269764 >= 0
+ rightMutuallyExclusivePlanesVar_f0_t15_v5: y6_t795
+   + rightMutuallyExclusivePlanesVar_f0_th0.08073211461305618 <= 1
+ rightPlanesDominatesLeftFlowConstr_t15_v5: y7_t795
+   - rightMutuallyExclusivePlanesVar_f0_th0.0791400857269764 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f0_t15_v5: 1e-05 y6_t795
+   + 0.00159202888607979 rightMutuallyExclusivePlanesVar_f0_th0.0791400857269764
+   <= 0.00159202888607979
+ rightPlanesDominatesLeftFlowConstr_eps_t15_v5: 1e-05 y7_t795
+   - 0.00159202888607979 rightMutuallyExclusivePlanesVar_f0_th0.08073211461305618
    <= 0
- rightPlanesOrderConstr_f0_th0.17998163402080536:
-   rightMutuallyExclusivePlanesVar_f0_th0.17676767706871033
-   - rightMutuallyExclusivePlanesVar_f0_th0.17998163402080536 >= 0
- rightMutuallyExclusivePlanesVar_f0_t0_v15: y16_t401280
-   + rightMutuallyExclusivePlanesVar_f0_th0.18663912266492844 <= 1
- rightPlanesDominatesLeftFlowConstr_t0_v15: y17_t401280
-   - rightMutuallyExclusivePlanesVar_f0_th0.17998163402080536 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t0_v15: 1e-05 y16_t401280
-   + 0.00665748864412308 rightMutuallyExclusivePlanesVar_f0_th0.17998163402080536
-   <= 0.00665748864412308
- rightPlanesDominatesLeftFlowConstr_eps_t0_v15: 1e-05 y17_t401280
-   - 0.00665748864412308 rightMutuallyExclusivePlanesVar_f0_th0.18663912266492844
+ rightPlanesOrderConstr_f0_th0.08073211461305618:
+   rightMutuallyExclusivePlanesVar_f0_th0.0791400857269764
+   - rightMutuallyExclusivePlanesVar_f0_th0.08073211461305618 >= 0
+ rightMutuallyExclusivePlanesVar_f0_t14_v9: y10_t794
+   + rightMutuallyExclusivePlanesVar_f0_th0.08907450735569 <= 1
+ rightPlanesDominatesLeftFlowConstr_t14_v9: y11_t794
+   - rightMutuallyExclusivePlanesVar_f0_th0.08073211461305618 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f0_t14_v9: 1e-05 y10_t794
+   + 0.00834239274263382 rightMutuallyExclusivePlanesVar_f0_th0.08073211461305618
+   <= 0.00834239274263382
+ rightPlanesDominatesLeftFlowConstr_eps_t14_v9: 1e-05 y11_t794
+   - 0.00834239274263382 rightMutuallyExclusivePlanesVar_f0_th0.08907450735569
    <= 0
- rightMutuallyExclusivePlanesVar_f0_t8_v1: y2_t401288
-   + rightMutuallyExclusivePlanesVar_f0_th0.18663912266492844 <= 1
- rightPlanesDominatesLeftFlowConstr_t8_v1: y9_t401288
-   - rightMutuallyExclusivePlanesVar_f0_th0.17998163402080536 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t8_v1: 1e-05 y2_t401288
-   + 0.00665748864412308 rightMutuallyExclusivePlanesVar_f0_th0.17998163402080536
-   <= 0.00665748864412308
- rightPlanesDominatesLeftFlowConstr_eps_t8_v1: 1e-05 y9_t401288
-   - 0.00665748864412308 rightMutuallyExclusivePlanesVar_f0_th0.18663912266492844
+ rightPlanesOrderConstr_f0_th0.08907450735569:
+   rightMutuallyExclusivePlanesVar_f0_th0.08073211461305618
+   - rightMutuallyExclusivePlanesVar_f0_th0.08907450735569 >= 0
+ rightMutuallyExclusivePlanesVar_f0_t17_v8: y9_t797
+   + rightMutuallyExclusivePlanesVar_f0_th0.09496655687689781 <= 1
+ rightPlanesDominatesLeftFlowConstr_t17_v8: y12_t797
+   - rightMutuallyExclusivePlanesVar_f0_th0.08907450735569 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f0_t17_v8: 1e-05 y9_t797
+   + 0.00589204952120781 rightMutuallyExclusivePlanesVar_f0_th0.08907450735569
+   <= 0.00589204952120781
+ rightPlanesDominatesLeftFlowConstr_eps_t17_v8: 1e-05 y12_t797
+   - 0.00589204952120781 rightMutuallyExclusivePlanesVar_f0_th0.09496655687689781
    <= 0
- rightPlanesOrderConstr_f0_th0.18663912266492844:
-   rightMutuallyExclusivePlanesVar_f0_th0.17998163402080536
-   - rightMutuallyExclusivePlanesVar_f0_th0.18663912266492844 >= 0
- rightMutuallyExclusivePlanesVar_f0_t11_v16: y17_t401291
-   + rightMutuallyExclusivePlanesVar_f0_th0.19260789453983307 <= 1
- rightPlanesDominatesLeftFlowConstr_t11_v16: y18_t401291
-   - rightMutuallyExclusivePlanesVar_f0_th0.18663912266492844 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t11_v16: 1e-05 y17_t401291
-   + 0.00596877187490463 rightMutuallyExclusivePlanesVar_f0_th0.18663912266492844
-   <= 0.00596877187490463
- rightPlanesDominatesLeftFlowConstr_eps_t11_v16: 1e-05 y18_t401291
-   - 0.00596877187490463 rightMutuallyExclusivePlanesVar_f0_th0.19260789453983307
+ rightPlanesOrderConstr_f0_th0.09496655687689781:
+   rightMutuallyExclusivePlanesVar_f0_th0.08907450735569
+   - rightMutuallyExclusivePlanesVar_f0_th0.09496655687689781 >= 0
+ rightMutuallyExclusivePlanesVar_f0_t7_v8: y9_t787
+   + rightMutuallyExclusivePlanesVar_f0_th0.09643839299678802 <= 1
+ rightPlanesDominatesLeftFlowConstr_t7_v8: y12_t787
+   - rightMutuallyExclusivePlanesVar_f0_th0.09496655687689781 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f0_t7_v8: 1e-05 y9_t787
+   + 0.00147183611989021 rightMutuallyExclusivePlanesVar_f0_th0.09496655687689781
+   <= 0.00147183611989021
+ rightPlanesDominatesLeftFlowConstr_eps_t7_v8: 1e-05 y12_t787
+   - 0.00147183611989021 rightMutuallyExclusivePlanesVar_f0_th0.09643839299678802
    <= 0
- rightPlanesOrderConstr_f0_th0.19260789453983307:
-   rightMutuallyExclusivePlanesVar_f0_th0.18663912266492844
-   - rightMutuallyExclusivePlanesVar_f0_th0.19260789453983307 >= 0
- rightMutuallyExclusivePlanesVar_f0_t6_v3: y4_t401286
-   + rightMutuallyExclusivePlanesVar_f0_th0.19605141878128052 <= 1
- rightPlanesDominatesLeftFlowConstr_t6_v3: y9_t401286
-   - rightMutuallyExclusivePlanesVar_f0_th0.19260789453983307 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t6_v3: 1e-05 y4_t401286
-   + 0.00344352424144745 rightMutuallyExclusivePlanesVar_f0_th0.19260789453983307
-   <= 0.00344352424144745
- rightPlanesDominatesLeftFlowConstr_eps_t6_v3: 1e-05 y9_t401286
-   - 0.00344352424144745 rightMutuallyExclusivePlanesVar_f0_th0.19605141878128052
+ rightPlanesOrderConstr_f0_th0.09643839299678802:
+   rightMutuallyExclusivePlanesVar_f0_th0.09496655687689781
+   - rightMutuallyExclusivePlanesVar_f0_th0.09643839299678802 >= 0
+ rightMutuallyExclusivePlanesVar_f0_t8_v8: y9_t788
+   + rightMutuallyExclusivePlanesVar_f0_th0.09879248961806297 <= 1
+ rightPlanesDominatesLeftFlowConstr_t8_v8: y12_t788
+   - rightMutuallyExclusivePlanesVar_f0_th0.09643839299678802 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f0_t8_v8: 1e-05 y9_t788
+   + 0.00235409662127495 rightMutuallyExclusivePlanesVar_f0_th0.09643839299678802
+   <= 0.00235409662127495
+ rightPlanesDominatesLeftFlowConstr_eps_t8_v8: 1e-05 y12_t788
+   - 0.00235409662127495 rightMutuallyExclusivePlanesVar_f0_th0.09879248961806297
    <= 0
- rightPlanesOrderConstr_f0_th0.19605141878128052:
-   rightMutuallyExclusivePlanesVar_f0_th0.19260789453983307
-   - rightMutuallyExclusivePlanesVar_f0_th0.19605141878128052 >= 0
- rightMutuallyExclusivePlanesVar_f0_t3_v13: y14_t401283
-   + rightMutuallyExclusivePlanesVar_f0_th0.21877869218587875 <= 1
- rightPlanesDominatesLeftFlowConstr_t3_v13: y15_t401283
-   - rightMutuallyExclusivePlanesVar_f0_th0.19605141878128052 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t3_v13: 1e-05 y14_t401283
-   + 0.0227272734045982 rightMutuallyExclusivePlanesVar_f0_th0.19605141878128052
-   <= 0.0227272734045982
- rightPlanesDominatesLeftFlowConstr_eps_t3_v13: 1e-05 y15_t401283
-   - 0.0227272734045982 rightMutuallyExclusivePlanesVar_f0_th0.21877869218587875
+ rightPlanesOrderConstr_f0_th0.09879248961806297:
+   rightMutuallyExclusivePlanesVar_f0_th0.09643839299678802
+   - rightMutuallyExclusivePlanesVar_f0_th0.09879248961806297 >= 0
+ rightMutuallyExclusivePlanesVar_f0_t6_v8: y9_t786
+   + rightMutuallyExclusivePlanesVar_f0_th0.12242572382092476 <= 1
+ rightPlanesDominatesLeftFlowConstr_t6_v8: y12_t786
+   - rightMutuallyExclusivePlanesVar_f0_th0.09879248961806297 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f0_t6_v8: 1e-05 y9_t786
+   + 0.0236332342028618 rightMutuallyExclusivePlanesVar_f0_th0.09879248961806297
+   <= 0.0236332342028618
+ rightPlanesDominatesLeftFlowConstr_eps_t6_v8: 1e-05 y12_t786
+   - 0.0236332342028618 rightMutuallyExclusivePlanesVar_f0_th0.12242572382092476
    <= 0
- rightPlanesOrderConstr_f0_th0.21877869218587875:
-   rightMutuallyExclusivePlanesVar_f0_th0.19605141878128052
-   - rightMutuallyExclusivePlanesVar_f0_th0.21877869218587875 >= 0
- rightMutuallyExclusivePlanesVar_f0_t13_v3: y4_t401293
-   + rightMutuallyExclusivePlanesVar_f0_th0.22451790422201157 <= 1
- rightPlanesDominatesLeftFlowConstr_t13_v3: y7_t401293
-   - rightMutuallyExclusivePlanesVar_f0_th0.21877869218587875 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t13_v3: 1e-05 y4_t401293
-   + 0.00573921203613281 rightMutuallyExclusivePlanesVar_f0_th0.21877869218587875
-   <= 0.00573921203613281
- rightPlanesDominatesLeftFlowConstr_eps_t13_v3: 1e-05 y7_t401293
-   - 0.00573921203613281 rightMutuallyExclusivePlanesVar_f0_th0.22451790422201157
+ rightPlanesOrderConstr_f0_th0.12242572382092476:
+   rightMutuallyExclusivePlanesVar_f0_th0.09879248961806297
+   - rightMutuallyExclusivePlanesVar_f0_th0.12242572382092476 >= 0
+ rightMutuallyExclusivePlanesVar_f0_t8_v12: y13_t788
+   + rightMutuallyExclusivePlanesVar_f0_th0.13332924246788025 <= 1
+ rightPlanesDominatesLeftFlowConstr_t8_v12: y14_t788
+   - rightMutuallyExclusivePlanesVar_f0_th0.12242572382092476 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f0_t8_v12: 1e-05 y13_t788
+   + 0.0109035186469555 rightMutuallyExclusivePlanesVar_f0_th0.12242572382092476
+   <= 0.0109035186469555
+ rightPlanesDominatesLeftFlowConstr_eps_t8_v12: 1e-05 y14_t788
+   - 0.0109035186469555 rightMutuallyExclusivePlanesVar_f0_th0.13332924246788025
    <= 0
- rightPlanesOrderConstr_f0_th0.22451790422201157:
-   rightMutuallyExclusivePlanesVar_f0_th0.21877869218587875
-   - rightMutuallyExclusivePlanesVar_f0_th0.22451790422201157 >= 0
- rightMutuallyExclusivePlanesVar_f0_t4_v0: y1_t401284
-   + rightMutuallyExclusivePlanesVar_f0_th0.22979798167943954 <= 1
- rightPlanesDominatesLeftFlowConstr_t4_v0: y10_t401284
-   - rightMutuallyExclusivePlanesVar_f0_th0.22451790422201157 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t4_v0: 1e-05 y1_t401284
-   + 0.00528007745742798 rightMutuallyExclusivePlanesVar_f0_th0.22451790422201157
-   <= 0.00528007745742798
- rightPlanesDominatesLeftFlowConstr_eps_t4_v0: 1e-05 y10_t401284
-   - 0.00528007745742798 rightMutuallyExclusivePlanesVar_f0_th0.22979798167943954
+ rightPlanesOrderConstr_f0_th0.13332924246788025:
+   rightMutuallyExclusivePlanesVar_f0_th0.12242572382092476
+   - rightMutuallyExclusivePlanesVar_f0_th0.13332924246788025 >= 0
+ rightMutuallyExclusivePlanesVar_f0_t2_v12: y13_t782
+   + rightMutuallyExclusivePlanesVar_f0_th0.2540372759103775 <= 1
+ rightPlanesDominatesLeftFlowConstr_t2_v12: y14_t782
+   - rightMutuallyExclusivePlanesVar_f0_th0.13332924246788025 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f0_t2_v12: 1e-05 y13_t782
+   + 0.1207080334424973 rightMutuallyExclusivePlanesVar_f0_th0.13332924246788025
+   <= 0.1207080334424973
+ rightPlanesDominatesLeftFlowConstr_eps_t2_v12: 1e-05 y14_t782
+   - 0.1207080334424973 rightMutuallyExclusivePlanesVar_f0_th0.2540372759103775
    <= 0
- rightPlanesOrderConstr_f0_th0.22979798167943954:
-   rightMutuallyExclusivePlanesVar_f0_th0.22451790422201157
-   - rightMutuallyExclusivePlanesVar_f0_th0.22979798167943954 >= 0
- rightMutuallyExclusivePlanesVar_f0_t9_v14: y15_t401289
-   + rightMutuallyExclusivePlanesVar_f0_th0.23163452744483948 <= 1
- rightPlanesDominatesLeftFlowConstr_t9_v14: y16_t401289
-   - rightMutuallyExclusivePlanesVar_f0_th0.22979798167943954 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t9_v14: 1e-05 y15_t401289
-   + 0.00183654576539993 rightMutuallyExclusivePlanesVar_f0_th0.22979798167943954
-   <= 0.00183654576539993
- rightPlanesDominatesLeftFlowConstr_eps_t9_v14: 1e-05 y16_t401289
-   - 0.00183654576539993 rightMutuallyExclusivePlanesVar_f0_th0.23163452744483948
+ rightPlanesOrderConstr_f0_th0.2540372759103775:
+   rightMutuallyExclusivePlanesVar_f0_th0.13332924246788025
+   - rightMutuallyExclusivePlanesVar_f0_th0.2540372759103775 >= 0
+ rightMutuallyExclusivePlanesVar_f0_t18_v0: y1_t798
+   + rightMutuallyExclusivePlanesVar_f0_th0.3341166079044342 <= 1
+ rightPlanesDominatesLeftFlowConstr_t18_v0: y8_t798
+   - rightMutuallyExclusivePlanesVar_f0_th0.2540372759103775 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f0_t18_v0: 1e-05 y1_t798
+   + 0.0800793319940567 rightMutuallyExclusivePlanesVar_f0_th0.2540372759103775
+   <= 0.0800793319940567
+ rightPlanesDominatesLeftFlowConstr_eps_t18_v0: 1e-05 y8_t798
+   - 0.0800793319940567 rightMutuallyExclusivePlanesVar_f0_th0.3341166079044342
    <= 0
- rightPlanesOrderConstr_f0_th0.23163452744483948:
-   rightMutuallyExclusivePlanesVar_f0_th0.22979798167943954
-   - rightMutuallyExclusivePlanesVar_f0_th0.23163452744483948 >= 0
- rightMutuallyExclusivePlanesVar_f0_t17_v7: y8_t401297
-   + rightMutuallyExclusivePlanesVar_f0_th0.23232322931289673 <= 1
- rightPlanesDominatesLeftFlowConstr_t17_v7: y9_t401297
-   - rightMutuallyExclusivePlanesVar_f0_th0.23163452744483948 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t17_v7: 1e-05 y8_t401297
-   + 6.8870186805725098e-04 rightMutuallyExclusivePlanesVar_f0_th0.23163452744483948
-   <= 6.8870186805725098e-04
- rightPlanesDominatesLeftFlowConstr_eps_t17_v7: 1e-05 y9_t401297
-   - 6.8870186805725098e-04 rightMutuallyExclusivePlanesVar_f0_th0.23232322931289673
+ rightPlanesOrderConstr_f0_th0.3341166079044342:
+   rightMutuallyExclusivePlanesVar_f0_th0.2540372759103775
+   - rightMutuallyExclusivePlanesVar_f0_th0.3341166079044342 >= 0
+ rightMutuallyExclusivePlanesVar_f0_t1_v0: y1_t781
+   + rightMutuallyExclusivePlanesVar_f0_th0.3343973159790039 <= 1
+ rightPlanesDominatesLeftFlowConstr_t1_v0: y8_t781
+   - rightMutuallyExclusivePlanesVar_f0_th0.3341166079044342 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f0_t1_v0: 1e-05 y1_t781
+   + 0.000280708 rightMutuallyExclusivePlanesVar_f0_th0.3341166079044342
+   <= 0.000280708
+ rightPlanesDominatesLeftFlowConstr_eps_t1_v0: 1e-05 y8_t781
+   - 0.000280708 rightMutuallyExclusivePlanesVar_f0_th0.3343973159790039
    <= 0
- rightPlanesOrderConstr_f0_th0.23232322931289673:
-   rightMutuallyExclusivePlanesVar_f0_th0.23163452744483948
-   - rightMutuallyExclusivePlanesVar_f0_th0.23232322931289673 >= 0
- rightPlanesOrderConstr_f0_th0.24747474747473858:
-   rightMutuallyExclusivePlanesVar_f0_th0.23232322931289673
-   - rightMutuallyExclusivePlanesVar_f0_th0.24747474747473858 >= 0
- rightMutuallyExclusivePlanesVar_f0_t9_v16: y17_t401289
-   + rightMutuallyExclusivePlanesVar_f0_th0.2571166232228279 <= 1
- rightPlanesDominatesLeftFlowConstr_t9_v16: y18_t401289
-   - rightMutuallyExclusivePlanesVar_f0_th0.24747474747473858 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t9_v16: 1e-05 y17_t401289
-   + 0.00964187574808933 rightMutuallyExclusivePlanesVar_f0_th0.24747474747473858
-   <= 0.00964187574808933
- rightPlanesDominatesLeftFlowConstr_eps_t9_v16: 1e-05 y18_t401289
-   - 0.00964187574808933 rightMutuallyExclusivePlanesVar_f0_th0.2571166232228279
+ rightMutuallyExclusivePlanesVar_f0_t4_v0: y1_t784
+   + rightMutuallyExclusivePlanesVar_f0_th0.3343973159790039 <= 1
+ rightPlanesDominatesLeftFlowConstr_t4_v0: y8_t784
+   - rightMutuallyExclusivePlanesVar_f0_th0.3341166079044342 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f0_t4_v0: 1e-05 y1_t784
+   + 0.000280708 rightMutuallyExclusivePlanesVar_f0_th0.3341166079044342
+   <= 0.000280708
+ rightPlanesDominatesLeftFlowConstr_eps_t4_v0: 1e-05 y8_t784
+   - 0.000280708 rightMutuallyExclusivePlanesVar_f0_th0.3343973159790039
    <= 0
- rightPlanesOrderConstr_f0_th0.2571166232228279:
-   rightMutuallyExclusivePlanesVar_f0_th0.24747474747473858
-   - rightMutuallyExclusivePlanesVar_f0_th0.2571166232228279 >= 0
- rightMutuallyExclusivePlanesVar_f0_t13_v2: y3_t401293
-   + rightMutuallyExclusivePlanesVar_f0_th0.266988068819046 <= 1
- rightPlanesDominatesLeftFlowConstr_t13_v2: y8_t401293
-   - rightMutuallyExclusivePlanesVar_f0_th0.2571166232228279 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t13_v2: 1e-05 y3_t401293
-   + 0.00987144559621811 rightMutuallyExclusivePlanesVar_f0_th0.2571166232228279
-   <= 0.00987144559621811
- rightPlanesDominatesLeftFlowConstr_eps_t13_v2: 1e-05 y8_t401293
-   - 0.00987144559621811 rightMutuallyExclusivePlanesVar_f0_th0.266988068819046
+ rightPlanesOrderConstr_f0_th0.3343973159790039:
+   rightMutuallyExclusivePlanesVar_f0_th0.3341166079044342
+   - rightMutuallyExclusivePlanesVar_f0_th0.3343973159790039 >= 0
+ rightMutuallyExclusivePlanesVar_f0_t13_v0: y1_t793
+   + rightMutuallyExclusivePlanesVar_f0_th0.33506934344768524 <= 1
+ rightPlanesDominatesLeftFlowConstr_t13_v0: y8_t793
+   - rightMutuallyExclusivePlanesVar_f0_th0.3343973159790039 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f0_t13_v0: 1e-05 y1_t793
+   + 6.7202746868133545e-04 rightMutuallyExclusivePlanesVar_f0_th0.3343973159790039
+   <= 6.7202746868133545e-04
+ rightPlanesDominatesLeftFlowConstr_eps_t13_v0: 1e-05 y8_t793
+   - 6.7202746868133545e-04 rightMutuallyExclusivePlanesVar_f0_th0.33506934344768524
    <= 0
- rightPlanesOrderConstr_f0_th0.266988068819046:
-   rightMutuallyExclusivePlanesVar_f0_th0.2571166232228279
-   - rightMutuallyExclusivePlanesVar_f0_th0.266988068819046 >= 0
- rightMutuallyExclusivePlanesVar_f0_t4_v10: y11_t401284
-   + rightMutuallyExclusivePlanesVar_f0_th0.2679063379764557 <= 1
- rightPlanesDominatesLeftFlowConstr_t4_v10: y14_t401284
-   - rightMutuallyExclusivePlanesVar_f0_th0.266988068819046 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t4_v10: 1e-05 y11_t401284
-   + 9.1826915740966797e-04 rightMutuallyExclusivePlanesVar_f0_th0.266988068819046
-   <= 9.1826915740966797e-04
- rightPlanesDominatesLeftFlowConstr_eps_t4_v10: 1e-05 y14_t401284
-   - 9.1826915740966797e-04 rightMutuallyExclusivePlanesVar_f0_th0.2679063379764557
+ rightPlanesOrderConstr_f0_th0.33506934344768524:
+   rightMutuallyExclusivePlanesVar_f0_th0.3343973159790039
+   - rightMutuallyExclusivePlanesVar_f0_th0.33506934344768524 >= 0
+ rightMutuallyExclusivePlanesVar_f0_t10_v1: y2_t790
+   + rightMutuallyExclusivePlanesVar_f0_th0.3356069475412369 <= 1
+ rightPlanesDominatesLeftFlowConstr_t10_v1: y5_t790
+   - rightMutuallyExclusivePlanesVar_f0_th0.33506934344768524 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f0_t10_v1: 1e-05 y2_t790
+   + 0.000537604 rightMutuallyExclusivePlanesVar_f0_th0.33506934344768524
+   <= 0.000537604
+ rightPlanesDominatesLeftFlowConstr_eps_t10_v1: 1e-05 y5_t790
+   - 0.000537604 rightMutuallyExclusivePlanesVar_f0_th0.3356069475412369
    <= 0
- rightMutuallyExclusivePlanesVar_f0_t17_v2: y3_t401297
-   + rightMutuallyExclusivePlanesVar_f0_th0.2679063379764557 <= 1
- rightPlanesDominatesLeftFlowConstr_t17_v2: y10_t401297
-   - rightMutuallyExclusivePlanesVar_f0_th0.266988068819046 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t17_v2: 1e-05 y3_t401297
-   + 9.1826915740966797e-04 rightMutuallyExclusivePlanesVar_f0_th0.266988068819046
-   <= 9.1826915740966797e-04
- rightPlanesDominatesLeftFlowConstr_eps_t17_v2: 1e-05 y10_t401297
-   - 9.1826915740966797e-04 rightMutuallyExclusivePlanesVar_f0_th0.2679063379764557
+ rightPlanesOrderConstr_f0_th0.3356069475412369:
+   rightMutuallyExclusivePlanesVar_f0_th0.33506934344768524
+   - rightMutuallyExclusivePlanesVar_f0_th0.3356069475412369 >= 0
+ rightMutuallyExclusivePlanesVar_f0_t3_v0: y1_t783
+   + rightMutuallyExclusivePlanesVar_f0_th0.33684203028678894 <= 1
+ rightPlanesDominatesLeftFlowConstr_t3_v0: y8_t783
+   - rightMutuallyExclusivePlanesVar_f0_th0.3356069475412369 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f0_t3_v0: 1e-05 y1_t783
+   + 0.00123508274555206 rightMutuallyExclusivePlanesVar_f0_th0.3356069475412369
+   <= 0.00123508274555206
+ rightPlanesDominatesLeftFlowConstr_eps_t3_v0: 1e-05 y8_t783
+   - 0.00123508274555206 rightMutuallyExclusivePlanesVar_f0_th0.33684203028678894
    <= 0
- rightPlanesOrderConstr_f0_th0.2679063379764557:
-   rightMutuallyExclusivePlanesVar_f0_th0.266988068819046
-   - rightMutuallyExclusivePlanesVar_f0_th0.2679063379764557 >= 0
- rightMutuallyExclusivePlanesVar_f0_t0_v1: y2_t401280
-   + rightMutuallyExclusivePlanesVar_f0_th0.2683654874563217 <= 1
- rightPlanesDominatesLeftFlowConstr_t0_v1: y3_t401280
-   - rightMutuallyExclusivePlanesVar_f0_th0.2679063379764557 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t0_v1: 1e-05 y2_t401280
-   + 4.5914947986602783e-04 rightMutuallyExclusivePlanesVar_f0_th0.2679063379764557
-   <= 4.5914947986602783e-04
- rightPlanesDominatesLeftFlowConstr_eps_t0_v1: 1e-05 y3_t401280
-   - 4.5914947986602783e-04 rightMutuallyExclusivePlanesVar_f0_th0.2683654874563217
+ rightPlanesOrderConstr_f0_th0.33684203028678894:
+   rightMutuallyExclusivePlanesVar_f0_th0.3356069475412369
+   - rightMutuallyExclusivePlanesVar_f0_th0.33684203028678894 >= 0
+ rightMutuallyExclusivePlanesVar_f0_t9_v0: y1_t789
+   + rightMutuallyExclusivePlanesVar_f0_th0.3368981182575226 <= 1
+ rightPlanesDominatesLeftFlowConstr_t9_v0: y8_t789
+   - rightMutuallyExclusivePlanesVar_f0_th0.33684203028678894 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f0_t9_v0: 1e-05 y1_t789
+   + 5.6088e-05 rightMutuallyExclusivePlanesVar_f0_th0.33684203028678894
+   <= 5.6088e-05
+ rightPlanesDominatesLeftFlowConstr_eps_t9_v0: 1e-05 y8_t789
+   - 5.6088e-05 rightMutuallyExclusivePlanesVar_f0_th0.3368981182575226
    <= 0
- rightPlanesOrderConstr_f0_th0.2683654874563217:
-   rightMutuallyExclusivePlanesVar_f0_th0.2679063379764557
-   - rightMutuallyExclusivePlanesVar_f0_th0.2683654874563217 >= 0
- rightMutuallyExclusivePlanesVar_f0_t11_v7: y8_t401291
-   + rightMutuallyExclusivePlanesVar_f0_th0.2692837566137314 <= 1
- rightPlanesDominatesLeftFlowConstr_t11_v7: y11_t401291
-   - rightMutuallyExclusivePlanesVar_f0_th0.2683654874563217 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t11_v7: 1e-05 y8_t401291
-   + 9.1826915740966797e-04 rightMutuallyExclusivePlanesVar_f0_th0.2683654874563217
-   <= 9.1826915740966797e-04
- rightPlanesDominatesLeftFlowConstr_eps_t11_v7: 1e-05 y11_t401291
-   - 9.1826915740966797e-04 rightMutuallyExclusivePlanesVar_f0_th0.2692837566137314
+ rightMutuallyExclusivePlanesVar_f0_t15_v0: y1_t795
+   + rightMutuallyExclusivePlanesVar_f0_th0.3368981182575226 <= 1
+ rightPlanesDominatesLeftFlowConstr_t15_v0: y8_t795
+   - rightMutuallyExclusivePlanesVar_f0_th0.33684203028678894 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f0_t15_v0: 1e-05 y1_t795
+   + 5.6088e-05 rightMutuallyExclusivePlanesVar_f0_th0.33684203028678894
+   <= 5.6088e-05
+ rightPlanesDominatesLeftFlowConstr_eps_t15_v0: 1e-05 y8_t795
+   - 5.6088e-05 rightMutuallyExclusivePlanesVar_f0_th0.3368981182575226
    <= 0
- rightMutuallyExclusivePlanesVar_f0_t15_v1: y2_t401295
-   + rightMutuallyExclusivePlanesVar_f0_th0.2692837566137314 <= 1
- rightPlanesDominatesLeftFlowConstr_t15_v1: y7_t401295
-   - rightMutuallyExclusivePlanesVar_f0_th0.2683654874563217 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t15_v1: 1e-05 y2_t401295
-   + 9.1826915740966797e-04 rightMutuallyExclusivePlanesVar_f0_th0.2683654874563217
-   <= 9.1826915740966797e-04
- rightPlanesDominatesLeftFlowConstr_eps_t15_v1: 1e-05 y7_t401295
-   - 9.1826915740966797e-04 rightMutuallyExclusivePlanesVar_f0_th0.2692837566137314
+ rightPlanesOrderConstr_f0_th0.3368981182575226:
+   rightMutuallyExclusivePlanesVar_f0_th0.33684203028678894
+   - rightMutuallyExclusivePlanesVar_f0_th0.3368981182575226 >= 0
+ rightMutuallyExclusivePlanesVar_f0_t0_v0: y1_t780
+   + rightMutuallyExclusivePlanesVar_f0_th0.3378014415502548 <= 1
+ rightPlanesDominatesLeftFlowConstr_t0_v0: y8_t780
+   - rightMutuallyExclusivePlanesVar_f0_th0.3368981182575226 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f0_t0_v0: 1e-05 y1_t780
+   + 9.0332329273223877e-04 rightMutuallyExclusivePlanesVar_f0_th0.3368981182575226
+   <= 9.0332329273223877e-04
+ rightPlanesDominatesLeftFlowConstr_eps_t0_v0: 1e-05 y8_t780
+   - 9.0332329273223877e-04 rightMutuallyExclusivePlanesVar_f0_th0.3378014415502548
    <= 0
- rightPlanesOrderConstr_f0_th0.2692837566137314:
-   rightMutuallyExclusivePlanesVar_f0_th0.2683654874563217
-   - rightMutuallyExclusivePlanesVar_f0_th0.2692837566137314 >= 0
- rightMutuallyExclusivePlanesVar_f0_t5_v2: y3_t401285
-   + rightMutuallyExclusivePlanesVar_f0_th0.26997245848178864 <= 1
- rightPlanesDominatesLeftFlowConstr_t5_v2: y8_t401285
-   - rightMutuallyExclusivePlanesVar_f0_th0.2692837566137314 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t5_v2: 1e-05 y3_t401285
-   + 6.8870186805725098e-04 rightMutuallyExclusivePlanesVar_f0_th0.2692837566137314
-   <= 6.8870186805725098e-04
- rightPlanesDominatesLeftFlowConstr_eps_t5_v2: 1e-05 y8_t401285
-   - 6.8870186805725098e-04 rightMutuallyExclusivePlanesVar_f0_th0.26997245848178864
+ rightPlanesOrderConstr_f0_th0.3378014415502548:
+   rightMutuallyExclusivePlanesVar_f0_th0.3368981182575226
+   - rightMutuallyExclusivePlanesVar_f0_th0.3378014415502548 >= 0
+ rightMutuallyExclusivePlanesVar_f0_t7_v5: y6_t787
+   + rightMutuallyExclusivePlanesVar_f0_th0.34504014253616333 <= 1
+ rightPlanesDominatesLeftFlowConstr_t7_v5: y7_t787
+   - rightMutuallyExclusivePlanesVar_f0_th0.3378014415502548 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f0_t7_v5: 1e-05 y6_t787
+   + 0.00723870098590851 rightMutuallyExclusivePlanesVar_f0_th0.3378014415502548
+   <= 0.00723870098590851
+ rightPlanesDominatesLeftFlowConstr_eps_t7_v5: 1e-05 y7_t787
+   - 0.00723870098590851 rightMutuallyExclusivePlanesVar_f0_th0.34504014253616333
    <= 0
- rightPlanesOrderConstr_f0_th0.26997245848178864:
-   rightMutuallyExclusivePlanesVar_f0_th0.2692837566137314
-   - rightMutuallyExclusivePlanesVar_f0_th0.26997245848178864 >= 0
- rightMutuallyExclusivePlanesVar_f0_t6_v10: y11_t401286
-   + rightMutuallyExclusivePlanesVar_f0_th0.27043159306049347 <= 1
- rightPlanesDominatesLeftFlowConstr_t6_v10: y12_t401286
-   - rightMutuallyExclusivePlanesVar_f0_th0.26997245848178864 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t6_v10: 1e-05 y11_t401286
-   + 4.5913457870483398e-04 rightMutuallyExclusivePlanesVar_f0_th0.26997245848178864
-   <= 4.5913457870483398e-04
- rightPlanesDominatesLeftFlowConstr_eps_t6_v10: 1e-05 y12_t401286
-   - 4.5913457870483398e-04 rightMutuallyExclusivePlanesVar_f0_th0.27043159306049347
+ rightPlanesOrderConstr_f0_th0.34504014253616333:
+   rightMutuallyExclusivePlanesVar_f0_th0.3378014415502548
+   - rightMutuallyExclusivePlanesVar_f0_th0.34504014253616333 >= 0
+ rightMutuallyExclusivePlanesVar_f0_t5_v1: y2_t785
+   + rightMutuallyExclusivePlanesVar_f0_th0.3493066728115082 <= 1
+ rightPlanesDominatesLeftFlowConstr_t5_v1: y5_t785
+   - rightMutuallyExclusivePlanesVar_f0_th0.34504014253616333 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f0_t5_v1: 1e-05 y2_t785
+   + 0.00426653027534485 rightMutuallyExclusivePlanesVar_f0_th0.34504014253616333
+   <= 0.00426653027534485
+ rightPlanesDominatesLeftFlowConstr_eps_t5_v1: 1e-05 y5_t785
+   - 0.00426653027534485 rightMutuallyExclusivePlanesVar_f0_th0.3493066728115082
    <= 0
- rightPlanesOrderConstr_f0_th0.27043159306049347:
-   rightMutuallyExclusivePlanesVar_f0_th0.26997245848178864
-   - rightMutuallyExclusivePlanesVar_f0_th0.27043159306049347 >= 0
- rightMutuallyExclusivePlanesVar_f0_t5_v23: y24_t401285
-   + rightMutuallyExclusivePlanesVar_f0_th0.2706611603498459 <= 1
- rightPlanesDominatesLeftFlowConstr_t5_v23: y25_t401285
-   - rightMutuallyExclusivePlanesVar_f0_th0.27043159306049347 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t5_v23: 1e-05 y24_t401285
-   + 2.2956728935241699e-04 rightMutuallyExclusivePlanesVar_f0_th0.27043159306049347
-   <= 2.2956728935241699e-04
- rightPlanesDominatesLeftFlowConstr_eps_t5_v23: 1e-05 y25_t401285
-   - 2.2956728935241699e-04 rightMutuallyExclusivePlanesVar_f0_th0.2706611603498459
+ rightPlanesOrderConstr_f0_th0.3493066728115082:
+   rightMutuallyExclusivePlanesVar_f0_th0.34504014253616333
+   - rightMutuallyExclusivePlanesVar_f0_th0.3493066728115082 >= 0
+ rightMutuallyExclusivePlanesVar_f0_t17_v1: y2_t797
+   + rightMutuallyExclusivePlanesVar_f0_th0.35618312656879425 <= 1
+ rightPlanesDominatesLeftFlowConstr_t17_v1: y5_t797
+   - rightMutuallyExclusivePlanesVar_f0_th0.3493066728115082 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f0_t17_v1: 1e-05 y2_t797
+   + 0.00687645375728607 rightMutuallyExclusivePlanesVar_f0_th0.3493066728115082
+   <= 0.00687645375728607
+ rightPlanesDominatesLeftFlowConstr_eps_t17_v1: 1e-05 y5_t797
+   - 0.00687645375728607 rightMutuallyExclusivePlanesVar_f0_th0.35618312656879425
    <= 0
- rightPlanesOrderConstr_f0_th0.2706611603498459:
-   rightMutuallyExclusivePlanesVar_f0_th0.27043159306049347
-   - rightMutuallyExclusivePlanesVar_f0_th0.2706611603498459 >= 0
- rightMutuallyExclusivePlanesVar_f0_t13_v14: y15_t401293
-   + rightMutuallyExclusivePlanesVar_f0_th0.2764003723859787 <= 1
- rightPlanesDominatesLeftFlowConstr_t13_v14: y16_t401293
-   - rightMutuallyExclusivePlanesVar_f0_th0.2706611603498459 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t13_v14: 1e-05 y15_t401293
-   + 0.00573921203613281 rightMutuallyExclusivePlanesVar_f0_th0.2706611603498459
-   <= 0.00573921203613281
- rightPlanesDominatesLeftFlowConstr_eps_t13_v14: 1e-05 y16_t401293
-   - 0.00573921203613281 rightMutuallyExclusivePlanesVar_f0_th0.2764003723859787
+ rightPlanesOrderConstr_f0_th0.35618312656879425:
+   rightMutuallyExclusivePlanesVar_f0_th0.3493066728115082
+   - rightMutuallyExclusivePlanesVar_f0_th0.35618312656879425 >= 0
+ rightMutuallyExclusivePlanesVar_f0_t16_v5: y6_t796
+   + rightMutuallyExclusivePlanesVar_f0_th0.3562789112329483 <= 1
+ rightPlanesDominatesLeftFlowConstr_t16_v5: y7_t796
+   - rightMutuallyExclusivePlanesVar_f0_th0.35618312656879425 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f0_t16_v5: 1e-05 y6_t796
+   + 9.57847e-05 rightMutuallyExclusivePlanesVar_f0_th0.35618312656879425
+   <= 9.57847e-05
+ rightPlanesDominatesLeftFlowConstr_eps_t16_v5: 1e-05 y7_t796
+   - 9.57847e-05 rightMutuallyExclusivePlanesVar_f0_th0.3562789112329483
    <= 0
- rightPlanesOrderConstr_f0_th0.2764003723859787:
-   rightMutuallyExclusivePlanesVar_f0_th0.2706611603498459
-   - rightMutuallyExclusivePlanesVar_f0_th0.2764003723859787 >= 0
- rightMutuallyExclusivePlanesVar_f0_t13_v11: y12_t401293
-   + rightMutuallyExclusivePlanesVar_f0_th0.30739210546016693 <= 1
- rightPlanesDominatesLeftFlowConstr_t13_v11: y13_t401293
-   - rightMutuallyExclusivePlanesVar_f0_th0.2764003723859787 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t13_v11: 1e-05 y12_t401293
-   + 0.0309917330741882 rightMutuallyExclusivePlanesVar_f0_th0.2764003723859787
-   <= 0.0309917330741882
- rightPlanesDominatesLeftFlowConstr_eps_t13_v11: 1e-05 y13_t401293
-   - 0.0309917330741882 rightMutuallyExclusivePlanesVar_f0_th0.30739210546016693
+ rightPlanesOrderConstr_f0_th0.3562789112329483:
+   rightMutuallyExclusivePlanesVar_f0_th0.35618312656879425
+   - rightMutuallyExclusivePlanesVar_f0_th0.3562789112329483 >= 0
+ rightMutuallyExclusivePlanesVar_f0_t9_v10: y11_t789
+   + rightMutuallyExclusivePlanesVar_f0_th0.35879792273044586 <= 1
+ rightPlanesDominatesLeftFlowConstr_t9_v10: y12_t789
+   - rightMutuallyExclusivePlanesVar_f0_th0.3562789112329483 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f0_t9_v10: 1e-05 y11_t789
+   + 0.00251901149749756 rightMutuallyExclusivePlanesVar_f0_th0.3562789112329483
+   <= 0.00251901149749756
+ rightPlanesDominatesLeftFlowConstr_eps_t9_v10: 1e-05 y12_t789
+   - 0.00251901149749756 rightMutuallyExclusivePlanesVar_f0_th0.35879792273044586
    <= 0
- rightPlanesOrderConstr_f0_th0.30739210546016693:
-   rightMutuallyExclusivePlanesVar_f0_th0.2764003723859787
-   - rightMutuallyExclusivePlanesVar_f0_th0.30739210546016693 >= 0
- rightMutuallyExclusivePlanesVar_f0_t5_v22: y23_t401285
-   + rightMutuallyExclusivePlanesVar_f0_th0.30876950919628143 <= 1
- rightPlanesDominatesLeftFlowConstr_t5_v22: y26_t401285
-   - rightMutuallyExclusivePlanesVar_f0_th0.30739210546016693 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t5_v22: 1e-05 y23_t401285
-   + 0.0013774037361145 rightMutuallyExclusivePlanesVar_f0_th0.30739210546016693
-   <= 0.0013774037361145
- rightPlanesDominatesLeftFlowConstr_eps_t5_v22: 1e-05 y26_t401285
-   - 0.0013774037361145 rightMutuallyExclusivePlanesVar_f0_th0.30876950919628143
+ rightPlanesOrderConstr_f0_th0.35879792273044586:
+   rightMutuallyExclusivePlanesVar_f0_th0.3562789112329483
+   - rightMutuallyExclusivePlanesVar_f0_th0.35879792273044586 >= 0
+ rightMutuallyExclusivePlanesVar_f0_t0_v9: y10_t780
+   + rightMutuallyExclusivePlanesVar_f0_th0.35949374735355377 <= 1
+ rightPlanesDominatesLeftFlowConstr_t0_v9: y11_t780
+   - rightMutuallyExclusivePlanesVar_f0_th0.35879792273044586 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f0_t0_v9: 1e-05 y10_t780
+   + 6.9582462310791016e-04 rightMutuallyExclusivePlanesVar_f0_th0.35879792273044586
+   <= 6.9582462310791016e-04
+ rightPlanesDominatesLeftFlowConstr_eps_t0_v9: 1e-05 y11_t780
+   - 6.9582462310791016e-04 rightMutuallyExclusivePlanesVar_f0_th0.35949374735355377
    <= 0
- rightPlanesOrderConstr_f0_th0.30876950919628143:
-   rightMutuallyExclusivePlanesVar_f0_th0.30739210546016693
-   - rightMutuallyExclusivePlanesVar_f0_th0.30876950919628143 >= 0
- rightMutuallyExclusivePlanesVar_f0_t6_v19: y20_t401286
-   + rightMutuallyExclusivePlanesVar_f0_th0.30922865867614746 <= 1
- rightPlanesDominatesLeftFlowConstr_t6_v19: y21_t401286
-   - rightMutuallyExclusivePlanesVar_f0_th0.30876950919628143 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t6_v19: 1e-05 y20_t401286
-   + 4.5914947986602783e-04 rightMutuallyExclusivePlanesVar_f0_th0.30876950919628143
-   <= 4.5914947986602783e-04
- rightPlanesDominatesLeftFlowConstr_eps_t6_v19: 1e-05 y21_t401286
-   - 4.5914947986602783e-04 rightMutuallyExclusivePlanesVar_f0_th0.30922865867614746
-   <= 0
- rightPlanesOrderConstr_f0_th0.30922865867614746:
-   rightMutuallyExclusivePlanesVar_f0_th0.30876950919628143
-   - rightMutuallyExclusivePlanesVar_f0_th0.30922865867614746 >= 0
- rightMutuallyExclusivePlanesVar_f0_t17_v10: y11_t401297
-   + rightMutuallyExclusivePlanesVar_f0_th0.31473828852176666 <= 1
- rightPlanesDominatesLeftFlowConstr_t17_v10: y12_t401297
-   - rightMutuallyExclusivePlanesVar_f0_th0.30922865867614746 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t17_v10: 1e-05 y11_t401297
-   + 0.0055096298456192 rightMutuallyExclusivePlanesVar_f0_th0.30922865867614746
-   <= 0.0055096298456192
- rightPlanesDominatesLeftFlowConstr_eps_t17_v10: 1e-05 y12_t401297
-   - 0.0055096298456192 rightMutuallyExclusivePlanesVar_f0_th0.31473828852176666
-   <= 0
- rightPlanesOrderConstr_f0_th0.31473828852176666:
-   rightMutuallyExclusivePlanesVar_f0_th0.30922865867614746
-   - rightMutuallyExclusivePlanesVar_f0_th0.31473828852176666 >= 0
- rightMutuallyExclusivePlanesVar_f0_t15_v7: y8_t401295
-   + rightMutuallyExclusivePlanesVar_f0_th0.31864096224308014 <= 1
- rightPlanesDominatesLeftFlowConstr_t15_v7: y9_t401295
-   - rightMutuallyExclusivePlanesVar_f0_th0.31473828852176666 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t15_v7: 1e-05 y8_t401295
-   + 0.00390267372131348 rightMutuallyExclusivePlanesVar_f0_th0.31473828852176666
-   <= 0.00390267372131348
- rightPlanesDominatesLeftFlowConstr_eps_t15_v7: 1e-05 y9_t401295
-   - 0.00390267372131348 rightMutuallyExclusivePlanesVar_f0_th0.31864096224308014
-   <= 0
- rightPlanesOrderConstr_f0_th0.31864096224308014:
-   rightMutuallyExclusivePlanesVar_f0_th0.31473828852176666
-   - rightMutuallyExclusivePlanesVar_f0_th0.31864096224308014 >= 0
- rightMutuallyExclusivePlanesVar_f0_t8_v23: y24_t401288
-   + rightMutuallyExclusivePlanesVar_f0_th0.35353535413742065 <= 1
- rightPlanesDominatesLeftFlowConstr_t8_v23: y25_t401288
-   - rightMutuallyExclusivePlanesVar_f0_th0.31864096224308014 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t8_v23: 1e-05 y24_t401288
-   + 0.0348943918943405 rightMutuallyExclusivePlanesVar_f0_th0.31864096224308014
-   <= 0.0348943918943405
- rightPlanesDominatesLeftFlowConstr_eps_t8_v23: 1e-05 y25_t401288
-   - 0.0348943918943405 rightMutuallyExclusivePlanesVar_f0_th0.35353535413742065
-   <= 0
- rightPlanesOrderConstr_f0_th0.35353535413742065:
-   rightMutuallyExclusivePlanesVar_f0_th0.31864096224308014
-   - rightMutuallyExclusivePlanesVar_f0_th0.35353535413742065 >= 0
- rightMutuallyExclusivePlanesVar_f0_t5_v8: y9_t401285
-   + rightMutuallyExclusivePlanesVar_f0_th0.35606060922145844 <= 1
- rightPlanesDominatesLeftFlowConstr_t5_v8: y12_t401285
-   - rightMutuallyExclusivePlanesVar_f0_th0.35353535413742065 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t5_v8: 1e-05 y9_t401285
-   + 0.00252525508403778 rightMutuallyExclusivePlanesVar_f0_th0.35353535413742065
-   <= 0.00252525508403778
- rightPlanesDominatesLeftFlowConstr_eps_t5_v8: 1e-05 y12_t401285
-   - 0.00252525508403778 rightMutuallyExclusivePlanesVar_f0_th0.35606060922145844
-   <= 0
- rightPlanesOrderConstr_f0_th0.35606060922145844:
-   rightMutuallyExclusivePlanesVar_f0_th0.35353535413742065
-   - rightMutuallyExclusivePlanesVar_f0_th0.35606060922145844 >= 0
- rightMutuallyExclusivePlanesVar_f0_t16_v8: y9_t401296
-   + rightMutuallyExclusivePlanesVar_f0_th0.361111119389534 <= 1
- rightPlanesDominatesLeftFlowConstr_t16_v8: y10_t401296
-   - rightMutuallyExclusivePlanesVar_f0_th0.35606060922145844 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t16_v8: 1e-05 y9_t401296
-   + 0.00505051016807556 rightMutuallyExclusivePlanesVar_f0_th0.35606060922145844
-   <= 0.00505051016807556
- rightPlanesDominatesLeftFlowConstr_eps_t16_v8: 1e-05 y10_t401296
-   - 0.00505051016807556 rightMutuallyExclusivePlanesVar_f0_th0.361111119389534
-   <= 0
- rightPlanesOrderConstr_f0_th0.361111119389534:
-   rightMutuallyExclusivePlanesVar_f0_th0.35606060922145844
-   - rightMutuallyExclusivePlanesVar_f0_th0.361111119389534 >= 0
- rightMutuallyExclusivePlanesVar_f0_t10_v3: y4_t401290
-   + rightMutuallyExclusivePlanesVar_f0_th0.44628100097179413 <= 1
- rightPlanesDominatesLeftFlowConstr_t10_v3: y7_t401290
-   - rightMutuallyExclusivePlanesVar_f0_th0.361111119389534 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t10_v3: 1e-05 y4_t401290
-   + 0.0851698815822601 rightMutuallyExclusivePlanesVar_f0_th0.361111119389534
-   <= 0.0851698815822601
- rightPlanesDominatesLeftFlowConstr_eps_t10_v3: 1e-05 y7_t401290
-   - 0.0851698815822601 rightMutuallyExclusivePlanesVar_f0_th0.44628100097179413
-   <= 0
- rightPlanesOrderConstr_f0_th0.44628100097179413:
-   rightMutuallyExclusivePlanesVar_f0_th0.361111119389534
-   - rightMutuallyExclusivePlanesVar_f0_th0.44628100097179413 >= 0
- rightMutuallyExclusivePlanesVar_f0_t15_v10: y11_t401295
-   + rightMutuallyExclusivePlanesVar_f0_th0.5280073583126068 <= 1
- rightPlanesDominatesLeftFlowConstr_t15_v10: y12_t401295
-   - rightMutuallyExclusivePlanesVar_f0_th0.44628100097179413 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t15_v10: 1e-05 y11_t401295
-   + 0.0817263573408127 rightMutuallyExclusivePlanesVar_f0_th0.44628100097179413
-   <= 0.0817263573408127
- rightPlanesDominatesLeftFlowConstr_eps_t15_v10: 1e-05 y12_t401295
-   - 0.0817263573408127 rightMutuallyExclusivePlanesVar_f0_th0.5280073583126068
-   <= 0
- rightPlanesOrderConstr_f0_th0.5280073583126068:
-   rightMutuallyExclusivePlanesVar_f0_th0.44628100097179413
-   - rightMutuallyExclusivePlanesVar_f0_th0.5280073583126068 >= 0
- rightMutuallyExclusivePlanesVar_f0_t4_v16: y17_t401284
-   + rightMutuallyExclusivePlanesVar_f0_th0.574839323759079 <= 1
- rightPlanesDominatesLeftFlowConstr_t4_v16: y18_t401284
-   - rightMutuallyExclusivePlanesVar_f0_th0.5280073583126068 <= 0
- rightMutuallyExclusivePlanesVar_eps_f0_t4_v16: 1e-05 y17_t401284
-   + 0.0468319654464722 rightMutuallyExclusivePlanesVar_f0_th0.5280073583126068
-   <= 0.0468319654464722
- rightPlanesDominatesLeftFlowConstr_eps_t4_v16: 1e-05 y18_t401284
-   - 0.0468319654464722 rightMutuallyExclusivePlanesVar_f0_th0.574839323759079
-   <= 0
- rightPlanesOrderConstr_f0_th0.574839323759079:
-   rightMutuallyExclusivePlanesVar_f0_th0.5280073583126068
-   - rightMutuallyExclusivePlanesVar_f0_th0.574839323759079 >= 0
+ rightPlanesOrderConstr_f0_th0.35949374735355377:
+   rightMutuallyExclusivePlanesVar_f0_th0.35879792273044586
+   - rightMutuallyExclusivePlanesVar_f0_th0.35949374735355377 >= 0
  x_as_linear_combination_of_planes_f: x_f0
-   - 0.0860881507396698 rightMutuallyExclusivePlanesVar_f0_th0
-   - 0.0812672227621078 rightMutuallyExclusivePlanesVar_f0_th0.0860881507396698
-   - 0.00183654576539993 rightMutuallyExclusivePlanesVar_f0_th0.16735537350177765
-   - 0.00757575780153275 rightMutuallyExclusivePlanesVar_f0_th0.16919191926717758
-   - 0.00321395695209503 rightMutuallyExclusivePlanesVar_f0_th0.17676767706871033
-   - 0.00665748864412308 rightMutuallyExclusivePlanesVar_f0_th0.17998163402080536
-   - 0.00596877187490463 rightMutuallyExclusivePlanesVar_f0_th0.18663912266492844
-   - 0.00344352424144745 rightMutuallyExclusivePlanesVar_f0_th0.19260789453983307
-   - 0.0227272734045982 rightMutuallyExclusivePlanesVar_f0_th0.19605141878128052
-   - 0.00573921203613281 rightMutuallyExclusivePlanesVar_f0_th0.21877869218587875
-   - 0.00528007745742798 rightMutuallyExclusivePlanesVar_f0_th0.22451790422201157
-   - 0.00183654576539993 rightMutuallyExclusivePlanesVar_f0_th0.22979798167943954
-   - 6.8870186805725098e-04 rightMutuallyExclusivePlanesVar_f0_th0.23163452744483948
-   - 0.0151515181618418 rightMutuallyExclusivePlanesVar_f0_th0.23232322931289673
-   - 0.00964187574808933 rightMutuallyExclusivePlanesVar_f0_th0.24747474747473858
-   - 0.00987144559621811 rightMutuallyExclusivePlanesVar_f0_th0.2571166232228279
-   - 9.1826915740966797e-04 rightMutuallyExclusivePlanesVar_f0_th0.266988068819046
-   - 4.5914947986602783e-04 rightMutuallyExclusivePlanesVar_f0_th0.2679063379764557
-   - 9.1826915740966797e-04 rightMutuallyExclusivePlanesVar_f0_th0.2683654874563217
-   - 6.8870186805725098e-04 rightMutuallyExclusivePlanesVar_f0_th0.2692837566137314
-   - 4.5913457870483398e-04 rightMutuallyExclusivePlanesVar_f0_th0.26997245848178864
-   - 2.2956728935241699e-04 rightMutuallyExclusivePlanesVar_f0_th0.27043159306049347
-   - 0.00573921203613281 rightMutuallyExclusivePlanesVar_f0_th0.2706611603498459
-   - 0.0309917330741882 rightMutuallyExclusivePlanesVar_f0_th0.2764003723859787
-   - 0.0013774037361145 rightMutuallyExclusivePlanesVar_f0_th0.30739210546016693
-   - 4.5914947986602783e-04 rightMutuallyExclusivePlanesVar_f0_th0.30876950919628143
-   - 0.0055096298456192 rightMutuallyExclusivePlanesVar_f0_th0.30922865867614746
-   - 0.00390267372131348 rightMutuallyExclusivePlanesVar_f0_th0.31473828852176666
-   - 0.0348943918943405 rightMutuallyExclusivePlanesVar_f0_th0.31864096224308014
-   - 0.00252525508403778 rightMutuallyExclusivePlanesVar_f0_th0.35353535413742065
-   - 0.00505051016807556 rightMutuallyExclusivePlanesVar_f0_th0.35606060922145844
-   - 0.0851698815822601 rightMutuallyExclusivePlanesVar_f0_th0.361111119389534
-   - 0.0817263573408127 rightMutuallyExclusivePlanesVar_f0_th0.44628100097179413
-   - 0.0468319654464722 rightMutuallyExclusivePlanesVar_f0_th0.5280073583126068
-   - 0.425160676240921 rightMutuallyExclusivePlanesVar_f0_th0.574839323759079
+   - 0.0270960173510542 rightMutuallyExclusivePlanesVar_f0_th0
+   - 0.0199987263477812 rightMutuallyExclusivePlanesVar_f0_th0.027096017351054203
+   - 0.0182475559413433 rightMutuallyExclusivePlanesVar_f0_th0.04709474369883537
+   - 0.0137977860867977 rightMutuallyExclusivePlanesVar_f0_th0.06534229964017868
+   - 0.00159202888607979 rightMutuallyExclusivePlanesVar_f0_th0.0791400857269764
+   - 0.00834239274263382 rightMutuallyExclusivePlanesVar_f0_th0.08073211461305618
+   - 0.00589204952120781 rightMutuallyExclusivePlanesVar_f0_th0.08907450735569
+   - 0.00147183611989021 rightMutuallyExclusivePlanesVar_f0_th0.09496655687689781
+   - 0.00235409662127495 rightMutuallyExclusivePlanesVar_f0_th0.09643839299678802
+   - 0.0236332342028618 rightMutuallyExclusivePlanesVar_f0_th0.09879248961806297
+   - 0.0109035186469555 rightMutuallyExclusivePlanesVar_f0_th0.12242572382092476
+   - 0.1207080334424973 rightMutuallyExclusivePlanesVar_f0_th0.13332924246788025
+   - 0.0800793319940567 rightMutuallyExclusivePlanesVar_f0_th0.2540372759103775
+   - 0.000280708 rightMutuallyExclusivePlanesVar_f0_th0.3341166079044342
+   - 6.7202746868133545e-04 rightMutuallyExclusivePlanesVar_f0_th0.3343973159790039
+   - 0.000537604 rightMutuallyExclusivePlanesVar_f0_th0.33506934344768524
+   - 0.00123508274555206 rightMutuallyExclusivePlanesVar_f0_th0.3356069475412369
+   - 5.6088e-05 rightMutuallyExclusivePlanesVar_f0_th0.33684203028678894
+   - 9.0332329273223877e-04 rightMutuallyExclusivePlanesVar_f0_th0.3368981182575226
+   - 0.00723870098590851 rightMutuallyExclusivePlanesVar_f0_th0.3378014415502548
+   - 0.00426653027534485 rightMutuallyExclusivePlanesVar_f0_th0.34504014253616333
+   - 0.00687645375728607 rightMutuallyExclusivePlanesVar_f0_th0.3493066728115082
+   - 9.57847e-05 rightMutuallyExclusivePlanesVar_f0_th0.35618312656879425
+   - 0.00251901149749756 rightMutuallyExclusivePlanesVar_f0_th0.3562789112329483
+   - 6.9582462310791016e-04 rightMutuallyExclusivePlanesVar_f0_th0.35879792273044586
+   - 0.6405062526464462 rightMutuallyExclusivePlanesVar_f0_th0.35949374735355377
    = 0
- rightMutuallyExclusivePlanesVar_f1_t3_v11: y12_t401283
-   + rightMutuallyExclusivePlanesVar_f1_th0.41767553985118866 <= 1
- rightPlanesDominatesLeftFlowConstr_t3_v11: y13_t401283
+ rightMutuallyExclusivePlanesVar_f1_t17_v9: y10_t797
+   + rightMutuallyExclusivePlanesVar_f1_th0.03974596597254276 <= 1
+ rightPlanesDominatesLeftFlowConstr_t17_v9: y11_t797
    - rightMutuallyExclusivePlanesVar_f1_th0 <= 0
- rightMutuallyExclusivePlanesVar_eps_f1_t3_v11: 1e-05 y12_t401283
-   + 0.4176755398511887 rightMutuallyExclusivePlanesVar_f1_th0
-   <= 0.4176755398511887
- rightPlanesDominatesLeftFlowConstr_eps_t3_v11: 1e-05 y13_t401283
-   - 0.4176755398511887 rightMutuallyExclusivePlanesVar_f1_th0.41767553985118866
+ rightMutuallyExclusivePlanesVar_eps_f1_t17_v9: 1e-05 y10_t797
+   + 0.0397459659725428 rightMutuallyExclusivePlanesVar_f1_th0
+   <= 0.0397459659725428
+ rightPlanesDominatesLeftFlowConstr_eps_t17_v9: 1e-05 y11_t797
+   - 0.0397459659725428 rightMutuallyExclusivePlanesVar_f1_th0.03974596597254276
    <= 0
- rightPlanesOrderConstr_f1_th0.41767553985118866:
+ rightPlanesOrderConstr_f1_th0.03974596597254276:
    rightMutuallyExclusivePlanesVar_f1_th0
-   - rightMutuallyExclusivePlanesVar_f1_th0.41767553985118866 >= 0
- rightMutuallyExclusivePlanesVar_f1_t14_v17: y18_t401294
-   + rightMutuallyExclusivePlanesVar_f1_th0.4975786805152893 <= 1
- rightPlanesDominatesLeftFlowConstr_t14_v17: y19_t401294
-   - rightMutuallyExclusivePlanesVar_f1_th0.41767553985118866 <= 0
- rightMutuallyExclusivePlanesVar_eps_f1_t14_v17: 1e-05 y18_t401294
-   + 0.0799031406641006 rightMutuallyExclusivePlanesVar_f1_th0.41767553985118866
-   <= 0.0799031406641006
- rightPlanesDominatesLeftFlowConstr_eps_t14_v17: 1e-05 y19_t401294
-   - 0.0799031406641006 rightMutuallyExclusivePlanesVar_f1_th0.4975786805152893
+   - rightMutuallyExclusivePlanesVar_f1_th0.03974596597254276 >= 0
+ rightMutuallyExclusivePlanesVar_f1_t1_v5: y6_t781
+   + rightMutuallyExclusivePlanesVar_f1_th0.040300214663147926 <= 1
+ rightPlanesDominatesLeftFlowConstr_t1_v5: y7_t781
+   - rightMutuallyExclusivePlanesVar_f1_th0.03974596597254276 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f1_t1_v5: 1e-05 y6_t781
+   + 5.5424869060516357e-04 rightMutuallyExclusivePlanesVar_f1_th0.03974596597254276
+   <= 5.5424869060516357e-04
+ rightPlanesDominatesLeftFlowConstr_eps_t1_v5: 1e-05 y7_t781
+   - 5.5424869060516357e-04 rightMutuallyExclusivePlanesVar_f1_th0.040300214663147926
    <= 0
- rightMutuallyExclusivePlanesVar_f1_t15_v18: y19_t401295
-   + rightMutuallyExclusivePlanesVar_f1_th0.4975786805152893 <= 1
- rightPlanesDominatesLeftFlowConstr_t15_v18: y22_t401295
-   - rightMutuallyExclusivePlanesVar_f1_th0.41767553985118866 <= 0
- rightMutuallyExclusivePlanesVar_eps_f1_t15_v18: 1e-05 y19_t401295
-   + 0.0799031406641006 rightMutuallyExclusivePlanesVar_f1_th0.41767553985118866
-   <= 0.0799031406641006
- rightPlanesDominatesLeftFlowConstr_eps_t15_v18: 1e-05 y22_t401295
-   - 0.0799031406641006 rightMutuallyExclusivePlanesVar_f1_th0.4975786805152893
+ rightPlanesOrderConstr_f1_th0.040300214663147926:
+   rightMutuallyExclusivePlanesVar_f1_th0.03974596597254276
+   - rightMutuallyExclusivePlanesVar_f1_th0.040300214663147926 >= 0
+ rightMutuallyExclusivePlanesVar_f1_t6_v9: y10_t786
+   + rightMutuallyExclusivePlanesVar_f1_th0.040319718420505524 <= 1
+ rightPlanesDominatesLeftFlowConstr_t6_v9: y11_t786
+   - rightMutuallyExclusivePlanesVar_f1_th0.040300214663147926 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f1_t6_v9: 1e-05 y10_t786
+   + 1.95038e-05 rightMutuallyExclusivePlanesVar_f1_th0.040300214663147926
+   <= 1.95038e-05
+ rightPlanesDominatesLeftFlowConstr_eps_t6_v9: 1e-05 y11_t786
+   - 1.95038e-05 rightMutuallyExclusivePlanesVar_f1_th0.040319718420505524
    <= 0
- rightPlanesOrderConstr_f1_th0.4975786805152893:
-   rightMutuallyExclusivePlanesVar_f1_th0.41767553985118866
-   - rightMutuallyExclusivePlanesVar_f1_th0.4975786805152893 >= 0
- rightMutuallyExclusivePlanesVar_f1_t4_v6: y7_t401284
-   + rightMutuallyExclusivePlanesVar_f1_th0.5024213045835495 <= 1
- rightPlanesDominatesLeftFlowConstr_t4_v6: y8_t401284
-   - rightMutuallyExclusivePlanesVar_f1_th0.4975786805152893 <= 0
- rightMutuallyExclusivePlanesVar_eps_f1_t4_v6: 1e-05 y7_t401284
-   + 0.00484262406826019 rightMutuallyExclusivePlanesVar_f1_th0.4975786805152893
-   <= 0.00484262406826019
- rightPlanesDominatesLeftFlowConstr_eps_t4_v6: 1e-05 y8_t401284
-   - 0.00484262406826019 rightMutuallyExclusivePlanesVar_f1_th0.5024213045835495
+ rightPlanesOrderConstr_f1_th0.040319718420505524:
+   rightMutuallyExclusivePlanesVar_f1_th0.040300214663147926
+   - rightMutuallyExclusivePlanesVar_f1_th0.040319718420505524 >= 0
+ rightPlanesOrderConstr_f1_th0.04079108517758657:
+   rightMutuallyExclusivePlanesVar_f1_th0.040319718420505524
+   - rightMutuallyExclusivePlanesVar_f1_th0.04079108517758657 >= 0
+ rightMutuallyExclusivePlanesVar_f1_t15_v12: y13_t795
+   + rightMutuallyExclusivePlanesVar_f1_th0.10028063505887985 <= 1
+ rightPlanesDominatesLeftFlowConstr_t15_v12: y14_t795
+   - rightMutuallyExclusivePlanesVar_f1_th0.04079108517758657 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f1_t15_v12: 1e-05 y13_t795
+   + 0.0594895498812933 rightMutuallyExclusivePlanesVar_f1_th0.04079108517758657
+   <= 0.0594895498812933
+ rightPlanesDominatesLeftFlowConstr_eps_t15_v12: 1e-05 y14_t795
+   - 0.0594895498812933 rightMutuallyExclusivePlanesVar_f1_th0.10028063505887985
    <= 0
- rightPlanesOrderConstr_f1_th0.5024213045835495:
-   rightMutuallyExclusivePlanesVar_f1_th0.4975786805152893
-   - rightMutuallyExclusivePlanesVar_f1_th0.5024213045835495 >= 0
- rightMutuallyExclusivePlanesVar_f1_t6_v14: y15_t401286
-   + rightMutuallyExclusivePlanesVar_f1_th0.5060532540082932 <= 1
- rightPlanesDominatesLeftFlowConstr_t6_v14: y18_t401286
-   - rightMutuallyExclusivePlanesVar_f1_th0.5024213045835495 <= 0
- rightMutuallyExclusivePlanesVar_eps_f1_t6_v14: 1e-05 y15_t401286
-   + 0.00363194942474365 rightMutuallyExclusivePlanesVar_f1_th0.5024213045835495
-   <= 0.00363194942474365
- rightPlanesDominatesLeftFlowConstr_eps_t6_v14: 1e-05 y18_t401286
-   - 0.00363194942474365 rightMutuallyExclusivePlanesVar_f1_th0.5060532540082932
+ rightPlanesOrderConstr_f1_th0.10028063505887985:
+   rightMutuallyExclusivePlanesVar_f1_th0.04079108517758657
+   - rightMutuallyExclusivePlanesVar_f1_th0.10028063505887985 >= 0
+ rightMutuallyExclusivePlanesVar_f1_t3_v8: y9_t783
+   + rightMutuallyExclusivePlanesVar_f1_th0.10061411932110786 <= 1
+ rightPlanesDominatesLeftFlowConstr_t3_v8: y12_t783
+   - rightMutuallyExclusivePlanesVar_f1_th0.10028063505887985 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f1_t3_v8: 1e-05 y9_t783
+   + 3.3348426222801208e-04 rightMutuallyExclusivePlanesVar_f1_th0.10028063505887985
+   <= 3.3348426222801208e-04
+ rightPlanesDominatesLeftFlowConstr_eps_t3_v8: 1e-05 y12_t783
+   - 3.3348426222801208e-04 rightMutuallyExclusivePlanesVar_f1_th0.10061411932110786
    <= 0
- rightMutuallyExclusivePlanesVar_f1_t7_v1: y2_t401287
-   + rightMutuallyExclusivePlanesVar_f1_th0.5060532540082932 <= 1
- rightPlanesDominatesLeftFlowConstr_t7_v1: y3_t401287
-   - rightMutuallyExclusivePlanesVar_f1_th0.5024213045835495 <= 0
- rightMutuallyExclusivePlanesVar_eps_f1_t7_v1: 1e-05 y2_t401287
-   + 0.00363194942474365 rightMutuallyExclusivePlanesVar_f1_th0.5024213045835495
-   <= 0.00363194942474365
- rightPlanesDominatesLeftFlowConstr_eps_t7_v1: 1e-05 y3_t401287
-   - 0.00363194942474365 rightMutuallyExclusivePlanesVar_f1_th0.5060532540082932
+ rightMutuallyExclusivePlanesVar_f1_t4_v8: y9_t784
+   + rightMutuallyExclusivePlanesVar_f1_th0.10061411932110786 <= 1
+ rightPlanesDominatesLeftFlowConstr_t4_v8: y12_t784
+   - rightMutuallyExclusivePlanesVar_f1_th0.10028063505887985 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f1_t4_v8: 1e-05 y9_t784
+   + 3.3348426222801208e-04 rightMutuallyExclusivePlanesVar_f1_th0.10028063505887985
+   <= 3.3348426222801208e-04
+ rightPlanesDominatesLeftFlowConstr_eps_t4_v8: 1e-05 y12_t784
+   - 3.3348426222801208e-04 rightMutuallyExclusivePlanesVar_f1_th0.10061411932110786
    <= 0
- rightPlanesOrderConstr_f1_th0.5060532540082932:
-   rightMutuallyExclusivePlanesVar_f1_th0.5024213045835495
-   - rightMutuallyExclusivePlanesVar_f1_th0.5060532540082932 >= 0
- rightMutuallyExclusivePlanesVar_f1_t1_v7: y8_t401281
-   + rightMutuallyExclusivePlanesVar_f1_th0.5072639137506485 <= 1
- rightPlanesDominatesLeftFlowConstr_t1_v7: y9_t401281
-   - rightMutuallyExclusivePlanesVar_f1_th0.5060532540082932 <= 0
- rightMutuallyExclusivePlanesVar_eps_f1_t1_v7: 1e-05 y8_t401281
-   + 0.00121065974235535 rightMutuallyExclusivePlanesVar_f1_th0.5060532540082932
-   <= 0.00121065974235535
- rightPlanesDominatesLeftFlowConstr_eps_t1_v7: 1e-05 y9_t401281
-   - 0.00121065974235535 rightMutuallyExclusivePlanesVar_f1_th0.5072639137506485
+ rightPlanesOrderConstr_f1_th0.10061411932110786:
+   rightMutuallyExclusivePlanesVar_f1_th0.10028063505887985
+   - rightMutuallyExclusivePlanesVar_f1_th0.10061411932110786 >= 0
+ rightMutuallyExclusivePlanesVar_f1_t1_v8: y9_t781
+   + rightMutuallyExclusivePlanesVar_f1_th0.10527825355529785 <= 1
+ rightPlanesDominatesLeftFlowConstr_t1_v8: y12_t781
+   - rightMutuallyExclusivePlanesVar_f1_th0.10061411932110786 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f1_t1_v8: 1e-05 y9_t781
+   + 0.00466413423418999 rightMutuallyExclusivePlanesVar_f1_th0.10061411932110786
+   <= 0.00466413423418999
+ rightPlanesDominatesLeftFlowConstr_eps_t1_v8: 1e-05 y12_t781
+   - 0.00466413423418999 rightMutuallyExclusivePlanesVar_f1_th0.10527825355529785
    <= 0
- rightPlanesOrderConstr_f1_th0.5072639137506485:
-   rightMutuallyExclusivePlanesVar_f1_th0.5060532540082932
-   - rightMutuallyExclusivePlanesVar_f1_th0.5072639137506485 >= 0
- rightMutuallyExclusivePlanesVar_f1_t2_v3: y4_t401282
-   + rightMutuallyExclusivePlanesVar_f1_th0.5084745585918427 <= 1
- rightPlanesDominatesLeftFlowConstr_t2_v3: y5_t401282
-   - rightMutuallyExclusivePlanesVar_f1_th0.5072639137506485 <= 0
- rightMutuallyExclusivePlanesVar_eps_f1_t2_v3: 1e-05 y4_t401282
-   + 0.00121064484119415 rightMutuallyExclusivePlanesVar_f1_th0.5072639137506485
-   <= 0.00121064484119415
- rightPlanesDominatesLeftFlowConstr_eps_t2_v3: 1e-05 y5_t401282
-   - 0.00121064484119415 rightMutuallyExclusivePlanesVar_f1_th0.5084745585918427
+ rightPlanesOrderConstr_f1_th0.10527825355529785:
+   rightMutuallyExclusivePlanesVar_f1_th0.10061411932110786
+   - rightMutuallyExclusivePlanesVar_f1_th0.10527825355529785 >= 0
+ rightMutuallyExclusivePlanesVar_f1_t7_v12: y13_t787
+   + rightMutuallyExclusivePlanesVar_f1_th0.10827904939651489 <= 1
+ rightPlanesDominatesLeftFlowConstr_t7_v12: y14_t787
+   - rightMutuallyExclusivePlanesVar_f1_th0.10527825355529785 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f1_t7_v12: 1e-05 y13_t787
+   + 0.00300079584121704 rightMutuallyExclusivePlanesVar_f1_th0.10527825355529785
+   <= 0.00300079584121704
+ rightPlanesDominatesLeftFlowConstr_eps_t7_v12: 1e-05 y14_t787
+   - 0.00300079584121704 rightMutuallyExclusivePlanesVar_f1_th0.10827904939651489
    <= 0
- rightPlanesOrderConstr_f1_th0.5084745585918427:
-   rightMutuallyExclusivePlanesVar_f1_th0.5072639137506485
-   - rightMutuallyExclusivePlanesVar_f1_th0.5084745585918427 >= 0
- rightMutuallyExclusivePlanesVar_f1_t5_v19: y20_t401285
-   + rightMutuallyExclusivePlanesVar_f1_th0.509685218334198 <= 1
- rightPlanesDominatesLeftFlowConstr_t5_v19: y21_t401285
-   - rightMutuallyExclusivePlanesVar_f1_th0.5084745585918427 <= 0
- rightMutuallyExclusivePlanesVar_eps_f1_t5_v19: 1e-05 y20_t401285
-   + 0.00121065974235535 rightMutuallyExclusivePlanesVar_f1_th0.5084745585918427
-   <= 0.00121065974235535
- rightPlanesDominatesLeftFlowConstr_eps_t5_v19: 1e-05 y21_t401285
-   - 0.00121065974235535 rightMutuallyExclusivePlanesVar_f1_th0.509685218334198
+ rightPlanesOrderConstr_f1_th0.10827904939651489:
+   rightMutuallyExclusivePlanesVar_f1_th0.10527825355529785
+   - rightMutuallyExclusivePlanesVar_f1_th0.10827904939651489 >= 0
+ rightMutuallyExclusivePlanesVar_f1_t5_v5: y6_t785
+   + rightMutuallyExclusivePlanesVar_f1_th0.11673849821090698 <= 1
+ rightPlanesDominatesLeftFlowConstr_t5_v5: y7_t785
+   - rightMutuallyExclusivePlanesVar_f1_th0.10827904939651489 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f1_t5_v5: 1e-05 y6_t785
+   + 0.00845944881439209 rightMutuallyExclusivePlanesVar_f1_th0.10827904939651489
+   <= 0.00845944881439209
+ rightPlanesDominatesLeftFlowConstr_eps_t5_v5: 1e-05 y7_t785
+   - 0.00845944881439209 rightMutuallyExclusivePlanesVar_f1_th0.11673849821090698
    <= 0
- rightPlanesOrderConstr_f1_th0.509685218334198:
-   rightMutuallyExclusivePlanesVar_f1_th0.5084745585918427
-   - rightMutuallyExclusivePlanesVar_f1_th0.509685218334198 >= 0
- rightMutuallyExclusivePlanesVar_f1_t8_v2: y3_t401288
-   + rightMutuallyExclusivePlanesVar_f1_th0.5254237204790115 <= 1
- rightPlanesDominatesLeftFlowConstr_t8_v2: y4_t401288
-   - rightMutuallyExclusivePlanesVar_f1_th0.509685218334198 <= 0
- rightMutuallyExclusivePlanesVar_eps_f1_t8_v2: 1e-05 y3_t401288
-   + 0.0157385021448135 rightMutuallyExclusivePlanesVar_f1_th0.509685218334198
-   <= 0.0157385021448135
- rightPlanesDominatesLeftFlowConstr_eps_t8_v2: 1e-05 y4_t401288
-   - 0.0157385021448135 rightMutuallyExclusivePlanesVar_f1_th0.5254237204790115
+ rightPlanesOrderConstr_f1_th0.11673849821090698:
+   rightMutuallyExclusivePlanesVar_f1_th0.10827904939651489
+   - rightMutuallyExclusivePlanesVar_f1_th0.11673849821090698 >= 0
+ rightMutuallyExclusivePlanesVar_f1_t19_v12: y13_t799
+   + rightMutuallyExclusivePlanesVar_f1_th0.12969163805246353 <= 1
+ rightPlanesDominatesLeftFlowConstr_t19_v12: y14_t799
+   - rightMutuallyExclusivePlanesVar_f1_th0.11673849821090698 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f1_t19_v12: 1e-05 y13_t799
+   + 0.0129531398415565 rightMutuallyExclusivePlanesVar_f1_th0.11673849821090698
+   <= 0.0129531398415565
+ rightPlanesDominatesLeftFlowConstr_eps_t19_v12: 1e-05 y14_t799
+   - 0.0129531398415565 rightMutuallyExclusivePlanesVar_f1_th0.12969163805246353
    <= 0
- rightPlanesOrderConstr_f1_th0.5254237204790115:
-   rightMutuallyExclusivePlanesVar_f1_th0.509685218334198
-   - rightMutuallyExclusivePlanesVar_f1_th0.5254237204790115 >= 0
- rightMutuallyExclusivePlanesVar_f1_t9_v3: y4_t401289
-   + rightMutuallyExclusivePlanesVar_f1_th0.5290556848049164 <= 1
- rightPlanesDominatesLeftFlowConstr_t9_v3: y5_t401289
-   - rightMutuallyExclusivePlanesVar_f1_th0.5254237204790115 <= 0
- rightMutuallyExclusivePlanesVar_eps_f1_t9_v3: 1e-05 y4_t401289
-   + 0.00363196432590485 rightMutuallyExclusivePlanesVar_f1_th0.5254237204790115
-   <= 0.00363196432590485
- rightPlanesDominatesLeftFlowConstr_eps_t9_v3: 1e-05 y5_t401289
-   - 0.00363196432590485 rightMutuallyExclusivePlanesVar_f1_th0.5290556848049164
+ rightPlanesOrderConstr_f1_th0.12969163805246353:
+   rightMutuallyExclusivePlanesVar_f1_th0.11673849821090698
+   - rightMutuallyExclusivePlanesVar_f1_th0.12969163805246353 >= 0
+ rightMutuallyExclusivePlanesVar_f1_t17_v12: y13_t797
+   + rightMutuallyExclusivePlanesVar_f1_th0.15222343802452087 <= 1
+ rightPlanesDominatesLeftFlowConstr_t17_v12: y14_t797
+   - rightMutuallyExclusivePlanesVar_f1_th0.12969163805246353 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f1_t17_v12: 1e-05 y13_t797
+   + 0.0225318 rightMutuallyExclusivePlanesVar_f1_th0.12969163805246353
+   <= 0.0225318
+ rightPlanesDominatesLeftFlowConstr_eps_t17_v12: 1e-05 y14_t797
+   - 0.0225318 rightMutuallyExclusivePlanesVar_f1_th0.15222343802452087
    <= 0
- rightMutuallyExclusivePlanesVar_f1_t12_v10: y11_t401292
-   + rightMutuallyExclusivePlanesVar_f1_th0.5290556848049164 <= 1
- rightPlanesDominatesLeftFlowConstr_t12_v10: y12_t401292
-   - rightMutuallyExclusivePlanesVar_f1_th0.5254237204790115 <= 0
- rightMutuallyExclusivePlanesVar_eps_f1_t12_v10: 1e-05 y11_t401292
-   + 0.00363196432590485 rightMutuallyExclusivePlanesVar_f1_th0.5254237204790115
-   <= 0.00363196432590485
- rightPlanesDominatesLeftFlowConstr_eps_t12_v10: 1e-05 y12_t401292
-   - 0.00363196432590485 rightMutuallyExclusivePlanesVar_f1_th0.5290556848049164
+ rightPlanesOrderConstr_f1_th0.15222343802452087:
+   rightMutuallyExclusivePlanesVar_f1_th0.12969163805246353
+   - rightMutuallyExclusivePlanesVar_f1_th0.15222343802452087 >= 0
+ rightMutuallyExclusivePlanesVar_f1_t2_v0: y1_t782
+   + rightMutuallyExclusivePlanesVar_f1_th0.15863750129938126 <= 1
+ rightPlanesDominatesLeftFlowConstr_t2_v0: y8_t782
+   - rightMutuallyExclusivePlanesVar_f1_th0.15222343802452087 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f1_t2_v0: 1e-05 y1_t782
+   + 0.00641406327486038 rightMutuallyExclusivePlanesVar_f1_th0.15222343802452087
+   <= 0.00641406327486038
+ rightPlanesDominatesLeftFlowConstr_eps_t2_v0: 1e-05 y8_t782
+   - 0.00641406327486038 rightMutuallyExclusivePlanesVar_f1_th0.15863750129938126
    <= 0
- rightPlanesOrderConstr_f1_th0.5290556848049164:
-   rightMutuallyExclusivePlanesVar_f1_th0.5254237204790115
-   - rightMutuallyExclusivePlanesVar_f1_th0.5290556848049164 >= 0
- rightMutuallyExclusivePlanesVar_f1_t1_v3: y4_t401281
-   + rightMutuallyExclusivePlanesVar_f1_th0.5447941869497299 <= 1
- rightPlanesDominatesLeftFlowConstr_t1_v3: y5_t401281
-   - rightMutuallyExclusivePlanesVar_f1_th0.5290556848049164 <= 0
- rightMutuallyExclusivePlanesVar_eps_f1_t1_v3: 1e-05 y4_t401281
-   + 0.0157385021448135 rightMutuallyExclusivePlanesVar_f1_th0.5290556848049164
-   <= 0.0157385021448135
- rightPlanesDominatesLeftFlowConstr_eps_t1_v3: 1e-05 y5_t401281
-   - 0.0157385021448135 rightMutuallyExclusivePlanesVar_f1_th0.5447941869497299
+ rightPlanesOrderConstr_f1_th0.15863750129938126:
+   rightMutuallyExclusivePlanesVar_f1_th0.15222343802452087
+   - rightMutuallyExclusivePlanesVar_f1_th0.15863750129938126 >= 0
+ rightMutuallyExclusivePlanesVar_f1_t12_v0: y1_t792
+   + rightMutuallyExclusivePlanesVar_f1_th0.17800937592983246 <= 1
+ rightPlanesDominatesLeftFlowConstr_t12_v0: y8_t792
+   - rightMutuallyExclusivePlanesVar_f1_th0.15863750129938126 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f1_t12_v0: 1e-05 y1_t792
+   + 0.0193718746304512 rightMutuallyExclusivePlanesVar_f1_th0.15863750129938126
+   <= 0.0193718746304512
+ rightPlanesDominatesLeftFlowConstr_eps_t12_v0: 1e-05 y8_t792
+   - 0.0193718746304512 rightMutuallyExclusivePlanesVar_f1_th0.17800937592983246
    <= 0
- rightPlanesOrderConstr_f1_th0.5447941869497299:
-   rightMutuallyExclusivePlanesVar_f1_th0.5290556848049164
-   - rightMutuallyExclusivePlanesVar_f1_th0.5447941869497299 >= 0
- rightMutuallyExclusivePlanesVar_f1_t8_v11: y12_t401288
-   + rightMutuallyExclusivePlanesVar_f1_th0.5472154915332794 <= 1
- rightPlanesDominatesLeftFlowConstr_t8_v11: y13_t401288
-   - rightMutuallyExclusivePlanesVar_f1_th0.5447941869497299 <= 0
- rightMutuallyExclusivePlanesVar_eps_f1_t8_v11: 1e-05 y12_t401288
-   + 0.0024213045835495 rightMutuallyExclusivePlanesVar_f1_th0.5447941869497299
-   <= 0.0024213045835495
- rightPlanesDominatesLeftFlowConstr_eps_t8_v11: 1e-05 y13_t401288
-   - 0.0024213045835495 rightMutuallyExclusivePlanesVar_f1_th0.5472154915332794
+ rightPlanesOrderConstr_f1_th0.17800937592983246:
+   rightMutuallyExclusivePlanesVar_f1_th0.15863750129938126
+   - rightMutuallyExclusivePlanesVar_f1_th0.17800937592983246 >= 0
+ rightMutuallyExclusivePlanesVar_f1_t16_v0: y1_t796
+   + rightMutuallyExclusivePlanesVar_f1_th0.18105444312095642 <= 1
+ rightPlanesDominatesLeftFlowConstr_t16_v0: y8_t796
+   - rightMutuallyExclusivePlanesVar_f1_th0.17800937592983246 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f1_t16_v0: 1e-05 y1_t796
+   + 0.00304506719112396 rightMutuallyExclusivePlanesVar_f1_th0.17800937592983246
+   <= 0.00304506719112396
+ rightPlanesDominatesLeftFlowConstr_eps_t16_v0: 1e-05 y8_t796
+   - 0.00304506719112396 rightMutuallyExclusivePlanesVar_f1_th0.18105444312095642
    <= 0
- rightPlanesOrderConstr_f1_th0.5472154915332794:
-   rightMutuallyExclusivePlanesVar_f1_th0.5447941869497299
-   - rightMutuallyExclusivePlanesVar_f1_th0.5472154915332794 >= 0
- rightMutuallyExclusivePlanesVar_f1_t3_v10: y11_t401283
-   + rightMutuallyExclusivePlanesVar_f1_th0.5544794201850891 <= 1
- rightPlanesDominatesLeftFlowConstr_t3_v10: y18_t401283
-   - rightMutuallyExclusivePlanesVar_f1_th0.5472154915332794 <= 0
- rightMutuallyExclusivePlanesVar_eps_f1_t3_v10: 1e-05 y11_t401283
-   + 0.00726392865180969 rightMutuallyExclusivePlanesVar_f1_th0.5472154915332794
-   <= 0.00726392865180969
- rightPlanesDominatesLeftFlowConstr_eps_t3_v10: 1e-05 y18_t401283
-   - 0.00726392865180969 rightMutuallyExclusivePlanesVar_f1_th0.5544794201850891
+ rightPlanesOrderConstr_f1_th0.18105444312095642:
+   rightMutuallyExclusivePlanesVar_f1_th0.17800937592983246
+   - rightMutuallyExclusivePlanesVar_f1_th0.18105444312095642 >= 0
+ rightMutuallyExclusivePlanesVar_f1_t4_v2: y3_t784
+   + rightMutuallyExclusivePlanesVar_f1_th0.1865893453359604 <= 1
+ rightPlanesDominatesLeftFlowConstr_t4_v2: y4_t784
+   - rightMutuallyExclusivePlanesVar_f1_th0.18105444312095642 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f1_t4_v2: 1e-05 y3_t784
+   + 0.00553490221500397 rightMutuallyExclusivePlanesVar_f1_th0.18105444312095642
+   <= 0.00553490221500397
+ rightPlanesDominatesLeftFlowConstr_eps_t4_v2: 1e-05 y4_t784
+   - 0.00553490221500397 rightMutuallyExclusivePlanesVar_f1_th0.1865893453359604
    <= 0
- rightPlanesOrderConstr_f1_th0.5544794201850891:
-   rightMutuallyExclusivePlanesVar_f1_th0.5472154915332794
-   - rightMutuallyExclusivePlanesVar_f1_th0.5544794201850891 >= 0
- rightMutuallyExclusivePlanesVar_f1_t18_v17: y18_t401298
-   + rightMutuallyExclusivePlanesVar_f1_th0.5569007396697998 <= 1
- rightPlanesDominatesLeftFlowConstr_t18_v17: y19_t401298
-   - rightMutuallyExclusivePlanesVar_f1_th0.5544794201850891 <= 0
- rightMutuallyExclusivePlanesVar_eps_f1_t18_v17: 1e-05 y18_t401298
-   + 0.00242131948471069 rightMutuallyExclusivePlanesVar_f1_th0.5544794201850891
-   <= 0.00242131948471069
- rightPlanesDominatesLeftFlowConstr_eps_t18_v17: 1e-05 y19_t401298
-   - 0.00242131948471069 rightMutuallyExclusivePlanesVar_f1_th0.5569007396697998
+ rightPlanesOrderConstr_f1_th0.1865893453359604:
+   rightMutuallyExclusivePlanesVar_f1_th0.18105444312095642
+   - rightMutuallyExclusivePlanesVar_f1_th0.1865893453359604 >= 0
+ rightMutuallyExclusivePlanesVar_f1_t8_v1: y2_t788
+   + rightMutuallyExclusivePlanesVar_f1_th0.1867556944489479 <= 1
+ rightPlanesDominatesLeftFlowConstr_t8_v1: y5_t788
+   - rightMutuallyExclusivePlanesVar_f1_th0.1865893453359604 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f1_t8_v1: 1e-05 y2_t788
+   + 1.6634911298751831e-04 rightMutuallyExclusivePlanesVar_f1_th0.1865893453359604
+   <= 1.6634911298751831e-04
+ rightPlanesDominatesLeftFlowConstr_eps_t8_v1: 1e-05 y5_t788
+   - 1.6634911298751831e-04 rightMutuallyExclusivePlanesVar_f1_th0.1867556944489479
    <= 0
- rightPlanesOrderConstr_f1_th0.5569007396697998:
-   rightMutuallyExclusivePlanesVar_f1_th0.5544794201850891
-   - rightMutuallyExclusivePlanesVar_f1_th0.5569007396697998 >= 0
- rightMutuallyExclusivePlanesVar_f1_t7_v15: y16_t401287
-   + rightMutuallyExclusivePlanesVar_f1_th0.5738498866558075 <= 1
- rightPlanesDominatesLeftFlowConstr_t7_v15: y17_t401287
-   - rightMutuallyExclusivePlanesVar_f1_th0.5569007396697998 <= 0
- rightMutuallyExclusivePlanesVar_eps_f1_t7_v15: 1e-05 y16_t401287
-   + 0.0169491469860077 rightMutuallyExclusivePlanesVar_f1_th0.5569007396697998
-   <= 0.0169491469860077
- rightPlanesDominatesLeftFlowConstr_eps_t7_v15: 1e-05 y17_t401287
-   - 0.0169491469860077 rightMutuallyExclusivePlanesVar_f1_th0.5738498866558075
+ rightPlanesOrderConstr_f1_th0.1867556944489479:
+   rightMutuallyExclusivePlanesVar_f1_th0.1865893453359604
+   - rightMutuallyExclusivePlanesVar_f1_th0.1867556944489479 >= 0
+ rightMutuallyExclusivePlanesVar_f1_t12_v12: y13_t792
+   + rightMutuallyExclusivePlanesVar_f1_th0.19504430890083313 <= 1
+ rightPlanesDominatesLeftFlowConstr_t12_v12: y14_t792
+   - rightMutuallyExclusivePlanesVar_f1_th0.1867556944489479 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f1_t12_v12: 1e-05 y13_t792
+   + 0.00828861445188522 rightMutuallyExclusivePlanesVar_f1_th0.1867556944489479
+   <= 0.00828861445188522
+ rightPlanesDominatesLeftFlowConstr_eps_t12_v12: 1e-05 y14_t792
+   - 0.00828861445188522 rightMutuallyExclusivePlanesVar_f1_th0.19504430890083313
    <= 0
- rightPlanesOrderConstr_f1_th0.5738498866558075:
-   rightMutuallyExclusivePlanesVar_f1_th0.5569007396697998
-   - rightMutuallyExclusivePlanesVar_f1_th0.5738498866558075 >= 0
- rightMutuallyExclusivePlanesVar_f1_t0_v13: y14_t401280
-   + rightMutuallyExclusivePlanesVar_f1_th0.5883777141571045 <= 1
- rightPlanesDominatesLeftFlowConstr_t0_v13: y15_t401280
-   - rightMutuallyExclusivePlanesVar_f1_th0.5738498866558075 <= 0
- rightMutuallyExclusivePlanesVar_eps_f1_t0_v13: 1e-05 y14_t401280
-   + 0.014527827501297 rightMutuallyExclusivePlanesVar_f1_th0.5738498866558075
-   <= 0.014527827501297
- rightPlanesDominatesLeftFlowConstr_eps_t0_v13: 1e-05 y15_t401280
-   - 0.014527827501297 rightMutuallyExclusivePlanesVar_f1_th0.5883777141571045
-   <= 0
- rightPlanesOrderConstr_f1_th0.5883777141571045:
-   rightMutuallyExclusivePlanesVar_f1_th0.5738498866558075
-   - rightMutuallyExclusivePlanesVar_f1_th0.5883777141571045 >= 0
- rightMutuallyExclusivePlanesVar_f1_t4_v24: y25_t401284
-   + rightMutuallyExclusivePlanesVar_f1_th0.6041162014007568 <= 1
- rightPlanesDominatesLeftFlowConstr_t4_v24: y26_t401284
-   - rightMutuallyExclusivePlanesVar_f1_th0.5883777141571045 <= 0
- rightMutuallyExclusivePlanesVar_eps_f1_t4_v24: 1e-05 y25_t401284
-   + 0.0157384872436523 rightMutuallyExclusivePlanesVar_f1_th0.5883777141571045
-   <= 0.0157384872436523
- rightPlanesDominatesLeftFlowConstr_eps_t4_v24: 1e-05 y26_t401284
-   - 0.0157384872436523 rightMutuallyExclusivePlanesVar_f1_th0.6041162014007568
-   <= 0
- rightPlanesOrderConstr_f1_th0.6041162014007568:
-   rightMutuallyExclusivePlanesVar_f1_th0.5883777141571045
-   - rightMutuallyExclusivePlanesVar_f1_th0.6041162014007568 >= 0
- rightMutuallyExclusivePlanesVar_f1_t3_v3: y4_t401283
-   + rightMutuallyExclusivePlanesVar_f1_th0.6065375208854675 <= 1
- rightPlanesDominatesLeftFlowConstr_t3_v3: y9_t401283
-   - rightMutuallyExclusivePlanesVar_f1_th0.6041162014007568 <= 0
- rightMutuallyExclusivePlanesVar_eps_f1_t3_v3: 1e-05 y4_t401283
-   + 0.00242131948471069 rightMutuallyExclusivePlanesVar_f1_th0.6041162014007568
-   <= 0.00242131948471069
- rightPlanesDominatesLeftFlowConstr_eps_t3_v3: 1e-05 y9_t401283
-   - 0.00242131948471069 rightMutuallyExclusivePlanesVar_f1_th0.6065375208854675
-   <= 0
- rightPlanesOrderConstr_f1_th0.6065375208854675:
-   rightMutuallyExclusivePlanesVar_f1_th0.6041162014007568
-   - rightMutuallyExclusivePlanesVar_f1_th0.6065375208854675 >= 0
- rightMutuallyExclusivePlanesVar_f1_t8_v17: y18_t401288
-   + rightMutuallyExclusivePlanesVar_f1_th0.6186440587043762 <= 1
- rightPlanesDominatesLeftFlowConstr_t8_v17: y19_t401288
-   - rightMutuallyExclusivePlanesVar_f1_th0.6065375208854675 <= 0
- rightMutuallyExclusivePlanesVar_eps_f1_t8_v17: 1e-05 y18_t401288
-   + 0.0121065378189087 rightMutuallyExclusivePlanesVar_f1_th0.6065375208854675
-   <= 0.0121065378189087
- rightPlanesDominatesLeftFlowConstr_eps_t8_v17: 1e-05 y19_t401288
-   - 0.0121065378189087 rightMutuallyExclusivePlanesVar_f1_th0.6186440587043762
-   <= 0
- rightPlanesOrderConstr_f1_th0.6186440587043762:
-   rightMutuallyExclusivePlanesVar_f1_th0.6065375208854675
-   - rightMutuallyExclusivePlanesVar_f1_th0.6186440587043762 >= 0
- rightMutuallyExclusivePlanesVar_f1_t8_v19: y20_t401288
-   + rightMutuallyExclusivePlanesVar_f1_th0.6428571343421936 <= 1
- rightPlanesDominatesLeftFlowConstr_t8_v19: y21_t401288
-   - rightMutuallyExclusivePlanesVar_f1_th0.6186440587043762 <= 0
- rightMutuallyExclusivePlanesVar_eps_f1_t8_v19: 1e-05 y20_t401288
-   + 0.0242130756378174 rightMutuallyExclusivePlanesVar_f1_th0.6186440587043762
-   <= 0.0242130756378174
- rightPlanesDominatesLeftFlowConstr_eps_t8_v19: 1e-05 y21_t401288
-   - 0.0242130756378174 rightMutuallyExclusivePlanesVar_f1_th0.6428571343421936
-   <= 0
- rightPlanesOrderConstr_f1_th0.6428571343421936:
-   rightMutuallyExclusivePlanesVar_f1_th0.6186440587043762
-   - rightMutuallyExclusivePlanesVar_f1_th0.6428571343421936 >= 0
- rightPlanesOrderConstr_f1_th0.6440677966101697:
-   rightMutuallyExclusivePlanesVar_f1_th0.6428571343421936
-   - rightMutuallyExclusivePlanesVar_f1_th0.6440677966101697 >= 0
- rightMutuallyExclusivePlanesVar_f1_t18_v10: y11_t401298
-   + rightMutuallyExclusivePlanesVar_f1_th0.6598063111305237 <= 1
- rightPlanesDominatesLeftFlowConstr_t18_v10: y14_t401298
-   - rightMutuallyExclusivePlanesVar_f1_th0.6440677966101697 <= 0
- rightMutuallyExclusivePlanesVar_eps_f1_t18_v10: 1e-05 y11_t401298
-   + 0.015738514520354 rightMutuallyExclusivePlanesVar_f1_th0.6440677966101697
-   <= 0.015738514520354
- rightPlanesDominatesLeftFlowConstr_eps_t18_v10: 1e-05 y14_t401298
-   - 0.015738514520354 rightMutuallyExclusivePlanesVar_f1_th0.6598063111305237
-   <= 0
- rightPlanesOrderConstr_f1_th0.6598063111305237:
-   rightMutuallyExclusivePlanesVar_f1_th0.6440677966101697
-   - rightMutuallyExclusivePlanesVar_f1_th0.6598063111305237 >= 0
- rightMutuallyExclusivePlanesVar_f1_t12_v12: y13_t401292
-   + rightMutuallyExclusivePlanesVar_f1_th0.662227600812912 <= 1
- rightPlanesDominatesLeftFlowConstr_t12_v12: y14_t401292
-   - rightMutuallyExclusivePlanesVar_f1_th0.6598063111305237 <= 0
- rightMutuallyExclusivePlanesVar_eps_f1_t12_v12: 1e-05 y13_t401292
-   + 0.00242128968238831 rightMutuallyExclusivePlanesVar_f1_th0.6598063111305237
-   <= 0.00242128968238831
- rightPlanesDominatesLeftFlowConstr_eps_t12_v12: 1e-05 y14_t401292
-   - 0.00242128968238831 rightMutuallyExclusivePlanesVar_f1_th0.662227600812912
-   <= 0
- rightPlanesOrderConstr_f1_th0.662227600812912:
-   rightMutuallyExclusivePlanesVar_f1_th0.6598063111305237
-   - rightMutuallyExclusivePlanesVar_f1_th0.662227600812912 >= 0
- rightMutuallyExclusivePlanesVar_f1_t7_v3: y4_t401287
-   + rightMutuallyExclusivePlanesVar_f1_th0.6634382605552673 <= 1
- rightPlanesDominatesLeftFlowConstr_t7_v3: y9_t401287
-   - rightMutuallyExclusivePlanesVar_f1_th0.662227600812912 <= 0
- rightMutuallyExclusivePlanesVar_eps_f1_t7_v3: 1e-05 y4_t401287
-   + 0.00121065974235535 rightMutuallyExclusivePlanesVar_f1_th0.662227600812912
-   <= 0.00121065974235535
- rightPlanesDominatesLeftFlowConstr_eps_t7_v3: 1e-05 y9_t401287
-   - 0.00121065974235535 rightMutuallyExclusivePlanesVar_f1_th0.6634382605552673
-   <= 0
- rightMutuallyExclusivePlanesVar_f1_t19_v3: y4_t401299
-   + rightMutuallyExclusivePlanesVar_f1_th0.6634382605552673 <= 1
- rightPlanesDominatesLeftFlowConstr_t19_v3: y7_t401299
-   - rightMutuallyExclusivePlanesVar_f1_th0.662227600812912 <= 0
- rightMutuallyExclusivePlanesVar_eps_f1_t19_v3: 1e-05 y4_t401299
-   + 0.00121065974235535 rightMutuallyExclusivePlanesVar_f1_th0.662227600812912
-   <= 0.00121065974235535
- rightPlanesDominatesLeftFlowConstr_eps_t19_v3: 1e-05 y7_t401299
-   - 0.00121065974235535 rightMutuallyExclusivePlanesVar_f1_th0.6634382605552673
-   <= 0
- rightPlanesOrderConstr_f1_th0.6634382605552673:
-   rightMutuallyExclusivePlanesVar_f1_th0.662227600812912
-   - rightMutuallyExclusivePlanesVar_f1_th0.6634382605552673 >= 0
+ rightPlanesOrderConstr_f1_th0.19504430890083313:
+   rightMutuallyExclusivePlanesVar_f1_th0.1867556944489479
+   - rightMutuallyExclusivePlanesVar_f1_th0.19504430890083313 >= 0
  x_as_linear_combination_of_planes_f: x_f1
-   - 0.4176755398511887 rightMutuallyExclusivePlanesVar_f1_th0
-   - 0.0799031406641006 rightMutuallyExclusivePlanesVar_f1_th0.41767553985118866
-   - 0.00484262406826019 rightMutuallyExclusivePlanesVar_f1_th0.4975786805152893
-   - 0.00363194942474365 rightMutuallyExclusivePlanesVar_f1_th0.5024213045835495
-   - 0.00121065974235535 rightMutuallyExclusivePlanesVar_f1_th0.5060532540082932
-   - 0.00121064484119415 rightMutuallyExclusivePlanesVar_f1_th0.5072639137506485
-   - 0.00121065974235535 rightMutuallyExclusivePlanesVar_f1_th0.5084745585918427
-   - 0.0157385021448135 rightMutuallyExclusivePlanesVar_f1_th0.509685218334198
-   - 0.00363196432590485 rightMutuallyExclusivePlanesVar_f1_th0.5254237204790115
-   - 0.0157385021448135 rightMutuallyExclusivePlanesVar_f1_th0.5290556848049164
-   - 0.0024213045835495 rightMutuallyExclusivePlanesVar_f1_th0.5447941869497299
-   - 0.00726392865180969 rightMutuallyExclusivePlanesVar_f1_th0.5472154915332794
-   - 0.00242131948471069 rightMutuallyExclusivePlanesVar_f1_th0.5544794201850891
-   - 0.0169491469860077 rightMutuallyExclusivePlanesVar_f1_th0.5569007396697998
-   - 0.014527827501297 rightMutuallyExclusivePlanesVar_f1_th0.5738498866558075
-   - 0.0157384872436523 rightMutuallyExclusivePlanesVar_f1_th0.5883777141571045
-   - 0.00242131948471069 rightMutuallyExclusivePlanesVar_f1_th0.6041162014007568
-   - 0.0121065378189087 rightMutuallyExclusivePlanesVar_f1_th0.6065375208854675
-   - 0.0242130756378174 rightMutuallyExclusivePlanesVar_f1_th0.6186440587043762
-   - 0.00121066226797606 rightMutuallyExclusivePlanesVar_f1_th0.6428571343421936
-   - 0.015738514520354 rightMutuallyExclusivePlanesVar_f1_th0.6440677966101697
-   - 0.00242128968238831 rightMutuallyExclusivePlanesVar_f1_th0.6598063111305237
-   - 0.00121065974235535 rightMutuallyExclusivePlanesVar_f1_th0.662227600812912
-   - 0.3365617394447327 rightMutuallyExclusivePlanesVar_f1_th0.6634382605552673
+   - 0.0397459659725428 rightMutuallyExclusivePlanesVar_f1_th0
+   - 5.5424869060516357e-04 rightMutuallyExclusivePlanesVar_f1_th0.03974596597254276
+   - 1.95038e-05 rightMutuallyExclusivePlanesVar_f1_th0.040300214663147926
+   - 4.7136675708104453e-04 rightMutuallyExclusivePlanesVar_f1_th0.040319718420505524
+   - 0.0594895498812933 rightMutuallyExclusivePlanesVar_f1_th0.04079108517758657
+   - 3.3348426222801208e-04 rightMutuallyExclusivePlanesVar_f1_th0.10028063505887985
+   - 0.00466413423418999 rightMutuallyExclusivePlanesVar_f1_th0.10061411932110786
+   - 0.00300079584121704 rightMutuallyExclusivePlanesVar_f1_th0.10527825355529785
+   - 0.00845944881439209 rightMutuallyExclusivePlanesVar_f1_th0.10827904939651489
+   - 0.0129531398415565 rightMutuallyExclusivePlanesVar_f1_th0.11673849821090698
+   - 0.0225318 rightMutuallyExclusivePlanesVar_f1_th0.12969163805246353
+   - 0.00641406327486038 rightMutuallyExclusivePlanesVar_f1_th0.15222343802452087
+   - 0.0193718746304512 rightMutuallyExclusivePlanesVar_f1_th0.15863750129938126
+   - 0.00304506719112396 rightMutuallyExclusivePlanesVar_f1_th0.17800937592983246
+   - 0.00553490221500397 rightMutuallyExclusivePlanesVar_f1_th0.18105444312095642
+   - 1.6634911298751831e-04 rightMutuallyExclusivePlanesVar_f1_th0.1865893453359604
+   - 0.00828861445188522 rightMutuallyExclusivePlanesVar_f1_th0.1867556944489479
+   - 0.8049556910991669 rightMutuallyExclusivePlanesVar_f1_th0.19504430890083313
    = 0
- rightMutuallyExclusivePlanesVar_f2_t16_v2: y3_t401296
-   + rightMutuallyExclusivePlanesVar_f2_th0.35301506519317627 <= 1
- rightPlanesDominatesLeftFlowConstr_t16_v2: y4_t401296
-   - rightMutuallyExclusivePlanesVar_f2_th0 <= 0
- rightMutuallyExclusivePlanesVar_eps_f2_t16_v2: 1e-05 y3_t401296
-   + 0.3530150651931763 rightMutuallyExclusivePlanesVar_f2_th0
-   <= 0.3530150651931763
- rightPlanesDominatesLeftFlowConstr_eps_t16_v2: 1e-05 y4_t401296
-   - 0.3530150651931763 rightMutuallyExclusivePlanesVar_f2_th0.35301506519317627
-   <= 0
- rightPlanesOrderConstr_f2_th0.35301506519317627:
+ rightPlanesOrderConstr_f2_th0.07732111176818447:
    rightMutuallyExclusivePlanesVar_f2_th0
-   - rightMutuallyExclusivePlanesVar_f2_th0.35301506519317627 >= 0
- rightMutuallyExclusivePlanesVar_f2_t4_v11: y12_t401284
-   + rightMutuallyExclusivePlanesVar_f2_th0.6947236061096191 <= 1
- rightPlanesDominatesLeftFlowConstr_t4_v11: y13_t401284
-   - rightMutuallyExclusivePlanesVar_f2_th0.35301506519317627 <= 0
- rightMutuallyExclusivePlanesVar_eps_f2_t4_v11: 1e-05 y12_t401284
-   + 0.3417085409164429 rightMutuallyExclusivePlanesVar_f2_th0.35301506519317627
-   <= 0.3417085409164429
- rightPlanesDominatesLeftFlowConstr_eps_t4_v11: 1e-05 y13_t401284
-   - 0.3417085409164429 rightMutuallyExclusivePlanesVar_f2_th0.6947236061096191
+   - rightMutuallyExclusivePlanesVar_f2_th0.07732111176818447 >= 0
+ rightMutuallyExclusivePlanesVar_f2_t8_v9: y10_t788
+   + rightMutuallyExclusivePlanesVar_f2_th0.13097279518842697 <= 1
+ rightPlanesDominatesLeftFlowConstr_t8_v9: y11_t788
+   - rightMutuallyExclusivePlanesVar_f2_th0.07732111176818447 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f2_t8_v9: 1e-05 y10_t788
+   + 0.0536516834202425 rightMutuallyExclusivePlanesVar_f2_th0.07732111176818447
+   <= 0.0536516834202425
+ rightPlanesDominatesLeftFlowConstr_eps_t8_v9: 1e-05 y11_t788
+   - 0.0536516834202425 rightMutuallyExclusivePlanesVar_f2_th0.13097279518842697
    <= 0
- rightMutuallyExclusivePlanesVar_f2_t7_v13: y14_t401287
-   + rightMutuallyExclusivePlanesVar_f2_th0.6947236061096191 <= 1
- rightPlanesDominatesLeftFlowConstr_t7_v13: y15_t401287
-   - rightMutuallyExclusivePlanesVar_f2_th0.35301506519317627 <= 0
- rightMutuallyExclusivePlanesVar_eps_f2_t7_v13: 1e-05 y14_t401287
-   + 0.3417085409164429 rightMutuallyExclusivePlanesVar_f2_th0.35301506519317627
-   <= 0.3417085409164429
- rightPlanesDominatesLeftFlowConstr_eps_t7_v13: 1e-05 y15_t401287
-   - 0.3417085409164429 rightMutuallyExclusivePlanesVar_f2_th0.6947236061096191
+ rightPlanesOrderConstr_f2_th0.13097279518842697:
+   rightMutuallyExclusivePlanesVar_f2_th0.07732111176818447
+   - rightMutuallyExclusivePlanesVar_f2_th0.13097279518842697 >= 0
+ rightMutuallyExclusivePlanesVar_f2_t0_v5: y6_t780
+   + rightMutuallyExclusivePlanesVar_f2_th0.1433471292257309 <= 1
+ rightPlanesDominatesLeftFlowConstr_t0_v5: y7_t780
+   - rightMutuallyExclusivePlanesVar_f2_th0.13097279518842697 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f2_t0_v5: 1e-05 y6_t780
+   + 0.0123743340373039 rightMutuallyExclusivePlanesVar_f2_th0.13097279518842697
+   <= 0.0123743340373039
+ rightPlanesDominatesLeftFlowConstr_eps_t0_v5: 1e-05 y7_t780
+   - 0.0123743340373039 rightMutuallyExclusivePlanesVar_f2_th0.1433471292257309
    <= 0
- rightMutuallyExclusivePlanesVar_f2_t18_v4: y5_t401298
-   + rightMutuallyExclusivePlanesVar_f2_th0.6947236061096191 <= 1
- rightPlanesDominatesLeftFlowConstr_t18_v4: y6_t401298
-   - rightMutuallyExclusivePlanesVar_f2_th0.35301506519317627 <= 0
- rightMutuallyExclusivePlanesVar_eps_f2_t18_v4: 1e-05 y5_t401298
-   + 0.3417085409164429 rightMutuallyExclusivePlanesVar_f2_th0.35301506519317627
-   <= 0.3417085409164429
- rightPlanesDominatesLeftFlowConstr_eps_t18_v4: 1e-05 y6_t401298
-   - 0.3417085409164429 rightMutuallyExclusivePlanesVar_f2_th0.6947236061096191
+ rightPlanesOrderConstr_f2_th0.1433471292257309:
+   rightMutuallyExclusivePlanesVar_f2_th0.13097279518842697
+   - rightMutuallyExclusivePlanesVar_f2_th0.1433471292257309 >= 0
+ rightMutuallyExclusivePlanesVar_f2_t3_v5: y6_t783
+   + rightMutuallyExclusivePlanesVar_f2_th0.15232111513614655 <= 1
+ rightPlanesDominatesLeftFlowConstr_t3_v5: y7_t783
+   - rightMutuallyExclusivePlanesVar_f2_th0.1433471292257309 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f2_t3_v5: 1e-05 y6_t783
+   + 0.00897398591041565 rightMutuallyExclusivePlanesVar_f2_th0.1433471292257309
+   <= 0.00897398591041565
+ rightPlanesDominatesLeftFlowConstr_eps_t3_v5: 1e-05 y7_t783
+   - 0.00897398591041565 rightMutuallyExclusivePlanesVar_f2_th0.15232111513614655
    <= 0
- rightPlanesOrderConstr_f2_th0.6947236061096191:
-   rightMutuallyExclusivePlanesVar_f2_th0.35301506519317627
-   - rightMutuallyExclusivePlanesVar_f2_th0.6947236061096191 >= 0
- rightMutuallyExclusivePlanesVar_f2_t18_v3: y4_t401298
-   + rightMutuallyExclusivePlanesVar_f2_th0.7148241400718689 <= 1
- rightPlanesDominatesLeftFlowConstr_t18_v3: y7_t401298
-   - rightMutuallyExclusivePlanesVar_f2_th0.6947236061096191 <= 0
- rightMutuallyExclusivePlanesVar_eps_f2_t18_v3: 1e-05 y4_t401298
-   + 0.0201005339622498 rightMutuallyExclusivePlanesVar_f2_th0.6947236061096191
-   <= 0.0201005339622498
- rightPlanesDominatesLeftFlowConstr_eps_t18_v3: 1e-05 y7_t401298
-   - 0.0201005339622498 rightMutuallyExclusivePlanesVar_f2_th0.7148241400718689
+ rightPlanesOrderConstr_f2_th0.15232111513614655:
+   rightMutuallyExclusivePlanesVar_f2_th0.1433471292257309
+   - rightMutuallyExclusivePlanesVar_f2_th0.15232111513614655 >= 0
+ rightMutuallyExclusivePlanesVar_f2_t0_v12: y13_t780
+   + rightMutuallyExclusivePlanesVar_f2_th0.15715552866458893 <= 1
+ rightPlanesDominatesLeftFlowConstr_t0_v12: y14_t780
+   - rightMutuallyExclusivePlanesVar_f2_th0.15232111513614655 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f2_t0_v12: 1e-05 y13_t780
+   + 0.00483441352844238 rightMutuallyExclusivePlanesVar_f2_th0.15232111513614655
+   <= 0.00483441352844238
+ rightPlanesDominatesLeftFlowConstr_eps_t0_v12: 1e-05 y14_t780
+   - 0.00483441352844238 rightMutuallyExclusivePlanesVar_f2_th0.15715552866458893
    <= 0
- rightPlanesOrderConstr_f2_th0.7148241400718689:
-   rightMutuallyExclusivePlanesVar_f2_th0.6947236061096191
-   - rightMutuallyExclusivePlanesVar_f2_th0.7148241400718689 >= 0
- rightMutuallyExclusivePlanesVar_f2_t0_v3: y4_t401280
-   + rightMutuallyExclusivePlanesVar_f2_th0.7650753557682037 <= 1
- rightPlanesDominatesLeftFlowConstr_t0_v3: y5_t401280
-   - rightMutuallyExclusivePlanesVar_f2_th0.7148241400718689 <= 0
- rightMutuallyExclusivePlanesVar_eps_f2_t0_v3: 1e-05 y4_t401280
-   + 0.0502512156963348 rightMutuallyExclusivePlanesVar_f2_th0.7148241400718689
-   <= 0.0502512156963348
- rightPlanesDominatesLeftFlowConstr_eps_t0_v3: 1e-05 y5_t401280
-   - 0.0502512156963348 rightMutuallyExclusivePlanesVar_f2_th0.7650753557682037
+ rightPlanesOrderConstr_f2_th0.15715552866458893:
+   rightMutuallyExclusivePlanesVar_f2_th0.15232111513614655
+   - rightMutuallyExclusivePlanesVar_f2_th0.15715552866458893 >= 0
+ rightMutuallyExclusivePlanesVar_f2_t9_v8: y9_t789
+   + rightMutuallyExclusivePlanesVar_f2_th0.15994973480701447 <= 1
+ rightPlanesDominatesLeftFlowConstr_t9_v8: y10_t789
+   - rightMutuallyExclusivePlanesVar_f2_th0.15715552866458893 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f2_t9_v8: 1e-05 y9_t789
+   + 0.00279420614242554 rightMutuallyExclusivePlanesVar_f2_th0.15715552866458893
+   <= 0.00279420614242554
+ rightPlanesDominatesLeftFlowConstr_eps_t9_v8: 1e-05 y10_t789
+   - 0.00279420614242554 rightMutuallyExclusivePlanesVar_f2_th0.15994973480701447
    <= 0
- rightPlanesOrderConstr_f2_th0.7650753557682037:
-   rightMutuallyExclusivePlanesVar_f2_th0.7148241400718689
-   - rightMutuallyExclusivePlanesVar_f2_th0.7650753557682037 >= 0
- rightMutuallyExclusivePlanesVar_f2_t8_v14: y15_t401288
-   + rightMutuallyExclusivePlanesVar_f2_th0.8178391754627228 <= 1
- rightPlanesDominatesLeftFlowConstr_t8_v14: y16_t401288
-   - rightMutuallyExclusivePlanesVar_f2_th0.7650753557682037 <= 0
- rightMutuallyExclusivePlanesVar_eps_f2_t8_v14: 1e-05 y15_t401288
-   + 0.052763819694519 rightMutuallyExclusivePlanesVar_f2_th0.7650753557682037
-   <= 0.052763819694519
- rightPlanesDominatesLeftFlowConstr_eps_t8_v14: 1e-05 y16_t401288
-   - 0.052763819694519 rightMutuallyExclusivePlanesVar_f2_th0.8178391754627228
+ rightPlanesOrderConstr_f2_th0.15994973480701447:
+   rightMutuallyExclusivePlanesVar_f2_th0.15715552866458893
+   - rightMutuallyExclusivePlanesVar_f2_th0.15994973480701447 >= 0
+ rightMutuallyExclusivePlanesVar_f2_t10_v12: y13_t790
+   + rightMutuallyExclusivePlanesVar_f2_th0.1627735048532486 <= 1
+ rightPlanesDominatesLeftFlowConstr_t10_v12: y14_t790
+   - rightMutuallyExclusivePlanesVar_f2_th0.15994973480701447 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f2_t10_v12: 1e-05 y13_t790
+   + 0.00282377 rightMutuallyExclusivePlanesVar_f2_th0.15994973480701447
+   <= 0.00282377
+ rightPlanesDominatesLeftFlowConstr_eps_t10_v12: 1e-05 y14_t790
+   - 0.00282377 rightMutuallyExclusivePlanesVar_f2_th0.1627735048532486
    <= 0
- rightMutuallyExclusivePlanesVar_f2_t18_v0: y1_t401298
-   + rightMutuallyExclusivePlanesVar_f2_th0.8178391754627228 <= 1
- rightPlanesDominatesLeftFlowConstr_t18_v0: y8_t401298
-   - rightMutuallyExclusivePlanesVar_f2_th0.7650753557682037 <= 0
- rightMutuallyExclusivePlanesVar_eps_f2_t18_v0: 1e-05 y1_t401298
-   + 0.052763819694519 rightMutuallyExclusivePlanesVar_f2_th0.7650753557682037
-   <= 0.052763819694519
- rightPlanesDominatesLeftFlowConstr_eps_t18_v0: 1e-05 y8_t401298
-   - 0.052763819694519 rightMutuallyExclusivePlanesVar_f2_th0.8178391754627228
+ rightPlanesOrderConstr_f2_th0.1627735048532486:
+   rightMutuallyExclusivePlanesVar_f2_th0.15994973480701447
+   - rightMutuallyExclusivePlanesVar_f2_th0.1627735048532486 >= 0
+ rightMutuallyExclusivePlanesVar_f2_t4_v9: y10_t784
+   + rightMutuallyExclusivePlanesVar_f2_th0.1840626820921898 <= 1
+ rightPlanesDominatesLeftFlowConstr_t4_v9: y11_t784
+   - rightMutuallyExclusivePlanesVar_f2_th0.1627735048532486 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f2_t4_v9: 1e-05 y10_t784
+   + 0.0212891772389412 rightMutuallyExclusivePlanesVar_f2_th0.1627735048532486
+   <= 0.0212891772389412
+ rightPlanesDominatesLeftFlowConstr_eps_t4_v9: 1e-05 y11_t784
+   - 0.0212891772389412 rightMutuallyExclusivePlanesVar_f2_th0.1840626820921898
    <= 0
- rightPlanesOrderConstr_f2_th0.8178391754627228:
-   rightMutuallyExclusivePlanesVar_f2_th0.7650753557682037
-   - rightMutuallyExclusivePlanesVar_f2_th0.8178391754627228 >= 0
- rightMutuallyExclusivePlanesVar_f2_t15_v2: y3_t401295
-   + rightMutuallyExclusivePlanesVar_f2_th0.8253768682479858 <= 1
- rightPlanesDominatesLeftFlowConstr_t15_v2: y6_t401295
-   - rightMutuallyExclusivePlanesVar_f2_th0.8178391754627228 <= 0
- rightMutuallyExclusivePlanesVar_eps_f2_t15_v2: 1e-05 y3_t401295
-   + 0.00753769278526306 rightMutuallyExclusivePlanesVar_f2_th0.8178391754627228
-   <= 0.00753769278526306
- rightPlanesDominatesLeftFlowConstr_eps_t15_v2: 1e-05 y6_t401295
-   - 0.00753769278526306 rightMutuallyExclusivePlanesVar_f2_th0.8253768682479858
+ rightPlanesOrderConstr_f2_th0.1840626820921898:
+   rightMutuallyExclusivePlanesVar_f2_th0.1627735048532486
+   - rightMutuallyExclusivePlanesVar_f2_th0.1840626820921898 >= 0
+ rightMutuallyExclusivePlanesVar_f2_t18_v8: y9_t798
+   + rightMutuallyExclusivePlanesVar_f2_th0.2393258437514305 <= 1
+ rightPlanesDominatesLeftFlowConstr_t18_v8: y12_t798
+   - rightMutuallyExclusivePlanesVar_f2_th0.1840626820921898 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f2_t18_v8: 1e-05 y9_t798
+   + 0.0552631616592407 rightMutuallyExclusivePlanesVar_f2_th0.1840626820921898
+   <= 0.0552631616592407
+ rightPlanesDominatesLeftFlowConstr_eps_t18_v8: 1e-05 y12_t798
+   - 0.0552631616592407 rightMutuallyExclusivePlanesVar_f2_th0.2393258437514305
    <= 0
- rightPlanesOrderConstr_f2_th0.8253768682479858:
-   rightMutuallyExclusivePlanesVar_f2_th0.8178391754627228
-   - rightMutuallyExclusivePlanesVar_f2_th0.8253768682479858 >= 0
- rightMutuallyExclusivePlanesVar_f2_t1_v0: y1_t401281
-   + rightMutuallyExclusivePlanesVar_f2_th0.8266331553459167 <= 1
- rightPlanesDominatesLeftFlowConstr_t1_v0: y6_t401281
-   - rightMutuallyExclusivePlanesVar_f2_th0.8253768682479858 <= 0
- rightMutuallyExclusivePlanesVar_eps_f2_t1_v0: 1e-05 y1_t401281
-   + 0.00125628709793091 rightMutuallyExclusivePlanesVar_f2_th0.8253768682479858
-   <= 0.00125628709793091
- rightPlanesDominatesLeftFlowConstr_eps_t1_v0: 1e-05 y6_t401281
-   - 0.00125628709793091 rightMutuallyExclusivePlanesVar_f2_th0.8266331553459167
+ rightPlanesOrderConstr_f2_th0.2393258437514305:
+   rightMutuallyExclusivePlanesVar_f2_th0.1840626820921898
+   - rightMutuallyExclusivePlanesVar_f2_th0.2393258437514305 >= 0
+ rightMutuallyExclusivePlanesVar_f2_t13_v9: y10_t793
+   + rightMutuallyExclusivePlanesVar_f2_th0.3200916647911072 <= 1
+ rightPlanesDominatesLeftFlowConstr_t13_v9: y11_t793
+   - rightMutuallyExclusivePlanesVar_f2_th0.2393258437514305 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f2_t13_v9: 1e-05 y10_t793
+   + 0.0807658210396767 rightMutuallyExclusivePlanesVar_f2_th0.2393258437514305
+   <= 0.0807658210396767
+ rightPlanesDominatesLeftFlowConstr_eps_t13_v9: 1e-05 y11_t793
+   - 0.0807658210396767 rightMutuallyExclusivePlanesVar_f2_th0.3200916647911072
    <= 0
- rightMutuallyExclusivePlanesVar_f2_t9_v2: y3_t401289
-   + rightMutuallyExclusivePlanesVar_f2_th0.8266331553459167 <= 1
- rightPlanesDominatesLeftFlowConstr_t9_v2: y6_t401289
-   - rightMutuallyExclusivePlanesVar_f2_th0.8253768682479858 <= 0
- rightMutuallyExclusivePlanesVar_eps_f2_t9_v2: 1e-05 y3_t401289
-   + 0.00125628709793091 rightMutuallyExclusivePlanesVar_f2_th0.8253768682479858
-   <= 0.00125628709793091
- rightPlanesDominatesLeftFlowConstr_eps_t9_v2: 1e-05 y6_t401289
-   - 0.00125628709793091 rightMutuallyExclusivePlanesVar_f2_th0.8266331553459167
+ rightPlanesOrderConstr_f2_th0.3200916647911072:
+   rightMutuallyExclusivePlanesVar_f2_th0.2393258437514305
+   - rightMutuallyExclusivePlanesVar_f2_th0.3200916647911072 >= 0
+ rightMutuallyExclusivePlanesVar_f2_t18_v5: y6_t798
+   + rightMutuallyExclusivePlanesVar_f2_th0.3834860920906067 <= 1
+ rightPlanesDominatesLeftFlowConstr_t18_v5: y7_t798
+   - rightMutuallyExclusivePlanesVar_f2_th0.3200916647911072 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f2_t18_v5: 1e-05 y6_t798
+   + 0.0633944272994995 rightMutuallyExclusivePlanesVar_f2_th0.3200916647911072
+   <= 0.0633944272994995
+ rightPlanesDominatesLeftFlowConstr_eps_t18_v5: 1e-05 y7_t798
+   - 0.0633944272994995 rightMutuallyExclusivePlanesVar_f2_th0.3834860920906067
    <= 0
- rightMutuallyExclusivePlanesVar_f2_t14_v1: y2_t401294
-   + rightMutuallyExclusivePlanesVar_f2_th0.8266331553459167 <= 1
- rightPlanesDominatesLeftFlowConstr_t14_v1: y3_t401294
-   - rightMutuallyExclusivePlanesVar_f2_th0.8253768682479858 <= 0
- rightMutuallyExclusivePlanesVar_eps_f2_t14_v1: 1e-05 y2_t401294
-   + 0.00125628709793091 rightMutuallyExclusivePlanesVar_f2_th0.8253768682479858
-   <= 0.00125628709793091
- rightPlanesDominatesLeftFlowConstr_eps_t14_v1: 1e-05 y3_t401294
-   - 0.00125628709793091 rightMutuallyExclusivePlanesVar_f2_th0.8266331553459167
+ rightPlanesOrderConstr_f2_th0.3834860920906067:
+   rightMutuallyExclusivePlanesVar_f2_th0.3200916647911072
+   - rightMutuallyExclusivePlanesVar_f2_th0.3834860920906067 >= 0
+ rightMutuallyExclusivePlanesVar_f2_t19_v2: y3_t799
+   + rightMutuallyExclusivePlanesVar_f2_th0.4596097022294998 <= 1
+ rightPlanesDominatesLeftFlowConstr_t19_v2: y4_t799
+   - rightMutuallyExclusivePlanesVar_f2_th0.3834860920906067 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f2_t19_v2: 1e-05 y3_t799
+   + 0.0761236101388931 rightMutuallyExclusivePlanesVar_f2_th0.3834860920906067
+   <= 0.0761236101388931
+ rightPlanesDominatesLeftFlowConstr_eps_t19_v2: 1e-05 y4_t799
+   - 0.0761236101388931 rightMutuallyExclusivePlanesVar_f2_th0.4596097022294998
    <= 0
- rightPlanesOrderConstr_f2_th0.8266331553459167:
-   rightMutuallyExclusivePlanesVar_f2_th0.8253768682479858
-   - rightMutuallyExclusivePlanesVar_f2_th0.8266331553459167 >= 0
- rightMutuallyExclusivePlanesVar_f2_t7_v12: y13_t401287
-   + rightMutuallyExclusivePlanesVar_f2_th0.8341708481311798 <= 1
- rightPlanesDominatesLeftFlowConstr_t7_v12: y18_t401287
-   - rightMutuallyExclusivePlanesVar_f2_th0.8266331553459167 <= 0
- rightMutuallyExclusivePlanesVar_eps_f2_t7_v12: 1e-05 y13_t401287
-   + 0.00753769278526306 rightMutuallyExclusivePlanesVar_f2_th0.8266331553459167
-   <= 0.00753769278526306
- rightPlanesDominatesLeftFlowConstr_eps_t7_v12: 1e-05 y18_t401287
-   - 0.00753769278526306 rightMutuallyExclusivePlanesVar_f2_th0.8341708481311798
+ rightPlanesOrderConstr_f2_th0.4596097022294998:
+   rightMutuallyExclusivePlanesVar_f2_th0.3834860920906067
+   - rightMutuallyExclusivePlanesVar_f2_th0.4596097022294998 >= 0
+ rightMutuallyExclusivePlanesVar_f2_t12_v9: y10_t792
+   + rightMutuallyExclusivePlanesVar_f2_th0.5469987988471985 <= 1
+ rightPlanesDominatesLeftFlowConstr_t12_v9: y11_t792
+   - rightMutuallyExclusivePlanesVar_f2_th0.4596097022294998 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f2_t12_v9: 1e-05 y10_t792
+   + 0.0873890966176987 rightMutuallyExclusivePlanesVar_f2_th0.4596097022294998
+   <= 0.0873890966176987
+ rightPlanesDominatesLeftFlowConstr_eps_t12_v9: 1e-05 y11_t792
+   - 0.0873890966176987 rightMutuallyExclusivePlanesVar_f2_th0.5469987988471985
    <= 0
- rightPlanesOrderConstr_f2_th0.8341708481311798:
-   rightMutuallyExclusivePlanesVar_f2_th0.8266331553459167
-   - rightMutuallyExclusivePlanesVar_f2_th0.8341708481311798 >= 0
- rightMutuallyExclusivePlanesVar_f2_t8_v16: y17_t401288
-   + rightMutuallyExclusivePlanesVar_f2_th0.8643216192722321 <= 1
- rightPlanesDominatesLeftFlowConstr_t8_v16: y22_t401288
-   - rightMutuallyExclusivePlanesVar_f2_th0.8341708481311798 <= 0
- rightMutuallyExclusivePlanesVar_eps_f2_t8_v16: 1e-05 y17_t401288
-   + 0.0301507711410522 rightMutuallyExclusivePlanesVar_f2_th0.8341708481311798
-   <= 0.0301507711410522
- rightPlanesDominatesLeftFlowConstr_eps_t8_v16: 1e-05 y22_t401288
-   - 0.0301507711410522 rightMutuallyExclusivePlanesVar_f2_th0.8643216192722321
+ rightPlanesOrderConstr_f2_th0.5469987988471985:
+   rightMutuallyExclusivePlanesVar_f2_th0.4596097022294998
+   - rightMutuallyExclusivePlanesVar_f2_th0.5469987988471985 >= 0
+ rightMutuallyExclusivePlanesVar_f2_t6_v5: y6_t786
+   + rightMutuallyExclusivePlanesVar_f2_th0.654302179813385 <= 1
+ rightPlanesDominatesLeftFlowConstr_t6_v5: y7_t786
+   - rightMutuallyExclusivePlanesVar_f2_th0.5469987988471985 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f2_t6_v5: 1e-05 y6_t786
+   + 0.1073033809661865 rightMutuallyExclusivePlanesVar_f2_th0.5469987988471985
+   <= 0.1073033809661865
+ rightPlanesDominatesLeftFlowConstr_eps_t6_v5: 1e-05 y7_t786
+   - 0.1073033809661865 rightMutuallyExclusivePlanesVar_f2_th0.654302179813385
    <= 0
- rightPlanesOrderConstr_f2_th0.8643216192722321:
-   rightMutuallyExclusivePlanesVar_f2_th0.8341708481311798
-   - rightMutuallyExclusivePlanesVar_f2_th0.8643216192722321 >= 0
- rightMutuallyExclusivePlanesVar_f2_t10_v13: y14_t401290
-   + rightMutuallyExclusivePlanesVar_f2_th0.8655778765678406 <= 1
- rightPlanesDominatesLeftFlowConstr_t10_v13: y15_t401290
-   - rightMutuallyExclusivePlanesVar_f2_th0.8643216192722321 <= 0
- rightMutuallyExclusivePlanesVar_eps_f2_t10_v13: 1e-05 y14_t401290
-   + 0.00125625729560852 rightMutuallyExclusivePlanesVar_f2_th0.8643216192722321
-   <= 0.00125625729560852
- rightPlanesDominatesLeftFlowConstr_eps_t10_v13: 1e-05 y15_t401290
-   - 0.00125625729560852 rightMutuallyExclusivePlanesVar_f2_th0.8655778765678406
+ rightPlanesOrderConstr_f2_th0.654302179813385:
+   rightMutuallyExclusivePlanesVar_f2_th0.5469987988471985
+   - rightMutuallyExclusivePlanesVar_f2_th0.654302179813385 >= 0
+ rightMutuallyExclusivePlanesVar_f2_t1_v12: y13_t781
+   + rightMutuallyExclusivePlanesVar_f2_th0.8063867688179016 <= 1
+ rightPlanesDominatesLeftFlowConstr_t1_v12: y14_t781
+   - rightMutuallyExclusivePlanesVar_f2_th0.654302179813385 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f2_t1_v12: 1e-05 y13_t781
+   + 0.1520845890045166 rightMutuallyExclusivePlanesVar_f2_th0.654302179813385
+   <= 0.1520845890045166
+ rightPlanesDominatesLeftFlowConstr_eps_t1_v12: 1e-05 y14_t781
+   - 0.1520845890045166 rightMutuallyExclusivePlanesVar_f2_th0.8063867688179016
    <= 0
- rightPlanesOrderConstr_f2_th0.8655778765678406:
-   rightMutuallyExclusivePlanesVar_f2_th0.8643216192722321
-   - rightMutuallyExclusivePlanesVar_f2_th0.8655778765678406 >= 0
- rightMutuallyExclusivePlanesVar_f2_t5_v16: y17_t401285
-   + rightMutuallyExclusivePlanesVar_f2_th0.8831658065319061 <= 1
- rightPlanesDominatesLeftFlowConstr_t5_v16: y18_t401285
-   - rightMutuallyExclusivePlanesVar_f2_th0.8655778765678406 <= 0
- rightMutuallyExclusivePlanesVar_eps_f2_t5_v16: 1e-05 y17_t401285
-   + 0.0175879299640656 rightMutuallyExclusivePlanesVar_f2_th0.8655778765678406
-   <= 0.0175879299640656
- rightPlanesDominatesLeftFlowConstr_eps_t5_v16: 1e-05 y18_t401285
-   - 0.0175879299640656 rightMutuallyExclusivePlanesVar_f2_th0.8831658065319061
+ rightMutuallyExclusivePlanesVar_f2_t3_v12: y13_t783
+   + rightMutuallyExclusivePlanesVar_f2_th0.8063867688179016 <= 1
+ rightPlanesDominatesLeftFlowConstr_t3_v12: y14_t783
+   - rightMutuallyExclusivePlanesVar_f2_th0.654302179813385 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f2_t3_v12: 1e-05 y13_t783
+   + 0.1520845890045166 rightMutuallyExclusivePlanesVar_f2_th0.654302179813385
+   <= 0.1520845890045166
+ rightPlanesDominatesLeftFlowConstr_eps_t3_v12: 1e-05 y14_t783
+   - 0.1520845890045166 rightMutuallyExclusivePlanesVar_f2_th0.8063867688179016
    <= 0
- rightPlanesOrderConstr_f2_th0.8831658065319061:
-   rightMutuallyExclusivePlanesVar_f2_th0.8655778765678406
-   - rightMutuallyExclusivePlanesVar_f2_th0.8831658065319061 >= 0
- rightMutuallyExclusivePlanesVar_f2_t0_v11: y12_t401280
-   + rightMutuallyExclusivePlanesVar_f2_th0.8869346678256989 <= 1
- rightPlanesDominatesLeftFlowConstr_t0_v11: y13_t401280
-   - rightMutuallyExclusivePlanesVar_f2_th0.8831658065319061 <= 0
- rightMutuallyExclusivePlanesVar_eps_f2_t0_v11: 1e-05 y12_t401280
-   + 0.00376886129379272 rightMutuallyExclusivePlanesVar_f2_th0.8831658065319061
-   <= 0.00376886129379272
- rightPlanesDominatesLeftFlowConstr_eps_t0_v11: 1e-05 y13_t401280
-   - 0.00376886129379272 rightMutuallyExclusivePlanesVar_f2_th0.8869346678256989
+ rightPlanesOrderConstr_f2_th0.8063867688179016:
+   rightMutuallyExclusivePlanesVar_f2_th0.654302179813385
+   - rightMutuallyExclusivePlanesVar_f2_th0.8063867688179016 >= 0
+ rightMutuallyExclusivePlanesVar_f2_t4_v12: y13_t784
+   + rightMutuallyExclusivePlanesVar_f2_th0.839015394449234 <= 1
+ rightPlanesDominatesLeftFlowConstr_t4_v12: y14_t784
+   - rightMutuallyExclusivePlanesVar_f2_th0.8063867688179016 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f2_t4_v12: 1e-05 y13_t784
+   + 0.0326286256313324 rightMutuallyExclusivePlanesVar_f2_th0.8063867688179016
+   <= 0.0326286256313324
+ rightPlanesDominatesLeftFlowConstr_eps_t4_v12: 1e-05 y14_t784
+   - 0.0326286256313324 rightMutuallyExclusivePlanesVar_f2_th0.839015394449234
    <= 0
- rightPlanesOrderConstr_f2_th0.8869346678256989:
-   rightMutuallyExclusivePlanesVar_f2_th0.8831658065319061
-   - rightMutuallyExclusivePlanesVar_f2_th0.8869346678256989 >= 0
- rightMutuallyExclusivePlanesVar_f2_t12_v9: y10_t401292
-   + rightMutuallyExclusivePlanesVar_f2_th0.893216073513031 <= 1
- rightPlanesDominatesLeftFlowConstr_t12_v9: y15_t401292
-   - rightMutuallyExclusivePlanesVar_f2_th0.8869346678256989 <= 0
- rightMutuallyExclusivePlanesVar_eps_f2_t12_v9: 1e-05 y10_t401292
-   + 0.00628140568733215 rightMutuallyExclusivePlanesVar_f2_th0.8869346678256989
-   <= 0.00628140568733215
- rightPlanesDominatesLeftFlowConstr_eps_t12_v9: 1e-05 y15_t401292
-   - 0.00628140568733215 rightMutuallyExclusivePlanesVar_f2_th0.893216073513031
+ rightMutuallyExclusivePlanesVar_f2_t13_v12: y13_t793
+   + rightMutuallyExclusivePlanesVar_f2_th0.839015394449234 <= 1
+ rightPlanesDominatesLeftFlowConstr_t13_v12: y14_t793
+   - rightMutuallyExclusivePlanesVar_f2_th0.8063867688179016 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f2_t13_v12: 1e-05 y13_t793
+   + 0.0326286256313324 rightMutuallyExclusivePlanesVar_f2_th0.8063867688179016
+   <= 0.0326286256313324
+ rightPlanesDominatesLeftFlowConstr_eps_t13_v12: 1e-05 y14_t793
+   - 0.0326286256313324 rightMutuallyExclusivePlanesVar_f2_th0.839015394449234
    <= 0
- rightPlanesOrderConstr_f2_th0.893216073513031:
-   rightMutuallyExclusivePlanesVar_f2_th0.8869346678256989
-   - rightMutuallyExclusivePlanesVar_f2_th0.893216073513031 >= 0
- rightMutuallyExclusivePlanesVar_f2_t11_v11: y12_t401291
-   + rightMutuallyExclusivePlanesVar_f2_th0.9007537662982941 <= 1
- rightPlanesDominatesLeftFlowConstr_t11_v11: y13_t401291
-   - rightMutuallyExclusivePlanesVar_f2_th0.893216073513031 <= 0
- rightMutuallyExclusivePlanesVar_eps_f2_t11_v11: 1e-05 y12_t401291
-   + 0.00753769278526306 rightMutuallyExclusivePlanesVar_f2_th0.893216073513031
-   <= 0.00753769278526306
- rightPlanesDominatesLeftFlowConstr_eps_t11_v11: 1e-05 y13_t401291
-   - 0.00753769278526306 rightMutuallyExclusivePlanesVar_f2_th0.9007537662982941
-   <= 0
- rightPlanesOrderConstr_f2_th0.9007537662982941:
-   rightMutuallyExclusivePlanesVar_f2_th0.893216073513031
-   - rightMutuallyExclusivePlanesVar_f2_th0.9007537662982941 >= 0
- rightMutuallyExclusivePlanesVar_f2_t19_v4: y5_t401299
-   + rightMutuallyExclusivePlanesVar_f2_th0.9120603203773499 <= 1
- rightPlanesDominatesLeftFlowConstr_t19_v4: y6_t401299
-   - rightMutuallyExclusivePlanesVar_f2_th0.9007537662982941 <= 0
- rightMutuallyExclusivePlanesVar_eps_f2_t19_v4: 1e-05 y5_t401299
-   + 0.0113065540790558 rightMutuallyExclusivePlanesVar_f2_th0.9007537662982941
-   <= 0.0113065540790558
- rightPlanesDominatesLeftFlowConstr_eps_t19_v4: 1e-05 y6_t401299
-   - 0.0113065540790558 rightMutuallyExclusivePlanesVar_f2_th0.9120603203773499
-   <= 0
- rightPlanesOrderConstr_f2_th0.9120603203773499:
-   rightMutuallyExclusivePlanesVar_f2_th0.9007537662982941
-   - rightMutuallyExclusivePlanesVar_f2_th0.9120603203773499 >= 0
- rightPlanesOrderConstr_f2_th0.9195979899497487:
-   rightMutuallyExclusivePlanesVar_f2_th0.9120603203773499
-   - rightMutuallyExclusivePlanesVar_f2_th0.9195979899497487 >= 0
- rightMutuallyExclusivePlanesVar_f2_t10_v2: y3_t401290
-   + rightMutuallyExclusivePlanesVar_f2_th0.9233668446540833 <= 1
- rightPlanesDominatesLeftFlowConstr_t10_v2: y8_t401290
-   - rightMutuallyExclusivePlanesVar_f2_th0.9195979899497487 <= 0
- rightMutuallyExclusivePlanesVar_eps_f2_t10_v2: 1e-05 y3_t401290
-   + 0.00376885470433452 rightMutuallyExclusivePlanesVar_f2_th0.9195979899497487
-   <= 0.00376885470433452
- rightPlanesDominatesLeftFlowConstr_eps_t10_v2: 1e-05 y8_t401290
-   - 0.00376885470433452 rightMutuallyExclusivePlanesVar_f2_th0.9233668446540833
-   <= 0
- rightMutuallyExclusivePlanesVar_f2_t18_v11: y12_t401298
-   + rightMutuallyExclusivePlanesVar_f2_th0.9233668446540833 <= 1
- rightPlanesDominatesLeftFlowConstr_t18_v11: y13_t401298
-   - rightMutuallyExclusivePlanesVar_f2_th0.9195979899497487 <= 0
- rightMutuallyExclusivePlanesVar_eps_f2_t18_v11: 1e-05 y12_t401298
-   + 0.00376885470433452 rightMutuallyExclusivePlanesVar_f2_th0.9195979899497487
-   <= 0.00376885470433452
- rightPlanesDominatesLeftFlowConstr_eps_t18_v11: 1e-05 y13_t401298
-   - 0.00376885470433452 rightMutuallyExclusivePlanesVar_f2_th0.9233668446540833
-   <= 0
- rightPlanesOrderConstr_f2_th0.9233668446540833:
-   rightMutuallyExclusivePlanesVar_f2_th0.9195979899497487
-   - rightMutuallyExclusivePlanesVar_f2_th0.9233668446540833 >= 0
- rightMutuallyExclusivePlanesVar_f2_t14_v9: y10_t401294
-   + rightMutuallyExclusivePlanesVar_f2_th0.9522612988948822 <= 1
- rightPlanesDominatesLeftFlowConstr_t14_v9: y13_t401294
-   - rightMutuallyExclusivePlanesVar_f2_th0.9233668446540833 <= 0
- rightMutuallyExclusivePlanesVar_eps_f2_t14_v9: 1e-05 y10_t401294
-   + 0.028894454240799 rightMutuallyExclusivePlanesVar_f2_th0.9233668446540833
-   <= 0.028894454240799
- rightPlanesDominatesLeftFlowConstr_eps_t14_v9: 1e-05 y13_t401294
-   - 0.028894454240799 rightMutuallyExclusivePlanesVar_f2_th0.9522612988948822
-   <= 0
- rightPlanesOrderConstr_f2_th0.9522612988948822:
-   rightMutuallyExclusivePlanesVar_f2_th0.9233668446540833
-   - rightMutuallyExclusivePlanesVar_f2_th0.9522612988948822 >= 0
- rightMutuallyExclusivePlanesVar_f2_t6_v9: y10_t401286
-   + rightMutuallyExclusivePlanesVar_f2_th0.9798994958400726 <= 1
- rightPlanesDominatesLeftFlowConstr_t6_v9: y13_t401286
-   - rightMutuallyExclusivePlanesVar_f2_th0.9522612988948822 <= 0
- rightMutuallyExclusivePlanesVar_eps_f2_t6_v9: 1e-05 y10_t401286
-   + 0.0276381969451904 rightMutuallyExclusivePlanesVar_f2_th0.9522612988948822
-   <= 0.0276381969451904
- rightPlanesDominatesLeftFlowConstr_eps_t6_v9: 1e-05 y13_t401286
-   - 0.0276381969451904 rightMutuallyExclusivePlanesVar_f2_th0.9798994958400726
-   <= 0
- rightPlanesOrderConstr_f2_th0.9798994958400726:
-   rightMutuallyExclusivePlanesVar_f2_th0.9522612988948822
-   - rightMutuallyExclusivePlanesVar_f2_th0.9798994958400726 >= 0
- rightMutuallyExclusivePlanesVar_f2_t1_v10: y11_t401281
-   + rightMutuallyExclusivePlanesVar_f2_th0.9886934757232666 <= 1
- rightPlanesDominatesLeftFlowConstr_t1_v10: y16_t401281
-   - rightMutuallyExclusivePlanesVar_f2_th0.9798994958400726 <= 0
- rightMutuallyExclusivePlanesVar_eps_f2_t1_v10: 1e-05 y11_t401281
-   + 0.00879397988319397 rightMutuallyExclusivePlanesVar_f2_th0.9798994958400726
-   <= 0.00879397988319397
- rightPlanesDominatesLeftFlowConstr_eps_t1_v10: 1e-05 y16_t401281
-   - 0.00879397988319397 rightMutuallyExclusivePlanesVar_f2_th0.9886934757232666
-   <= 0
- rightPlanesOrderConstr_f2_th0.9886934757232666:
-   rightMutuallyExclusivePlanesVar_f2_th0.9798994958400726
-   - rightMutuallyExclusivePlanesVar_f2_th0.9886934757232666 >= 0
+ rightPlanesOrderConstr_f2_th0.839015394449234:
+   rightMutuallyExclusivePlanesVar_f2_th0.8063867688179016
+   - rightMutuallyExclusivePlanesVar_f2_th0.839015394449234 >= 0
  x_as_linear_combination_of_planes_f: x_f2
-   - 0.3530150651931763 rightMutuallyExclusivePlanesVar_f2_th0
-   - 0.3417085409164429 rightMutuallyExclusivePlanesVar_f2_th0.35301506519317627
-   - 0.0201005339622498 rightMutuallyExclusivePlanesVar_f2_th0.6947236061096191
-   - 0.0502512156963348 rightMutuallyExclusivePlanesVar_f2_th0.7148241400718689
-   - 0.052763819694519 rightMutuallyExclusivePlanesVar_f2_th0.7650753557682037
-   - 0.00753769278526306 rightMutuallyExclusivePlanesVar_f2_th0.8178391754627228
-   - 0.00125628709793091 rightMutuallyExclusivePlanesVar_f2_th0.8253768682479858
-   - 0.00753769278526306 rightMutuallyExclusivePlanesVar_f2_th0.8266331553459167
-   - 0.0301507711410522 rightMutuallyExclusivePlanesVar_f2_th0.8341708481311798
-   - 0.00125625729560852 rightMutuallyExclusivePlanesVar_f2_th0.8643216192722321
-   - 0.0175879299640656 rightMutuallyExclusivePlanesVar_f2_th0.8655778765678406
-   - 0.00376886129379272 rightMutuallyExclusivePlanesVar_f2_th0.8831658065319061
-   - 0.00628140568733215 rightMutuallyExclusivePlanesVar_f2_th0.8869346678256989
-   - 0.00753769278526306 rightMutuallyExclusivePlanesVar_f2_th0.893216073513031
-   - 0.0113065540790558 rightMutuallyExclusivePlanesVar_f2_th0.9007537662982941
-   - 0.00753766957239888 rightMutuallyExclusivePlanesVar_f2_th0.9120603203773499
-   - 0.00376885470433452 rightMutuallyExclusivePlanesVar_f2_th0.9195979899497487
-   - 0.028894454240799 rightMutuallyExclusivePlanesVar_f2_th0.9233668446540833
-   - 0.0276381969451904 rightMutuallyExclusivePlanesVar_f2_th0.9522612988948822
-   - 0.00879397988319397 rightMutuallyExclusivePlanesVar_f2_th0.9798994958400726
-   - 0.0113065242767334 rightMutuallyExclusivePlanesVar_f2_th0.9886934757232666
+   - 0.0773211117681845 rightMutuallyExclusivePlanesVar_f2_th0
+   - 0.0536516834202425 rightMutuallyExclusivePlanesVar_f2_th0.07732111176818447
+   - 0.0123743340373039 rightMutuallyExclusivePlanesVar_f2_th0.13097279518842697
+   - 0.00897398591041565 rightMutuallyExclusivePlanesVar_f2_th0.1433471292257309
+   - 0.00483441352844238 rightMutuallyExclusivePlanesVar_f2_th0.15232111513614655
+   - 0.00279420614242554 rightMutuallyExclusivePlanesVar_f2_th0.15715552866458893
+   - 0.00282377 rightMutuallyExclusivePlanesVar_f2_th0.15994973480701447
+   - 0.0212891772389412 rightMutuallyExclusivePlanesVar_f2_th0.1627735048532486
+   - 0.0552631616592407 rightMutuallyExclusivePlanesVar_f2_th0.1840626820921898
+   - 0.0807658210396767 rightMutuallyExclusivePlanesVar_f2_th0.2393258437514305
+   - 0.0633944272994995 rightMutuallyExclusivePlanesVar_f2_th0.3200916647911072
+   - 0.0761236101388931 rightMutuallyExclusivePlanesVar_f2_th0.3834860920906067
+   - 0.0873890966176987 rightMutuallyExclusivePlanesVar_f2_th0.4596097022294998
+   - 0.1073033809661865 rightMutuallyExclusivePlanesVar_f2_th0.5469987988471985
+   - 0.1520845890045166 rightMutuallyExclusivePlanesVar_f2_th0.654302179813385
+   - 0.0326286256313324 rightMutuallyExclusivePlanesVar_f2_th0.8063867688179016
+   - 0.160984605550766 rightMutuallyExclusivePlanesVar_f2_th0.839015394449234
    = 0
- rightMutuallyExclusivePlanesVar_f3_t19_v8: y9_t401299
-   + rightMutuallyExclusivePlanesVar_f3_th0.43989071249961853 <= 1
- rightPlanesDominatesLeftFlowConstr_t19_v8: y10_t401299
+ rightMutuallyExclusivePlanesVar_f3_t7_v2: y3_t787
+   + rightMutuallyExclusivePlanesVar_f3_th0.2571883201599121 <= 1
+ rightPlanesDominatesLeftFlowConstr_t7_v2: y4_t787
    - rightMutuallyExclusivePlanesVar_f3_th0 <= 0
- rightMutuallyExclusivePlanesVar_eps_f3_t19_v8: 1e-05 y9_t401299
-   + 0.4398907124996185 rightMutuallyExclusivePlanesVar_f3_th0
-   <= 0.4398907124996185
- rightPlanesDominatesLeftFlowConstr_eps_t19_v8: 1e-05 y10_t401299
-   - 0.4398907124996185 rightMutuallyExclusivePlanesVar_f3_th0.43989071249961853
+ rightMutuallyExclusivePlanesVar_eps_f3_t7_v2: 1e-05 y3_t787
+   + 0.2571883201599121 rightMutuallyExclusivePlanesVar_f3_th0
+   <= 0.2571883201599121
+ rightPlanesDominatesLeftFlowConstr_eps_t7_v2: 1e-05 y4_t787
+   - 0.2571883201599121 rightMutuallyExclusivePlanesVar_f3_th0.2571883201599121
    <= 0
- rightPlanesOrderConstr_f3_th0.43989071249961853:
+ rightPlanesOrderConstr_f3_th0.2571883201599121:
    rightMutuallyExclusivePlanesVar_f3_th0
-   - rightMutuallyExclusivePlanesVar_f3_th0.43989071249961853 >= 0
- rightMutuallyExclusivePlanesVar_f3_t2_v7: y8_t401282
-   + rightMutuallyExclusivePlanesVar_f3_th0.48360656201839447 <= 1
- rightPlanesDominatesLeftFlowConstr_t2_v7: y9_t401282
-   - rightMutuallyExclusivePlanesVar_f3_th0.43989071249961853 <= 0
- rightMutuallyExclusivePlanesVar_eps_f3_t2_v7: 1e-05 y8_t401282
-   + 0.0437158495187759 rightMutuallyExclusivePlanesVar_f3_th0.43989071249961853
-   <= 0.0437158495187759
- rightPlanesDominatesLeftFlowConstr_eps_t2_v7: 1e-05 y9_t401282
-   - 0.0437158495187759 rightMutuallyExclusivePlanesVar_f3_th0.48360656201839447
+   - rightMutuallyExclusivePlanesVar_f3_th0.2571883201599121 >= 0
+ rightMutuallyExclusivePlanesVar_f3_t5_v8: y9_t785
+   + rightMutuallyExclusivePlanesVar_f3_th0.29213546216487885 <= 1
+ rightPlanesDominatesLeftFlowConstr_t5_v8: y12_t785
+   - rightMutuallyExclusivePlanesVar_f3_th0.2571883201599121 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f3_t5_v8: 1e-05 y9_t785
+   + 0.0349471420049667 rightMutuallyExclusivePlanesVar_f3_th0.2571883201599121
+   <= 0.0349471420049667
+ rightPlanesDominatesLeftFlowConstr_eps_t5_v8: 1e-05 y12_t785
+   - 0.0349471420049667 rightMutuallyExclusivePlanesVar_f3_th0.29213546216487885
    <= 0
- rightPlanesOrderConstr_f3_th0.48360656201839447:
-   rightMutuallyExclusivePlanesVar_f3_th0.43989071249961853
-   - rightMutuallyExclusivePlanesVar_f3_th0.48360656201839447 >= 0
- rightPlanesOrderConstr_f3_th0.4918032786885245:
-   rightMutuallyExclusivePlanesVar_f3_th0.48360656201839447
-   - rightMutuallyExclusivePlanesVar_f3_th0.4918032786885245 >= 0
- rightMutuallyExclusivePlanesVar_f3_t7_v4: y5_t401287
-   + rightMutuallyExclusivePlanesVar_f3_th0.5245901644229889 <= 1
- rightPlanesDominatesLeftFlowConstr_t7_v4: y8_t401287
-   - rightMutuallyExclusivePlanesVar_f3_th0.4918032786885245 <= 0
- rightMutuallyExclusivePlanesVar_eps_f3_t7_v4: 1e-05 y5_t401287
-   + 0.0327868857344644 rightMutuallyExclusivePlanesVar_f3_th0.4918032786885245
-   <= 0.0327868857344644
- rightPlanesDominatesLeftFlowConstr_eps_t7_v4: 1e-05 y8_t401287
-   - 0.0327868857344644 rightMutuallyExclusivePlanesVar_f3_th0.5245901644229889
+ rightPlanesOrderConstr_f3_th0.29213546216487885:
+   rightMutuallyExclusivePlanesVar_f3_th0.2571883201599121
+   - rightMutuallyExclusivePlanesVar_f3_th0.29213546216487885 >= 0
+ rightMutuallyExclusivePlanesVar_f3_t11_v8: y9_t791
+   + rightMutuallyExclusivePlanesVar_f3_th0.2934424430131912 <= 1
+ rightPlanesDominatesLeftFlowConstr_t11_v8: y12_t791
+   - rightMutuallyExclusivePlanesVar_f3_th0.29213546216487885 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f3_t11_v8: 1e-05 y9_t791
+   + 0.00130698084831238 rightMutuallyExclusivePlanesVar_f3_th0.29213546216487885
+   <= 0.00130698084831238
+ rightPlanesDominatesLeftFlowConstr_eps_t11_v8: 1e-05 y12_t791
+   - 0.00130698084831238 rightMutuallyExclusivePlanesVar_f3_th0.2934424430131912
    <= 0
- rightMutuallyExclusivePlanesVar_f3_t12_v2: y3_t401292
-   + rightMutuallyExclusivePlanesVar_f3_th0.5245901644229889 <= 1
- rightPlanesDominatesLeftFlowConstr_t12_v2: y8_t401292
-   - rightMutuallyExclusivePlanesVar_f3_th0.4918032786885245 <= 0
- rightMutuallyExclusivePlanesVar_eps_f3_t12_v2: 1e-05 y3_t401292
-   + 0.0327868857344644 rightMutuallyExclusivePlanesVar_f3_th0.4918032786885245
-   <= 0.0327868857344644
- rightPlanesDominatesLeftFlowConstr_eps_t12_v2: 1e-05 y8_t401292
-   - 0.0327868857344644 rightMutuallyExclusivePlanesVar_f3_th0.5245901644229889
+ rightPlanesOrderConstr_f3_th0.2934424430131912:
+   rightMutuallyExclusivePlanesVar_f3_th0.29213546216487885
+   - rightMutuallyExclusivePlanesVar_f3_th0.2934424430131912 >= 0
+ rightMutuallyExclusivePlanesVar_f3_t13_v1: y2_t793
+   + rightMutuallyExclusivePlanesVar_f3_th0.4087396264076233 <= 1
+ rightPlanesDominatesLeftFlowConstr_t13_v1: y5_t793
+   - rightMutuallyExclusivePlanesVar_f3_th0.2934424430131912 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f3_t13_v1: 1e-05 y2_t793
+   + 0.1152971833944321 rightMutuallyExclusivePlanesVar_f3_th0.2934424430131912
+   <= 0.1152971833944321
+ rightPlanesDominatesLeftFlowConstr_eps_t13_v1: 1e-05 y5_t793
+   - 0.1152971833944321 rightMutuallyExclusivePlanesVar_f3_th0.4087396264076233
    <= 0
- rightPlanesOrderConstr_f3_th0.5245901644229889:
-   rightMutuallyExclusivePlanesVar_f3_th0.4918032786885245
-   - rightMutuallyExclusivePlanesVar_f3_th0.5245901644229889 >= 0
- rightMutuallyExclusivePlanesVar_f3_t2_v12: y13_t401282
-   + rightMutuallyExclusivePlanesVar_f3_th0.5300546586513519 <= 1
- rightPlanesDominatesLeftFlowConstr_t2_v12: y16_t401282
-   - rightMutuallyExclusivePlanesVar_f3_th0.5245901644229889 <= 0
- rightMutuallyExclusivePlanesVar_eps_f3_t2_v12: 1e-05 y13_t401282
-   + 0.00546449422836304 rightMutuallyExclusivePlanesVar_f3_th0.5245901644229889
-   <= 0.00546449422836304
- rightPlanesDominatesLeftFlowConstr_eps_t2_v12: 1e-05 y16_t401282
-   - 0.00546449422836304 rightMutuallyExclusivePlanesVar_f3_th0.5300546586513519
+ rightPlanesOrderConstr_f3_th0.4087396264076233:
+   rightMutuallyExclusivePlanesVar_f3_th0.2934424430131912
+   - rightMutuallyExclusivePlanesVar_f3_th0.4087396264076233 >= 0
+ rightMutuallyExclusivePlanesVar_f3_t0_v2: y3_t780
+   + rightMutuallyExclusivePlanesVar_f3_th0.5652346909046173 <= 1
+ rightPlanesDominatesLeftFlowConstr_t0_v2: y4_t780
+   - rightMutuallyExclusivePlanesVar_f3_th0.4087396264076233 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f3_t0_v2: 1e-05 y3_t780
+   + 0.156495064496994 rightMutuallyExclusivePlanesVar_f3_th0.4087396264076233
+   <= 0.156495064496994
+ rightPlanesDominatesLeftFlowConstr_eps_t0_v2: 1e-05 y4_t780
+   - 0.156495064496994 rightMutuallyExclusivePlanesVar_f3_th0.5652346909046173
    <= 0
- rightMutuallyExclusivePlanesVar_f3_t4_v20: y21_t401284
-   + rightMutuallyExclusivePlanesVar_f3_th0.5300546586513519 <= 1
- rightPlanesDominatesLeftFlowConstr_t4_v20: y24_t401284
-   - rightMutuallyExclusivePlanesVar_f3_th0.5245901644229889 <= 0
- rightMutuallyExclusivePlanesVar_eps_f3_t4_v20: 1e-05 y21_t401284
-   + 0.00546449422836304 rightMutuallyExclusivePlanesVar_f3_th0.5245901644229889
-   <= 0.00546449422836304
- rightPlanesDominatesLeftFlowConstr_eps_t4_v20: 1e-05 y24_t401284
-   - 0.00546449422836304 rightMutuallyExclusivePlanesVar_f3_th0.5300546586513519
+ rightPlanesOrderConstr_f3_th0.5652346909046173:
+   rightMutuallyExclusivePlanesVar_f3_th0.4087396264076233
+   - rightMutuallyExclusivePlanesVar_f3_th0.5652346909046173 >= 0
+ rightMutuallyExclusivePlanesVar_f3_t5_v12: y13_t785
+   + rightMutuallyExclusivePlanesVar_f3_th0.6186498403549194 <= 1
+ rightPlanesDominatesLeftFlowConstr_t5_v12: y14_t785
+   - rightMutuallyExclusivePlanesVar_f3_th0.5652346909046173 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f3_t5_v12: 1e-05 y13_t785
+   + 0.0534151494503021 rightMutuallyExclusivePlanesVar_f3_th0.5652346909046173
+   <= 0.0534151494503021
+ rightPlanesDominatesLeftFlowConstr_eps_t5_v12: 1e-05 y14_t785
+   - 0.0534151494503021 rightMutuallyExclusivePlanesVar_f3_th0.6186498403549194
    <= 0
- rightPlanesOrderConstr_f3_th0.5300546586513519:
-   rightMutuallyExclusivePlanesVar_f3_th0.5245901644229889
-   - rightMutuallyExclusivePlanesVar_f3_th0.5300546586513519 >= 0
- rightMutuallyExclusivePlanesVar_f3_t9_v7: y8_t401289
-   + rightMutuallyExclusivePlanesVar_f3_th0.5601092875003815 <= 1
- rightPlanesDominatesLeftFlowConstr_t9_v7: y9_t401289
-   - rightMutuallyExclusivePlanesVar_f3_th0.5300546586513519 <= 0
- rightMutuallyExclusivePlanesVar_eps_f3_t9_v7: 1e-05 y8_t401289
-   + 0.0300546288490295 rightMutuallyExclusivePlanesVar_f3_th0.5300546586513519
-   <= 0.0300546288490295
- rightPlanesDominatesLeftFlowConstr_eps_t9_v7: 1e-05 y9_t401289
-   - 0.0300546288490295 rightMutuallyExclusivePlanesVar_f3_th0.5601092875003815
-   <= 0
- rightPlanesOrderConstr_f3_th0.5601092875003815:
-   rightMutuallyExclusivePlanesVar_f3_th0.5300546586513519
-   - rightMutuallyExclusivePlanesVar_f3_th0.5601092875003815 >= 0
- rightMutuallyExclusivePlanesVar_f3_t9_v6: y7_t401289
-   + rightMutuallyExclusivePlanesVar_f3_th0.5710382461547852 <= 1
- rightPlanesDominatesLeftFlowConstr_t9_v6: y10_t401289
-   - rightMutuallyExclusivePlanesVar_f3_th0.5601092875003815 <= 0
- rightMutuallyExclusivePlanesVar_eps_f3_t9_v6: 1e-05 y7_t401289
-   + 0.0109289586544037 rightMutuallyExclusivePlanesVar_f3_th0.5601092875003815
-   <= 0.0109289586544037
- rightPlanesDominatesLeftFlowConstr_eps_t9_v6: 1e-05 y10_t401289
-   - 0.0109289586544037 rightMutuallyExclusivePlanesVar_f3_th0.5710382461547852
-   <= 0
- rightPlanesOrderConstr_f3_th0.5710382461547852:
-   rightMutuallyExclusivePlanesVar_f3_th0.5601092875003815
-   - rightMutuallyExclusivePlanesVar_f3_th0.5710382461547852 >= 0
- rightMutuallyExclusivePlanesVar_f3_t6_v18: y19_t401286
-   + rightMutuallyExclusivePlanesVar_f3_th0.5846994519233704 <= 1
- rightPlanesDominatesLeftFlowConstr_t6_v18: y22_t401286
-   - rightMutuallyExclusivePlanesVar_f3_th0.5710382461547852 <= 0
- rightMutuallyExclusivePlanesVar_eps_f3_t6_v18: 1e-05 y19_t401286
-   + 0.0136612057685852 rightMutuallyExclusivePlanesVar_f3_th0.5710382461547852
-   <= 0.0136612057685852
- rightPlanesDominatesLeftFlowConstr_eps_t6_v18: 1e-05 y22_t401286
-   - 0.0136612057685852 rightMutuallyExclusivePlanesVar_f3_th0.5846994519233704
-   <= 0
- rightPlanesOrderConstr_f3_th0.5846994519233704:
-   rightMutuallyExclusivePlanesVar_f3_th0.5710382461547852
-   - rightMutuallyExclusivePlanesVar_f3_th0.5846994519233704 >= 0
- rightMutuallyExclusivePlanesVar_f3_t11_v0: y1_t401291
-   + rightMutuallyExclusivePlanesVar_f3_th0.6038251221179962 <= 1
- rightPlanesDominatesLeftFlowConstr_t11_v0: y14_t401291
-   - rightMutuallyExclusivePlanesVar_f3_th0.5846994519233704 <= 0
- rightMutuallyExclusivePlanesVar_eps_f3_t11_v0: 1e-05 y1_t401291
-   + 0.0191256701946259 rightMutuallyExclusivePlanesVar_f3_th0.5846994519233704
-   <= 0.0191256701946259
- rightPlanesDominatesLeftFlowConstr_eps_t11_v0: 1e-05 y14_t401291
-   - 0.0191256701946259 rightMutuallyExclusivePlanesVar_f3_th0.6038251221179962
-   <= 0
- rightMutuallyExclusivePlanesVar_f3_t12_v1: y2_t401292
-   + rightMutuallyExclusivePlanesVar_f3_th0.6038251221179962 <= 1
- rightPlanesDominatesLeftFlowConstr_t12_v1: y9_t401292
-   - rightMutuallyExclusivePlanesVar_f3_th0.5846994519233704 <= 0
- rightMutuallyExclusivePlanesVar_eps_f3_t12_v1: 1e-05 y2_t401292
-   + 0.0191256701946259 rightMutuallyExclusivePlanesVar_f3_th0.5846994519233704
-   <= 0.0191256701946259
- rightPlanesDominatesLeftFlowConstr_eps_t12_v1: 1e-05 y9_t401292
-   - 0.0191256701946259 rightMutuallyExclusivePlanesVar_f3_th0.6038251221179962
-   <= 0
- rightPlanesOrderConstr_f3_th0.6038251221179962:
-   rightMutuallyExclusivePlanesVar_f3_th0.5846994519233704
-   - rightMutuallyExclusivePlanesVar_f3_th0.6038251221179962 >= 0
- rightMutuallyExclusivePlanesVar_f3_t15_v0: y1_t401295
-   + rightMutuallyExclusivePlanesVar_f3_th0.6065573692321777 <= 1
- rightPlanesDominatesLeftFlowConstr_t15_v0: y14_t401295
-   - rightMutuallyExclusivePlanesVar_f3_th0.6038251221179962 <= 0
- rightMutuallyExclusivePlanesVar_eps_f3_t15_v0: 1e-05 y1_t401295
-   + 0.00273224711418152 rightMutuallyExclusivePlanesVar_f3_th0.6038251221179962
-   <= 0.00273224711418152
- rightPlanesDominatesLeftFlowConstr_eps_t15_v0: 1e-05 y14_t401295
-   - 0.00273224711418152 rightMutuallyExclusivePlanesVar_f3_th0.6065573692321777
-   <= 0
- rightPlanesOrderConstr_f3_th0.6065573692321777:
-   rightMutuallyExclusivePlanesVar_f3_th0.6038251221179962
-   - rightMutuallyExclusivePlanesVar_f3_th0.6065573692321777 >= 0
- rightMutuallyExclusivePlanesVar_f3_t2_v10: y11_t401282
-   + rightMutuallyExclusivePlanesVar_f3_th0.6174863278865814 <= 1
- rightPlanesDominatesLeftFlowConstr_t2_v10: y18_t401282
-   - rightMutuallyExclusivePlanesVar_f3_th0.6065573692321777 <= 0
- rightMutuallyExclusivePlanesVar_eps_f3_t2_v10: 1e-05 y11_t401282
-   + 0.0109289586544037 rightMutuallyExclusivePlanesVar_f3_th0.6065573692321777
-   <= 0.0109289586544037
- rightPlanesDominatesLeftFlowConstr_eps_t2_v10: 1e-05 y18_t401282
-   - 0.0109289586544037 rightMutuallyExclusivePlanesVar_f3_th0.6174863278865814
-   <= 0
- rightMutuallyExclusivePlanesVar_f3_t10_v1: y2_t401290
-   + rightMutuallyExclusivePlanesVar_f3_th0.6174863278865814 <= 1
- rightPlanesDominatesLeftFlowConstr_t10_v1: y11_t401290
-   - rightMutuallyExclusivePlanesVar_f3_th0.6065573692321777 <= 0
- rightMutuallyExclusivePlanesVar_eps_f3_t10_v1: 1e-05 y2_t401290
-   + 0.0109289586544037 rightMutuallyExclusivePlanesVar_f3_th0.6065573692321777
-   <= 0.0109289586544037
- rightPlanesDominatesLeftFlowConstr_eps_t10_v1: 1e-05 y11_t401290
-   - 0.0109289586544037 rightMutuallyExclusivePlanesVar_f3_th0.6174863278865814
-   <= 0
- rightMutuallyExclusivePlanesVar_f3_t16_v0: y1_t401296
-   + rightMutuallyExclusivePlanesVar_f3_th0.6174863278865814 <= 1
- rightPlanesDominatesLeftFlowConstr_t16_v0: y12_t401296
-   - rightMutuallyExclusivePlanesVar_f3_th0.6065573692321777 <= 0
- rightMutuallyExclusivePlanesVar_eps_f3_t16_v0: 1e-05 y1_t401296
-   + 0.0109289586544037 rightMutuallyExclusivePlanesVar_f3_th0.6065573692321777
-   <= 0.0109289586544037
- rightPlanesDominatesLeftFlowConstr_eps_t16_v0: 1e-05 y12_t401296
-   - 0.0109289586544037 rightMutuallyExclusivePlanesVar_f3_th0.6174863278865814
-   <= 0
- rightMutuallyExclusivePlanesVar_f3_t19_v0: y1_t401299
-   + rightMutuallyExclusivePlanesVar_f3_th0.6174863278865814 <= 1
- rightPlanesDominatesLeftFlowConstr_t19_v0: y14_t401299
-   - rightMutuallyExclusivePlanesVar_f3_th0.6065573692321777 <= 0
- rightMutuallyExclusivePlanesVar_eps_f3_t19_v0: 1e-05 y1_t401299
-   + 0.0109289586544037 rightMutuallyExclusivePlanesVar_f3_th0.6065573692321777
-   <= 0.0109289586544037
- rightPlanesDominatesLeftFlowConstr_eps_t19_v0: 1e-05 y14_t401299
-   - 0.0109289586544037 rightMutuallyExclusivePlanesVar_f3_th0.6174863278865814
-   <= 0
- rightPlanesOrderConstr_f3_th0.6174863278865814:
-   rightMutuallyExclusivePlanesVar_f3_th0.6065573692321777
-   - rightMutuallyExclusivePlanesVar_f3_th0.6174863278865814 >= 0
- rightMutuallyExclusivePlanesVar_f3_t0_v0: y1_t401280
-   + rightMutuallyExclusivePlanesVar_f3_th0.6256830394268036 <= 1
- rightPlanesDominatesLeftFlowConstr_t0_v0: y10_t401280
-   - rightMutuallyExclusivePlanesVar_f3_th0.6174863278865814 <= 0
- rightMutuallyExclusivePlanesVar_eps_f3_t0_v0: 1e-05 y1_t401280
-   + 0.00819671154022217 rightMutuallyExclusivePlanesVar_f3_th0.6174863278865814
-   <= 0.00819671154022217
- rightPlanesDominatesLeftFlowConstr_eps_t0_v0: 1e-05 y10_t401280
-   - 0.00819671154022217 rightMutuallyExclusivePlanesVar_f3_th0.6256830394268036
-   <= 0
- rightMutuallyExclusivePlanesVar_f3_t9_v0: y1_t401289
-   + rightMutuallyExclusivePlanesVar_f3_th0.6256830394268036 <= 1
- rightPlanesDominatesLeftFlowConstr_t9_v0: y12_t401289
-   - rightMutuallyExclusivePlanesVar_f3_th0.6174863278865814 <= 0
- rightMutuallyExclusivePlanesVar_eps_f3_t9_v0: 1e-05 y1_t401289
-   + 0.00819671154022217 rightMutuallyExclusivePlanesVar_f3_th0.6174863278865814
-   <= 0.00819671154022217
- rightPlanesDominatesLeftFlowConstr_eps_t9_v0: 1e-05 y12_t401289
-   - 0.00819671154022217 rightMutuallyExclusivePlanesVar_f3_th0.6256830394268036
-   <= 0
- rightMutuallyExclusivePlanesVar_f3_t14_v0: y1_t401294
-   + rightMutuallyExclusivePlanesVar_f3_th0.6256830394268036 <= 1
- rightPlanesDominatesLeftFlowConstr_t14_v0: y14_t401294
-   - rightMutuallyExclusivePlanesVar_f3_th0.6174863278865814 <= 0
- rightMutuallyExclusivePlanesVar_eps_f3_t14_v0: 1e-05 y1_t401294
-   + 0.00819671154022217 rightMutuallyExclusivePlanesVar_f3_th0.6174863278865814
-   <= 0.00819671154022217
- rightPlanesDominatesLeftFlowConstr_eps_t14_v0: 1e-05 y14_t401294
-   - 0.00819671154022217 rightMutuallyExclusivePlanesVar_f3_th0.6256830394268036
-   <= 0
- rightMutuallyExclusivePlanesVar_f3_t17_v3: y4_t401297
-   + rightMutuallyExclusivePlanesVar_f3_th0.6256830394268036 <= 1
- rightPlanesDominatesLeftFlowConstr_t17_v3: y7_t401297
-   - rightMutuallyExclusivePlanesVar_f3_th0.6174863278865814 <= 0
- rightMutuallyExclusivePlanesVar_eps_f3_t17_v3: 1e-05 y4_t401297
-   + 0.00819671154022217 rightMutuallyExclusivePlanesVar_f3_th0.6174863278865814
-   <= 0.00819671154022217
- rightPlanesDominatesLeftFlowConstr_eps_t17_v3: 1e-05 y7_t401297
-   - 0.00819671154022217 rightMutuallyExclusivePlanesVar_f3_th0.6256830394268036
-   <= 0
- rightMutuallyExclusivePlanesVar_f3_t18_v8: y9_t401298
-   + rightMutuallyExclusivePlanesVar_f3_th0.6256830394268036 <= 1
- rightPlanesDominatesLeftFlowConstr_t18_v8: y16_t401298
-   - rightMutuallyExclusivePlanesVar_f3_th0.6174863278865814 <= 0
- rightMutuallyExclusivePlanesVar_eps_f3_t18_v8: 1e-05 y9_t401298
-   + 0.00819671154022217 rightMutuallyExclusivePlanesVar_f3_th0.6174863278865814
-   <= 0.00819671154022217
- rightPlanesDominatesLeftFlowConstr_eps_t18_v8: 1e-05 y16_t401298
-   - 0.00819671154022217 rightMutuallyExclusivePlanesVar_f3_th0.6256830394268036
-   <= 0
- rightPlanesOrderConstr_f3_th0.6256830394268036:
-   rightMutuallyExclusivePlanesVar_f3_th0.6174863278865814
-   - rightMutuallyExclusivePlanesVar_f3_th0.6256830394268036 >= 0
- rightMutuallyExclusivePlanesVar_f3_t5_v3: y4_t401285
-   + rightMutuallyExclusivePlanesVar_f3_th0.6338797807693481 <= 1
- rightPlanesDominatesLeftFlowConstr_t5_v3: y5_t401285
-   - rightMutuallyExclusivePlanesVar_f3_th0.6256830394268036 <= 0
- rightMutuallyExclusivePlanesVar_eps_f3_t5_v3: 1e-05 y4_t401285
-   + 0.00819674134254456 rightMutuallyExclusivePlanesVar_f3_th0.6256830394268036
-   <= 0.00819674134254456
- rightPlanesDominatesLeftFlowConstr_eps_t5_v3: 1e-05 y5_t401285
-   - 0.00819674134254456 rightMutuallyExclusivePlanesVar_f3_th0.6338797807693481
-   <= 0
- rightPlanesOrderConstr_f3_th0.6338797807693481:
-   rightMutuallyExclusivePlanesVar_f3_th0.6256830394268036
-   - rightMutuallyExclusivePlanesVar_f3_th0.6338797807693481 >= 0
- rightMutuallyExclusivePlanesVar_f3_t19_v15: y16_t401299
-   + rightMutuallyExclusivePlanesVar_f3_th0.6639344394207001 <= 1
- rightPlanesDominatesLeftFlowConstr_t19_v15: y17_t401299
-   - rightMutuallyExclusivePlanesVar_f3_th0.6338797807693481 <= 0
- rightMutuallyExclusivePlanesVar_eps_f3_t19_v15: 1e-05 y16_t401299
-   + 0.0300546586513519 rightMutuallyExclusivePlanesVar_f3_th0.6338797807693481
-   <= 0.0300546586513519
- rightPlanesDominatesLeftFlowConstr_eps_t19_v15: 1e-05 y17_t401299
-   - 0.0300546586513519 rightMutuallyExclusivePlanesVar_f3_th0.6639344394207001
-   <= 0
- rightPlanesOrderConstr_f3_th0.6639344394207001:
-   rightMutuallyExclusivePlanesVar_f3_th0.6338797807693481
-   - rightMutuallyExclusivePlanesVar_f3_th0.6639344394207001 >= 0
- rightMutuallyExclusivePlanesVar_f3_t5_v5: y6_t401285
-   + rightMutuallyExclusivePlanesVar_f3_th0.6666666567325592 <= 1
- rightPlanesDominatesLeftFlowConstr_t5_v5: y7_t401285
-   - rightMutuallyExclusivePlanesVar_f3_th0.6639344394207001 <= 0
- rightMutuallyExclusivePlanesVar_eps_f3_t5_v5: 1e-05 y6_t401285
-   + 0.00273221731185913 rightMutuallyExclusivePlanesVar_f3_th0.6639344394207001
-   <= 0.00273221731185913
- rightPlanesDominatesLeftFlowConstr_eps_t5_v5: 1e-05 y7_t401285
-   - 0.00273221731185913 rightMutuallyExclusivePlanesVar_f3_th0.6666666567325592
-   <= 0
- rightPlanesOrderConstr_f3_th0.6666666567325592:
-   rightMutuallyExclusivePlanesVar_f3_th0.6639344394207001
-   - rightMutuallyExclusivePlanesVar_f3_th0.6666666567325592 >= 0
- rightMutuallyExclusivePlanesVar_f3_t19_v18: y19_t401299
-   + rightMutuallyExclusivePlanesVar_f3_th0.7131147384643555 <= 1
- rightPlanesDominatesLeftFlowConstr_t19_v18: y20_t401299
-   - rightMutuallyExclusivePlanesVar_f3_th0.6666666567325592 <= 0
- rightMutuallyExclusivePlanesVar_eps_f3_t19_v18: 1e-05 y19_t401299
-   + 0.0464480817317963 rightMutuallyExclusivePlanesVar_f3_th0.6666666567325592
-   <= 0.0464480817317963
- rightPlanesDominatesLeftFlowConstr_eps_t19_v18: 1e-05 y20_t401299
-   - 0.0464480817317963 rightMutuallyExclusivePlanesVar_f3_th0.7131147384643555
-   <= 0
- rightPlanesOrderConstr_f3_th0.7131147384643555:
-   rightMutuallyExclusivePlanesVar_f3_th0.6666666567325592
-   - rightMutuallyExclusivePlanesVar_f3_th0.7131147384643555 >= 0
- rightMutuallyExclusivePlanesVar_f3_t14_v16: y17_t401294
-   + rightMutuallyExclusivePlanesVar_f3_th0.7595628499984741 <= 1
- rightPlanesDominatesLeftFlowConstr_t14_v16: y20_t401294
-   - rightMutuallyExclusivePlanesVar_f3_th0.7131147384643555 <= 0
- rightMutuallyExclusivePlanesVar_eps_f3_t14_v16: 1e-05 y17_t401294
-   + 0.0464481115341187 rightMutuallyExclusivePlanesVar_f3_th0.7131147384643555
-   <= 0.0464481115341187
- rightPlanesDominatesLeftFlowConstr_eps_t14_v16: 1e-05 y20_t401294
-   - 0.0464481115341187 rightMutuallyExclusivePlanesVar_f3_th0.7595628499984741
-   <= 0
- rightPlanesOrderConstr_f3_th0.7595628499984741:
-   rightMutuallyExclusivePlanesVar_f3_th0.7131147384643555
-   - rightMutuallyExclusivePlanesVar_f3_th0.7595628499984741 >= 0
+ rightPlanesOrderConstr_f3_th0.6186498403549194:
+   rightMutuallyExclusivePlanesVar_f3_th0.5652346909046173
+   - rightMutuallyExclusivePlanesVar_f3_th0.6186498403549194 >= 0
+ rightPlanesOrderConstr_f3_th0.882941243323105:
+   rightMutuallyExclusivePlanesVar_f3_th0.6186498403549194
+   - rightMutuallyExclusivePlanesVar_f3_th0.882941243323105 >= 0
  x_as_linear_combination_of_planes_f: x_f3
-   - 0.4398907124996185 rightMutuallyExclusivePlanesVar_f3_th0
-   - 0.0437158495187759 rightMutuallyExclusivePlanesVar_f3_th0.43989071249961853
-   - 0.00819671667013006 rightMutuallyExclusivePlanesVar_f3_th0.48360656201839447
-   - 0.0327868857344644 rightMutuallyExclusivePlanesVar_f3_th0.4918032786885245
-   - 0.00546449422836304 rightMutuallyExclusivePlanesVar_f3_th0.5245901644229889
-   - 0.0300546288490295 rightMutuallyExclusivePlanesVar_f3_th0.5300546586513519
-   - 0.0109289586544037 rightMutuallyExclusivePlanesVar_f3_th0.5601092875003815
-   - 0.0136612057685852 rightMutuallyExclusivePlanesVar_f3_th0.5710382461547852
-   - 0.0191256701946259 rightMutuallyExclusivePlanesVar_f3_th0.5846994519233704
-   - 0.00273224711418152 rightMutuallyExclusivePlanesVar_f3_th0.6038251221179962
-   - 0.0109289586544037 rightMutuallyExclusivePlanesVar_f3_th0.6065573692321777
-   - 0.00819671154022217 rightMutuallyExclusivePlanesVar_f3_th0.6174863278865814
-   - 0.00819674134254456 rightMutuallyExclusivePlanesVar_f3_th0.6256830394268036
-   - 0.0300546586513519 rightMutuallyExclusivePlanesVar_f3_th0.6338797807693481
-   - 0.00273221731185913 rightMutuallyExclusivePlanesVar_f3_th0.6639344394207001
-   - 0.0464480817317963 rightMutuallyExclusivePlanesVar_f3_th0.6666666567325592
-   - 0.0464481115341187 rightMutuallyExclusivePlanesVar_f3_th0.7131147384643555
-   - 0.2404371500015259 rightMutuallyExclusivePlanesVar_f3_th0.7595628499984741
+   - 0.2571883201599121 rightMutuallyExclusivePlanesVar_f3_th0
+   - 0.0349471420049667 rightMutuallyExclusivePlanesVar_f3_th0.2571883201599121
+   - 0.00130698084831238 rightMutuallyExclusivePlanesVar_f3_th0.29213546216487885
+   - 0.1152971833944321 rightMutuallyExclusivePlanesVar_f3_th0.2934424430131912
+   - 0.156495064496994 rightMutuallyExclusivePlanesVar_f3_th0.4087396264076233
+   - 0.0534151494503021 rightMutuallyExclusivePlanesVar_f3_th0.5652346909046173
+   - 0.2642914029681855 rightMutuallyExclusivePlanesVar_f3_th0.6186498403549194
+   - 0.117058756676895 rightMutuallyExclusivePlanesVar_f3_th0.882941243323105
    = 0
- rightMutuallyExclusivePlanesVar_f4_t3_v18: y19_t401283
-   + rightMutuallyExclusivePlanesVar_f4_th0.35021552443504333 <= 1
- rightPlanesDominatesLeftFlowConstr_t3_v18: y20_t401283
+ rightMutuallyExclusivePlanesVar_f4_t12_v5: y6_t792
+   + rightMutuallyExclusivePlanesVar_f4_th0.2475922331213951 <= 1
+ rightPlanesDominatesLeftFlowConstr_t12_v5: y7_t792
    - rightMutuallyExclusivePlanesVar_f4_th0 <= 0
- rightMutuallyExclusivePlanesVar_eps_f4_t3_v18: 1e-05 y19_t401283
-   + 0.3502155244350433 rightMutuallyExclusivePlanesVar_f4_th0
-   <= 0.3502155244350433
- rightPlanesDominatesLeftFlowConstr_eps_t3_v18: 1e-05 y20_t401283
-   - 0.3502155244350433 rightMutuallyExclusivePlanesVar_f4_th0.35021552443504333
+ rightMutuallyExclusivePlanesVar_eps_f4_t12_v5: 1e-05 y6_t792
+   + 0.2475922331213951 rightMutuallyExclusivePlanesVar_f4_th0
+   <= 0.2475922331213951
+ rightPlanesDominatesLeftFlowConstr_eps_t12_v5: 1e-05 y7_t792
+   - 0.2475922331213951 rightMutuallyExclusivePlanesVar_f4_th0.2475922331213951
    <= 0
- rightPlanesOrderConstr_f4_th0.35021552443504333:
+ rightPlanesOrderConstr_f4_th0.2475922331213951:
    rightMutuallyExclusivePlanesVar_f4_th0
-   - rightMutuallyExclusivePlanesVar_f4_th0.35021552443504333 >= 0
- rightMutuallyExclusivePlanesVar_f4_t11_v2: y3_t401291
-   + rightMutuallyExclusivePlanesVar_f4_th0.35991379618644714 <= 1
- rightPlanesDominatesLeftFlowConstr_t11_v2: y4_t401291
-   - rightMutuallyExclusivePlanesVar_f4_th0.35021552443504333 <= 0
- rightMutuallyExclusivePlanesVar_eps_f4_t11_v2: 1e-05 y3_t401291
-   + 0.00969827175140381 rightMutuallyExclusivePlanesVar_f4_th0.35021552443504333
-   <= 0.00969827175140381
- rightPlanesDominatesLeftFlowConstr_eps_t11_v2: 1e-05 y4_t401291
-   - 0.00969827175140381 rightMutuallyExclusivePlanesVar_f4_th0.35991379618644714
+   - rightMutuallyExclusivePlanesVar_f4_th0.2475922331213951 >= 0
+ rightMutuallyExclusivePlanesVar_f4_t18_v9: y10_t798
+   + rightMutuallyExclusivePlanesVar_f4_th0.2530745416879654 <= 1
+ rightPlanesDominatesLeftFlowConstr_t18_v9: y11_t798
+   - rightMutuallyExclusivePlanesVar_f4_th0.2475922331213951 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f4_t18_v9: 1e-05 y10_t798
+   + 0.00548230856657028 rightMutuallyExclusivePlanesVar_f4_th0.2475922331213951
+   <= 0.00548230856657028
+ rightPlanesDominatesLeftFlowConstr_eps_t18_v9: 1e-05 y11_t798
+   - 0.00548230856657028 rightMutuallyExclusivePlanesVar_f4_th0.2530745416879654
    <= 0
- rightPlanesOrderConstr_f4_th0.35991379618644714:
-   rightMutuallyExclusivePlanesVar_f4_th0.35021552443504333
-   - rightMutuallyExclusivePlanesVar_f4_th0.35991379618644714 >= 0
- rightMutuallyExclusivePlanesVar_f4_t10_v8: y9_t401290
-   + rightMutuallyExclusivePlanesVar_f4_th0.5140086263418198 <= 1
- rightPlanesDominatesLeftFlowConstr_t10_v8: y10_t401290
-   - rightMutuallyExclusivePlanesVar_f4_th0.35991379618644714 <= 0
- rightMutuallyExclusivePlanesVar_eps_f4_t10_v8: 1e-05 y9_t401290
-   + 0.1540948301553726 rightMutuallyExclusivePlanesVar_f4_th0.35991379618644714
-   <= 0.1540948301553726
- rightPlanesDominatesLeftFlowConstr_eps_t10_v8: 1e-05 y10_t401290
-   - 0.1540948301553726 rightMutuallyExclusivePlanesVar_f4_th0.5140086263418198
+ rightPlanesOrderConstr_f4_th0.2530745416879654:
+   rightMutuallyExclusivePlanesVar_f4_th0.2475922331213951
+   - rightMutuallyExclusivePlanesVar_f4_th0.2530745416879654 >= 0
+ rightMutuallyExclusivePlanesVar_f4_t15_v1: y2_t795
+   + rightMutuallyExclusivePlanesVar_f4_th0.3420506715774536 <= 1
+ rightPlanesDominatesLeftFlowConstr_t15_v1: y5_t795
+   - rightMutuallyExclusivePlanesVar_f4_th0.2530745416879654 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f4_t15_v1: 1e-05 y2_t795
+   + 0.0889761298894882 rightMutuallyExclusivePlanesVar_f4_th0.2530745416879654
+   <= 0.0889761298894882
+ rightPlanesDominatesLeftFlowConstr_eps_t15_v1: 1e-05 y5_t795
+   - 0.0889761298894882 rightMutuallyExclusivePlanesVar_f4_th0.3420506715774536
    <= 0
- rightPlanesOrderConstr_f4_th0.5140086263418198:
-   rightMutuallyExclusivePlanesVar_f4_th0.35991379618644714
-   - rightMutuallyExclusivePlanesVar_f4_th0.5140086263418198 >= 0
- rightMutuallyExclusivePlanesVar_f4_t0_v5: y6_t401280
-   + rightMutuallyExclusivePlanesVar_f4_th0.5237068831920624 <= 1
- rightPlanesDominatesLeftFlowConstr_t0_v5: y7_t401280
-   - rightMutuallyExclusivePlanesVar_f4_th0.5140086263418198 <= 0
- rightMutuallyExclusivePlanesVar_eps_f4_t0_v5: 1e-05 y6_t401280
-   + 0.00969825685024261 rightMutuallyExclusivePlanesVar_f4_th0.5140086263418198
-   <= 0.00969825685024261
- rightPlanesDominatesLeftFlowConstr_eps_t0_v5: 1e-05 y7_t401280
-   - 0.00969825685024261 rightMutuallyExclusivePlanesVar_f4_th0.5237068831920624
+ rightPlanesOrderConstr_f4_th0.3420506715774536:
+   rightMutuallyExclusivePlanesVar_f4_th0.2530745416879654
+   - rightMutuallyExclusivePlanesVar_f4_th0.3420506715774536 >= 0
+ rightMutuallyExclusivePlanesVar_f4_t4_v1: y2_t784
+   + rightMutuallyExclusivePlanesVar_f4_th0.35464513301849365 <= 1
+ rightPlanesDominatesLeftFlowConstr_t4_v1: y5_t784
+   - rightMutuallyExclusivePlanesVar_f4_th0.3420506715774536 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f4_t4_v1: 1e-05 y2_t784
+   + 0.01259446144104 rightMutuallyExclusivePlanesVar_f4_th0.3420506715774536
+   <= 0.01259446144104
+ rightPlanesDominatesLeftFlowConstr_eps_t4_v1: 1e-05 y5_t784
+   - 0.01259446144104 rightMutuallyExclusivePlanesVar_f4_th0.35464513301849365
    <= 0
- rightMutuallyExclusivePlanesVar_f4_t4_v14: y15_t401284
-   + rightMutuallyExclusivePlanesVar_f4_th0.5237068831920624 <= 1
- rightPlanesDominatesLeftFlowConstr_t4_v14: y20_t401284
-   - rightMutuallyExclusivePlanesVar_f4_th0.5140086263418198 <= 0
- rightMutuallyExclusivePlanesVar_eps_f4_t4_v14: 1e-05 y15_t401284
-   + 0.00969825685024261 rightMutuallyExclusivePlanesVar_f4_th0.5140086263418198
-   <= 0.00969825685024261
- rightPlanesDominatesLeftFlowConstr_eps_t4_v14: 1e-05 y20_t401284
-   - 0.00969825685024261 rightMutuallyExclusivePlanesVar_f4_th0.5237068831920624
+ rightPlanesOrderConstr_f4_th0.35464513301849365:
+   rightMutuallyExclusivePlanesVar_f4_th0.3420506715774536
+   - rightMutuallyExclusivePlanesVar_f4_th0.35464513301849365 >= 0
+ rightMutuallyExclusivePlanesVar_f4_t9_v1: y2_t789
+   + rightMutuallyExclusivePlanesVar_f4_th0.3568676859140396 <= 1
+ rightPlanesDominatesLeftFlowConstr_t9_v1: y5_t789
+   - rightMutuallyExclusivePlanesVar_f4_th0.35464513301849365 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f4_t9_v1: 1e-05 y2_t789
+   + 0.00222255289554596 rightMutuallyExclusivePlanesVar_f4_th0.35464513301849365
+   <= 0.00222255289554596
+ rightPlanesDominatesLeftFlowConstr_eps_t9_v1: 1e-05 y5_t789
+   - 0.00222255289554596 rightMutuallyExclusivePlanesVar_f4_th0.3568676859140396
    <= 0
- rightPlanesOrderConstr_f4_th0.5237068831920624:
-   rightMutuallyExclusivePlanesVar_f4_th0.5140086263418198
-   - rightMutuallyExclusivePlanesVar_f4_th0.5237068831920624 >= 0
- rightMutuallyExclusivePlanesVar_f4_t16_v17: y18_t401296
-   + rightMutuallyExclusivePlanesVar_f4_th0.5301724225282669 <= 1
- rightPlanesDominatesLeftFlowConstr_t16_v17: y19_t401296
-   - rightMutuallyExclusivePlanesVar_f4_th0.5237068831920624 <= 0
- rightMutuallyExclusivePlanesVar_eps_f4_t16_v17: 1e-05 y18_t401296
-   + 0.00646553933620453 rightMutuallyExclusivePlanesVar_f4_th0.5237068831920624
-   <= 0.00646553933620453
- rightPlanesDominatesLeftFlowConstr_eps_t16_v17: 1e-05 y19_t401296
-   - 0.00646553933620453 rightMutuallyExclusivePlanesVar_f4_th0.5301724225282669
+ rightPlanesOrderConstr_f4_th0.3568676859140396:
+   rightMutuallyExclusivePlanesVar_f4_th0.35464513301849365
+   - rightMutuallyExclusivePlanesVar_f4_th0.3568676859140396 >= 0
+ rightMutuallyExclusivePlanesVar_f4_t2_v5: y6_t782
+   + rightMutuallyExclusivePlanesVar_f4_th0.37124018371105194 <= 1
+ rightPlanesDominatesLeftFlowConstr_t2_v5: y7_t782
+   - rightMutuallyExclusivePlanesVar_f4_th0.3568676859140396 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f4_t2_v5: 1e-05 y6_t782
+   + 0.0143724977970123 rightMutuallyExclusivePlanesVar_f4_th0.3568676859140396
+   <= 0.0143724977970123
+ rightPlanesDominatesLeftFlowConstr_eps_t2_v5: 1e-05 y7_t782
+   - 0.0143724977970123 rightMutuallyExclusivePlanesVar_f4_th0.37124018371105194
    <= 0
- rightPlanesOrderConstr_f4_th0.5301724225282669:
-   rightMutuallyExclusivePlanesVar_f4_th0.5237068831920624
-   - rightMutuallyExclusivePlanesVar_f4_th0.5301724225282669 >= 0
- rightMutuallyExclusivePlanesVar_f4_t11_v1: y2_t401291
-   + rightMutuallyExclusivePlanesVar_f4_th0.536637932062149 <= 1
- rightPlanesDominatesLeftFlowConstr_t11_v1: y5_t401291
-   - rightMutuallyExclusivePlanesVar_f4_th0.5301724225282669 <= 0
- rightMutuallyExclusivePlanesVar_eps_f4_t11_v1: 1e-05 y2_t401291
-   + 0.00646550953388214 rightMutuallyExclusivePlanesVar_f4_th0.5301724225282669
-   <= 0.00646550953388214
- rightPlanesDominatesLeftFlowConstr_eps_t11_v1: 1e-05 y5_t401291
-   - 0.00646550953388214 rightMutuallyExclusivePlanesVar_f4_th0.536637932062149
-   <= 0
- rightPlanesOrderConstr_f4_th0.536637932062149:
-   rightMutuallyExclusivePlanesVar_f4_th0.5301724225282669
-   - rightMutuallyExclusivePlanesVar_f4_th0.536637932062149 >= 0
- rightMutuallyExclusivePlanesVar_f4_t5_v12: y13_t401285
-   + rightMutuallyExclusivePlanesVar_f4_th0.5431034564971924 <= 1
- rightPlanesDominatesLeftFlowConstr_t5_v12: y14_t401285
-   - rightMutuallyExclusivePlanesVar_f4_th0.536637932062149 <= 0
- rightMutuallyExclusivePlanesVar_eps_f4_t5_v12: 1e-05 y13_t401285
-   + 0.00646552443504333 rightMutuallyExclusivePlanesVar_f4_th0.536637932062149
-   <= 0.00646552443504333
- rightPlanesDominatesLeftFlowConstr_eps_t5_v12: 1e-05 y14_t401285
-   - 0.00646552443504333 rightMutuallyExclusivePlanesVar_f4_th0.5431034564971924
-   <= 0
- rightPlanesOrderConstr_f4_th0.5431034564971924:
-   rightMutuallyExclusivePlanesVar_f4_th0.536637932062149
-   - rightMutuallyExclusivePlanesVar_f4_th0.5431034564971924 >= 0
- rightMutuallyExclusivePlanesVar_f4_t12_v3: y4_t401292
-   + rightMutuallyExclusivePlanesVar_f4_th0.567887932062149 <= 1
- rightPlanesDominatesLeftFlowConstr_t12_v3: y5_t401292
-   - rightMutuallyExclusivePlanesVar_f4_th0.5431034564971924 <= 0
- rightMutuallyExclusivePlanesVar_eps_f4_t12_v3: 1e-05 y4_t401292
-   + 0.0247844755649567 rightMutuallyExclusivePlanesVar_f4_th0.5431034564971924
-   <= 0.0247844755649567
- rightPlanesDominatesLeftFlowConstr_eps_t12_v3: 1e-05 y5_t401292
-   - 0.0247844755649567 rightMutuallyExclusivePlanesVar_f4_th0.567887932062149
-   <= 0
- rightPlanesOrderConstr_f4_th0.567887932062149:
-   rightMutuallyExclusivePlanesVar_f4_th0.5431034564971924
-   - rightMutuallyExclusivePlanesVar_f4_th0.567887932062149 >= 0
- rightMutuallyExclusivePlanesVar_f4_t14_v4: y5_t401294
-   + rightMutuallyExclusivePlanesVar_f4_th0.5786637961864471 <= 1
- rightPlanesDominatesLeftFlowConstr_t14_v4: y8_t401294
-   - rightMutuallyExclusivePlanesVar_f4_th0.567887932062149 <= 0
- rightMutuallyExclusivePlanesVar_eps_f4_t14_v4: 1e-05 y5_t401294
-   + 0.0107758641242981 rightMutuallyExclusivePlanesVar_f4_th0.567887932062149
-   <= 0.0107758641242981
- rightPlanesDominatesLeftFlowConstr_eps_t14_v4: 1e-05 y8_t401294
-   - 0.0107758641242981 rightMutuallyExclusivePlanesVar_f4_th0.5786637961864471
-   <= 0
- rightPlanesOrderConstr_f4_th0.5786637961864471:
-   rightMutuallyExclusivePlanesVar_f4_th0.567887932062149
-   - rightMutuallyExclusivePlanesVar_f4_th0.5786637961864471 >= 0
- rightMutuallyExclusivePlanesVar_f4_t15_v9: y10_t401295
-   + rightMutuallyExclusivePlanesVar_f4_th0.5829741358757019 <= 1
- rightPlanesDominatesLeftFlowConstr_t15_v9: y13_t401295
-   - rightMutuallyExclusivePlanesVar_f4_th0.5786637961864471 <= 0
- rightMutuallyExclusivePlanesVar_eps_f4_t15_v9: 1e-05 y10_t401295
-   + 0.00431033968925476 rightMutuallyExclusivePlanesVar_f4_th0.5786637961864471
-   <= 0.00431033968925476
- rightPlanesDominatesLeftFlowConstr_eps_t15_v9: 1e-05 y13_t401295
-   - 0.00431033968925476 rightMutuallyExclusivePlanesVar_f4_th0.5829741358757019
-   <= 0
- rightPlanesOrderConstr_f4_th0.5829741358757019:
-   rightMutuallyExclusivePlanesVar_f4_th0.5786637961864471
-   - rightMutuallyExclusivePlanesVar_f4_th0.5829741358757019 >= 0
- rightMutuallyExclusivePlanesVar_f4_t7_v18: y19_t401287
-   + rightMutuallyExclusivePlanesVar_f4_th0.6023706793785095 <= 1
- rightPlanesDominatesLeftFlowConstr_t7_v18: y22_t401287
-   - rightMutuallyExclusivePlanesVar_f4_th0.5829741358757019 <= 0
- rightMutuallyExclusivePlanesVar_eps_f4_t7_v18: 1e-05 y19_t401287
-   + 0.0193965435028076 rightMutuallyExclusivePlanesVar_f4_th0.5829741358757019
-   <= 0.0193965435028076
- rightPlanesDominatesLeftFlowConstr_eps_t7_v18: 1e-05 y22_t401287
-   - 0.0193965435028076 rightMutuallyExclusivePlanesVar_f4_th0.6023706793785095
-   <= 0
- rightPlanesOrderConstr_f4_th0.6023706793785095:
-   rightMutuallyExclusivePlanesVar_f4_th0.5829741358757019
-   - rightMutuallyExclusivePlanesVar_f4_th0.6023706793785095 >= 0
- rightMutuallyExclusivePlanesVar_f4_t5_v9: y10_t401285
-   + rightMutuallyExclusivePlanesVar_f4_th0.6163793206214905 <= 1
- rightPlanesDominatesLeftFlowConstr_t5_v9: y11_t401285
-   - rightMutuallyExclusivePlanesVar_f4_th0.6023706793785095 <= 0
- rightMutuallyExclusivePlanesVar_eps_f4_t5_v9: 1e-05 y10_t401285
-   + 0.014008641242981 rightMutuallyExclusivePlanesVar_f4_th0.6023706793785095
-   <= 0.014008641242981
- rightPlanesDominatesLeftFlowConstr_eps_t5_v9: 1e-05 y11_t401285
-   - 0.014008641242981 rightMutuallyExclusivePlanesVar_f4_th0.6163793206214905
-   <= 0
- rightPlanesOrderConstr_f4_th0.6163793206214905:
-   rightMutuallyExclusivePlanesVar_f4_th0.6023706793785095
-   - rightMutuallyExclusivePlanesVar_f4_th0.6163793206214905 >= 0
- rightMutuallyExclusivePlanesVar_f4_t17_v12: y13_t401297
-   + rightMutuallyExclusivePlanesVar_f4_th0.6228448152542114 <= 1
- rightPlanesDominatesLeftFlowConstr_t17_v12: y14_t401297
-   - rightMutuallyExclusivePlanesVar_f4_th0.6163793206214905 <= 0
- rightMutuallyExclusivePlanesVar_eps_f4_t17_v12: 1e-05 y13_t401297
-   + 0.00646549463272095 rightMutuallyExclusivePlanesVar_f4_th0.6163793206214905
-   <= 0.00646549463272095
- rightPlanesDominatesLeftFlowConstr_eps_t17_v12: 1e-05 y14_t401297
-   - 0.00646549463272095 rightMutuallyExclusivePlanesVar_f4_th0.6228448152542114
-   <= 0
- rightPlanesOrderConstr_f4_th0.6228448152542114:
-   rightMutuallyExclusivePlanesVar_f4_th0.6163793206214905
-   - rightMutuallyExclusivePlanesVar_f4_th0.6228448152542114 >= 0
- rightMutuallyExclusivePlanesVar_f4_t3_v1: y2_t401283
-   + rightMutuallyExclusivePlanesVar_f4_th0.6282327771186829 <= 1
- rightPlanesDominatesLeftFlowConstr_t3_v1: y3_t401283
-   - rightMutuallyExclusivePlanesVar_f4_th0.6228448152542114 <= 0
- rightMutuallyExclusivePlanesVar_eps_f4_t3_v1: 1e-05 y2_t401283
-   + 0.00538796186447144 rightMutuallyExclusivePlanesVar_f4_th0.6228448152542114
-   <= 0.00538796186447144
- rightPlanesDominatesLeftFlowConstr_eps_t3_v1: 1e-05 y3_t401283
-   - 0.00538796186447144 rightMutuallyExclusivePlanesVar_f4_th0.6282327771186829
-   <= 0
- rightPlanesOrderConstr_f4_th0.6282327771186829:
-   rightMutuallyExclusivePlanesVar_f4_th0.6228448152542114
-   - rightMutuallyExclusivePlanesVar_f4_th0.6282327771186829 >= 0
- rightMutuallyExclusivePlanesVar_f4_t19_v2: y3_t401299
-   + rightMutuallyExclusivePlanesVar_f4_th0.6346982717514038 <= 1
- rightPlanesDominatesLeftFlowConstr_t19_v2: y8_t401299
-   - rightMutuallyExclusivePlanesVar_f4_th0.6282327771186829 <= 0
- rightMutuallyExclusivePlanesVar_eps_f4_t19_v2: 1e-05 y3_t401299
-   + 0.00646549463272095 rightMutuallyExclusivePlanesVar_f4_th0.6282327771186829
-   <= 0.00646549463272095
- rightPlanesDominatesLeftFlowConstr_eps_t19_v2: 1e-05 y8_t401299
-   - 0.00646549463272095 rightMutuallyExclusivePlanesVar_f4_th0.6346982717514038
-   <= 0
- rightPlanesOrderConstr_f4_th0.6346982717514038:
-   rightMutuallyExclusivePlanesVar_f4_th0.6282327771186829
-   - rightMutuallyExclusivePlanesVar_f4_th0.6346982717514038 >= 0
- rightMutuallyExclusivePlanesVar_f4_t10_v19: y20_t401290
-   + rightMutuallyExclusivePlanesVar_f4_th0.6368534564971924 <= 1
- rightPlanesDominatesLeftFlowConstr_t10_v19: y21_t401290
-   - rightMutuallyExclusivePlanesVar_f4_th0.6346982717514038 <= 0
- rightMutuallyExclusivePlanesVar_eps_f4_t10_v19: 1e-05 y20_t401290
-   + 0.00215518474578857 rightMutuallyExclusivePlanesVar_f4_th0.6346982717514038
-   <= 0.00215518474578857
- rightPlanesDominatesLeftFlowConstr_eps_t10_v19: 1e-05 y21_t401290
-   - 0.00215518474578857 rightMutuallyExclusivePlanesVar_f4_th0.6368534564971924
-   <= 0
- rightPlanesOrderConstr_f4_th0.6368534564971924:
-   rightMutuallyExclusivePlanesVar_f4_th0.6346982717514038
-   - rightMutuallyExclusivePlanesVar_f4_th0.6368534564971924 >= 0
- rightPlanesOrderConstr_f4_th0.6422413793103456:
-   rightMutuallyExclusivePlanesVar_f4_th0.6368534564971924
-   - rightMutuallyExclusivePlanesVar_f4_th0.6422413793103456 >= 0
- rightMutuallyExclusivePlanesVar_f4_t16_v16: y17_t401296
-   + rightMutuallyExclusivePlanesVar_f4_th0.64439657330513 <= 1
- rightPlanesDominatesLeftFlowConstr_t16_v16: y20_t401296
-   - rightMutuallyExclusivePlanesVar_f4_th0.6422413793103456 <= 0
- rightMutuallyExclusivePlanesVar_eps_f4_t16_v16: 1e-05 y17_t401296
-   + 0.00215519399478437 rightMutuallyExclusivePlanesVar_f4_th0.6422413793103456
-   <= 0.00215519399478437
- rightPlanesDominatesLeftFlowConstr_eps_t16_v16: 1e-05 y20_t401296
-   - 0.00215519399478437 rightMutuallyExclusivePlanesVar_f4_th0.64439657330513
-   <= 0
- rightPlanesOrderConstr_f4_th0.64439657330513:
-   rightMutuallyExclusivePlanesVar_f4_th0.6422413793103456
-   - rightMutuallyExclusivePlanesVar_f4_th0.64439657330513 >= 0
- rightMutuallyExclusivePlanesVar_f4_t18_v19: y20_t401298
-   + rightMutuallyExclusivePlanesVar_f4_th0.65625 <= 1
- rightPlanesDominatesLeftFlowConstr_t18_v19: y21_t401298
-   - rightMutuallyExclusivePlanesVar_f4_th0.64439657330513 <= 0
- rightMutuallyExclusivePlanesVar_eps_f4_t18_v19: 1e-05 y20_t401298
-   + 0.01185342669487 rightMutuallyExclusivePlanesVar_f4_th0.64439657330513
-   <= 0.01185342669487
- rightPlanesDominatesLeftFlowConstr_eps_t18_v19: 1e-05 y21_t401298
-   - 0.01185342669487 rightMutuallyExclusivePlanesVar_f4_th0.65625 <= 0
- rightPlanesOrderConstr_f4_th0.65625:
-   rightMutuallyExclusivePlanesVar_f4_th0.64439657330513
-   - rightMutuallyExclusivePlanesVar_f4_th0.65625 >= 0
- rightMutuallyExclusivePlanesVar_f4_t10_v11: y12_t401290
-   + rightMutuallyExclusivePlanesVar_f4_th0.682112067937851 <= 1
- rightPlanesDominatesLeftFlowConstr_t10_v11: y13_t401290
-   - rightMutuallyExclusivePlanesVar_f4_th0.65625 <= 0
- rightMutuallyExclusivePlanesVar_eps_f4_t10_v11: 1e-05 y12_t401290
-   + 0.025862067937851 rightMutuallyExclusivePlanesVar_f4_th0.65625
-   <= 0.025862067937851
- rightPlanesDominatesLeftFlowConstr_eps_t10_v11: 1e-05 y13_t401290
-   - 0.025862067937851 rightMutuallyExclusivePlanesVar_f4_th0.682112067937851
-   <= 0
- rightMutuallyExclusivePlanesVar_f4_t19_v10: y11_t401299
-   + rightMutuallyExclusivePlanesVar_f4_th0.682112067937851 <= 1
- rightPlanesDominatesLeftFlowConstr_t19_v10: y12_t401299
-   - rightMutuallyExclusivePlanesVar_f4_th0.65625 <= 0
- rightMutuallyExclusivePlanesVar_eps_f4_t19_v10: 1e-05 y11_t401299
-   + 0.025862067937851 rightMutuallyExclusivePlanesVar_f4_th0.65625
-   <= 0.025862067937851
- rightPlanesDominatesLeftFlowConstr_eps_t19_v10: 1e-05 y12_t401299
-   - 0.025862067937851 rightMutuallyExclusivePlanesVar_f4_th0.682112067937851
-   <= 0
- rightPlanesOrderConstr_f4_th0.682112067937851:
-   rightMutuallyExclusivePlanesVar_f4_th0.65625
-   - rightMutuallyExclusivePlanesVar_f4_th0.682112067937851 >= 0
- rightMutuallyExclusivePlanesVar_f4_t0_v10: y11_t401280
-   + rightMutuallyExclusivePlanesVar_f4_th0.6875 <= 1
- rightPlanesDominatesLeftFlowConstr_t0_v10: y18_t401280
-   - rightMutuallyExclusivePlanesVar_f4_th0.682112067937851 <= 0
- rightMutuallyExclusivePlanesVar_eps_f4_t0_v10: 1e-05 y11_t401280
-   + 0.00538793206214905 rightMutuallyExclusivePlanesVar_f4_th0.682112067937851
-   <= 0.00538793206214905
- rightPlanesDominatesLeftFlowConstr_eps_t0_v10: 1e-05 y18_t401280
-   - 0.00538793206214905 rightMutuallyExclusivePlanesVar_f4_th0.6875 <= 0
- rightPlanesOrderConstr_f4_th0.6875:
-   rightMutuallyExclusivePlanesVar_f4_th0.682112067937851
-   - rightMutuallyExclusivePlanesVar_f4_th0.6875 >= 0
- rightMutuallyExclusivePlanesVar_f4_t8_v9: y10_t401288
-   + rightMutuallyExclusivePlanesVar_f4_th0.7036637961864471 <= 1
- rightPlanesDominatesLeftFlowConstr_t8_v9: y11_t401288
-   - rightMutuallyExclusivePlanesVar_f4_th0.6875 <= 0
- rightMutuallyExclusivePlanesVar_eps_f4_t8_v9: 1e-05 y10_t401288
-   + 0.0161637961864471 rightMutuallyExclusivePlanesVar_f4_th0.6875
-   <= 0.0161637961864471
- rightPlanesDominatesLeftFlowConstr_eps_t8_v9: 1e-05 y11_t401288
-   - 0.0161637961864471 rightMutuallyExclusivePlanesVar_f4_th0.7036637961864471
-   <= 0
- rightPlanesOrderConstr_f4_th0.7036637961864471:
-   rightMutuallyExclusivePlanesVar_f4_th0.6875
-   - rightMutuallyExclusivePlanesVar_f4_th0.7036637961864471 >= 0
- rightMutuallyExclusivePlanesVar_f4_t3_v5: y6_t401283
-   + rightMutuallyExclusivePlanesVar_f4_th0.7209051847457886 <= 1
- rightPlanesDominatesLeftFlowConstr_t3_v5: y7_t401283
-   - rightMutuallyExclusivePlanesVar_f4_th0.7036637961864471 <= 0
- rightMutuallyExclusivePlanesVar_eps_f4_t3_v5: 1e-05 y6_t401283
-   + 0.0172413885593414 rightMutuallyExclusivePlanesVar_f4_th0.7036637961864471
-   <= 0.0172413885593414
- rightPlanesDominatesLeftFlowConstr_eps_t3_v5: 1e-05 y7_t401283
-   - 0.0172413885593414 rightMutuallyExclusivePlanesVar_f4_th0.7209051847457886
-   <= 0
- rightPlanesOrderConstr_f4_th0.7209051847457886:
-   rightMutuallyExclusivePlanesVar_f4_th0.7036637961864471
-   - rightMutuallyExclusivePlanesVar_f4_th0.7209051847457886 >= 0
- rightMutuallyExclusivePlanesVar_f4_t12_v0: y1_t401292
-   + rightMutuallyExclusivePlanesVar_f4_th0.7316810488700867 <= 1
- rightPlanesDominatesLeftFlowConstr_t12_v0: y20_t401292
-   - rightMutuallyExclusivePlanesVar_f4_th0.7209051847457886 <= 0
- rightMutuallyExclusivePlanesVar_eps_f4_t12_v0: 1e-05 y1_t401292
-   + 0.0107758641242981 rightMutuallyExclusivePlanesVar_f4_th0.7209051847457886
-   <= 0.0107758641242981
- rightPlanesDominatesLeftFlowConstr_eps_t12_v0: 1e-05 y20_t401292
-   - 0.0107758641242981 rightMutuallyExclusivePlanesVar_f4_th0.7316810488700867
-   <= 0
- rightMutuallyExclusivePlanesVar_f4_t16_v1: y2_t401296
-   + rightMutuallyExclusivePlanesVar_f4_th0.7316810488700867 <= 1
- rightPlanesDominatesLeftFlowConstr_t16_v1: y11_t401296
-   - rightMutuallyExclusivePlanesVar_f4_th0.7209051847457886 <= 0
- rightMutuallyExclusivePlanesVar_eps_f4_t16_v1: 1e-05 y2_t401296
-   + 0.0107758641242981 rightMutuallyExclusivePlanesVar_f4_th0.7209051847457886
-   <= 0.0107758641242981
- rightPlanesDominatesLeftFlowConstr_eps_t16_v1: 1e-05 y11_t401296
-   - 0.0107758641242981 rightMutuallyExclusivePlanesVar_f4_th0.7316810488700867
-   <= 0
- rightPlanesOrderConstr_f4_th0.7316810488700867:
-   rightMutuallyExclusivePlanesVar_f4_th0.7209051847457886
-   - rightMutuallyExclusivePlanesVar_f4_th0.7316810488700867 >= 0
- rightMutuallyExclusivePlanesVar_f4_t13_v9: y10_t401293
-   + rightMutuallyExclusivePlanesVar_f4_th0.7381465435028076 <= 1
- rightPlanesDominatesLeftFlowConstr_t13_v9: y17_t401293
-   - rightMutuallyExclusivePlanesVar_f4_th0.7316810488700867 <= 0
- rightMutuallyExclusivePlanesVar_eps_f4_t13_v9: 1e-05 y10_t401293
-   + 0.00646549463272095 rightMutuallyExclusivePlanesVar_f4_th0.7316810488700867
-   <= 0.00646549463272095
- rightPlanesDominatesLeftFlowConstr_eps_t13_v9: 1e-05 y17_t401293
-   - 0.00646549463272095 rightMutuallyExclusivePlanesVar_f4_th0.7381465435028076
-   <= 0
- rightPlanesOrderConstr_f4_th0.7381465435028076:
-   rightMutuallyExclusivePlanesVar_f4_th0.7316810488700867
-   - rightMutuallyExclusivePlanesVar_f4_th0.7381465435028076 >= 0
- rightMutuallyExclusivePlanesVar_f4_t10_v18: y19_t401290
-   + rightMutuallyExclusivePlanesVar_f4_th0.744612067937851 <= 1
- rightPlanesDominatesLeftFlowConstr_t10_v18: y22_t401290
-   - rightMutuallyExclusivePlanesVar_f4_th0.7381465435028076 <= 0
- rightMutuallyExclusivePlanesVar_eps_f4_t10_v18: 1e-05 y19_t401290
-   + 0.00646552443504333 rightMutuallyExclusivePlanesVar_f4_th0.7381465435028076
-   <= 0.00646552443504333
- rightPlanesDominatesLeftFlowConstr_eps_t10_v18: 1e-05 y22_t401290
-   - 0.00646552443504333 rightMutuallyExclusivePlanesVar_f4_th0.744612067937851
-   <= 0
- rightPlanesOrderConstr_f4_th0.744612067937851:
-   rightMutuallyExclusivePlanesVar_f4_th0.7381465435028076
-   - rightMutuallyExclusivePlanesVar_f4_th0.744612067937851 >= 0
- rightMutuallyExclusivePlanesVar_f4_t6_v15: y16_t401286
-   + rightMutuallyExclusivePlanesVar_f4_th0.7683189809322357 <= 1
- rightPlanesDominatesLeftFlowConstr_t6_v15: y17_t401286
-   - rightMutuallyExclusivePlanesVar_f4_th0.744612067937851 <= 0
- rightMutuallyExclusivePlanesVar_eps_f4_t6_v15: 1e-05 y16_t401286
-   + 0.0237069129943848 rightMutuallyExclusivePlanesVar_f4_th0.744612067937851
-   <= 0.0237069129943848
- rightPlanesDominatesLeftFlowConstr_eps_t6_v15: 1e-05 y17_t401286
-   - 0.0237069129943848 rightMutuallyExclusivePlanesVar_f4_th0.7683189809322357
-   <= 0
- rightPlanesOrderConstr_f4_th0.7683189809322357:
-   rightMutuallyExclusivePlanesVar_f4_th0.744612067937851
-   - rightMutuallyExclusivePlanesVar_f4_th0.7683189809322357 >= 0
+ rightPlanesOrderConstr_f4_th0.37124018371105194:
+   rightMutuallyExclusivePlanesVar_f4_th0.3568676859140396
+   - rightMutuallyExclusivePlanesVar_f4_th0.37124018371105194 >= 0
+ rightPlanesOrderConstr_f4_th0.7009927396651354:
+   rightMutuallyExclusivePlanesVar_f4_th0.37124018371105194
+   - rightMutuallyExclusivePlanesVar_f4_th0.7009927396651354 >= 0
  x_as_linear_combination_of_planes_f: x_f4
-   - 0.3502155244350433 rightMutuallyExclusivePlanesVar_f4_th0
-   - 0.00969827175140381 rightMutuallyExclusivePlanesVar_f4_th0.35021552443504333
-   - 0.1540948301553726 rightMutuallyExclusivePlanesVar_f4_th0.35991379618644714
-   - 0.00969825685024261 rightMutuallyExclusivePlanesVar_f4_th0.5140086263418198
-   - 0.00646553933620453 rightMutuallyExclusivePlanesVar_f4_th0.5237068831920624
-   - 0.00646550953388214 rightMutuallyExclusivePlanesVar_f4_th0.5301724225282669
-   - 0.00646552443504333 rightMutuallyExclusivePlanesVar_f4_th0.536637932062149
-   - 0.0247844755649567 rightMutuallyExclusivePlanesVar_f4_th0.5431034564971924
-   - 0.0107758641242981 rightMutuallyExclusivePlanesVar_f4_th0.567887932062149
-   - 0.00431033968925476 rightMutuallyExclusivePlanesVar_f4_th0.5786637961864471
-   - 0.0193965435028076 rightMutuallyExclusivePlanesVar_f4_th0.5829741358757019
-   - 0.014008641242981 rightMutuallyExclusivePlanesVar_f4_th0.6023706793785095
-   - 0.00646549463272095 rightMutuallyExclusivePlanesVar_f4_th0.6163793206214905
-   - 0.00538796186447144 rightMutuallyExclusivePlanesVar_f4_th0.6228448152542114
-   - 0.00646549463272095 rightMutuallyExclusivePlanesVar_f4_th0.6282327771186829
-   - 0.00215518474578857 rightMutuallyExclusivePlanesVar_f4_th0.6346982717514038
-   - 0.00538792281315326 rightMutuallyExclusivePlanesVar_f4_th0.6368534564971924
-   - 0.00215519399478437 rightMutuallyExclusivePlanesVar_f4_th0.6422413793103456
-   - 0.01185342669487 rightMutuallyExclusivePlanesVar_f4_th0.64439657330513
-   - 0.025862067937851 rightMutuallyExclusivePlanesVar_f4_th0.65625
-   - 0.00538793206214905 rightMutuallyExclusivePlanesVar_f4_th0.682112067937851
-   - 0.0161637961864471 rightMutuallyExclusivePlanesVar_f4_th0.6875
-   - 0.0172413885593414 rightMutuallyExclusivePlanesVar_f4_th0.7036637961864471
-   - 0.0107758641242981 rightMutuallyExclusivePlanesVar_f4_th0.7209051847457886
-   - 0.00646549463272095 rightMutuallyExclusivePlanesVar_f4_th0.7316810488700867
-   - 0.00646552443504333 rightMutuallyExclusivePlanesVar_f4_th0.7381465435028076
-   - 0.0237069129943848 rightMutuallyExclusivePlanesVar_f4_th0.744612067937851
-   - 0.2316810190677643 rightMutuallyExclusivePlanesVar_f4_th0.7683189809322357
+   - 0.2475922331213951 rightMutuallyExclusivePlanesVar_f4_th0
+   - 0.00548230856657028 rightMutuallyExclusivePlanesVar_f4_th0.2475922331213951
+   - 0.0889761298894882 rightMutuallyExclusivePlanesVar_f4_th0.2530745416879654
+   - 0.01259446144104 rightMutuallyExclusivePlanesVar_f4_th0.3420506715774536
+   - 0.00222255289554596 rightMutuallyExclusivePlanesVar_f4_th0.35464513301849365
+   - 0.0143724977970123 rightMutuallyExclusivePlanesVar_f4_th0.3568676859140396
+   - 0.3297525559540835 rightMutuallyExclusivePlanesVar_f4_th0.37124018371105194
+   - 0.2990072603348646 rightMutuallyExclusivePlanesVar_f4_th0.7009927396651354
    = 0
- rightMutuallyExclusivePlanesVar_f5_t6_v0: y1_t401286
-   + rightMutuallyExclusivePlanesVar_f5_th0.040909089148044586 <= 1
- rightPlanesDominatesLeftFlowConstr_t6_v0: y2_t401286
+ rightMutuallyExclusivePlanesVar_f5_t11_v2: y3_t791
+   + rightMutuallyExclusivePlanesVar_f5_th0.26479703187942505 <= 1
+ rightPlanesDominatesLeftFlowConstr_t11_v2: y4_t791
    - rightMutuallyExclusivePlanesVar_f5_th0 <= 0
- rightMutuallyExclusivePlanesVar_eps_f5_t6_v0: 1e-05 y1_t401286
-   + 0.0409090891480446 rightMutuallyExclusivePlanesVar_f5_th0
-   <= 0.0409090891480446
- rightPlanesDominatesLeftFlowConstr_eps_t6_v0: 1e-05 y2_t401286
-   - 0.0409090891480446 rightMutuallyExclusivePlanesVar_f5_th0.040909089148044586
+ rightMutuallyExclusivePlanesVar_eps_f5_t11_v2: 1e-05 y3_t791
+   + 0.264797031879425 rightMutuallyExclusivePlanesVar_f5_th0
+   <= 0.264797031879425
+ rightPlanesDominatesLeftFlowConstr_eps_t11_v2: 1e-05 y4_t791
+   - 0.264797031879425 rightMutuallyExclusivePlanesVar_f5_th0.26479703187942505
    <= 0
- rightPlanesOrderConstr_f5_th0.040909089148044586:
+ rightPlanesOrderConstr_f5_th0.26479703187942505:
    rightMutuallyExclusivePlanesVar_f5_th0
-   - rightMutuallyExclusivePlanesVar_f5_th0.040909089148044586 >= 0
- rightMutuallyExclusivePlanesVar_f5_t11_v5: y6_t401291
-   + rightMutuallyExclusivePlanesVar_f5_th0.11818181723356247 <= 1
- rightPlanesDominatesLeftFlowConstr_t11_v5: y7_t401291
-   - rightMutuallyExclusivePlanesVar_f5_th0.040909089148044586 <= 0
- rightMutuallyExclusivePlanesVar_eps_f5_t11_v5: 1e-05 y6_t401291
-   + 0.0772727280855179 rightMutuallyExclusivePlanesVar_f5_th0.040909089148044586
-   <= 0.0772727280855179
- rightPlanesDominatesLeftFlowConstr_eps_t11_v5: 1e-05 y7_t401291
-   - 0.0772727280855179 rightMutuallyExclusivePlanesVar_f5_th0.11818181723356247
+   - rightMutuallyExclusivePlanesVar_f5_th0.26479703187942505 >= 0
+ rightMutuallyExclusivePlanesVar_f5_t11_v1: y2_t791
+   + rightMutuallyExclusivePlanesVar_f5_th0.3501214534044266 <= 1
+ rightPlanesDominatesLeftFlowConstr_t11_v1: y5_t791
+   - rightMutuallyExclusivePlanesVar_f5_th0.26479703187942505 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f5_t11_v1: 1e-05 y2_t791
+   + 0.0853244215250015 rightMutuallyExclusivePlanesVar_f5_th0.26479703187942505
+   <= 0.0853244215250015
+ rightPlanesDominatesLeftFlowConstr_eps_t11_v1: 1e-05 y5_t791
+   - 0.0853244215250015 rightMutuallyExclusivePlanesVar_f5_th0.3501214534044266
    <= 0
- rightPlanesOrderConstr_f5_th0.11818181723356247:
-   rightMutuallyExclusivePlanesVar_f5_th0.040909089148044586
-   - rightMutuallyExclusivePlanesVar_f5_th0.11818181723356247 >= 0
- rightMutuallyExclusivePlanesVar_f5_t4_v21: y22_t401284
-   + rightMutuallyExclusivePlanesVar_f5_th0.23181817680597305 <= 1
- rightPlanesDominatesLeftFlowConstr_t4_v21: y23_t401284
-   - rightMutuallyExclusivePlanesVar_f5_th0.11818181723356247 <= 0
- rightMutuallyExclusivePlanesVar_eps_f5_t4_v21: 1e-05 y22_t401284
-   + 0.1136363595724106 rightMutuallyExclusivePlanesVar_f5_th0.11818181723356247
-   <= 0.1136363595724106
- rightPlanesDominatesLeftFlowConstr_eps_t4_v21: 1e-05 y23_t401284
-   - 0.1136363595724106 rightMutuallyExclusivePlanesVar_f5_th0.23181817680597305
+ rightPlanesOrderConstr_f5_th0.3501214534044266:
+   rightMutuallyExclusivePlanesVar_f5_th0.26479703187942505
+   - rightMutuallyExclusivePlanesVar_f5_th0.3501214534044266 >= 0
+ rightMutuallyExclusivePlanesVar_f5_t10_v0: y1_t790
+   + rightMutuallyExclusivePlanesVar_f5_th0.3697996735572815 <= 1
+ rightPlanesDominatesLeftFlowConstr_t10_v0: y8_t790
+   - rightMutuallyExclusivePlanesVar_f5_th0.3501214534044266 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f5_t10_v0: 1e-05 y1_t790
+   + 0.0196782201528549 rightMutuallyExclusivePlanesVar_f5_th0.3501214534044266
+   <= 0.0196782201528549
+ rightPlanesDominatesLeftFlowConstr_eps_t10_v0: 1e-05 y8_t790
+   - 0.0196782201528549 rightMutuallyExclusivePlanesVar_f5_th0.3697996735572815
    <= 0
- rightPlanesOrderConstr_f5_th0.23181817680597305:
-   rightMutuallyExclusivePlanesVar_f5_th0.11818181723356247
-   - rightMutuallyExclusivePlanesVar_f5_th0.23181817680597305 >= 0
- rightMutuallyExclusivePlanesVar_f5_t7_v19: y20_t401287
-   + rightMutuallyExclusivePlanesVar_f5_th0.3181818202137947 <= 1
- rightPlanesDominatesLeftFlowConstr_t7_v19: y21_t401287
-   - rightMutuallyExclusivePlanesVar_f5_th0.23181817680597305 <= 0
- rightMutuallyExclusivePlanesVar_eps_f5_t7_v19: 1e-05 y20_t401287
-   + 0.0863636434078217 rightMutuallyExclusivePlanesVar_f5_th0.23181817680597305
-   <= 0.0863636434078217
- rightPlanesDominatesLeftFlowConstr_eps_t7_v19: 1e-05 y21_t401287
-   - 0.0863636434078217 rightMutuallyExclusivePlanesVar_f5_th0.3181818202137947
+ rightPlanesOrderConstr_f5_th0.3697996735572815:
+   rightMutuallyExclusivePlanesVar_f5_th0.3501214534044266
+   - rightMutuallyExclusivePlanesVar_f5_th0.3697996735572815 >= 0
+ rightMutuallyExclusivePlanesVar_f5_t6_v2: y3_t786
+   + rightMutuallyExclusivePlanesVar_f5_th0.3729969561100006 <= 1
+ rightPlanesDominatesLeftFlowConstr_t6_v2: y4_t786
+   - rightMutuallyExclusivePlanesVar_f5_th0.3697996735572815 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f5_t6_v2: 1e-05 y3_t786
+   + 0.00319728255271912 rightMutuallyExclusivePlanesVar_f5_th0.3697996735572815
+   <= 0.00319728255271912
+ rightPlanesDominatesLeftFlowConstr_eps_t6_v2: 1e-05 y4_t786
+   - 0.00319728255271912 rightMutuallyExclusivePlanesVar_f5_th0.3729969561100006
    <= 0
- rightPlanesOrderConstr_f5_th0.3181818202137947:
-   rightMutuallyExclusivePlanesVar_f5_th0.23181817680597305
-   - rightMutuallyExclusivePlanesVar_f5_th0.3181818202137947 >= 0
- rightMutuallyExclusivePlanesVar_f5_t4_v15: y16_t401284
-   + rightMutuallyExclusivePlanesVar_f5_th0.34545453637838364 <= 1
- rightPlanesDominatesLeftFlowConstr_t4_v15: y19_t401284
-   - rightMutuallyExclusivePlanesVar_f5_th0.3181818202137947 <= 0
- rightMutuallyExclusivePlanesVar_eps_f5_t4_v15: 1e-05 y16_t401284
-   + 0.0272727161645889 rightMutuallyExclusivePlanesVar_f5_th0.3181818202137947
-   <= 0.0272727161645889
- rightPlanesDominatesLeftFlowConstr_eps_t4_v15: 1e-05 y19_t401284
-   - 0.0272727161645889 rightMutuallyExclusivePlanesVar_f5_th0.34545453637838364
+ rightPlanesOrderConstr_f5_th0.3729969561100006:
+   rightMutuallyExclusivePlanesVar_f5_th0.3697996735572815
+   - rightMutuallyExclusivePlanesVar_f5_th0.3729969561100006 >= 0
+ rightMutuallyExclusivePlanesVar_f5_t12_v2: y3_t792
+   + rightMutuallyExclusivePlanesVar_f5_th0.3877960294485092 <= 1
+ rightPlanesDominatesLeftFlowConstr_t12_v2: y4_t792
+   - rightMutuallyExclusivePlanesVar_f5_th0.3729969561100006 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f5_t12_v2: 1e-05 y3_t792
+   + 0.0147990733385086 rightMutuallyExclusivePlanesVar_f5_th0.3729969561100006
+   <= 0.0147990733385086
+ rightPlanesDominatesLeftFlowConstr_eps_t12_v2: 1e-05 y4_t792
+   - 0.0147990733385086 rightMutuallyExclusivePlanesVar_f5_th0.3877960294485092
    <= 0
- rightPlanesOrderConstr_f5_th0.34545453637838364:
-   rightMutuallyExclusivePlanesVar_f5_th0.3181818202137947
-   - rightMutuallyExclusivePlanesVar_f5_th0.34545453637838364 >= 0
- rightMutuallyExclusivePlanesVar_f5_t19_v14: y15_t401299
-   + rightMutuallyExclusivePlanesVar_f5_th0.38181817531585693 <= 1
- rightPlanesDominatesLeftFlowConstr_t19_v14: y18_t401299
-   - rightMutuallyExclusivePlanesVar_f5_th0.34545453637838364 <= 0
- rightMutuallyExclusivePlanesVar_eps_f5_t19_v14: 1e-05 y15_t401299
-   + 0.0363636389374733 rightMutuallyExclusivePlanesVar_f5_th0.34545453637838364
-   <= 0.0363636389374733
- rightPlanesDominatesLeftFlowConstr_eps_t19_v14: 1e-05 y18_t401299
-   - 0.0363636389374733 rightMutuallyExclusivePlanesVar_f5_th0.38181817531585693
+ rightPlanesOrderConstr_f5_th0.3877960294485092:
+   rightMutuallyExclusivePlanesVar_f5_th0.3729969561100006
+   - rightMutuallyExclusivePlanesVar_f5_th0.3877960294485092 >= 0
+ rightMutuallyExclusivePlanesVar_f5_t18_v1: y2_t798
+   + rightMutuallyExclusivePlanesVar_f5_th0.4171677976846695 <= 1
+ rightPlanesDominatesLeftFlowConstr_t18_v1: y5_t798
+   - rightMutuallyExclusivePlanesVar_f5_th0.3877960294485092 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f5_t18_v1: 1e-05 y2_t798
+   + 0.0293717682361603 rightMutuallyExclusivePlanesVar_f5_th0.3877960294485092
+   <= 0.0293717682361603
+ rightPlanesDominatesLeftFlowConstr_eps_t18_v1: 1e-05 y5_t798
+   - 0.0293717682361603 rightMutuallyExclusivePlanesVar_f5_th0.4171677976846695
    <= 0
- rightPlanesOrderConstr_f5_th0.38181817531585693:
-   rightMutuallyExclusivePlanesVar_f5_th0.34545453637838364
-   - rightMutuallyExclusivePlanesVar_f5_th0.38181817531585693 >= 0
- rightMutuallyExclusivePlanesVar_f5_t18_v1: y2_t401298
-   + rightMutuallyExclusivePlanesVar_f5_th0.3909090906381607 <= 1
- rightPlanesDominatesLeftFlowConstr_t18_v1: y3_t401298
-   - rightMutuallyExclusivePlanesVar_f5_th0.38181817531585693 <= 0
- rightMutuallyExclusivePlanesVar_eps_f5_t18_v1: 1e-05 y2_t401298
-   + 0.00909091532230377 rightMutuallyExclusivePlanesVar_f5_th0.38181817531585693
-   <= 0.00909091532230377
- rightPlanesDominatesLeftFlowConstr_eps_t18_v1: 1e-05 y3_t401298
-   - 0.00909091532230377 rightMutuallyExclusivePlanesVar_f5_th0.3909090906381607
+ rightPlanesOrderConstr_f5_th0.4171677976846695:
+   rightMutuallyExclusivePlanesVar_f5_th0.3877960294485092
+   - rightMutuallyExclusivePlanesVar_f5_th0.4171677976846695 >= 0
+ rightMutuallyExclusivePlanesVar_f5_t15_v2: y3_t795
+   + rightMutuallyExclusivePlanesVar_f5_th0.42388615012168884 <= 1
+ rightPlanesDominatesLeftFlowConstr_t15_v2: y4_t795
+   - rightMutuallyExclusivePlanesVar_f5_th0.4171677976846695 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f5_t15_v2: 1e-05 y3_t795
+   + 0.00671835243701935 rightMutuallyExclusivePlanesVar_f5_th0.4171677976846695
+   <= 0.00671835243701935
+ rightPlanesDominatesLeftFlowConstr_eps_t15_v2: 1e-05 y4_t795
+   - 0.00671835243701935 rightMutuallyExclusivePlanesVar_f5_th0.42388615012168884
    <= 0
- rightPlanesOrderConstr_f5_th0.3909090906381607:
-   rightMutuallyExclusivePlanesVar_f5_th0.38181817531585693
-   - rightMutuallyExclusivePlanesVar_f5_th0.3909090906381607 >= 0
- rightMutuallyExclusivePlanesVar_f5_t8_v6: y7_t401288
-   + rightMutuallyExclusivePlanesVar_f5_th0.45000000298023224 <= 1
- rightPlanesDominatesLeftFlowConstr_t8_v6: y8_t401288
-   - rightMutuallyExclusivePlanesVar_f5_th0.3909090906381607 <= 0
- rightMutuallyExclusivePlanesVar_eps_f5_t8_v6: 1e-05 y7_t401288
-   + 0.0590909123420715 rightMutuallyExclusivePlanesVar_f5_th0.3909090906381607
-   <= 0.0590909123420715
- rightPlanesDominatesLeftFlowConstr_eps_t8_v6: 1e-05 y8_t401288
-   - 0.0590909123420715 rightMutuallyExclusivePlanesVar_f5_th0.45000000298023224
+ rightPlanesOrderConstr_f5_th0.42388615012168884:
+   rightMutuallyExclusivePlanesVar_f5_th0.4171677976846695
+   - rightMutuallyExclusivePlanesVar_f5_th0.42388615012168884 >= 0
+ rightMutuallyExclusivePlanesVar_f5_t5_v9: y10_t785
+   + rightMutuallyExclusivePlanesVar_f5_th0.4253869354724884 <= 1
+ rightPlanesDominatesLeftFlowConstr_t5_v9: y11_t785
+   - rightMutuallyExclusivePlanesVar_f5_th0.42388615012168884 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f5_t5_v9: 1e-05 y10_t785
+   + 0.00150078535079956 rightMutuallyExclusivePlanesVar_f5_th0.42388615012168884
+   <= 0.00150078535079956
+ rightPlanesDominatesLeftFlowConstr_eps_t5_v9: 1e-05 y11_t785
+   - 0.00150078535079956 rightMutuallyExclusivePlanesVar_f5_th0.4253869354724884
    <= 0
- rightMutuallyExclusivePlanesVar_f5_t13_v4: y5_t401293
-   + rightMutuallyExclusivePlanesVar_f5_th0.45000000298023224 <= 1
- rightPlanesDominatesLeftFlowConstr_t13_v4: y6_t401293
-   - rightMutuallyExclusivePlanesVar_f5_th0.3909090906381607 <= 0
- rightMutuallyExclusivePlanesVar_eps_f5_t13_v4: 1e-05 y5_t401293
-   + 0.0590909123420715 rightMutuallyExclusivePlanesVar_f5_th0.3909090906381607
-   <= 0.0590909123420715
- rightPlanesDominatesLeftFlowConstr_eps_t13_v4: 1e-05 y6_t401293
-   - 0.0590909123420715 rightMutuallyExclusivePlanesVar_f5_th0.45000000298023224
+ rightPlanesOrderConstr_f5_th0.4253869354724884:
+   rightMutuallyExclusivePlanesVar_f5_th0.42388615012168884
+   - rightMutuallyExclusivePlanesVar_f5_th0.4253869354724884 >= 0
+ rightMutuallyExclusivePlanesVar_f5_t16_v12: y13_t796
+   + rightMutuallyExclusivePlanesVar_f5_th0.4431868940591812 <= 1
+ rightPlanesDominatesLeftFlowConstr_t16_v12: y14_t796
+   - rightMutuallyExclusivePlanesVar_f5_th0.4253869354724884 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f5_t16_v12: 1e-05 y13_t796
+   + 0.0177999585866928 rightMutuallyExclusivePlanesVar_f5_th0.4253869354724884
+   <= 0.0177999585866928
+ rightPlanesDominatesLeftFlowConstr_eps_t16_v12: 1e-05 y14_t796
+   - 0.0177999585866928 rightMutuallyExclusivePlanesVar_f5_th0.4431868940591812
    <= 0
- rightMutuallyExclusivePlanesVar_f5_t15_v15: y16_t401295
-   + rightMutuallyExclusivePlanesVar_f5_th0.45000000298023224 <= 1
- rightPlanesDominatesLeftFlowConstr_t15_v15: y17_t401295
-   - rightMutuallyExclusivePlanesVar_f5_th0.3909090906381607 <= 0
- rightMutuallyExclusivePlanesVar_eps_f5_t15_v15: 1e-05 y16_t401295
-   + 0.0590909123420715 rightMutuallyExclusivePlanesVar_f5_th0.3909090906381607
-   <= 0.0590909123420715
- rightPlanesDominatesLeftFlowConstr_eps_t15_v15: 1e-05 y17_t401295
-   - 0.0590909123420715 rightMutuallyExclusivePlanesVar_f5_th0.45000000298023224
-   <= 0
- rightPlanesOrderConstr_f5_th0.45000000298023224:
-   rightMutuallyExclusivePlanesVar_f5_th0.3909090906381607
-   - rightMutuallyExclusivePlanesVar_f5_th0.45000000298023224 >= 0
- rightMutuallyExclusivePlanesVar_f5_t1_v11: y12_t401281
-   + rightMutuallyExclusivePlanesVar_f5_th0.459090918302536 <= 1
- rightPlanesDominatesLeftFlowConstr_t1_v11: y13_t401281
-   - rightMutuallyExclusivePlanesVar_f5_th0.45000000298023224 <= 0
- rightMutuallyExclusivePlanesVar_eps_f5_t1_v11: 1e-05 y12_t401281
-   + 0.00909091532230377 rightMutuallyExclusivePlanesVar_f5_th0.45000000298023224
-   <= 0.00909091532230377
- rightPlanesDominatesLeftFlowConstr_eps_t1_v11: 1e-05 y13_t401281
-   - 0.00909091532230377 rightMutuallyExclusivePlanesVar_f5_th0.459090918302536
-   <= 0
- rightPlanesOrderConstr_f5_th0.459090918302536:
-   rightMutuallyExclusivePlanesVar_f5_th0.45000000298023224
-   - rightMutuallyExclusivePlanesVar_f5_th0.459090918302536 >= 0
- rightMutuallyExclusivePlanesVar_f5_t1_v13: y14_t401281
-   + rightMutuallyExclusivePlanesVar_f5_th0.4681818187236786 <= 1
- rightPlanesDominatesLeftFlowConstr_t1_v13: y15_t401281
-   - rightMutuallyExclusivePlanesVar_f5_th0.459090918302536 <= 0
- rightMutuallyExclusivePlanesVar_eps_f5_t1_v13: 1e-05 y14_t401281
-   + 0.00909090042114258 rightMutuallyExclusivePlanesVar_f5_th0.459090918302536
-   <= 0.00909090042114258
- rightPlanesDominatesLeftFlowConstr_eps_t1_v13: 1e-05 y15_t401281
-   - 0.00909090042114258 rightMutuallyExclusivePlanesVar_f5_th0.4681818187236786
-   <= 0
- rightPlanesOrderConstr_f5_th0.4681818187236786:
-   rightMutuallyExclusivePlanesVar_f5_th0.459090918302536
-   - rightMutuallyExclusivePlanesVar_f5_th0.4681818187236786 >= 0
- rightMutuallyExclusivePlanesVar_f5_t18_v16: y17_t401298
-   + rightMutuallyExclusivePlanesVar_f5_th0.5181818181818181 <= 1
- rightPlanesDominatesLeftFlowConstr_t18_v16: y22_t401298
-   - rightMutuallyExclusivePlanesVar_f5_th0.4681818187236786 <= 0
- rightMutuallyExclusivePlanesVar_eps_f5_t18_v16: 1e-05 y17_t401298
-   + 0.0499999994581395 rightMutuallyExclusivePlanesVar_f5_th0.4681818187236786
-   <= 0.0499999994581395
- rightPlanesDominatesLeftFlowConstr_eps_t18_v16: 1e-05 y22_t401298
-   - 0.0499999994581395 rightMutuallyExclusivePlanesVar_f5_th0.5181818181818181
-   <= 0
- rightPlanesOrderConstr_f5_th0.5181818181818181:
-   rightMutuallyExclusivePlanesVar_f5_th0.4681818187236786
-   - rightMutuallyExclusivePlanesVar_f5_th0.5181818181818181 >= 0
- rightMutuallyExclusivePlanesVar_f5_t15_v14: y15_t401295
-   + rightMutuallyExclusivePlanesVar_f5_th0.5227272808551788 <= 1
- rightPlanesDominatesLeftFlowConstr_t15_v14: y18_t401295
-   - rightMutuallyExclusivePlanesVar_f5_th0.5181818181818181 <= 0
- rightMutuallyExclusivePlanesVar_eps_f5_t15_v14: 1e-05 y15_t401295
-   + 0.00454546267336076 rightMutuallyExclusivePlanesVar_f5_th0.5181818181818181
-   <= 0.00454546267336076
- rightPlanesDominatesLeftFlowConstr_eps_t15_v14: 1e-05 y18_t401295
-   - 0.00454546267336076 rightMutuallyExclusivePlanesVar_f5_th0.5227272808551788
-   <= 0
- rightPlanesOrderConstr_f5_th0.5227272808551788:
-   rightMutuallyExclusivePlanesVar_f5_th0.5181818181818181
-   - rightMutuallyExclusivePlanesVar_f5_th0.5227272808551788 >= 0
- rightMutuallyExclusivePlanesVar_f5_t0_v7: y8_t401280
-   + rightMutuallyExclusivePlanesVar_f5_th0.5363636314868927 <= 1
- rightPlanesDominatesLeftFlowConstr_t0_v7: y9_t401280
-   - rightMutuallyExclusivePlanesVar_f5_th0.5227272808551788 <= 0
- rightMutuallyExclusivePlanesVar_eps_f5_t0_v7: 1e-05 y8_t401280
-   + 0.0136363506317139 rightMutuallyExclusivePlanesVar_f5_th0.5227272808551788
-   <= 0.0136363506317139
- rightPlanesDominatesLeftFlowConstr_eps_t0_v7: 1e-05 y9_t401280
-   - 0.0136363506317139 rightMutuallyExclusivePlanesVar_f5_th0.5363636314868927
-   <= 0
- rightPlanesOrderConstr_f5_th0.5363636314868927:
-   rightMutuallyExclusivePlanesVar_f5_th0.5227272808551788
-   - rightMutuallyExclusivePlanesVar_f5_th0.5363636314868927 >= 0
- rightMutuallyExclusivePlanesVar_f5_t12_v5: y6_t401292
-   + rightMutuallyExclusivePlanesVar_f5_th0.5545454323291779 <= 1
- rightPlanesDominatesLeftFlowConstr_t12_v5: y7_t401292
-   - rightMutuallyExclusivePlanesVar_f5_th0.5363636314868927 <= 0
- rightMutuallyExclusivePlanesVar_eps_f5_t12_v5: 1e-05 y6_t401292
-   + 0.0181818008422852 rightMutuallyExclusivePlanesVar_f5_th0.5363636314868927
-   <= 0.0181818008422852
- rightPlanesDominatesLeftFlowConstr_eps_t12_v5: 1e-05 y7_t401292
-   - 0.0181818008422852 rightMutuallyExclusivePlanesVar_f5_th0.5545454323291779
-   <= 0
- rightPlanesOrderConstr_f5_th0.5545454323291779:
-   rightMutuallyExclusivePlanesVar_f5_th0.5363636314868927
-   - rightMutuallyExclusivePlanesVar_f5_th0.5545454323291779 >= 0
- rightMutuallyExclusivePlanesVar_f5_t10_v0: y1_t401290
-   + rightMutuallyExclusivePlanesVar_f5_th0.5590909123420715 <= 1
- rightPlanesDominatesLeftFlowConstr_t10_v0: y16_t401290
-   - rightMutuallyExclusivePlanesVar_f5_th0.5545454323291779 <= 0
- rightMutuallyExclusivePlanesVar_eps_f5_t10_v0: 1e-05 y1_t401290
-   + 0.00454548 rightMutuallyExclusivePlanesVar_f5_th0.5545454323291779
-   <= 0.00454548
- rightPlanesDominatesLeftFlowConstr_eps_t10_v0: 1e-05 y16_t401290
-   - 0.00454548 rightMutuallyExclusivePlanesVar_f5_th0.5590909123420715
-   <= 0
- rightPlanesOrderConstr_f5_th0.5590909123420715:
-   rightMutuallyExclusivePlanesVar_f5_th0.5545454323291779
-   - rightMutuallyExclusivePlanesVar_f5_th0.5590909123420715 >= 0
- rightMutuallyExclusivePlanesVar_f5_t12_v15: y16_t401292
-   + rightMutuallyExclusivePlanesVar_f5_th0.5681818127632141 <= 1
- rightPlanesDominatesLeftFlowConstr_t12_v15: y17_t401292
-   - rightMutuallyExclusivePlanesVar_f5_th0.5590909123420715 <= 0
- rightMutuallyExclusivePlanesVar_eps_f5_t12_v15: 1e-05 y16_t401292
-   + 0.00909090042114258 rightMutuallyExclusivePlanesVar_f5_th0.5590909123420715
-   <= 0.00909090042114258
- rightPlanesDominatesLeftFlowConstr_eps_t12_v15: 1e-05 y17_t401292
-   - 0.00909090042114258 rightMutuallyExclusivePlanesVar_f5_th0.5681818127632141
-   <= 0
- rightMutuallyExclusivePlanesVar_f5_t13_v10: y11_t401293
-   + rightMutuallyExclusivePlanesVar_f5_th0.5681818127632141 <= 1
- rightPlanesDominatesLeftFlowConstr_t13_v10: y14_t401293
-   - rightMutuallyExclusivePlanesVar_f5_th0.5590909123420715 <= 0
- rightMutuallyExclusivePlanesVar_eps_f5_t13_v10: 1e-05 y11_t401293
-   + 0.00909090042114258 rightMutuallyExclusivePlanesVar_f5_th0.5590909123420715
-   <= 0.00909090042114258
- rightPlanesDominatesLeftFlowConstr_eps_t13_v10: 1e-05 y14_t401293
-   - 0.00909090042114258 rightMutuallyExclusivePlanesVar_f5_th0.5681818127632141
-   <= 0
- rightPlanesOrderConstr_f5_th0.5681818127632141:
-   rightMutuallyExclusivePlanesVar_f5_th0.5590909123420715
-   - rightMutuallyExclusivePlanesVar_f5_th0.5681818127632141 >= 0
- rightMutuallyExclusivePlanesVar_f5_t14_v10: y11_t401294
-   + rightMutuallyExclusivePlanesVar_f5_th0.5727272629737854 <= 1
- rightPlanesDominatesLeftFlowConstr_t14_v10: y12_t401294
-   - rightMutuallyExclusivePlanesVar_f5_th0.5681818127632141 <= 0
- rightMutuallyExclusivePlanesVar_eps_f5_t14_v10: 1e-05 y11_t401294
-   + 0.00454545021057129 rightMutuallyExclusivePlanesVar_f5_th0.5681818127632141
-   <= 0.00454545021057129
- rightPlanesDominatesLeftFlowConstr_eps_t14_v10: 1e-05 y12_t401294
-   - 0.00454545021057129 rightMutuallyExclusivePlanesVar_f5_th0.5727272629737854
-   <= 0
- rightPlanesOrderConstr_f5_th0.5727272629737854:
-   rightMutuallyExclusivePlanesVar_f5_th0.5681818127632141
-   - rightMutuallyExclusivePlanesVar_f5_th0.5727272629737854 >= 0
- rightMutuallyExclusivePlanesVar_f5_t5_v1: y2_t401285
-   + rightMutuallyExclusivePlanesVar_f5_th0.5863636434078217 <= 1
- rightPlanesDominatesLeftFlowConstr_t5_v1: y15_t401285
-   - rightMutuallyExclusivePlanesVar_f5_th0.5727272629737854 <= 0
- rightMutuallyExclusivePlanesVar_eps_f5_t5_v1: 1e-05 y2_t401285
-   + 0.0136363804340363 rightMutuallyExclusivePlanesVar_f5_th0.5727272629737854
-   <= 0.0136363804340363
- rightPlanesDominatesLeftFlowConstr_eps_t5_v1: 1e-05 y15_t401285
-   - 0.0136363804340363 rightMutuallyExclusivePlanesVar_f5_th0.5863636434078217
-   <= 0
- rightPlanesOrderConstr_f5_th0.5863636434078217:
-   rightMutuallyExclusivePlanesVar_f5_th0.5727272629737854
-   - rightMutuallyExclusivePlanesVar_f5_th0.5863636434078217 >= 0
- rightMutuallyExclusivePlanesVar_f5_t17_v0: y1_t401297
-   + rightMutuallyExclusivePlanesVar_f5_th0.6136363744735718 <= 1
- rightPlanesDominatesLeftFlowConstr_t17_v0: y16_t401297
-   - rightMutuallyExclusivePlanesVar_f5_th0.5863636434078217 <= 0
- rightMutuallyExclusivePlanesVar_eps_f5_t17_v0: 1e-05 y1_t401297
-   + 0.0272727310657501 rightMutuallyExclusivePlanesVar_f5_th0.5863636434078217
-   <= 0.0272727310657501
- rightPlanesDominatesLeftFlowConstr_eps_t17_v0: 1e-05 y16_t401297
-   - 0.0272727310657501 rightMutuallyExclusivePlanesVar_f5_th0.6136363744735718
-   <= 0
- rightPlanesOrderConstr_f5_th0.6136363744735718:
-   rightMutuallyExclusivePlanesVar_f5_th0.5863636434078217
-   - rightMutuallyExclusivePlanesVar_f5_th0.6136363744735718 >= 0
+ rightPlanesOrderConstr_f5_th0.4431868940591812:
+   rightMutuallyExclusivePlanesVar_f5_th0.4253869354724884
+   - rightMutuallyExclusivePlanesVar_f5_th0.4431868940591812 >= 0
+ rightPlanesOrderConstr_f5_th0.45627236833750695:
+   rightMutuallyExclusivePlanesVar_f5_th0.4431868940591812
+   - rightMutuallyExclusivePlanesVar_f5_th0.45627236833750695 >= 0
  x_as_linear_combination_of_planes_f: x_f5
-   - 0.0409090891480446 rightMutuallyExclusivePlanesVar_f5_th0
-   - 0.0772727280855179 rightMutuallyExclusivePlanesVar_f5_th0.040909089148044586
-   - 0.1136363595724106 rightMutuallyExclusivePlanesVar_f5_th0.11818181723356247
-   - 0.0863636434078217 rightMutuallyExclusivePlanesVar_f5_th0.23181817680597305
-   - 0.0272727161645889 rightMutuallyExclusivePlanesVar_f5_th0.3181818202137947
-   - 0.0363636389374733 rightMutuallyExclusivePlanesVar_f5_th0.34545453637838364
-   - 0.00909091532230377 rightMutuallyExclusivePlanesVar_f5_th0.38181817531585693
-   - 0.0590909123420715 rightMutuallyExclusivePlanesVar_f5_th0.3909090906381607
-   - 0.00909091532230377 rightMutuallyExclusivePlanesVar_f5_th0.45000000298023224
-   - 0.00909090042114258 rightMutuallyExclusivePlanesVar_f5_th0.459090918302536
-   - 0.0499999994581395 rightMutuallyExclusivePlanesVar_f5_th0.4681818187236786
-   - 0.00454546267336076 rightMutuallyExclusivePlanesVar_f5_th0.5181818181818181
-   - 0.0136363506317139 rightMutuallyExclusivePlanesVar_f5_th0.5227272808551788
-   - 0.0181818008422852 rightMutuallyExclusivePlanesVar_f5_th0.5363636314868927
-   - 0.00454548 rightMutuallyExclusivePlanesVar_f5_th0.5545454323291779
-   - 0.00909090042114258 rightMutuallyExclusivePlanesVar_f5_th0.5590909123420715
-   - 0.00454545021057129 rightMutuallyExclusivePlanesVar_f5_th0.5681818127632141
-   - 0.0136363804340363 rightMutuallyExclusivePlanesVar_f5_th0.5727272629737854
-   - 0.0272727310657501 rightMutuallyExclusivePlanesVar_f5_th0.5863636434078217
-   - 0.3863636255264282 rightMutuallyExclusivePlanesVar_f5_th0.6136363744735718
+   - 0.264797031879425 rightMutuallyExclusivePlanesVar_f5_th0
+   - 0.0853244215250015 rightMutuallyExclusivePlanesVar_f5_th0.26479703187942505
+   - 0.0196782201528549 rightMutuallyExclusivePlanesVar_f5_th0.3501214534044266
+   - 0.00319728255271912 rightMutuallyExclusivePlanesVar_f5_th0.3697996735572815
+   - 0.0147990733385086 rightMutuallyExclusivePlanesVar_f5_th0.3729969561100006
+   - 0.0293717682361603 rightMutuallyExclusivePlanesVar_f5_th0.3877960294485092
+   - 0.00671835243701935 rightMutuallyExclusivePlanesVar_f5_th0.4171677976846695
+   - 0.00150078535079956 rightMutuallyExclusivePlanesVar_f5_th0.42388615012168884
+   - 0.0177999585866928 rightMutuallyExclusivePlanesVar_f5_th0.4253869354724884
+   - 0.0130854742783257 rightMutuallyExclusivePlanesVar_f5_th0.4431868940591812
+   - 0.543727631662493 rightMutuallyExclusivePlanesVar_f5_th0.45627236833750695
    = 0
- rightMutuallyExclusivePlanesVar_f6_t4_v3: y4_t401284
-   + rightMutuallyExclusivePlanesVar_f6_th0.08287596330046654 <= 1
- rightPlanesDominatesLeftFlowConstr_t4_v3: y5_t401284
+ rightMutuallyExclusivePlanesVar_f6_t14_v2: y3_t794
+   + rightMutuallyExclusivePlanesVar_f6_th0.42845749855041504 <= 1
+ rightPlanesDominatesLeftFlowConstr_t14_v2: y4_t794
    - rightMutuallyExclusivePlanesVar_f6_th0 <= 0
- rightMutuallyExclusivePlanesVar_eps_f6_t4_v3: 1e-05 y4_t401284
-   + 0.0828759633004665 rightMutuallyExclusivePlanesVar_f6_th0
-   <= 0.0828759633004665
- rightPlanesDominatesLeftFlowConstr_eps_t4_v3: 1e-05 y5_t401284
-   - 0.0828759633004665 rightMutuallyExclusivePlanesVar_f6_th0.08287596330046654
+ rightMutuallyExclusivePlanesVar_eps_f6_t14_v2: 1e-05 y3_t794
+   + 0.428457498550415 rightMutuallyExclusivePlanesVar_f6_th0
+   <= 0.428457498550415
+ rightPlanesDominatesLeftFlowConstr_eps_t14_v2: 1e-05 y4_t794
+   - 0.428457498550415 rightMutuallyExclusivePlanesVar_f6_th0.42845749855041504
    <= 0
- rightPlanesOrderConstr_f6_th0.08287596330046654:
+ rightPlanesOrderConstr_f6_th0.42845749855041504:
    rightMutuallyExclusivePlanesVar_f6_th0
-   - rightMutuallyExclusivePlanesVar_f6_th0.08287596330046654 >= 0
- rightMutuallyExclusivePlanesVar_f6_t6_v4: y5_t401286
-   + rightMutuallyExclusivePlanesVar_f6_th0.08342481032013893 <= 1
- rightPlanesDominatesLeftFlowConstr_t6_v4: y6_t401286
-   - rightMutuallyExclusivePlanesVar_f6_th0.08287596330046654 <= 0
- rightMutuallyExclusivePlanesVar_eps_f6_t6_v4: 1e-05 y5_t401286
-   + 0.000548847 rightMutuallyExclusivePlanesVar_f6_th0.08287596330046654
-   <= 0.000548847
- rightPlanesDominatesLeftFlowConstr_eps_t6_v4: 1e-05 y6_t401286
-   - 0.000548847 rightMutuallyExclusivePlanesVar_f6_th0.08342481032013893
+   - rightMutuallyExclusivePlanesVar_f6_th0.42845749855041504 >= 0
+ rightMutuallyExclusivePlanesVar_f6_t3_v2: y3_t783
+   + rightMutuallyExclusivePlanesVar_f6_th0.4549831598997116 <= 1
+ rightPlanesDominatesLeftFlowConstr_t3_v2: y4_t783
+   - rightMutuallyExclusivePlanesVar_f6_th0.42845749855041504 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f6_t3_v2: 1e-05 y3_t783
+   + 0.0265256613492966 rightMutuallyExclusivePlanesVar_f6_th0.42845749855041504
+   <= 0.0265256613492966
+ rightPlanesDominatesLeftFlowConstr_eps_t3_v2: 1e-05 y4_t783
+   - 0.0265256613492966 rightMutuallyExclusivePlanesVar_f6_th0.4549831598997116
    <= 0
- rightPlanesOrderConstr_f6_th0.08342481032013893:
-   rightMutuallyExclusivePlanesVar_f6_th0.08287596330046654
-   - rightMutuallyExclusivePlanesVar_f6_th0.08342481032013893 >= 0
- rightMutuallyExclusivePlanesVar_f6_t2_v1: y2_t401282
-   + rightMutuallyExclusivePlanesVar_f6_th0.0856201983988285 <= 1
- rightPlanesDominatesLeftFlowConstr_t2_v1: y3_t401282
-   - rightMutuallyExclusivePlanesVar_f6_th0.08342481032013893 <= 0
- rightMutuallyExclusivePlanesVar_eps_f6_t2_v1: 1e-05 y2_t401282
-   + 0.00219538807868958 rightMutuallyExclusivePlanesVar_f6_th0.08342481032013893
-   <= 0.00219538807868958
- rightPlanesDominatesLeftFlowConstr_eps_t2_v1: 1e-05 y3_t401282
-   - 0.00219538807868958 rightMutuallyExclusivePlanesVar_f6_th0.0856201983988285
+ rightPlanesOrderConstr_f6_th0.4549831598997116:
+   rightMutuallyExclusivePlanesVar_f6_th0.42845749855041504
+   - rightMutuallyExclusivePlanesVar_f6_th0.4549831598997116 >= 0
+ rightMutuallyExclusivePlanesVar_f6_t11_v5: y6_t791
+   + rightMutuallyExclusivePlanesVar_f6_th0.4625789076089859 <= 1
+ rightPlanesDominatesLeftFlowConstr_t11_v5: y7_t791
+   - rightMutuallyExclusivePlanesVar_f6_th0.4549831598997116 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f6_t11_v5: 1e-05 y6_t791
+   + 0.00759574770927429 rightMutuallyExclusivePlanesVar_f6_th0.4549831598997116
+   <= 0.00759574770927429
+ rightPlanesDominatesLeftFlowConstr_eps_t11_v5: 1e-05 y7_t791
+   - 0.00759574770927429 rightMutuallyExclusivePlanesVar_f6_th0.4625789076089859
    <= 0
- rightPlanesOrderConstr_f6_th0.0856201983988285:
-   rightMutuallyExclusivePlanesVar_f6_th0.08342481032013893
-   - rightMutuallyExclusivePlanesVar_f6_th0.0856201983988285 >= 0
- rightMutuallyExclusivePlanesVar_f6_t16_v12: y13_t401296
-   + rightMutuallyExclusivePlanesVar_f6_th0.1119648739695549 <= 1
- rightPlanesDominatesLeftFlowConstr_t16_v12: y16_t401296
-   - rightMutuallyExclusivePlanesVar_f6_th0.0856201983988285 <= 0
- rightMutuallyExclusivePlanesVar_eps_f6_t16_v12: 1e-05 y13_t401296
-   + 0.0263446755707264 rightMutuallyExclusivePlanesVar_f6_th0.0856201983988285
-   <= 0.0263446755707264
- rightPlanesDominatesLeftFlowConstr_eps_t16_v12: 1e-05 y16_t401296
-   - 0.0263446755707264 rightMutuallyExclusivePlanesVar_f6_th0.1119648739695549
+ rightPlanesOrderConstr_f6_th0.4625789076089859:
+   rightMutuallyExclusivePlanesVar_f6_th0.4549831598997116
+   - rightMutuallyExclusivePlanesVar_f6_th0.4625789076089859 >= 0
+ rightMutuallyExclusivePlanesVar_f6_t10_v9: y10_t790
+   + rightMutuallyExclusivePlanesVar_f6_th0.4630121737718582 <= 1
+ rightPlanesDominatesLeftFlowConstr_t10_v9: y11_t790
+   - rightMutuallyExclusivePlanesVar_f6_th0.4625789076089859 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f6_t10_v9: 1e-05 y10_t790
+   + 4.3326616287231445e-04 rightMutuallyExclusivePlanesVar_f6_th0.4625789076089859
+   <= 4.3326616287231445e-04
+ rightPlanesDominatesLeftFlowConstr_eps_t10_v9: 1e-05 y11_t790
+   - 4.3326616287231445e-04 rightMutuallyExclusivePlanesVar_f6_th0.4630121737718582
    <= 0
- rightPlanesOrderConstr_f6_th0.1119648739695549:
-   rightMutuallyExclusivePlanesVar_f6_th0.0856201983988285
-   - rightMutuallyExclusivePlanesVar_f6_th0.1119648739695549 >= 0
- rightPlanesOrderConstr_f6_th0.13062568605927544:
-   rightMutuallyExclusivePlanesVar_f6_th0.1119648739695549
-   - rightMutuallyExclusivePlanesVar_f6_th0.13062568605927544 >= 0
- rightMutuallyExclusivePlanesVar_f6_t10_v16: y17_t401290
-   + rightMutuallyExclusivePlanesVar_f6_th0.13336992263793945 <= 1
- rightPlanesDominatesLeftFlowConstr_t10_v16: y18_t401290
-   - rightMutuallyExclusivePlanesVar_f6_th0.13062568605927544 <= 0
- rightMutuallyExclusivePlanesVar_eps_f6_t10_v16: 1e-05 y17_t401290
-   + 0.00274423657866402 rightMutuallyExclusivePlanesVar_f6_th0.13062568605927544
-   <= 0.00274423657866402
- rightPlanesDominatesLeftFlowConstr_eps_t10_v16: 1e-05 y18_t401290
-   - 0.00274423657866402 rightMutuallyExclusivePlanesVar_f6_th0.13336992263793945
+ rightPlanesOrderConstr_f6_th0.4630121737718582:
+   rightMutuallyExclusivePlanesVar_f6_th0.4625789076089859
+   - rightMutuallyExclusivePlanesVar_f6_th0.4630121737718582 >= 0
+ rightMutuallyExclusivePlanesVar_f6_t7_v1: y2_t787
+   + rightMutuallyExclusivePlanesVar_f6_th0.46358802914619446 <= 1
+ rightPlanesDominatesLeftFlowConstr_t7_v1: y5_t787
+   - rightMutuallyExclusivePlanesVar_f6_th0.4630121737718582 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f6_t7_v1: 1e-05 y2_t787
+   + 5.7585537433624268e-04 rightMutuallyExclusivePlanesVar_f6_th0.4630121737718582
+   <= 5.7585537433624268e-04
+ rightPlanesDominatesLeftFlowConstr_eps_t7_v1: 1e-05 y5_t787
+   - 5.7585537433624268e-04 rightMutuallyExclusivePlanesVar_f6_th0.46358802914619446
    <= 0
- rightPlanesOrderConstr_f6_th0.13336992263793945:
-   rightMutuallyExclusivePlanesVar_f6_th0.13062568605927544
-   - rightMutuallyExclusivePlanesVar_f6_th0.13336992263793945 >= 0
- rightMutuallyExclusivePlanesVar_f6_t1_v6: y7_t401281
-   + rightMutuallyExclusivePlanesVar_f6_th0.14324917644262314 <= 1
- rightPlanesDominatesLeftFlowConstr_t1_v6: y10_t401281
-   - rightMutuallyExclusivePlanesVar_f6_th0.13336992263793945 <= 0
- rightMutuallyExclusivePlanesVar_eps_f6_t1_v6: 1e-05 y7_t401281
-   + 0.00987925380468369 rightMutuallyExclusivePlanesVar_f6_th0.13336992263793945
-   <= 0.00987925380468369
- rightPlanesDominatesLeftFlowConstr_eps_t1_v6: 1e-05 y10_t401281
-   - 0.00987925380468369 rightMutuallyExclusivePlanesVar_f6_th0.14324917644262314
+ rightPlanesOrderConstr_f6_th0.46358802914619446:
+   rightMutuallyExclusivePlanesVar_f6_th0.4630121737718582
+   - rightMutuallyExclusivePlanesVar_f6_th0.46358802914619446 >= 0
+ rightMutuallyExclusivePlanesVar_f6_t2_v2: y3_t782
+   + rightMutuallyExclusivePlanesVar_f6_th0.4844895005226135 <= 1
+ rightPlanesDominatesLeftFlowConstr_t2_v2: y4_t782
+   - rightMutuallyExclusivePlanesVar_f6_th0.46358802914619446 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f6_t2_v2: 1e-05 y3_t782
+   + 0.0209014713764191 rightMutuallyExclusivePlanesVar_f6_th0.46358802914619446
+   <= 0.0209014713764191
+ rightPlanesDominatesLeftFlowConstr_eps_t2_v2: 1e-05 y4_t782
+   - 0.0209014713764191 rightMutuallyExclusivePlanesVar_f6_th0.4844895005226135
    <= 0
- rightMutuallyExclusivePlanesVar_f6_t7_v0: y1_t401287
-   + rightMutuallyExclusivePlanesVar_f6_th0.14324917644262314 <= 1
- rightPlanesDominatesLeftFlowConstr_t7_v0: y12_t401287
-   - rightMutuallyExclusivePlanesVar_f6_th0.13336992263793945 <= 0
- rightMutuallyExclusivePlanesVar_eps_f6_t7_v0: 1e-05 y1_t401287
-   + 0.00987925380468369 rightMutuallyExclusivePlanesVar_f6_th0.13336992263793945
-   <= 0.00987925380468369
- rightPlanesDominatesLeftFlowConstr_eps_t7_v0: 1e-05 y12_t401287
-   - 0.00987925380468369 rightMutuallyExclusivePlanesVar_f6_th0.14324917644262314
+ rightPlanesOrderConstr_f6_th0.4844895005226135:
+   rightMutuallyExclusivePlanesVar_f6_th0.46358802914619446
+   - rightMutuallyExclusivePlanesVar_f6_th0.4844895005226135 >= 0
+ rightMutuallyExclusivePlanesVar_f6_t16_v9: y10_t796
+   + rightMutuallyExclusivePlanesVar_f6_th0.48462440073490143 <= 1
+ rightPlanesDominatesLeftFlowConstr_t16_v9: y11_t796
+   - rightMutuallyExclusivePlanesVar_f6_th0.4844895005226135 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f6_t16_v9: 1e-05 y10_t796
+   + 1.3490021228790283e-04 rightMutuallyExclusivePlanesVar_f6_th0.4844895005226135
+   <= 1.3490021228790283e-04
+ rightPlanesDominatesLeftFlowConstr_eps_t16_v9: 1e-05 y11_t796
+   - 1.3490021228790283e-04 rightMutuallyExclusivePlanesVar_f6_th0.48462440073490143
    <= 0
- rightPlanesOrderConstr_f6_th0.14324917644262314:
-   rightMutuallyExclusivePlanesVar_f6_th0.13336992263793945
-   - rightMutuallyExclusivePlanesVar_f6_th0.14324917644262314 >= 0
- rightMutuallyExclusivePlanesVar_f6_t2_v0: y1_t401282
-   + rightMutuallyExclusivePlanesVar_f6_th0.1476399526000023 <= 1
- rightPlanesDominatesLeftFlowConstr_t2_v0: y10_t401282
-   - rightMutuallyExclusivePlanesVar_f6_th0.14324917644262314 <= 0
- rightMutuallyExclusivePlanesVar_eps_f6_t2_v0: 1e-05 y1_t401282
-   + 0.00439077615737915 rightMutuallyExclusivePlanesVar_f6_th0.14324917644262314
-   <= 0.00439077615737915
- rightPlanesDominatesLeftFlowConstr_eps_t2_v0: 1e-05 y10_t401282
-   - 0.00439077615737915 rightMutuallyExclusivePlanesVar_f6_th0.1476399526000023
+ rightPlanesOrderConstr_f6_th0.48462440073490143:
+   rightMutuallyExclusivePlanesVar_f6_th0.4844895005226135
+   - rightMutuallyExclusivePlanesVar_f6_th0.48462440073490143 >= 0
+ rightMutuallyExclusivePlanesVar_f6_t17_v2: y3_t797
+   + rightMutuallyExclusivePlanesVar_f6_th0.4857873320579529 <= 1
+ rightPlanesDominatesLeftFlowConstr_t17_v2: y4_t797
+   - rightMutuallyExclusivePlanesVar_f6_th0.48462440073490143 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f6_t17_v2: 1e-05 y3_t797
+   + 0.00116293132305145 rightMutuallyExclusivePlanesVar_f6_th0.48462440073490143
+   <= 0.00116293132305145
+ rightPlanesDominatesLeftFlowConstr_eps_t17_v2: 1e-05 y4_t797
+   - 0.00116293132305145 rightMutuallyExclusivePlanesVar_f6_th0.4857873320579529
    <= 0
- rightMutuallyExclusivePlanesVar_f6_t8_v0: y1_t401288
-   + rightMutuallyExclusivePlanesVar_f6_th0.1476399526000023 <= 1
- rightPlanesDominatesLeftFlowConstr_t8_v0: y14_t401288
-   - rightMutuallyExclusivePlanesVar_f6_th0.14324917644262314 <= 0
- rightMutuallyExclusivePlanesVar_eps_f6_t8_v0: 1e-05 y1_t401288
-   + 0.00439077615737915 rightMutuallyExclusivePlanesVar_f6_th0.14324917644262314
-   <= 0.00439077615737915
- rightPlanesDominatesLeftFlowConstr_eps_t8_v0: 1e-05 y14_t401288
-   - 0.00439077615737915 rightMutuallyExclusivePlanesVar_f6_th0.1476399526000023
+ rightPlanesOrderConstr_f6_th0.4857873320579529:
+   rightMutuallyExclusivePlanesVar_f6_th0.48462440073490143
+   - rightMutuallyExclusivePlanesVar_f6_th0.4857873320579529 >= 0
+ rightMutuallyExclusivePlanesVar_f6_t14_v1: y2_t794
+   + rightMutuallyExclusivePlanesVar_f6_th0.4874393343925476 <= 1
+ rightPlanesDominatesLeftFlowConstr_t14_v1: y5_t794
+   - rightMutuallyExclusivePlanesVar_f6_th0.4857873320579529 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f6_t14_v1: 1e-05 y2_t794
+   + 0.00165200233459473 rightMutuallyExclusivePlanesVar_f6_th0.4857873320579529
+   <= 0.00165200233459473
+ rightPlanesDominatesLeftFlowConstr_eps_t14_v1: 1e-05 y5_t794
+   - 0.00165200233459473 rightMutuallyExclusivePlanesVar_f6_th0.4874393343925476
    <= 0
- rightPlanesOrderConstr_f6_th0.1476399526000023:
-   rightMutuallyExclusivePlanesVar_f6_th0.14324917644262314
-   - rightMutuallyExclusivePlanesVar_f6_th0.1476399526000023 >= 0
- rightMutuallyExclusivePlanesVar_f6_t3_v0: y1_t401283
-   + rightMutuallyExclusivePlanesVar_f6_th0.15148188918828964 <= 1
- rightPlanesDominatesLeftFlowConstr_t3_v0: y10_t401283
-   - rightMutuallyExclusivePlanesVar_f6_th0.1476399526000023 <= 0
- rightMutuallyExclusivePlanesVar_eps_f6_t3_v0: 1e-05 y1_t401283
-   + 0.00384193658828735 rightMutuallyExclusivePlanesVar_f6_th0.1476399526000023
-   <= 0.00384193658828735
- rightPlanesDominatesLeftFlowConstr_eps_t3_v0: 1e-05 y10_t401283
-   - 0.00384193658828735 rightMutuallyExclusivePlanesVar_f6_th0.15148188918828964
+ rightPlanesOrderConstr_f6_th0.4874393343925476:
+   rightMutuallyExclusivePlanesVar_f6_th0.4857873320579529
+   - rightMutuallyExclusivePlanesVar_f6_th0.4874393343925476 >= 0
+ rightMutuallyExclusivePlanesVar_f6_t19_v0: y1_t799
+   + rightMutuallyExclusivePlanesVar_f6_th0.48922839760780334 <= 1
+ rightPlanesDominatesLeftFlowConstr_t19_v0: y8_t799
+   - rightMutuallyExclusivePlanesVar_f6_th0.4874393343925476 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f6_t19_v0: 1e-05 y1_t799
+   + 0.00178906321525574 rightMutuallyExclusivePlanesVar_f6_th0.4874393343925476
+   <= 0.00178906321525574
+ rightPlanesDominatesLeftFlowConstr_eps_t19_v0: 1e-05 y8_t799
+   - 0.00178906321525574 rightMutuallyExclusivePlanesVar_f6_th0.48922839760780334
    <= 0
- rightPlanesOrderConstr_f6_th0.15148188918828964:
-   rightMutuallyExclusivePlanesVar_f6_th0.1476399526000023
-   - rightMutuallyExclusivePlanesVar_f6_th0.15148188918828964 >= 0
- rightMutuallyExclusivePlanesVar_f6_t8_v22: y23_t401288
-   + rightMutuallyExclusivePlanesVar_f6_th0.15861690789461136 <= 1
- rightPlanesDominatesLeftFlowConstr_t8_v22: y26_t401288
-   - rightMutuallyExclusivePlanesVar_f6_th0.15148188918828964 <= 0
- rightMutuallyExclusivePlanesVar_eps_f6_t8_v22: 1e-05 y23_t401288
-   + 0.00713501870632172 rightMutuallyExclusivePlanesVar_f6_th0.15148188918828964
-   <= 0.00713501870632172
- rightPlanesDominatesLeftFlowConstr_eps_t8_v22: 1e-05 y26_t401288
-   - 0.00713501870632172 rightMutuallyExclusivePlanesVar_f6_th0.15861690789461136
+ rightPlanesOrderConstr_f6_th0.48922839760780334:
+   rightMutuallyExclusivePlanesVar_f6_th0.4874393343925476
+   - rightMutuallyExclusivePlanesVar_f6_th0.48922839760780334 >= 0
+ rightMutuallyExclusivePlanesVar_f6_t16_v1: y2_t796
+   + rightMutuallyExclusivePlanesVar_f6_th0.5061003267765045 <= 1
+ rightPlanesDominatesLeftFlowConstr_t16_v1: y5_t796
+   - rightMutuallyExclusivePlanesVar_f6_th0.48922839760780334 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f6_t16_v1: 1e-05 y2_t796
+   + 0.0168719291687012 rightMutuallyExclusivePlanesVar_f6_th0.48922839760780334
+   <= 0.0168719291687012
+ rightPlanesDominatesLeftFlowConstr_eps_t16_v1: 1e-05 y5_t796
+   - 0.0168719291687012 rightMutuallyExclusivePlanesVar_f6_th0.5061003267765045
    <= 0
- rightMutuallyExclusivePlanesVar_f6_t13_v1: y2_t401293
-   + rightMutuallyExclusivePlanesVar_f6_th0.15861690789461136 <= 1
- rightPlanesDominatesLeftFlowConstr_t13_v1: y9_t401293
-   - rightMutuallyExclusivePlanesVar_f6_th0.15148188918828964 <= 0
- rightMutuallyExclusivePlanesVar_eps_f6_t13_v1: 1e-05 y2_t401293
-   + 0.00713501870632172 rightMutuallyExclusivePlanesVar_f6_th0.15148188918828964
-   <= 0.00713501870632172
- rightPlanesDominatesLeftFlowConstr_eps_t13_v1: 1e-05 y9_t401293
-   - 0.00713501870632172 rightMutuallyExclusivePlanesVar_f6_th0.15861690789461136
+ rightPlanesOrderConstr_f6_th0.5061003267765045:
+   rightMutuallyExclusivePlanesVar_f6_th0.48922839760780334
+   - rightMutuallyExclusivePlanesVar_f6_th0.5061003267765045 >= 0
+ rightMutuallyExclusivePlanesVar_f6_t12_v1: y2_t792
+   + rightMutuallyExclusivePlanesVar_f6_th0.508878767490387 <= 1
+ rightPlanesDominatesLeftFlowConstr_t12_v1: y5_t792
+   - rightMutuallyExclusivePlanesVar_f6_th0.5061003267765045 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f6_t12_v1: 1e-05 y2_t792
+   + 0.00277844071388245 rightMutuallyExclusivePlanesVar_f6_th0.5061003267765045
+   <= 0.00277844071388245
+ rightPlanesDominatesLeftFlowConstr_eps_t12_v1: 1e-05 y5_t792
+   - 0.00277844071388245 rightMutuallyExclusivePlanesVar_f6_th0.508878767490387
    <= 0
- rightPlanesOrderConstr_f6_th0.15861690789461136:
-   rightMutuallyExclusivePlanesVar_f6_th0.15148188918828964
-   - rightMutuallyExclusivePlanesVar_f6_th0.15861690789461136 >= 0
- rightMutuallyExclusivePlanesVar_f6_t4_v2: y3_t401284
-   + rightMutuallyExclusivePlanesVar_f6_th0.16190999001264572 <= 1
- rightPlanesDominatesLeftFlowConstr_t4_v2: y6_t401284
-   - rightMutuallyExclusivePlanesVar_f6_th0.15861690789461136 <= 0
- rightMutuallyExclusivePlanesVar_eps_f6_t4_v2: 1e-05 y3_t401284
-   + 0.00329308211803436 rightMutuallyExclusivePlanesVar_f6_th0.15861690789461136
-   <= 0.00329308211803436
- rightPlanesDominatesLeftFlowConstr_eps_t4_v2: 1e-05 y6_t401284
-   - 0.00329308211803436 rightMutuallyExclusivePlanesVar_f6_th0.16190999001264572
+ rightPlanesOrderConstr_f6_th0.508878767490387:
+   rightMutuallyExclusivePlanesVar_f6_th0.5061003267765045
+   - rightMutuallyExclusivePlanesVar_f6_th0.508878767490387 >= 0
+ rightMutuallyExclusivePlanesVar_f6_t13_v2: y3_t793
+   + rightMutuallyExclusivePlanesVar_f6_th0.5126359164714813 <= 1
+ rightPlanesDominatesLeftFlowConstr_t13_v2: y4_t793
+   - rightMutuallyExclusivePlanesVar_f6_th0.508878767490387 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f6_t13_v2: 1e-05 y3_t793
+   + 0.00375714898109436 rightMutuallyExclusivePlanesVar_f6_th0.508878767490387
+   <= 0.00375714898109436
+ rightPlanesDominatesLeftFlowConstr_eps_t13_v2: 1e-05 y4_t793
+   - 0.00375714898109436 rightMutuallyExclusivePlanesVar_f6_th0.5126359164714813
    <= 0
- rightPlanesOrderConstr_f6_th0.16190999001264572:
-   rightMutuallyExclusivePlanesVar_f6_th0.15861690789461136
-   - rightMutuallyExclusivePlanesVar_f6_th0.16190999001264572 >= 0
- rightMutuallyExclusivePlanesVar_f6_t3_v15: y16_t401283
-   + rightMutuallyExclusivePlanesVar_f6_th0.1734357848763466 <= 1
- rightPlanesDominatesLeftFlowConstr_t3_v15: y17_t401283
-   - rightMutuallyExclusivePlanesVar_f6_th0.16190999001264572 <= 0
- rightMutuallyExclusivePlanesVar_eps_f6_t3_v15: 1e-05 y16_t401283
-   + 0.0115257948637009 rightMutuallyExclusivePlanesVar_f6_th0.16190999001264572
-   <= 0.0115257948637009
- rightPlanesDominatesLeftFlowConstr_eps_t3_v15: 1e-05 y17_t401283
-   - 0.0115257948637009 rightMutuallyExclusivePlanesVar_f6_th0.1734357848763466
+ rightPlanesOrderConstr_f6_th0.5126359164714813:
+   rightMutuallyExclusivePlanesVar_f6_th0.508878767490387
+   - rightMutuallyExclusivePlanesVar_f6_th0.5126359164714813 >= 0
+ rightMutuallyExclusivePlanesVar_f6_t11_v9: y10_t791
+   + rightMutuallyExclusivePlanesVar_f6_th0.5143159925937653 <= 1
+ rightPlanesDominatesLeftFlowConstr_t11_v9: y11_t791
+   - rightMutuallyExclusivePlanesVar_f6_th0.5126359164714813 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f6_t11_v9: 1e-05 y10_t791
+   + 0.00168007612228394 rightMutuallyExclusivePlanesVar_f6_th0.5126359164714813
+   <= 0.00168007612228394
+ rightPlanesDominatesLeftFlowConstr_eps_t11_v9: 1e-05 y11_t791
+   - 0.00168007612228394 rightMutuallyExclusivePlanesVar_f6_th0.5143159925937653
    <= 0
- rightPlanesOrderConstr_f6_th0.1734357848763466:
-   rightMutuallyExclusivePlanesVar_f6_th0.16190999001264572
-   - rightMutuallyExclusivePlanesVar_f6_th0.1734357848763466 >= 0
- rightMutuallyExclusivePlanesVar_f6_t5_v18: y19_t401285
-   + rightMutuallyExclusivePlanesVar_f6_th0.17618002742528915 <= 1
- rightPlanesDominatesLeftFlowConstr_t5_v18: y22_t401285
-   - rightMutuallyExclusivePlanesVar_f6_th0.1734357848763466 <= 0
- rightMutuallyExclusivePlanesVar_eps_f6_t5_v18: 1e-05 y19_t401285
-   + 0.00274424254894257 rightMutuallyExclusivePlanesVar_f6_th0.1734357848763466
-   <= 0.00274424254894257
- rightPlanesDominatesLeftFlowConstr_eps_t5_v18: 1e-05 y22_t401285
-   - 0.00274424254894257 rightMutuallyExclusivePlanesVar_f6_th0.17618002742528915
+ rightPlanesOrderConstr_f6_th0.5143159925937653:
+   rightMutuallyExclusivePlanesVar_f6_th0.5126359164714813
+   - rightMutuallyExclusivePlanesVar_f6_th0.5143159925937653 >= 0
+ rightMutuallyExclusivePlanesVar_f6_t10_v2: y3_t790
+   + rightMutuallyExclusivePlanesVar_f6_th0.5143923759460449 <= 1
+ rightPlanesDominatesLeftFlowConstr_t10_v2: y4_t790
+   - rightMutuallyExclusivePlanesVar_f6_th0.5143159925937653 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f6_t10_v2: 1e-05 y3_t790
+   + 7.63834e-05 rightMutuallyExclusivePlanesVar_f6_th0.5143159925937653
+   <= 7.63834e-05
+ rightPlanesDominatesLeftFlowConstr_eps_t10_v2: 1e-05 y4_t790
+   - 7.63834e-05 rightMutuallyExclusivePlanesVar_f6_th0.5143923759460449
    <= 0
- rightPlanesOrderConstr_f6_th0.17618002742528915:
-   rightMutuallyExclusivePlanesVar_f6_th0.1734357848763466
-   - rightMutuallyExclusivePlanesVar_f6_th0.17618002742528915 >= 0
- rightMutuallyExclusivePlanesVar_f6_t14_v5: y6_t401294
-   + rightMutuallyExclusivePlanesVar_f6_th0.19648737460374832 <= 1
- rightPlanesDominatesLeftFlowConstr_t14_v5: y7_t401294
-   - rightMutuallyExclusivePlanesVar_f6_th0.17618002742528915 <= 0
- rightMutuallyExclusivePlanesVar_eps_f6_t14_v5: 1e-05 y6_t401294
-   + 0.0203073471784592 rightMutuallyExclusivePlanesVar_f6_th0.17618002742528915
-   <= 0.0203073471784592
- rightPlanesDominatesLeftFlowConstr_eps_t14_v5: 1e-05 y7_t401294
-   - 0.0203073471784592 rightMutuallyExclusivePlanesVar_f6_th0.19648737460374832
+ rightPlanesOrderConstr_f6_th0.5143923759460449:
+   rightMutuallyExclusivePlanesVar_f6_th0.5143159925937653
+   - rightMutuallyExclusivePlanesVar_f6_th0.5143923759460449 >= 0
+ rightMutuallyExclusivePlanesVar_f6_t15_v8: y9_t795
+   + rightMutuallyExclusivePlanesVar_f6_th0.5283508598804474 <= 1
+ rightPlanesDominatesLeftFlowConstr_t15_v8: y12_t795
+   - rightMutuallyExclusivePlanesVar_f6_th0.5143923759460449 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f6_t15_v8: 1e-05 y9_t795
+   + 0.0139584839344025 rightMutuallyExclusivePlanesVar_f6_th0.5143923759460449
+   <= 0.0139584839344025
+ rightPlanesDominatesLeftFlowConstr_eps_t15_v8: 1e-05 y12_t795
+   - 0.0139584839344025 rightMutuallyExclusivePlanesVar_f6_th0.5283508598804474
    <= 0
- rightPlanesOrderConstr_f6_th0.19648737460374832:
-   rightMutuallyExclusivePlanesVar_f6_th0.17618002742528915
-   - rightMutuallyExclusivePlanesVar_f6_th0.19648737460374832 >= 0
- rightMutuallyExclusivePlanesVar_f6_t15_v3: y4_t401295
-   + rightMutuallyExclusivePlanesVar_f6_th0.20142699778079987 <= 1
- rightPlanesDominatesLeftFlowConstr_t15_v3: y5_t401295
-   - rightMutuallyExclusivePlanesVar_f6_th0.19648737460374832 <= 0
- rightMutuallyExclusivePlanesVar_eps_f6_t15_v3: 1e-05 y4_t401295
-   + 0.00493962317705154 rightMutuallyExclusivePlanesVar_f6_th0.19648737460374832
-   <= 0.00493962317705154
- rightPlanesDominatesLeftFlowConstr_eps_t15_v3: 1e-05 y5_t401295
-   - 0.00493962317705154 rightMutuallyExclusivePlanesVar_f6_th0.20142699778079987
+ rightPlanesOrderConstr_f6_th0.5283508598804474:
+   rightMutuallyExclusivePlanesVar_f6_th0.5143923759460449
+   - rightMutuallyExclusivePlanesVar_f6_th0.5283508598804474 >= 0
+ rightPlanesOrderConstr_f6_th0.5916691954583486:
+   rightMutuallyExclusivePlanesVar_f6_th0.5283508598804474
+   - rightMutuallyExclusivePlanesVar_f6_th0.5916691954583486 >= 0
+ rightMutuallyExclusivePlanesVar_f6_t10_v5: y6_t790
+   + rightMutuallyExclusivePlanesVar_f6_th0.6502995193004608 <= 1
+ rightPlanesDominatesLeftFlowConstr_t10_v5: y7_t790
+   - rightMutuallyExclusivePlanesVar_f6_th0.5916691954583486 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f6_t10_v5: 1e-05 y6_t790
+   + 0.0586303238421122 rightMutuallyExclusivePlanesVar_f6_th0.5916691954583486
+   <= 0.0586303238421122
+ rightPlanesDominatesLeftFlowConstr_eps_t10_v5: 1e-05 y7_t790
+   - 0.0586303238421122 rightMutuallyExclusivePlanesVar_f6_th0.6502995193004608
    <= 0
- rightPlanesOrderConstr_f6_th0.20142699778079987:
-   rightMutuallyExclusivePlanesVar_f6_th0.19648737460374832
-   - rightMutuallyExclusivePlanesVar_f6_th0.20142699778079987 >= 0
- rightMutuallyExclusivePlanesVar_f6_t2_v11: y12_t401282
-   + rightMutuallyExclusivePlanesVar_f6_th0.3556531220674515 <= 1
- rightPlanesDominatesLeftFlowConstr_t2_v11: y17_t401282
-   - rightMutuallyExclusivePlanesVar_f6_th0.20142699778079987 <= 0
- rightMutuallyExclusivePlanesVar_eps_f6_t2_v11: 1e-05 y12_t401282
-   + 0.1542261242866516 rightMutuallyExclusivePlanesVar_f6_th0.20142699778079987
-   <= 0.1542261242866516
- rightPlanesDominatesLeftFlowConstr_eps_t2_v11: 1e-05 y17_t401282
-   - 0.1542261242866516 rightMutuallyExclusivePlanesVar_f6_th0.3556531220674515
+ rightPlanesOrderConstr_f6_th0.6502995193004608:
+   rightMutuallyExclusivePlanesVar_f6_th0.5916691954583486
+   - rightMutuallyExclusivePlanesVar_f6_th0.6502995193004608 >= 0
+ rightMutuallyExclusivePlanesVar_f6_t19_v8: y9_t799
+   + rightMutuallyExclusivePlanesVar_f6_th0.760267049074173 <= 1
+ rightPlanesDominatesLeftFlowConstr_t19_v8: y12_t799
+   - rightMutuallyExclusivePlanesVar_f6_th0.6502995193004608 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f6_t19_v8: 1e-05 y9_t799
+   + 0.1099675297737122 rightMutuallyExclusivePlanesVar_f6_th0.6502995193004608
+   <= 0.1099675297737122
+ rightPlanesDominatesLeftFlowConstr_eps_t19_v8: 1e-05 y12_t799
+   - 0.1099675297737122 rightMutuallyExclusivePlanesVar_f6_th0.760267049074173
    <= 0
- rightPlanesOrderConstr_f6_th0.3556531220674515:
-   rightMutuallyExclusivePlanesVar_f6_th0.20142699778079987
-   - rightMutuallyExclusivePlanesVar_f6_th0.3556531220674515 >= 0
- rightMutuallyExclusivePlanesVar_f6_t16_v5: y6_t401296
-   + rightMutuallyExclusivePlanesVar_f6_th0.36498352885246277 <= 1
- rightPlanesDominatesLeftFlowConstr_t16_v5: y7_t401296
-   - rightMutuallyExclusivePlanesVar_f6_th0.3556531220674515 <= 0
- rightMutuallyExclusivePlanesVar_eps_f6_t16_v5: 1e-05 y6_t401296
-   + 0.00933040678501129 rightMutuallyExclusivePlanesVar_f6_th0.3556531220674515
-   <= 0.00933040678501129
- rightPlanesDominatesLeftFlowConstr_eps_t16_v5: 1e-05 y7_t401296
-   - 0.00933040678501129 rightMutuallyExclusivePlanesVar_f6_th0.36498352885246277
-   <= 0
- rightMutuallyExclusivePlanesVar_f6_t19_v1: y2_t401299
-   + rightMutuallyExclusivePlanesVar_f6_th0.36498352885246277 <= 1
- rightPlanesDominatesLeftFlowConstr_t19_v1: y13_t401299
-   - rightMutuallyExclusivePlanesVar_f6_th0.3556531220674515 <= 0
- rightMutuallyExclusivePlanesVar_eps_f6_t19_v1: 1e-05 y2_t401299
-   + 0.00933040678501129 rightMutuallyExclusivePlanesVar_f6_th0.3556531220674515
-   <= 0.00933040678501129
- rightPlanesDominatesLeftFlowConstr_eps_t19_v1: 1e-05 y13_t401299
-   - 0.00933040678501129 rightMutuallyExclusivePlanesVar_f6_th0.36498352885246277
-   <= 0
- rightPlanesOrderConstr_f6_th0.36498352885246277:
-   rightMutuallyExclusivePlanesVar_f6_th0.3556531220674515
-   - rightMutuallyExclusivePlanesVar_f6_th0.36498352885246277 >= 0
- rightMutuallyExclusivePlanesVar_f6_t13_v0: y1_t401293
-   + rightMutuallyExclusivePlanesVar_f6_th0.36717891693115234 <= 1
- rightPlanesDominatesLeftFlowConstr_t13_v0: y18_t401293
-   - rightMutuallyExclusivePlanesVar_f6_th0.36498352885246277 <= 0
- rightMutuallyExclusivePlanesVar_eps_f6_t13_v0: 1e-05 y1_t401293
-   + 0.00219538807868958 rightMutuallyExclusivePlanesVar_f6_th0.36498352885246277
-   <= 0.00219538807868958
- rightPlanesDominatesLeftFlowConstr_eps_t13_v0: 1e-05 y18_t401293
-   - 0.00219538807868958 rightMutuallyExclusivePlanesVar_f6_th0.36717891693115234
-   <= 0
- rightPlanesOrderConstr_f6_th0.36717891693115234:
-   rightMutuallyExclusivePlanesVar_f6_th0.36498352885246277
-   - rightMutuallyExclusivePlanesVar_f6_th0.36717891693115234 >= 0
- rightMutuallyExclusivePlanesVar_f6_t9_v1: y2_t401289
-   + rightMutuallyExclusivePlanesVar_f6_th0.3781558722257614 <= 1
- rightPlanesDominatesLeftFlowConstr_t9_v1: y11_t401289
-   - rightMutuallyExclusivePlanesVar_f6_th0.36717891693115234 <= 0
- rightMutuallyExclusivePlanesVar_eps_f6_t9_v1: 1e-05 y2_t401289
-   + 0.0109769552946091 rightMutuallyExclusivePlanesVar_f6_th0.36717891693115234
-   <= 0.0109769552946091
- rightPlanesDominatesLeftFlowConstr_eps_t9_v1: 1e-05 y11_t401289
-   - 0.0109769552946091 rightMutuallyExclusivePlanesVar_f6_th0.3781558722257614
-   <= 0
- rightPlanesOrderConstr_f6_th0.3781558722257614:
-   rightMutuallyExclusivePlanesVar_f6_th0.36717891693115234
-   - rightMutuallyExclusivePlanesVar_f6_th0.3781558722257614 >= 0
- rightMutuallyExclusivePlanesVar_f6_t17_v1: y2_t401297
-   + rightMutuallyExclusivePlanesVar_f6_th0.4072447866201401 <= 1
- rightPlanesDominatesLeftFlowConstr_t17_v1: y15_t401297
-   - rightMutuallyExclusivePlanesVar_f6_th0.3781558722257614 <= 0
- rightMutuallyExclusivePlanesVar_eps_f6_t17_v1: 1e-05 y2_t401297
-   + 0.0290889143943787 rightMutuallyExclusivePlanesVar_f6_th0.3781558722257614
-   <= 0.0290889143943787
- rightPlanesDominatesLeftFlowConstr_eps_t17_v1: 1e-05 y15_t401297
-   - 0.0290889143943787 rightMutuallyExclusivePlanesVar_f6_th0.4072447866201401
-   <= 0
- rightPlanesOrderConstr_f6_th0.4072447866201401:
-   rightMutuallyExclusivePlanesVar_f6_th0.3781558722257614
-   - rightMutuallyExclusivePlanesVar_f6_th0.4072447866201401 >= 0
+ rightPlanesOrderConstr_f6_th0.760267049074173:
+   rightMutuallyExclusivePlanesVar_f6_th0.6502995193004608
+   - rightMutuallyExclusivePlanesVar_f6_th0.760267049074173 >= 0
  x_as_linear_combination_of_planes_f: x_f6
-   - 0.0828759633004665 rightMutuallyExclusivePlanesVar_f6_th0
-   - 0.000548847 rightMutuallyExclusivePlanesVar_f6_th0.08287596330046654
-   - 0.00219538807868958 rightMutuallyExclusivePlanesVar_f6_th0.08342481032013893
-   - 0.0263446755707264 rightMutuallyExclusivePlanesVar_f6_th0.0856201983988285
-   - 0.0186608120897205 rightMutuallyExclusivePlanesVar_f6_th0.1119648739695549
-   - 0.00274423657866402 rightMutuallyExclusivePlanesVar_f6_th0.13062568605927544
-   - 0.00987925380468369 rightMutuallyExclusivePlanesVar_f6_th0.13336992263793945
-   - 0.00439077615737915 rightMutuallyExclusivePlanesVar_f6_th0.14324917644262314
-   - 0.00384193658828735 rightMutuallyExclusivePlanesVar_f6_th0.1476399526000023
-   - 0.00713501870632172 rightMutuallyExclusivePlanesVar_f6_th0.15148188918828964
-   - 0.00329308211803436 rightMutuallyExclusivePlanesVar_f6_th0.15861690789461136
-   - 0.0115257948637009 rightMutuallyExclusivePlanesVar_f6_th0.16190999001264572
-   - 0.00274424254894257 rightMutuallyExclusivePlanesVar_f6_th0.1734357848763466
-   - 0.0203073471784592 rightMutuallyExclusivePlanesVar_f6_th0.17618002742528915
-   - 0.00493962317705154 rightMutuallyExclusivePlanesVar_f6_th0.19648737460374832
-   - 0.1542261242866516 rightMutuallyExclusivePlanesVar_f6_th0.20142699778079987
-   - 0.00933040678501129 rightMutuallyExclusivePlanesVar_f6_th0.3556531220674515
-   - 0.00219538807868958 rightMutuallyExclusivePlanesVar_f6_th0.36498352885246277
-   - 0.0109769552946091 rightMutuallyExclusivePlanesVar_f6_th0.36717891693115234
-   - 0.0290889143943787 rightMutuallyExclusivePlanesVar_f6_th0.3781558722257614
-   - 0.5927552133798599 rightMutuallyExclusivePlanesVar_f6_th0.4072447866201401
+   - 0.428457498550415 rightMutuallyExclusivePlanesVar_f6_th0
+   - 0.0265256613492966 rightMutuallyExclusivePlanesVar_f6_th0.42845749855041504
+   - 0.00759574770927429 rightMutuallyExclusivePlanesVar_f6_th0.4549831598997116
+   - 4.3326616287231445e-04 rightMutuallyExclusivePlanesVar_f6_th0.4625789076089859
+   - 5.7585537433624268e-04 rightMutuallyExclusivePlanesVar_f6_th0.4630121737718582
+   - 0.0209014713764191 rightMutuallyExclusivePlanesVar_f6_th0.46358802914619446
+   - 1.3490021228790283e-04 rightMutuallyExclusivePlanesVar_f6_th0.4844895005226135
+   - 0.00116293132305145 rightMutuallyExclusivePlanesVar_f6_th0.48462440073490143
+   - 0.00165200233459473 rightMutuallyExclusivePlanesVar_f6_th0.4857873320579529
+   - 0.00178906321525574 rightMutuallyExclusivePlanesVar_f6_th0.4874393343925476
+   - 0.0168719291687012 rightMutuallyExclusivePlanesVar_f6_th0.48922839760780334
+   - 0.00277844071388245 rightMutuallyExclusivePlanesVar_f6_th0.5061003267765045
+   - 0.00375714898109436 rightMutuallyExclusivePlanesVar_f6_th0.508878767490387
+   - 0.00168007612228394 rightMutuallyExclusivePlanesVar_f6_th0.5126359164714813
+   - 7.63834e-05 rightMutuallyExclusivePlanesVar_f6_th0.5143159925937653
+   - 0.0139584839344025 rightMutuallyExclusivePlanesVar_f6_th0.5143923759460449
+   - 0.0633183355779012 rightMutuallyExclusivePlanesVar_f6_th0.5283508598804474
+   - 0.0586303238421122 rightMutuallyExclusivePlanesVar_f6_th0.5916691954583486
+   - 0.1099675297737122 rightMutuallyExclusivePlanesVar_f6_th0.6502995193004608
+   - 0.239732950925827 rightMutuallyExclusivePlanesVar_f6_th0.760267049074173
    = 0
- rightPlanesOrderConstr_f7_th0.0: >= 0
+ rightMutuallyExclusivePlanesVar_f7_t2_v9: y10_t782
+   + rightMutuallyExclusivePlanesVar_f7_th0.41285035014152527 <= 1
+ rightPlanesDominatesLeftFlowConstr_t2_v9: y11_t782
+   - rightMutuallyExclusivePlanesVar_f7_th0 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f7_t2_v9: 1e-05 y10_t782
+   + 0.4128503501415253 rightMutuallyExclusivePlanesVar_f7_th0
+   <= 0.4128503501415253
+ rightPlanesDominatesLeftFlowConstr_eps_t2_v9: 1e-05 y11_t782
+   - 0.4128503501415253 rightMutuallyExclusivePlanesVar_f7_th0.41285035014152527
+   <= 0
+ rightPlanesOrderConstr_f7_th0.41285035014152527:
+   rightMutuallyExclusivePlanesVar_f7_th0
+   - rightMutuallyExclusivePlanesVar_f7_th0.41285035014152527 >= 0
+ rightMutuallyExclusivePlanesVar_f7_t1_v1: y2_t781
+   + rightMutuallyExclusivePlanesVar_f7_th0.46164973080158234 <= 1
+ rightPlanesDominatesLeftFlowConstr_t1_v1: y5_t781
+   - rightMutuallyExclusivePlanesVar_f7_th0.41285035014152527 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f7_t1_v1: 1e-05 y2_t781
+   + 0.0487993806600571 rightMutuallyExclusivePlanesVar_f7_th0.41285035014152527
+   <= 0.0487993806600571
+ rightPlanesDominatesLeftFlowConstr_eps_t1_v1: 1e-05 y5_t781
+   - 0.0487993806600571 rightMutuallyExclusivePlanesVar_f7_th0.46164973080158234
+   <= 0
+ rightPlanesOrderConstr_f7_th0.46164973080158234:
+   rightMutuallyExclusivePlanesVar_f7_th0.41285035014152527
+   - rightMutuallyExclusivePlanesVar_f7_th0.46164973080158234 >= 0
+ rightPlanesOrderConstr_f7_th0.5625011503692718:
+   rightMutuallyExclusivePlanesVar_f7_th0.46164973080158234
+   - rightMutuallyExclusivePlanesVar_f7_th0.5625011503692718 >= 0
+ rightMutuallyExclusivePlanesVar_f7_t6_v1: y2_t786
+   + rightMutuallyExclusivePlanesVar_f7_th0.6190357804298401 <= 1
+ rightPlanesDominatesLeftFlowConstr_t6_v1: y5_t786
+   - rightMutuallyExclusivePlanesVar_f7_th0.5625011503692718 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f7_t6_v1: 1e-05 y2_t786
+   + 0.0565346300605682 rightMutuallyExclusivePlanesVar_f7_th0.5625011503692718
+   <= 0.0565346300605682
+ rightPlanesDominatesLeftFlowConstr_eps_t6_v1: 1e-05 y5_t786
+   - 0.0565346300605682 rightMutuallyExclusivePlanesVar_f7_th0.6190357804298401
+   <= 0
+ rightPlanesOrderConstr_f7_th0.6190357804298401:
+   rightMutuallyExclusivePlanesVar_f7_th0.5625011503692718
+   - rightMutuallyExclusivePlanesVar_f7_th0.6190357804298401 >= 0
  x_as_linear_combination_of_planes_f: x_f7
-   - rightMutuallyExclusivePlanesVar_f7_th0.0 = 0
- rightMutuallyExclusivePlanesVar_f8_t14_v14: y15_t401294
-   + rightMutuallyExclusivePlanesVar_f8_th0.09459459781646729 <= 1
- rightPlanesDominatesLeftFlowConstr_t14_v14: y16_t401294
-   - rightMutuallyExclusivePlanesVar_f8_th0 <= 0
- rightMutuallyExclusivePlanesVar_eps_f8_t14_v14: 1e-05 y15_t401294
-   + 0.0945945978164673 rightMutuallyExclusivePlanesVar_f8_th0
-   <= 0.0945945978164673
- rightPlanesDominatesLeftFlowConstr_eps_t14_v14: 1e-05 y16_t401294
-   - 0.0945945978164673 rightMutuallyExclusivePlanesVar_f8_th0.09459459781646729
-   <= 0
- rightPlanesOrderConstr_f8_th0.09459459781646729:
-   rightMutuallyExclusivePlanesVar_f8_th0
-   - rightMutuallyExclusivePlanesVar_f8_th0.09459459781646729 >= 0
- rightMutuallyExclusivePlanesVar_f8_t7_v5: y6_t401287
-   + rightMutuallyExclusivePlanesVar_f8_th0.1621621549129486 <= 1
- rightPlanesDominatesLeftFlowConstr_t7_v5: y7_t401287
-   - rightMutuallyExclusivePlanesVar_f8_th0.09459459781646729 <= 0
- rightMutuallyExclusivePlanesVar_eps_f8_t7_v5: 1e-05 y6_t401287
-   + 0.0675675570964813 rightMutuallyExclusivePlanesVar_f8_th0.09459459781646729
-   <= 0.0675675570964813
- rightPlanesDominatesLeftFlowConstr_eps_t7_v5: 1e-05 y7_t401287
-   - 0.0675675570964813 rightMutuallyExclusivePlanesVar_f8_th0.1621621549129486
-   <= 0
- rightPlanesOrderConstr_f8_th0.1621621549129486:
-   rightMutuallyExclusivePlanesVar_f8_th0.09459459781646729
-   - rightMutuallyExclusivePlanesVar_f8_th0.1621621549129486 >= 0
- rightMutuallyExclusivePlanesVar_f8_t7_v9: y10_t401287
-   + rightMutuallyExclusivePlanesVar_f8_th0.20270270109176636 <= 1
- rightPlanesDominatesLeftFlowConstr_t7_v9: y11_t401287
-   - rightMutuallyExclusivePlanesVar_f8_th0.1621621549129486 <= 0
- rightMutuallyExclusivePlanesVar_eps_f8_t7_v9: 1e-05 y10_t401287
-   + 0.0405405461788177 rightMutuallyExclusivePlanesVar_f8_th0.1621621549129486
-   <= 0.0405405461788177
- rightPlanesDominatesLeftFlowConstr_eps_t7_v9: 1e-05 y11_t401287
-   - 0.0405405461788177 rightMutuallyExclusivePlanesVar_f8_th0.20270270109176636
-   <= 0
- rightPlanesOrderConstr_f8_th0.20270270109176636:
-   rightMutuallyExclusivePlanesVar_f8_th0.1621621549129486
-   - rightMutuallyExclusivePlanesVar_f8_th0.20270270109176636 >= 0
- rightMutuallyExclusivePlanesVar_f8_t1_v1: y2_t401281
-   + rightMutuallyExclusivePlanesVar_f8_th0.22972973436117172 <= 1
- rightPlanesDominatesLeftFlowConstr_t1_v1: y3_t401281
-   - rightMutuallyExclusivePlanesVar_f8_th0.20270270109176636 <= 0
- rightMutuallyExclusivePlanesVar_eps_f8_t1_v1: 1e-05 y2_t401281
-   + 0.0270270332694054 rightMutuallyExclusivePlanesVar_f8_th0.20270270109176636
-   <= 0.0270270332694054
- rightPlanesDominatesLeftFlowConstr_eps_t1_v1: 1e-05 y3_t401281
-   - 0.0270270332694054 rightMutuallyExclusivePlanesVar_f8_th0.22972973436117172
-   <= 0
- rightPlanesOrderConstr_f8_th0.22972973436117172:
-   rightMutuallyExclusivePlanesVar_f8_th0.20270270109176636
-   - rightMutuallyExclusivePlanesVar_f8_th0.22972973436117172 >= 0
- rightMutuallyExclusivePlanesVar_f8_t5_v0: y1_t401285
-   + rightMutuallyExclusivePlanesVar_f8_th0.2567567527294159 <= 1
- rightPlanesDominatesLeftFlowConstr_t5_v0: y16_t401285
-   - rightMutuallyExclusivePlanesVar_f8_th0.22972973436117172 <= 0
- rightMutuallyExclusivePlanesVar_eps_f8_t5_v0: 1e-05 y1_t401285
-   + 0.0270270183682442 rightMutuallyExclusivePlanesVar_f8_th0.22972973436117172
-   <= 0.0270270183682442
- rightPlanesDominatesLeftFlowConstr_eps_t5_v0: 1e-05 y16_t401285
-   - 0.0270270183682442 rightMutuallyExclusivePlanesVar_f8_th0.2567567527294159
-   <= 0
- rightMutuallyExclusivePlanesVar_f8_t6_v2: y3_t401286
-   + rightMutuallyExclusivePlanesVar_f8_th0.2567567527294159 <= 1
- rightPlanesDominatesLeftFlowConstr_t6_v2: y14_t401286
-   - rightMutuallyExclusivePlanesVar_f8_th0.22972973436117172 <= 0
- rightMutuallyExclusivePlanesVar_eps_f8_t6_v2: 1e-05 y3_t401286
-   + 0.0270270183682442 rightMutuallyExclusivePlanesVar_f8_th0.22972973436117172
-   <= 0.0270270183682442
- rightPlanesDominatesLeftFlowConstr_eps_t6_v2: 1e-05 y14_t401286
-   - 0.0270270183682442 rightMutuallyExclusivePlanesVar_f8_th0.2567567527294159
-   <= 0
- rightPlanesOrderConstr_f8_th0.2567567527294159:
-   rightMutuallyExclusivePlanesVar_f8_th0.22972973436117172
-   - rightMutuallyExclusivePlanesVar_f8_th0.2567567527294159 >= 0
- rightPlanesOrderConstr_f8_th0.2972972972972973:
-   rightMutuallyExclusivePlanesVar_f8_th0.2567567527294159
-   - rightMutuallyExclusivePlanesVar_f8_th0.2972972972972973 >= 0
- rightMutuallyExclusivePlanesVar_f8_t14_v3: y4_t401294
-   + rightMutuallyExclusivePlanesVar_f8_th0.31081080436706543 <= 1
- rightPlanesDominatesLeftFlowConstr_t14_v3: y9_t401294
-   - rightMutuallyExclusivePlanesVar_f8_th0.2972972972972973 <= 0
- rightMutuallyExclusivePlanesVar_eps_f8_t14_v3: 1e-05 y4_t401294
-   + 0.0135135070697681 rightMutuallyExclusivePlanesVar_f8_th0.2972972972972973
-   <= 0.0135135070697681
- rightPlanesDominatesLeftFlowConstr_eps_t14_v3: 1e-05 y9_t401294
-   - 0.0135135070697681 rightMutuallyExclusivePlanesVar_f8_th0.31081080436706543
-   <= 0
- rightPlanesOrderConstr_f8_th0.31081080436706543:
-   rightMutuallyExclusivePlanesVar_f8_th0.2972972972972973
-   - rightMutuallyExclusivePlanesVar_f8_th0.31081080436706543 >= 0
- rightMutuallyExclusivePlanesVar_f8_t2_v13: y14_t401282
-   + rightMutuallyExclusivePlanesVar_f8_th0.3513513505458832 <= 1
- rightPlanesDominatesLeftFlowConstr_t2_v13: y15_t401282
-   - rightMutuallyExclusivePlanesVar_f8_th0.31081080436706543 <= 0
- rightMutuallyExclusivePlanesVar_eps_f8_t2_v13: 1e-05 y14_t401282
-   + 0.0405405461788177 rightMutuallyExclusivePlanesVar_f8_th0.31081080436706543
-   <= 0.0405405461788177
- rightPlanesDominatesLeftFlowConstr_eps_t2_v13: 1e-05 y15_t401282
-   - 0.0405405461788177 rightMutuallyExclusivePlanesVar_f8_th0.3513513505458832
-   <= 0
- rightMutuallyExclusivePlanesVar_f8_t12_v17: y18_t401292
-   + rightMutuallyExclusivePlanesVar_f8_th0.3513513505458832 <= 1
- rightPlanesDominatesLeftFlowConstr_t12_v17: y19_t401292
-   - rightMutuallyExclusivePlanesVar_f8_th0.31081080436706543 <= 0
- rightMutuallyExclusivePlanesVar_eps_f8_t12_v17: 1e-05 y18_t401292
-   + 0.0405405461788177 rightMutuallyExclusivePlanesVar_f8_th0.31081080436706543
-   <= 0.0405405461788177
- rightPlanesDominatesLeftFlowConstr_eps_t12_v17: 1e-05 y19_t401292
-   - 0.0405405461788177 rightMutuallyExclusivePlanesVar_f8_th0.3513513505458832
-   <= 0
- rightPlanesOrderConstr_f8_th0.3513513505458832:
-   rightMutuallyExclusivePlanesVar_f8_th0.31081080436706543
-   - rightMutuallyExclusivePlanesVar_f8_th0.3513513505458832 >= 0
- rightMutuallyExclusivePlanesVar_f8_t16_v4: y5_t401296
-   + rightMutuallyExclusivePlanesVar_f8_th0.3918918967247009 <= 1
- rightPlanesDominatesLeftFlowConstr_t16_v4: y8_t401296
-   - rightMutuallyExclusivePlanesVar_f8_th0.3513513505458832 <= 0
- rightMutuallyExclusivePlanesVar_eps_f8_t16_v4: 1e-05 y5_t401296
-   + 0.0405405461788177 rightMutuallyExclusivePlanesVar_f8_th0.3513513505458832
-   <= 0.0405405461788177
- rightPlanesDominatesLeftFlowConstr_eps_t16_v4: 1e-05 y8_t401296
-   - 0.0405405461788177 rightMutuallyExclusivePlanesVar_f8_th0.3918918967247009
-   <= 0
- rightPlanesOrderConstr_f8_th0.3918918967247009:
-   rightMutuallyExclusivePlanesVar_f8_th0.3513513505458832
-   - rightMutuallyExclusivePlanesVar_f8_th0.3918918967247009 >= 0
- rightMutuallyExclusivePlanesVar_f8_t11_v8: y9_t401291
-   + rightMutuallyExclusivePlanesVar_f8_th0.44594593346118927 <= 1
- rightPlanesDominatesLeftFlowConstr_t11_v8: y10_t401291
-   - rightMutuallyExclusivePlanesVar_f8_th0.3918918967247009 <= 0
- rightMutuallyExclusivePlanesVar_eps_f8_t11_v8: 1e-05 y9_t401291
-   + 0.0540540367364883 rightMutuallyExclusivePlanesVar_f8_th0.3918918967247009
-   <= 0.0540540367364883
- rightPlanesDominatesLeftFlowConstr_eps_t11_v8: 1e-05 y10_t401291
-   - 0.0540540367364883 rightMutuallyExclusivePlanesVar_f8_th0.44594593346118927
-   <= 0
- rightMutuallyExclusivePlanesVar_f8_t17_v4: y5_t401297
-   + rightMutuallyExclusivePlanesVar_f8_th0.44594593346118927 <= 1
- rightPlanesDominatesLeftFlowConstr_t17_v4: y6_t401297
-   - rightMutuallyExclusivePlanesVar_f8_th0.3918918967247009 <= 0
- rightMutuallyExclusivePlanesVar_eps_f8_t17_v4: 1e-05 y5_t401297
-   + 0.0540540367364883 rightMutuallyExclusivePlanesVar_f8_th0.3918918967247009
-   <= 0.0540540367364883
- rightPlanesDominatesLeftFlowConstr_eps_t17_v4: 1e-05 y6_t401297
-   - 0.0540540367364883 rightMutuallyExclusivePlanesVar_f8_th0.44594593346118927
-   <= 0
- rightPlanesOrderConstr_f8_th0.44594593346118927:
-   rightMutuallyExclusivePlanesVar_f8_th0.3918918967247009
-   - rightMutuallyExclusivePlanesVar_f8_th0.44594593346118927 >= 0
- rightMutuallyExclusivePlanesVar_f8_t10_v4: y5_t401290
-   + rightMutuallyExclusivePlanesVar_f8_th0.5540540367364883 <= 1
- rightPlanesDominatesLeftFlowConstr_t10_v4: y6_t401290
-   - rightMutuallyExclusivePlanesVar_f8_th0.44594593346118927 <= 0
- rightMutuallyExclusivePlanesVar_eps_f8_t10_v4: 1e-05 y5_t401290
-   + 0.1081081032752991 rightMutuallyExclusivePlanesVar_f8_th0.44594593346118927
-   <= 0.1081081032752991
- rightPlanesDominatesLeftFlowConstr_eps_t10_v4: 1e-05 y6_t401290
-   - 0.1081081032752991 rightMutuallyExclusivePlanesVar_f8_th0.5540540367364883
-   <= 0
- rightPlanesOrderConstr_f8_th0.5540540367364883:
-   rightMutuallyExclusivePlanesVar_f8_th0.44594593346118927
-   - rightMutuallyExclusivePlanesVar_f8_th0.5540540367364883 >= 0
- rightMutuallyExclusivePlanesVar_f8_t19_v20: y21_t401299
-   + rightMutuallyExclusivePlanesVar_f8_th0.5810810774564743 <= 1
- rightPlanesDominatesLeftFlowConstr_t19_v20: y22_t401299
-   - rightMutuallyExclusivePlanesVar_f8_th0.5540540367364883 <= 0
- rightMutuallyExclusivePlanesVar_eps_f8_t19_v20: 1e-05 y21_t401299
-   + 0.027027040719986 rightMutuallyExclusivePlanesVar_f8_th0.5540540367364883
-   <= 0.027027040719986
- rightPlanesDominatesLeftFlowConstr_eps_t19_v20: 1e-05 y22_t401299
-   - 0.027027040719986 rightMutuallyExclusivePlanesVar_f8_th0.5810810774564743
-   <= 0
- rightPlanesOrderConstr_f8_th0.5810810774564743:
-   rightMutuallyExclusivePlanesVar_f8_th0.5540540367364883
-   - rightMutuallyExclusivePlanesVar_f8_th0.5810810774564743 >= 0
- rightMutuallyExclusivePlanesVar_f8_t11_v14: y15_t401291
-   + rightMutuallyExclusivePlanesVar_f8_th0.6081081032752991 <= 1
- rightPlanesDominatesLeftFlowConstr_t11_v14: y16_t401291
-   - rightMutuallyExclusivePlanesVar_f8_th0.5810810774564743 <= 0
- rightMutuallyExclusivePlanesVar_eps_f8_t11_v14: 1e-05 y15_t401291
-   + 0.0270270258188248 rightMutuallyExclusivePlanesVar_f8_th0.5810810774564743
-   <= 0.0270270258188248
- rightPlanesDominatesLeftFlowConstr_eps_t11_v14: 1e-05 y16_t401291
-   - 0.0270270258188248 rightMutuallyExclusivePlanesVar_f8_th0.6081081032752991
-   <= 0
- rightMutuallyExclusivePlanesVar_f8_t16_v13: y14_t401296
-   + rightMutuallyExclusivePlanesVar_f8_th0.6081081032752991 <= 1
- rightPlanesDominatesLeftFlowConstr_t16_v13: y15_t401296
-   - rightMutuallyExclusivePlanesVar_f8_th0.5810810774564743 <= 0
- rightMutuallyExclusivePlanesVar_eps_f8_t16_v13: 1e-05 y14_t401296
-   + 0.0270270258188248 rightMutuallyExclusivePlanesVar_f8_th0.5810810774564743
-   <= 0.0270270258188248
- rightPlanesDominatesLeftFlowConstr_eps_t16_v13: 1e-05 y15_t401296
-   - 0.0270270258188248 rightMutuallyExclusivePlanesVar_f8_th0.6081081032752991
-   <= 0
- rightPlanesOrderConstr_f8_th0.6081081032752991:
-   rightMutuallyExclusivePlanesVar_f8_th0.5810810774564743
-   - rightMutuallyExclusivePlanesVar_f8_th0.6081081032752991 >= 0
- rightMutuallyExclusivePlanesVar_f8_t4_v1: y2_t401284
-   + rightMutuallyExclusivePlanesVar_f8_th0.6216216087341309 <= 1
- rightPlanesDominatesLeftFlowConstr_t4_v1: y9_t401284
-   - rightMutuallyExclusivePlanesVar_f8_th0.6081081032752991 <= 0
- rightMutuallyExclusivePlanesVar_eps_f8_t4_v1: 1e-05 y2_t401284
-   + 0.0135135054588318 rightMutuallyExclusivePlanesVar_f8_th0.6081081032752991
-   <= 0.0135135054588318
- rightPlanesDominatesLeftFlowConstr_eps_t4_v1: 1e-05 y9_t401284
-   - 0.0135135054588318 rightMutuallyExclusivePlanesVar_f8_th0.6216216087341309
-   <= 0
- rightPlanesOrderConstr_f8_th0.6216216087341309:
-   rightMutuallyExclusivePlanesVar_f8_th0.6081081032752991
-   - rightMutuallyExclusivePlanesVar_f8_th0.6216216087341309 >= 0
- rightMutuallyExclusivePlanesVar_f8_t3_v4: y5_t401283
-   + rightMutuallyExclusivePlanesVar_f8_th0.6891891956329346 <= 1
- rightPlanesDominatesLeftFlowConstr_t3_v4: y8_t401283
-   - rightMutuallyExclusivePlanesVar_f8_th0.6216216087341309 <= 0
- rightMutuallyExclusivePlanesVar_eps_f8_t3_v4: 1e-05 y5_t401283
-   + 0.0675675868988037 rightMutuallyExclusivePlanesVar_f8_th0.6216216087341309
-   <= 0.0675675868988037
- rightPlanesDominatesLeftFlowConstr_eps_t3_v4: 1e-05 y8_t401283
-   - 0.0675675868988037 rightMutuallyExclusivePlanesVar_f8_th0.6891891956329346
-   <= 0
- rightPlanesOrderConstr_f8_th0.6891891956329346:
-   rightMutuallyExclusivePlanesVar_f8_th0.6216216087341309
-   - rightMutuallyExclusivePlanesVar_f8_th0.6891891956329346 >= 0
- rightMutuallyExclusivePlanesVar_f8_t18_v9: y10_t401298
-   + rightMutuallyExclusivePlanesVar_f8_th0.8918918669223785 <= 1
- rightPlanesDominatesLeftFlowConstr_t18_v9: y15_t401298
-   - rightMutuallyExclusivePlanesVar_f8_th0.6891891956329346 <= 0
- rightMutuallyExclusivePlanesVar_eps_f8_t18_v9: 1e-05 y10_t401298
-   + 0.202702671289444 rightMutuallyExclusivePlanesVar_f8_th0.6891891956329346
-   <= 0.202702671289444
- rightPlanesDominatesLeftFlowConstr_eps_t18_v9: 1e-05 y15_t401298
-   - 0.202702671289444 rightMutuallyExclusivePlanesVar_f8_th0.8918918669223785
-   <= 0
- rightPlanesOrderConstr_f8_th0.8918918669223785:
-   rightMutuallyExclusivePlanesVar_f8_th0.6891891956329346
-   - rightMutuallyExclusivePlanesVar_f8_th0.8918918669223785 >= 0
- x_as_linear_combination_of_planes_f: x_f8
-   - 0.0945945978164673 rightMutuallyExclusivePlanesVar_f8_th0
-   - 0.0675675570964813 rightMutuallyExclusivePlanesVar_f8_th0.09459459781646729
-   - 0.0405405461788177 rightMutuallyExclusivePlanesVar_f8_th0.1621621549129486
-   - 0.0270270332694054 rightMutuallyExclusivePlanesVar_f8_th0.20270270109176636
-   - 0.0270270183682442 rightMutuallyExclusivePlanesVar_f8_th0.22972973436117172
-   - 0.0405405445678814 rightMutuallyExclusivePlanesVar_f8_th0.2567567527294159
-   - 0.0135135070697681 rightMutuallyExclusivePlanesVar_f8_th0.2972972972972973
-   - 0.0405405461788177 rightMutuallyExclusivePlanesVar_f8_th0.31081080436706543
-   - 0.0405405461788177 rightMutuallyExclusivePlanesVar_f8_th0.3513513505458832
-   - 0.0540540367364883 rightMutuallyExclusivePlanesVar_f8_th0.3918918967247009
-   - 0.1081081032752991 rightMutuallyExclusivePlanesVar_f8_th0.44594593346118927
-   - 0.027027040719986 rightMutuallyExclusivePlanesVar_f8_th0.5540540367364883
-   - 0.0270270258188248 rightMutuallyExclusivePlanesVar_f8_th0.5810810774564743
-   - 0.0135135054588318 rightMutuallyExclusivePlanesVar_f8_th0.6081081032752991
-   - 0.0675675868988037 rightMutuallyExclusivePlanesVar_f8_th0.6216216087341309
-   - 0.202702671289444 rightMutuallyExclusivePlanesVar_f8_th0.6891891956329346
-   - 0.1081081330776215 rightMutuallyExclusivePlanesVar_f8_th0.8918918669223785
+   - 0.4128503501415253 rightMutuallyExclusivePlanesVar_f7_th0
+   - 0.0487993806600571 rightMutuallyExclusivePlanesVar_f7_th0.41285035014152527
+   - 0.1008514195676895 rightMutuallyExclusivePlanesVar_f7_th0.46164973080158234
+   - 0.0565346300605682 rightMutuallyExclusivePlanesVar_f7_th0.5625011503692718
+   - 0.3809642195701599 rightMutuallyExclusivePlanesVar_f7_th0.6190357804298401
    = 0
- majorityVoteConstr_cl1: - 0.05 y2_t401280 + 0.05 y4_t401280
-   - 0.05 y6_t401280 + 0.05 y8_t401280 - 0.00714285714285714 y9_t401280
-   + 0.05 y12_t401280 - 0.05 y14_t401280 - 0.05 y16_t401280
-   + 0.05 y17_t401280 + 0.05 y18_t401280 + 0.05 y2_t401281
-   + 0.05 y4_t401281 - 0.05 y5_t401281 - 0.05 y8_t401281 + 0.05 y9_t401281
-   - 0.05 y12_t401281 + 0.05 y14_t401281 - 0.0384615384615385 y15_t401281
-   + 0.05 y16_t401281 - 0.05 y2_t401282 - 0.05 y4_t401282 - 0.05 y6_t401282
-   + 0.03 y8_t401282 + 0.05 y9_t401282 - 0.0416666666666667 y14_t401282
-   + 0.01 y15_t401282 - 0.05 y16_t401282 + 0.05 y17_t401282
-   + 0.05 y18_t401282 + 0.05 y2_t401283 + 0.05 y6_t401283 - 0.05 y8_t401283
-   - 0.05 y9_t401283 + 0.05 y12_t401283 + 0.05 y14_t401283
-   - 0.05 y16_t401283 + 0.05 y19_t401283 - 0.05 y20_t401283
-   - 0.05 y4_t401284 + 0.05 y5_t401284 + 0.05 y7_t401284 - 0.05 y8_t401284
-   - 0.05 y9_t401284 + 0.05 y12_t401284 - 0.05 y13_t401284
-   - 0.05 y17_t401284 + 0.05 y18_t401284 + 0.05 y19_t401284
-   + 0.0166666666666667 y22_t401284 + 0.05 y23_t401284 - 0.03 y25_t401284
-   + 0.05 y26_t401284 - 0.05 y4_t401285 + 0.05 y6_t401285
-   - 0.0166666666666667 y7_t401285 + 0.05 y10_t401285 - 0.05 y11_t401285
-   - 0.0357142857142857 y13_t401285 + 0.05 y14_t401285 + 0.05 y15_t401285
-   + 0.05 y17_t401285 - 0.05 y20_t401285 + 0.05 y21_t401285
-   - 0.05 y24_t401285 + 0.05 y25_t401285 - 0.05 y26_t401285
-   + 0.05 y1_t401286 - 0.05 y5_t401286 - 0.05 y7_t401286 + 0.05 y8_t401286
-   - 0.05 y11_t401286 - 0.0333333333333333 y12_t401286 + 0.05 y13_t401286
-   - 0.05 y16_t401286 + 0.05 y17_t401286 + 0.01 y20_t401286
-   - 0.05 y21_t401286 + 0.05 y22_t401286 - 0.05 y2_t401287
-   - 0.05 y6_t401287 + 0.05 y7_t401287 + 0.05 y8_t401287 - 0.05 y10_t401287
-   + 0.05 y11_t401287 + 0.05 y14_t401287 + 0.05 y16_t401287
-   - 0.05 y17_t401287 - 0.05 y20_t401287 + 0.05 y21_t401287
-   - 0.05 y22_t401287 - 0.05 y3_t401288 + 0.05 y5_t401288 - 0.05 y7_t401288
-   + 0.05 y8_t401288 + 0.05 y10_t401288 + 0.05 y12_t401288
-   - 0.05 y13_t401288 + 0.05 y15_t401288 - 0.05 y18_t401288
-   + 0.05 y20_t401288 - 0.05 y21_t401288 - 0.05 y24_t401288
-   + 0.05 y25_t401288 - 0.05 y26_t401288 + 0.05 y4_t401289
-   - 0.05 y5_t401289 - 0.0431034482758621 y8_t401289
-   + 0.0166666666666667 y9_t401289 - 0.05 y10_t401289 + 0.05 y11_t401289
-   - 0.05 y13_t401289 + 0.05 y15_t401289 - 0.05 y17_t401289
-   + 0.05 y18_t401289 - 0.05 y5_t401290 + 0.05 y7_t401290 - 0.05 y9_t401290
-   + 0.05 y10_t401290 + 0.05 y12_t401290 + 0.05 y14_t401290
-   - 0.05 y15_t401290 + 0.05 y17_t401290 + 0.05 y20_t401290
-   - 0.05 y21_t401290 + 0.05 y22_t401290 + 0.05 y3_t401291
-   - 0.05 y4_t401291 + 0.05 y6_t401291 - 0.05 y9_t401291 - 0.05 y12_t401291
-   + 0.05 y13_t401291 + 0.05 y15_t401291 - 0.05 y17_t401291
-   + 0.05 y18_t401291 - 0.05 y4_t401292 + 0.0333333333333333 y6_t401292
-   - 0.05 y7_t401292 - 0.05 y8_t401292 - 0.05 y11_t401292
-   + 0.05 y13_t401292 - 0.05 y14_t401292 + 0.05 y16_t401292
-   + 0.05 y18_t401292 + 0.05 y20_t401292 - 0.05 y5_t401293
-   + 0.0269230769230769 y6_t401293 - 0.05 y7_t401293 + 0.05 y8_t401293
-   - 0.0409090909090909 y12_t401293 - 0.05 y13_t401293 - 0.05 y15_t401293
-   + 0.05 y16_t401293 + 0.05 y17_t401293 + 0.05 y18_t401293
-   + 0.05 y2_t401294 + 0.05 y6_t401294 - 0.05 y7_t401294 - 0.05 y8_t401294
-   - 0.05 y11_t401294 + 0.05 y12_t401294 + 0.05 y13_t401294
-   + 0.05 y15_t401294 - 0.05 y18_t401294 + 0.05 y19_t401294
-   - 0.05 y20_t401294 + 0.05 y4_t401295 - 0.05 y5_t401295 - 0.05 y6_t401295
-   + 0.05 y8_t401295 - 0.05 y11_t401295 + 0.05 y12_t401295
-   + 0.05 y13_t401295 + 0.05 y16_t401295 - 0.05 y17_t401295
-   - 0.05 y20_t401295 + 0.05 y21_t401295 + 0.05 y22_t401295
-   + 0.05 y3_t401296 - 0.0426829268292683 y6_t401296 + 0.05 y7_t401296
-   + 0.05 y9_t401296 - 0.05 y10_t401296 + 0.05 y11_t401296
-   + 0.05 y14_t401296 - 0.05 y15_t401296 + 0.05 y18_t401296
-   - 0.05 y19_t401296 + 0.05 y20_t401296 - 0.05 y5_t401297
-   - 0.01 y6_t401297 + 0.0136363636363636 y8_t401297 - 0.05 y9_t401297
-   + 0.05 y11_t401297 - 0.05 y13_t401297 + 0.05 y14_t401297
-   + 0.05 y15_t401297 + 0.05 y16_t401297 + 0.05 y2_t401298
-   + 0.05 y5_t401298 - 0.05 y6_t401298 + 0.05 y7_t401298 - 0.05 y12_t401298
-   + 0.05 y13_t401298 - 0.05 y14_t401298 + 0.05 y15_t401298
-   - 0.05 y18_t401298 + 0.05 y20_t401298 + 0.0166666666666667 y21_t401298
-   + 0.05 y22_t401298 - 0.05 y5_t401299 + 0.0428571428571429 y6_t401299
-   - 0.05 y7_t401299 + 0.05 y9_t401299 - 0.04 y11_t401299
-   - 0.05 y12_t401299 + 0.05 y13_t401299 + 0.05 y16_t401299
-   - 0.05 y17_t401299 + 0.05 y19_t401299 + 0.05 y21_t401299
-   - 0.05 y22_t401299 >= 0.0001
+ rightMutuallyExclusivePlanesVar_f8_t18_v12: y13_t798
+   + rightMutuallyExclusivePlanesVar_f8_th0.041305555030703545 <= 1
+ rightPlanesDominatesLeftFlowConstr_t18_v12: y14_t798
+   - rightMutuallyExclusivePlanesVar_f8_th0 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f8_t18_v12: 1e-05 y13_t798
+   + 0.0413055550307035 rightMutuallyExclusivePlanesVar_f8_th0
+   <= 0.0413055550307035
+ rightPlanesDominatesLeftFlowConstr_eps_t18_v12: 1e-05 y14_t798
+   - 0.0413055550307035 rightMutuallyExclusivePlanesVar_f8_th0.041305555030703545
+   <= 0
+ rightPlanesOrderConstr_f8_th0.041305555030703545:
+   rightMutuallyExclusivePlanesVar_f8_th0
+   - rightMutuallyExclusivePlanesVar_f8_th0.041305555030703545 >= 0
+ rightMutuallyExclusivePlanesVar_f8_t19_v1: y2_t799
+   + rightMutuallyExclusivePlanesVar_f8_th0.0541333332657814 <= 1
+ rightPlanesDominatesLeftFlowConstr_t19_v1: y5_t799
+   - rightMutuallyExclusivePlanesVar_f8_th0.041305555030703545 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f8_t19_v1: 1e-05 y2_t799
+   + 0.0128277782350779 rightMutuallyExclusivePlanesVar_f8_th0.041305555030703545
+   <= 0.0128277782350779
+ rightPlanesDominatesLeftFlowConstr_eps_t19_v1: 1e-05 y5_t799
+   - 0.0128277782350779 rightMutuallyExclusivePlanesVar_f8_th0.0541333332657814
+   <= 0
+ rightPlanesOrderConstr_f8_th0.0541333332657814:
+   rightMutuallyExclusivePlanesVar_f8_th0.041305555030703545
+   - rightMutuallyExclusivePlanesVar_f8_th0.0541333332657814 >= 0
+ rightMutuallyExclusivePlanesVar_f8_t2_v8: y9_t782
+   + rightMutuallyExclusivePlanesVar_f8_th0.054419444873929024 <= 1
+ rightPlanesDominatesLeftFlowConstr_t2_v8: y12_t782
+   - rightMutuallyExclusivePlanesVar_f8_th0.0541333332657814 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f8_t2_v8: 1e-05 y9_t782
+   + 2.8611160814762115e-04 rightMutuallyExclusivePlanesVar_f8_th0.0541333332657814
+   <= 2.8611160814762115e-04
+ rightPlanesDominatesLeftFlowConstr_eps_t2_v8: 1e-05 y12_t782
+   - 2.8611160814762115e-04 rightMutuallyExclusivePlanesVar_f8_th0.054419444873929024
+   <= 0
+ rightPlanesOrderConstr_f8_th0.054419444873929024:
+   rightMutuallyExclusivePlanesVar_f8_th0.0541333332657814
+   - rightMutuallyExclusivePlanesVar_f8_th0.054419444873929024 >= 0
+ rightMutuallyExclusivePlanesVar_f8_t0_v8: y9_t780
+   + rightMutuallyExclusivePlanesVar_f8_th0.061391666531562805 <= 1
+ rightPlanesDominatesLeftFlowConstr_t0_v8: y12_t780
+   - rightMutuallyExclusivePlanesVar_f8_th0.054419444873929024 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f8_t0_v8: 1e-05 y9_t780
+   + 0.00697222165763378 rightMutuallyExclusivePlanesVar_f8_th0.054419444873929024
+   <= 0.00697222165763378
+ rightPlanesDominatesLeftFlowConstr_eps_t0_v8: 1e-05 y12_t780
+   - 0.00697222165763378 rightMutuallyExclusivePlanesVar_f8_th0.061391666531562805
+   <= 0
+ rightPlanesOrderConstr_f8_th0.061391666531562805:
+   rightMutuallyExclusivePlanesVar_f8_th0.054419444873929024
+   - rightMutuallyExclusivePlanesVar_f8_th0.061391666531562805 >= 0
+ rightMutuallyExclusivePlanesVar_f8_t8_v5: y6_t788
+   + rightMutuallyExclusivePlanesVar_f8_th0.07651111111044884 <= 1
+ rightPlanesDominatesLeftFlowConstr_t8_v5: y7_t788
+   - rightMutuallyExclusivePlanesVar_f8_th0.061391666531562805 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f8_t8_v5: 1e-05 y6_t788
+   + 0.015119444578886 rightMutuallyExclusivePlanesVar_f8_th0.061391666531562805
+   <= 0.015119444578886
+ rightPlanesDominatesLeftFlowConstr_eps_t8_v5: 1e-05 y7_t788
+   - 0.015119444578886 rightMutuallyExclusivePlanesVar_f8_th0.07651111111044884
+   <= 0
+ rightPlanesOrderConstr_f8_th0.07651111111044884:
+   rightMutuallyExclusivePlanesVar_f8_th0.061391666531562805
+   - rightMutuallyExclusivePlanesVar_f8_th0.07651111111044884 >= 0
+ rightMutuallyExclusivePlanesVar_f8_t12_v8: y9_t792
+   + rightMutuallyExclusivePlanesVar_f8_th0.08008888736367226 <= 1
+ rightPlanesDominatesLeftFlowConstr_t12_v8: y12_t792
+   - rightMutuallyExclusivePlanesVar_f8_th0.07651111111044884 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f8_t12_v8: 1e-05 y9_t792
+   + 0.00357777625322342 rightMutuallyExclusivePlanesVar_f8_th0.07651111111044884
+   <= 0.00357777625322342
+ rightPlanesDominatesLeftFlowConstr_eps_t12_v8: 1e-05 y12_t792
+   - 0.00357777625322342 rightMutuallyExclusivePlanesVar_f8_th0.08008888736367226
+   <= 0
+ rightMutuallyExclusivePlanesVar_f8_t16_v8: y9_t796
+   + rightMutuallyExclusivePlanesVar_f8_th0.08008888736367226 <= 1
+ rightPlanesDominatesLeftFlowConstr_t16_v8: y12_t796
+   - rightMutuallyExclusivePlanesVar_f8_th0.07651111111044884 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f8_t16_v8: 1e-05 y9_t796
+   + 0.00357777625322342 rightMutuallyExclusivePlanesVar_f8_th0.07651111111044884
+   <= 0.00357777625322342
+ rightPlanesDominatesLeftFlowConstr_eps_t16_v8: 1e-05 y12_t796
+   - 0.00357777625322342 rightMutuallyExclusivePlanesVar_f8_th0.08008888736367226
+   <= 0
+ rightPlanesOrderConstr_f8_th0.08008888736367226:
+   rightMutuallyExclusivePlanesVar_f8_th0.07651111111044884
+   - rightMutuallyExclusivePlanesVar_f8_th0.08008888736367226 >= 0
+ rightMutuallyExclusivePlanesVar_f8_t13_v8: y9_t793
+   + rightMutuallyExclusivePlanesVar_f8_th0.0955333337187767 <= 1
+ rightPlanesDominatesLeftFlowConstr_t13_v8: y12_t793
+   - rightMutuallyExclusivePlanesVar_f8_th0.08008888736367226 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f8_t13_v8: 1e-05 y9_t793
+   + 0.0154444463551044 rightMutuallyExclusivePlanesVar_f8_th0.08008888736367226
+   <= 0.0154444463551044
+ rightPlanesDominatesLeftFlowConstr_eps_t13_v8: 1e-05 y12_t793
+   - 0.0154444463551044 rightMutuallyExclusivePlanesVar_f8_th0.0955333337187767
+   <= 0
+ rightMutuallyExclusivePlanesVar_f8_t17_v5: y6_t797
+   + rightMutuallyExclusivePlanesVar_f8_th0.0955333337187767 <= 1
+ rightPlanesDominatesLeftFlowConstr_t17_v5: y7_t797
+   - rightMutuallyExclusivePlanesVar_f8_th0.08008888736367226 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f8_t17_v5: 1e-05 y6_t797
+   + 0.0154444463551044 rightMutuallyExclusivePlanesVar_f8_th0.08008888736367226
+   <= 0.0154444463551044
+ rightPlanesDominatesLeftFlowConstr_eps_t17_v5: 1e-05 y7_t797
+   - 0.0154444463551044 rightMutuallyExclusivePlanesVar_f8_th0.0955333337187767
+   <= 0
+ rightPlanesOrderConstr_f8_th0.0955333337187767:
+   rightMutuallyExclusivePlanesVar_f8_th0.08008888736367226
+   - rightMutuallyExclusivePlanesVar_f8_th0.0955333337187767 >= 0
+ rightMutuallyExclusivePlanesVar_f8_t15_v9: y10_t795
+   + rightMutuallyExclusivePlanesVar_f8_th0.09651888906955719 <= 1
+ rightPlanesDominatesLeftFlowConstr_t15_v9: y11_t795
+   - rightMutuallyExclusivePlanesVar_f8_th0.0955333337187767 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f8_t15_v9: 1e-05 y10_t795
+   + 9.8555535078048706e-04 rightMutuallyExclusivePlanesVar_f8_th0.0955333337187767
+   <= 9.8555535078048706e-04
+ rightPlanesDominatesLeftFlowConstr_eps_t15_v9: 1e-05 y11_t795
+   - 9.8555535078048706e-04 rightMutuallyExclusivePlanesVar_f8_th0.09651888906955719
+   <= 0
+ rightPlanesOrderConstr_f8_th0.09651888906955719:
+   rightMutuallyExclusivePlanesVar_f8_th0.0955333337187767
+   - rightMutuallyExclusivePlanesVar_f8_th0.09651888906955719 >= 0
+ rightMutuallyExclusivePlanesVar_f8_t8_v2: y3_t788
+   + rightMutuallyExclusivePlanesVar_f8_th0.10388500243425369 <= 1
+ rightPlanesDominatesLeftFlowConstr_t8_v2: y4_t788
+   - rightMutuallyExclusivePlanesVar_f8_th0.09651888906955719 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f8_t8_v2: 1e-05 y3_t788
+   + 0.0073661133646965 rightMutuallyExclusivePlanesVar_f8_th0.09651888906955719
+   <= 0.0073661133646965
+ rightPlanesDominatesLeftFlowConstr_eps_t8_v2: 1e-05 y4_t788
+   - 0.0073661133646965 rightMutuallyExclusivePlanesVar_f8_th0.10388500243425369
+   <= 0
+ rightPlanesOrderConstr_f8_th0.10388500243425369:
+   rightMutuallyExclusivePlanesVar_f8_th0.09651888906955719
+   - rightMutuallyExclusivePlanesVar_f8_th0.10388500243425369 >= 0
+ rightMutuallyExclusivePlanesVar_f8_t19_v5: y6_t799
+   + rightMutuallyExclusivePlanesVar_f8_th0.1087755560874939 <= 1
+ rightPlanesDominatesLeftFlowConstr_t19_v5: y7_t799
+   - rightMutuallyExclusivePlanesVar_f8_th0.10388500243425369 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f8_t19_v5: 1e-05 y6_t799
+   + 0.0048905536532402 rightMutuallyExclusivePlanesVar_f8_th0.10388500243425369
+   <= 0.0048905536532402
+ rightPlanesDominatesLeftFlowConstr_eps_t19_v5: 1e-05 y7_t799
+   - 0.0048905536532402 rightMutuallyExclusivePlanesVar_f8_th0.1087755560874939
+   <= 0
+ rightPlanesOrderConstr_f8_th0.1087755560874939:
+   rightMutuallyExclusivePlanesVar_f8_th0.10388500243425369
+   - rightMutuallyExclusivePlanesVar_f8_th0.1087755560874939 >= 0
+ rightMutuallyExclusivePlanesVar_f8_t3_v9: y10_t783
+   + rightMutuallyExclusivePlanesVar_f8_th0.11599055305123329 <= 1
+ rightPlanesDominatesLeftFlowConstr_t3_v9: y11_t783
+   - rightMutuallyExclusivePlanesVar_f8_th0.1087755560874939 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f8_t3_v9: 1e-05 y10_t783
+   + 0.0072149969637394 rightMutuallyExclusivePlanesVar_f8_th0.1087755560874939
+   <= 0.0072149969637394
+ rightPlanesDominatesLeftFlowConstr_eps_t3_v9: 1e-05 y11_t783
+   - 0.0072149969637394 rightMutuallyExclusivePlanesVar_f8_th0.11599055305123329
+   <= 0
+ rightPlanesOrderConstr_f8_th0.11599055305123329:
+   rightMutuallyExclusivePlanesVar_f8_th0.1087755560874939
+   - rightMutuallyExclusivePlanesVar_f8_th0.11599055305123329 >= 0
+ rightMutuallyExclusivePlanesVar_f8_t1_v9: y10_t781
+   + rightMutuallyExclusivePlanesVar_f8_th0.11733222007751465 <= 1
+ rightPlanesDominatesLeftFlowConstr_t1_v9: y11_t781
+   - rightMutuallyExclusivePlanesVar_f8_th0.11599055305123329 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f8_t1_v9: 1e-05 y10_t781
+   + 0.00134166702628136 rightMutuallyExclusivePlanesVar_f8_th0.11599055305123329
+   <= 0.00134166702628136
+ rightPlanesDominatesLeftFlowConstr_eps_t1_v9: 1e-05 y11_t781
+   - 0.00134166702628136 rightMutuallyExclusivePlanesVar_f8_th0.11733222007751465
+   <= 0
+ rightPlanesOrderConstr_f8_th0.11733222007751465:
+   rightMutuallyExclusivePlanesVar_f8_th0.11599055305123329
+   - rightMutuallyExclusivePlanesVar_f8_th0.11733222007751465 >= 0
+ rightMutuallyExclusivePlanesVar_f8_t14_v5: y6_t794
+   + rightMutuallyExclusivePlanesVar_f8_th0.16298333555459976 <= 1
+ rightPlanesDominatesLeftFlowConstr_t14_v5: y7_t794
+   - rightMutuallyExclusivePlanesVar_f8_th0.11733222007751465 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f8_t14_v5: 1e-05 y6_t794
+   + 0.0456511154770851 rightMutuallyExclusivePlanesVar_f8_th0.11733222007751465
+   <= 0.0456511154770851
+ rightPlanesDominatesLeftFlowConstr_eps_t14_v5: 1e-05 y7_t794
+   - 0.0456511154770851 rightMutuallyExclusivePlanesVar_f8_th0.16298333555459976
+   <= 0
+ rightPlanesOrderConstr_f8_th0.16298333555459976:
+   rightMutuallyExclusivePlanesVar_f8_th0.11733222007751465
+   - rightMutuallyExclusivePlanesVar_f8_th0.16298333555459976 >= 0
+ rightMutuallyExclusivePlanesVar_f8_t1_v2: y3_t781
+   + rightMutuallyExclusivePlanesVar_f8_th0.1893077716231346 <= 1
+ rightPlanesDominatesLeftFlowConstr_t1_v2: y4_t781
+   - rightMutuallyExclusivePlanesVar_f8_th0.16298333555459976 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f8_t1_v2: 1e-05 y3_t781
+   + 0.0263244360685349 rightMutuallyExclusivePlanesVar_f8_th0.16298333555459976
+   <= 0.0263244360685349
+ rightPlanesDominatesLeftFlowConstr_eps_t1_v2: 1e-05 y4_t781
+   - 0.0263244360685349 rightMutuallyExclusivePlanesVar_f8_th0.1893077716231346
+   <= 0
+ rightPlanesOrderConstr_f8_th0.1893077716231346:
+   rightMutuallyExclusivePlanesVar_f8_th0.16298333555459976
+   - rightMutuallyExclusivePlanesVar_f8_th0.1893077716231346 >= 0
+ rightMutuallyExclusivePlanesVar_f8_t18_v2: y3_t798
+   + rightMutuallyExclusivePlanesVar_f8_th0.19140110909938812 <= 1
+ rightPlanesDominatesLeftFlowConstr_t18_v2: y4_t798
+   - rightMutuallyExclusivePlanesVar_f8_th0.1893077716231346 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f8_t18_v2: 1e-05 y3_t798
+   + 0.00209333747625351 rightMutuallyExclusivePlanesVar_f8_th0.1893077716231346
+   <= 0.00209333747625351
+ rightPlanesDominatesLeftFlowConstr_eps_t18_v2: 1e-05 y4_t798
+   - 0.00209333747625351 rightMutuallyExclusivePlanesVar_f8_th0.19140110909938812
+   <= 0
+ rightPlanesOrderConstr_f8_th0.19140110909938812:
+   rightMutuallyExclusivePlanesVar_f8_th0.1893077716231346
+   - rightMutuallyExclusivePlanesVar_f8_th0.19140110909938812 >= 0
+ rightMutuallyExclusivePlanesVar_f8_t6_v0: y1_t786
+   + rightMutuallyExclusivePlanesVar_f8_th0.2040816694498062 <= 1
+ rightPlanesDominatesLeftFlowConstr_t6_v0: y8_t786
+   - rightMutuallyExclusivePlanesVar_f8_th0.19140110909938812 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f8_t6_v0: 1e-05 y1_t786
+   + 0.0126805603504181 rightMutuallyExclusivePlanesVar_f8_th0.19140110909938812
+   <= 0.0126805603504181
+ rightPlanesDominatesLeftFlowConstr_eps_t6_v0: 1e-05 y8_t786
+   - 0.0126805603504181 rightMutuallyExclusivePlanesVar_f8_th0.2040816694498062
+   <= 0
+ rightPlanesOrderConstr_f8_th0.2040816694498062:
+   rightMutuallyExclusivePlanesVar_f8_th0.19140110909938812
+   - rightMutuallyExclusivePlanesVar_f8_th0.2040816694498062 >= 0
+ rightMutuallyExclusivePlanesVar_f8_t7_v0: y1_t787
+   + rightMutuallyExclusivePlanesVar_f8_th0.21203555166721344 <= 1
+ rightPlanesDominatesLeftFlowConstr_t7_v0: y8_t787
+   - rightMutuallyExclusivePlanesVar_f8_th0.2040816694498062 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f8_t7_v0: 1e-05 y1_t787
+   + 0.00795388221740723 rightMutuallyExclusivePlanesVar_f8_th0.2040816694498062
+   <= 0.00795388221740723
+ rightPlanesDominatesLeftFlowConstr_eps_t7_v0: 1e-05 y8_t787
+   - 0.00795388221740723 rightMutuallyExclusivePlanesVar_f8_th0.21203555166721344
+   <= 0
+ rightMutuallyExclusivePlanesVar_f8_t19_v9: y10_t799
+   + rightMutuallyExclusivePlanesVar_f8_th0.21203555166721344 <= 1
+ rightPlanesDominatesLeftFlowConstr_t19_v9: y11_t799
+   - rightMutuallyExclusivePlanesVar_f8_th0.2040816694498062 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f8_t19_v9: 1e-05 y10_t799
+   + 0.00795388221740723 rightMutuallyExclusivePlanesVar_f8_th0.2040816694498062
+   <= 0.00795388221740723
+ rightPlanesDominatesLeftFlowConstr_eps_t19_v9: 1e-05 y11_t799
+   - 0.00795388221740723 rightMutuallyExclusivePlanesVar_f8_th0.21203555166721344
+   <= 0
+ rightPlanesOrderConstr_f8_th0.21203555166721344:
+   rightMutuallyExclusivePlanesVar_f8_th0.2040816694498062
+   - rightMutuallyExclusivePlanesVar_f8_th0.21203555166721344 >= 0
+ rightMutuallyExclusivePlanesVar_f8_t11_v0: y1_t791
+   + rightMutuallyExclusivePlanesVar_f8_th0.21335944533348083 <= 1
+ rightPlanesDominatesLeftFlowConstr_t11_v0: y8_t791
+   - rightMutuallyExclusivePlanesVar_f8_th0.21203555166721344 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f8_t11_v0: 1e-05 y1_t791
+   + 0.0013238936662674 rightMutuallyExclusivePlanesVar_f8_th0.21203555166721344
+   <= 0.0013238936662674
+ rightPlanesDominatesLeftFlowConstr_eps_t11_v0: 1e-05 y8_t791
+   - 0.0013238936662674 rightMutuallyExclusivePlanesVar_f8_th0.21335944533348083
+   <= 0
+ rightPlanesOrderConstr_f8_th0.21335944533348083:
+   rightMutuallyExclusivePlanesVar_f8_th0.21203555166721344
+   - rightMutuallyExclusivePlanesVar_f8_th0.21335944533348083 >= 0
+ rightMutuallyExclusivePlanesVar_f8_t10_v8: y9_t790
+   + rightMutuallyExclusivePlanesVar_f8_th0.234507218003273 <= 1
+ rightPlanesDominatesLeftFlowConstr_t10_v8: y12_t790
+   - rightMutuallyExclusivePlanesVar_f8_th0.21335944533348083 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f8_t10_v8: 1e-05 y9_t790
+   + 0.0211477726697922 rightMutuallyExclusivePlanesVar_f8_th0.21335944533348083
+   <= 0.0211477726697922
+ rightPlanesDominatesLeftFlowConstr_eps_t10_v8: 1e-05 y12_t790
+   - 0.0211477726697922 rightMutuallyExclusivePlanesVar_f8_th0.234507218003273
+   <= 0
+ rightPlanesOrderConstr_f8_th0.234507218003273:
+   rightMutuallyExclusivePlanesVar_f8_th0.21335944533348083
+   - rightMutuallyExclusivePlanesVar_f8_th0.234507218003273 >= 0
+ rightMutuallyExclusivePlanesVar_f8_t3_v1: y2_t783
+   + rightMutuallyExclusivePlanesVar_f8_th0.23702888935804367 <= 1
+ rightPlanesDominatesLeftFlowConstr_t3_v1: y5_t783
+   - rightMutuallyExclusivePlanesVar_f8_th0.234507218003273 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f8_t3_v1: 1e-05 y2_t783
+   + 0.00252167135477066 rightMutuallyExclusivePlanesVar_f8_th0.234507218003273
+   <= 0.00252167135477066
+ rightPlanesDominatesLeftFlowConstr_eps_t3_v1: 1e-05 y5_t783
+   - 0.00252167135477066 rightMutuallyExclusivePlanesVar_f8_th0.23702888935804367
+   <= 0
+ rightPlanesOrderConstr_f8_th0.23702888935804367:
+   rightMutuallyExclusivePlanesVar_f8_th0.234507218003273
+   - rightMutuallyExclusivePlanesVar_f8_th0.23702888935804367 >= 0
+ rightMutuallyExclusivePlanesVar_f8_t9_v2: y3_t789
+   + rightMutuallyExclusivePlanesVar_f8_th0.24018388986587524 <= 1
+ rightPlanesDominatesLeftFlowConstr_t9_v2: y4_t789
+   - rightMutuallyExclusivePlanesVar_f8_th0.23702888935804367 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f8_t9_v2: 1e-05 y3_t789
+   + 0.00315500050783157 rightMutuallyExclusivePlanesVar_f8_th0.23702888935804367
+   <= 0.00315500050783157
+ rightPlanesDominatesLeftFlowConstr_eps_t9_v2: 1e-05 y4_t789
+   - 0.00315500050783157 rightMutuallyExclusivePlanesVar_f8_th0.24018388986587524
+   <= 0
+ rightPlanesOrderConstr_f8_th0.24018388986587524:
+   rightMutuallyExclusivePlanesVar_f8_th0.23702888935804367
+   - rightMutuallyExclusivePlanesVar_f8_th0.24018388986587524 >= 0
+ rightMutuallyExclusivePlanesVar_f8_t8_v0: y1_t788
+   + rightMutuallyExclusivePlanesVar_f8_th0.26197388768196106 <= 1
+ rightPlanesDominatesLeftFlowConstr_t8_v0: y8_t788
+   - rightMutuallyExclusivePlanesVar_f8_th0.24018388986587524 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f8_t8_v0: 1e-05 y1_t788
+   + 0.0217899978160858 rightMutuallyExclusivePlanesVar_f8_th0.24018388986587524
+   <= 0.0217899978160858
+ rightPlanesDominatesLeftFlowConstr_eps_t8_v0: 1e-05 y8_t788
+   - 0.0217899978160858 rightMutuallyExclusivePlanesVar_f8_th0.26197388768196106
+   <= 0
+ rightPlanesOrderConstr_f8_th0.26197388768196106:
+   rightMutuallyExclusivePlanesVar_f8_th0.24018388986587524
+   - rightMutuallyExclusivePlanesVar_f8_th0.26197388768196106 >= 0
+ rightMutuallyExclusivePlanesVar_f8_t14_v0: y1_t794
+   + rightMutuallyExclusivePlanesVar_f8_th0.28935833275318146 <= 1
+ rightPlanesDominatesLeftFlowConstr_t14_v0: y8_t794
+   - rightMutuallyExclusivePlanesVar_f8_th0.26197388768196106 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f8_t14_v0: 1e-05 y1_t794
+   + 0.0273844450712204 rightMutuallyExclusivePlanesVar_f8_th0.26197388768196106
+   <= 0.0273844450712204
+ rightPlanesDominatesLeftFlowConstr_eps_t14_v0: 1e-05 y8_t794
+   - 0.0273844450712204 rightMutuallyExclusivePlanesVar_f8_th0.28935833275318146
+   <= 0
+ rightPlanesOrderConstr_f8_th0.28935833275318146:
+   rightMutuallyExclusivePlanesVar_f8_th0.26197388768196106
+   - rightMutuallyExclusivePlanesVar_f8_th0.28935833275318146 >= 0
+ rightMutuallyExclusivePlanesVar_f8_t5_v0: y1_t785
+   + rightMutuallyExclusivePlanesVar_f8_th0.28969332575798035 <= 1
+ rightPlanesDominatesLeftFlowConstr_t5_v0: y8_t785
+   - rightMutuallyExclusivePlanesVar_f8_th0.28935833275318146 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f8_t5_v0: 1e-05 y1_t785
+   + 0.000334993 rightMutuallyExclusivePlanesVar_f8_th0.28935833275318146
+   <= 0.000334993
+ rightPlanesDominatesLeftFlowConstr_eps_t5_v0: 1e-05 y8_t785
+   - 0.000334993 rightMutuallyExclusivePlanesVar_f8_th0.28969332575798035
+   <= 0
+ rightPlanesOrderConstr_f8_th0.28969332575798035:
+   rightMutuallyExclusivePlanesVar_f8_th0.28935833275318146
+   - rightMutuallyExclusivePlanesVar_f8_th0.28969332575798035 >= 0
+ rightMutuallyExclusivePlanesVar_f8_t17_v0: y1_t797
+   + rightMutuallyExclusivePlanesVar_f8_th0.2920183390378952 <= 1
+ rightPlanesDominatesLeftFlowConstr_t17_v0: y8_t797
+   - rightMutuallyExclusivePlanesVar_f8_th0.28969332575798035 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f8_t17_v0: 1e-05 y1_t797
+   + 0.00232501327991486 rightMutuallyExclusivePlanesVar_f8_th0.28969332575798035
+   <= 0.00232501327991486
+ rightPlanesDominatesLeftFlowConstr_eps_t17_v0: 1e-05 y8_t797
+   - 0.00232501327991486 rightMutuallyExclusivePlanesVar_f8_th0.2920183390378952
+   <= 0
+ rightPlanesOrderConstr_f8_th0.2920183390378952:
+   rightMutuallyExclusivePlanesVar_f8_th0.28969332575798035
+   - rightMutuallyExclusivePlanesVar_f8_th0.2920183390378952 >= 0
+ rightMutuallyExclusivePlanesVar_f8_t6_v12: y13_t786
+   + rightMutuallyExclusivePlanesVar_f8_th0.3015383332967758 <= 1
+ rightPlanesDominatesLeftFlowConstr_t6_v12: y14_t786
+   - rightMutuallyExclusivePlanesVar_f8_th0.2920183390378952 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f8_t6_v12: 1e-05 y13_t786
+   + 0.00951999425888062 rightMutuallyExclusivePlanesVar_f8_th0.2920183390378952
+   <= 0.00951999425888062
+ rightPlanesDominatesLeftFlowConstr_eps_t6_v12: 1e-05 y14_t786
+   - 0.00951999425888062 rightMutuallyExclusivePlanesVar_f8_th0.3015383332967758
+   <= 0
+ rightPlanesOrderConstr_f8_th0.3015383332967758:
+   rightMutuallyExclusivePlanesVar_f8_th0.2920183390378952
+   - rightMutuallyExclusivePlanesVar_f8_th0.3015383332967758 >= 0
+ rightMutuallyExclusivePlanesVar_f8_t2_v1: y2_t782
+   + rightMutuallyExclusivePlanesVar_f8_th0.30257222056388855 <= 1
+ rightPlanesDominatesLeftFlowConstr_t2_v1: y5_t782
+   - rightMutuallyExclusivePlanesVar_f8_th0.3015383332967758 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f8_t2_v1: 1e-05 y2_t782
+   + 0.00103388726711273 rightMutuallyExclusivePlanesVar_f8_th0.3015383332967758
+   <= 0.00103388726711273
+ rightPlanesDominatesLeftFlowConstr_eps_t2_v1: 1e-05 y5_t782
+   - 0.00103388726711273 rightMutuallyExclusivePlanesVar_f8_th0.30257222056388855
+   <= 0
+ rightPlanesOrderConstr_f8_th0.30257222056388855:
+   rightMutuallyExclusivePlanesVar_f8_th0.3015383332967758
+   - rightMutuallyExclusivePlanesVar_f8_th0.30257222056388855 >= 0
+ rightMutuallyExclusivePlanesVar_f8_t0_v1: y2_t780
+   + rightMutuallyExclusivePlanesVar_f8_th0.3590305596590042 <= 1
+ rightPlanesDominatesLeftFlowConstr_t0_v1: y5_t780
+   - rightMutuallyExclusivePlanesVar_f8_th0.30257222056388855 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f8_t0_v1: 1e-05 y2_t780
+   + 0.0564583390951157 rightMutuallyExclusivePlanesVar_f8_th0.30257222056388855
+   <= 0.0564583390951157
+ rightPlanesDominatesLeftFlowConstr_eps_t0_v1: 1e-05 y5_t780
+   - 0.0564583390951157 rightMutuallyExclusivePlanesVar_f8_th0.3590305596590042
+   <= 0
+ rightPlanesOrderConstr_f8_th0.3590305596590042:
+   rightMutuallyExclusivePlanesVar_f8_th0.30257222056388855
+   - rightMutuallyExclusivePlanesVar_f8_th0.3590305596590042 >= 0
+ rightMutuallyExclusivePlanesVar_f8_t13_v5: y6_t793
+   + rightMutuallyExclusivePlanesVar_f8_th0.42267611622810364 <= 1
+ rightPlanesDominatesLeftFlowConstr_t13_v5: y7_t793
+   - rightMutuallyExclusivePlanesVar_f8_th0.3590305596590042 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f8_t13_v5: 1e-05 y6_t793
+   + 0.0636455565690994 rightMutuallyExclusivePlanesVar_f8_th0.3590305596590042
+   <= 0.0636455565690994
+ rightPlanesDominatesLeftFlowConstr_eps_t13_v5: 1e-05 y7_t793
+   - 0.0636455565690994 rightMutuallyExclusivePlanesVar_f8_th0.42267611622810364
+   <= 0
+ rightPlanesOrderConstr_f8_th0.42267611622810364:
+   rightMutuallyExclusivePlanesVar_f8_th0.3590305596590042
+   - rightMutuallyExclusivePlanesVar_f8_th0.42267611622810364 >= 0
+ rightMutuallyExclusivePlanesVar_f8_t9_v5: y6_t789
+   + rightMutuallyExclusivePlanesVar_f8_th0.4443711191415787 <= 1
+ rightPlanesDominatesLeftFlowConstr_t9_v5: y7_t789
+   - rightMutuallyExclusivePlanesVar_f8_th0.42267611622810364 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f8_t9_v5: 1e-05 y6_t789
+   + 0.021695002913475 rightMutuallyExclusivePlanesVar_f8_th0.42267611622810364
+   <= 0.021695002913475
+ rightPlanesDominatesLeftFlowConstr_eps_t9_v5: 1e-05 y7_t789
+   - 0.021695002913475 rightMutuallyExclusivePlanesVar_f8_th0.4443711191415787
+   <= 0
+ rightPlanesOrderConstr_f8_th0.4443711191415787:
+   rightMutuallyExclusivePlanesVar_f8_th0.42267611622810364
+   - rightMutuallyExclusivePlanesVar_f8_th0.4443711191415787 >= 0
+ rightPlanesOrderConstr_f8_th0.5347666666666666:
+   rightMutuallyExclusivePlanesVar_f8_th0.4443711191415787
+   - rightMutuallyExclusivePlanesVar_f8_th0.5347666666666666 >= 0
+ x_as_linear_combination_of_planes_f: x_f8
+   - 0.0413055550307035 rightMutuallyExclusivePlanesVar_f8_th0
+   - 0.0128277782350779 rightMutuallyExclusivePlanesVar_f8_th0.041305555030703545
+   - 2.8611160814762115e-04 rightMutuallyExclusivePlanesVar_f8_th0.0541333332657814
+   - 0.00697222165763378 rightMutuallyExclusivePlanesVar_f8_th0.054419444873929024
+   - 0.015119444578886 rightMutuallyExclusivePlanesVar_f8_th0.061391666531562805
+   - 0.00357777625322342 rightMutuallyExclusivePlanesVar_f8_th0.07651111111044884
+   - 0.0154444463551044 rightMutuallyExclusivePlanesVar_f8_th0.08008888736367226
+   - 9.8555535078048706e-04 rightMutuallyExclusivePlanesVar_f8_th0.0955333337187767
+   - 0.0073661133646965 rightMutuallyExclusivePlanesVar_f8_th0.09651888906955719
+   - 0.0048905536532402 rightMutuallyExclusivePlanesVar_f8_th0.10388500243425369
+   - 0.0072149969637394 rightMutuallyExclusivePlanesVar_f8_th0.1087755560874939
+   - 0.00134166702628136 rightMutuallyExclusivePlanesVar_f8_th0.11599055305123329
+   - 0.0456511154770851 rightMutuallyExclusivePlanesVar_f8_th0.11733222007751465
+   - 0.0263244360685349 rightMutuallyExclusivePlanesVar_f8_th0.16298333555459976
+   - 0.00209333747625351 rightMutuallyExclusivePlanesVar_f8_th0.1893077716231346
+   - 0.0126805603504181 rightMutuallyExclusivePlanesVar_f8_th0.19140110909938812
+   - 0.00795388221740723 rightMutuallyExclusivePlanesVar_f8_th0.2040816694498062
+   - 0.0013238936662674 rightMutuallyExclusivePlanesVar_f8_th0.21203555166721344
+   - 0.0211477726697922 rightMutuallyExclusivePlanesVar_f8_th0.21335944533348083
+   - 0.00252167135477066 rightMutuallyExclusivePlanesVar_f8_th0.234507218003273
+   - 0.00315500050783157 rightMutuallyExclusivePlanesVar_f8_th0.23702888935804367
+   - 0.0217899978160858 rightMutuallyExclusivePlanesVar_f8_th0.24018388986587524
+   - 0.0273844450712204 rightMutuallyExclusivePlanesVar_f8_th0.26197388768196106
+   - 0.000334993 rightMutuallyExclusivePlanesVar_f8_th0.28935833275318146
+   - 0.00232501327991486 rightMutuallyExclusivePlanesVar_f8_th0.28969332575798035
+   - 0.00951999425888062 rightMutuallyExclusivePlanesVar_f8_th0.2920183390378952
+   - 0.00103388726711273 rightMutuallyExclusivePlanesVar_f8_th0.3015383332967758
+   - 0.0564583390951157 rightMutuallyExclusivePlanesVar_f8_th0.30257222056388855
+   - 0.0636455565690994 rightMutuallyExclusivePlanesVar_f8_th0.3590305596590042
+   - 0.021695002913475 rightMutuallyExclusivePlanesVar_f8_th0.42267611622810364
+   - 0.0903955475250879 rightMutuallyExclusivePlanesVar_f8_th0.4443711191415787
+   - 0.4652333333333334 rightMutuallyExclusivePlanesVar_f8_th0.5347666666666666
+   = 0
+ rightPlanesOrderConstr_f9_th0.3316317281920472:
+   rightMutuallyExclusivePlanesVar_f9_th0
+   - rightMutuallyExclusivePlanesVar_f9_th0.3316317281920472 >= 0
+ rightMutuallyExclusivePlanesVar_f9_t7_v9: y10_t787
+   + rightMutuallyExclusivePlanesVar_f9_th0.4123384654521942 <= 1
+ rightPlanesDominatesLeftFlowConstr_t7_v9: y11_t787
+   - rightMutuallyExclusivePlanesVar_f9_th0.3316317281920472 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f9_t7_v9: 1e-05 y10_t787
+   + 0.080706737260147 rightMutuallyExclusivePlanesVar_f9_th0.3316317281920472
+   <= 0.080706737260147
+ rightPlanesDominatesLeftFlowConstr_eps_t7_v9: 1e-05 y11_t787
+   - 0.080706737260147 rightMutuallyExclusivePlanesVar_f9_th0.4123384654521942
+   <= 0
+ rightPlanesOrderConstr_f9_th0.4123384654521942:
+   rightMutuallyExclusivePlanesVar_f9_th0.3316317281920472
+   - rightMutuallyExclusivePlanesVar_f9_th0.4123384654521942 >= 0
+ rightMutuallyExclusivePlanesVar_f9_t14_v8: y9_t794
+   + rightMutuallyExclusivePlanesVar_f9_th0.43681344389915466 <= 1
+ rightPlanesDominatesLeftFlowConstr_t14_v8: y12_t794
+   - rightMutuallyExclusivePlanesVar_f9_th0.4123384654521942 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f9_t14_v8: 1e-05 y9_t794
+   + 0.0244749784469604 rightMutuallyExclusivePlanesVar_f9_th0.4123384654521942
+   <= 0.0244749784469604
+ rightPlanesDominatesLeftFlowConstr_eps_t14_v8: 1e-05 y12_t794
+   - 0.0244749784469604 rightMutuallyExclusivePlanesVar_f9_th0.43681344389915466
+   <= 0
+ rightPlanesOrderConstr_f9_th0.43681344389915466:
+   rightMutuallyExclusivePlanesVar_f9_th0.4123384654521942
+   - rightMutuallyExclusivePlanesVar_f9_th0.43681344389915466 >= 0
+ rightMutuallyExclusivePlanesVar_f9_t11_v12: y13_t791
+   + rightMutuallyExclusivePlanesVar_f9_th0.44101886451244354 <= 1
+ rightPlanesDominatesLeftFlowConstr_t11_v12: y14_t791
+   - rightMutuallyExclusivePlanesVar_f9_th0.43681344389915466 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f9_t11_v12: 1e-05 y13_t791
+   + 0.00420542061328888 rightMutuallyExclusivePlanesVar_f9_th0.43681344389915466
+   <= 0.00420542061328888
+ rightPlanesDominatesLeftFlowConstr_eps_t11_v12: 1e-05 y14_t791
+   - 0.00420542061328888 rightMutuallyExclusivePlanesVar_f9_th0.44101886451244354
+   <= 0
+ rightPlanesOrderConstr_f9_th0.44101886451244354:
+   rightMutuallyExclusivePlanesVar_f9_th0.43681344389915466
+   - rightMutuallyExclusivePlanesVar_f9_th0.44101886451244354 >= 0
+ rightMutuallyExclusivePlanesVar_f9_t16_v2: y3_t796
+   + rightMutuallyExclusivePlanesVar_f9_th0.6559600830078125 <= 1
+ rightPlanesDominatesLeftFlowConstr_t16_v2: y4_t796
+   - rightMutuallyExclusivePlanesVar_f9_th0.44101886451244354 <= 0
+ rightMutuallyExclusivePlanesVar_eps_f9_t16_v2: 1e-05 y3_t796
+   + 0.214941218495369 rightMutuallyExclusivePlanesVar_f9_th0.44101886451244354
+   <= 0.214941218495369
+ rightPlanesDominatesLeftFlowConstr_eps_t16_v2: 1e-05 y4_t796
+   - 0.214941218495369 rightMutuallyExclusivePlanesVar_f9_th0.6559600830078125
+   <= 0
+ rightPlanesOrderConstr_f9_th0.6559600830078125:
+   rightMutuallyExclusivePlanesVar_f9_th0.44101886451244354
+   - rightMutuallyExclusivePlanesVar_f9_th0.6559600830078125 >= 0
+ x_as_linear_combination_of_planes_f: x_f9
+   - 0.3316317281920472 rightMutuallyExclusivePlanesVar_f9_th0
+   - 0.080706737260147 rightMutuallyExclusivePlanesVar_f9_th0.3316317281920472
+   - 0.0244749784469604 rightMutuallyExclusivePlanesVar_f9_th0.4123384654521942
+   - 0.00420542061328888 rightMutuallyExclusivePlanesVar_f9_th0.43681344389915466
+   - 0.214941218495369 rightMutuallyExclusivePlanesVar_f9_th0.44101886451244354
+   - 0.3440399169921875 rightMutuallyExclusivePlanesVar_f9_th0.6559600830078125
+   = 0
+ majorityVoteConstr_cl1: - 0.0359231819068044 y3_t780
+   - 0.0212888888888889 y4_t780 - 0.0215750232991612 y6_t780
+   + 0.0218460789089138 y7_t780 - 0.0357142857142857 y10_t780
+   + 0.0223076923076923 y11_t780 - 0.05 y13_t780
+   + 0.0479050279329609 y14_t780 - 0.00757575757575758 y3_t781
+   + 0.0441176470588235 y4_t781 - 0.00218023255813954 y6_t781
+   - 0.024436763952893 y7_t781 - 0.0175675675675676 y10_t781
+   + 0.0365671641791045 y11_t781 + 0.0454293628808864 y13_t781
+   + 0.00821917808219178 y3_t782 - 0.0358773181169757 y4_t782
+   + 0.016769993800372 y6_t782 - 0.00560187597707139 y7_t782
+   + 0.05 y10_t782 - 0.0244 y11_t782 + 0.0289473684210526 y13_t782
+   + 0.0467310549777117 y14_t782 + 0.0236842105263158 y3_t783
+   - 0.0380084827453249 y4_t783 - 0.0194480946123522 y6_t783
+   + 0.0168324407039021 y7_t783 - 0.0329268292682927 y10_t783
+   + 0.0385245901639344 y11_t783 + 0.0467142857142857 y13_t783
+   + 0.00833333333333333 y14_t783 - 0.0261699064074874 y3_t784
+   + 0.0273148148148148 y4_t784 - 0.017324290998767 y6_t784
+   - 0.00177797051170859 y7_t784 - 0.0227272727272727 y10_t784
+   + 0.0234939759036145 y11_t784 + 0.046831955922865 y13_t784
+   - 0.025 y14_t784 - 0.0193670886075949 y3_t785
+   - 0.0364834756776829 y4_t785 + 0.0138297872340425 y6_t785
+   + 0.0405063291139241 y7_t785 + 0.0482 y10_t785
+   + 0.0299163179916318 y11_t785 + 0.00810810810810811 y13_t785
+   - 0.0104707792207792 y14_t785 - 0.0142352941176471 y3_t786
+   - 0.0384146341463415 y4_t786 + 0.0304597701149425 y6_t786
+   - 0.0333333333333333 y7_t786 + 0.00292792792792793 y10_t786
+   - 0.012914979757085 y11_t786 + 0.023021582733813 y13_t786
+   + 0.0440532081377152 y14_t786 + 0.0475308641975309 y3_t787
+   + 0.019620253164557 y4_t787 - 0.0380340189873418 y6_t787
+   + 0.0185393258426966 y7_t787 - 0.0182251082251082 y10_t787
+   + 0.00606276747503566 y11_t787 + 0.0309776833156217 y13_t787
+   + 0.0445570971184632 y14_t787 - 0.04125 y3_t788
+   - 0.0262064022933588 y4_t788 - 0.00425531914893617 y6_t788
+   + 0.0439655172413793 y7_t788 - 0.0249273959341723 y10_t788
+   + 0.000209958 y11_t788 + 0.0216867469879518 y13_t788
+   + 0.0443988050784167 y14_t788 - 0.0407042253521127 y3_t789
+   + 0.0105138961719979 y4_t789 - 0.0232981783317354 y6_t789
+   - 6.7750677506775089e-04 y7_t789 - 0.05 y9_t789
+   + 0.0327868852459016 y11_t789 + 0.0456647398843931 y12_t789
+   + 0.0366666666666667 y3_t790 - 0.0189873417721519 y4_t790
+   + 0.0470027247956403 y6_t790 + 0.0338509316770186 y7_t790
+   + 0.029 y10_t790 - 0.038477366255144 y11_t790
+   - 0.0184239733629301 y13_t790 + 0.0192797453243136 y14_t790
+   + 0.0436170212765957 y3_t791 - 0.00601851851851852 y4_t791
+   + 0.024468085106383 y6_t791 - 0.0380813953488372 y7_t791
+   + 0.0461363636363636 y10_t791 + 0.0257660167130919 y11_t791
+   - 0.00723086900129702 y13_t791 + 0.0243260590500642 y14_t791
+   + 0.0361386138613861 y3_t792 + 0.0103921568627451 y4_t792
+   - 0.031331592689295 y6_t792 - 0.0160804869800474 y7_t792
+   + 0.040625 y10_t792 - 0.035 y11_t792 + 0.0370967741935484 y13_t792
+   + 0.0485239852398524 y14_t792 + 0.0159459459459459 y3_t793
+   - 0.0288065843621399 y4_t793 - 0.0250726744186047 y6_t793
+   + 0.0011727078891258 y7_t793 - 0.0222222222222222 y10_t793
+   + 0.0253246753246753 y11_t793 + 0.0474431818181818 y13_t793
+   - 0.03 y14_t793 + 0.0433823529411765 y3_t794
+   + 0.0158730158730159 y4_t794 - 0.0402960160249277 y6_t794
+   - 0.020859872611465 y7_t794 - 0.013894324853229 y10_t794
+   + 0.0297717842323651 y11_t794 + 0.00906432748538012 y13_t794
+   + 0.0481992797118848 y14_t794 - 0.0144125683060109 y3_t795
+   - 0.0282168186423506 y4_t795 - 0.017841814837523 y6_t795
+   + 0.0072463768115942 y7_t795 + 0.0264705882352941 y10_t795
+   + 0.0488235294117647 y11_t795 + 0.00492957746478873 y13_t795
+   + 0.0432862190812721 y14_t795 + 0.0296246648793566 y3_t796
+   + 0.00263157894736842 y4_t796 - 0.0221547458389564 y6_t796
+   + 0.0340579710144928 y7_t796 + 0.0357142857142857 y10_t796
+   - 0.0291044776119403 y11_t796 + 0.0490804597701149 y13_t796
+   + 0.041566265060241 y14_t796 + 0.00714285714285714 y3_t797
+   - 0.0367469879518072 y4_t797 + 0.0175324675324675 y6_t797
+   + 0.0425 y7_t797 + 0.00442477876106195 y10_t797
+   - 0.0141397849462366 y11_t797 + 0.0362102217936355 y13_t797
+   + 0.0479166666666667 y14_t797 - 0.0332471561530507 y3_t798
+   + 0.0321487603305785 y4_t798 - 0.0202750404471246 y6_t798
+   - 0.034994640943194 y7_t798 - 0.05 y10_t798 + 0.0125 y11_t798
+   + 0.00714285714285714 y13_t798 + 0.0471916971916972 y14_t798
+   - 0.0186567164179104 y3_t799 + 0.0282608695652174 y4_t799
+   + 0.025 y6_t799 + 0.0461857379767827 y7_t799
+   - 0.0384623238717582 y10_t799 + 0.001147693021099 y11_t799
+   + 0.0119047619047619 y13_t799 + 0.0452380952380952 y14_t799 >= 0.0001
 Bounds
  x_f0 <= 1
  x_f1 <= 1
@@ -3285,264 +2385,193 @@ Bounds
  x_f6 <= 1
  x_f7 <= 1
  x_f8 <= 1
+ x_f9 <= 1
  rightMutuallyExclusivePlanesVar_f0_th0 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.0860881507396698 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.16735537350177765 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.16919191926717758 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.17676767706871033 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.17998163402080536 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.18663912266492844 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.19260789453983307 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.19605141878128052 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.21877869218587875 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.22451790422201157 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.22979798167943954 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.23163452744483948 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.23232322931289673 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.24747474747473858 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.2571166232228279 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.266988068819046 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.2679063379764557 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.2683654874563217 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.2692837566137314 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.26997245848178864 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.27043159306049347 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.2706611603498459 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.2764003723859787 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.30739210546016693 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.30876950919628143 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.30922865867614746 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.31473828852176666 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.31864096224308014 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.35353535413742065 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.35606060922145844 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.361111119389534 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.44628100097179413 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.5280073583126068 <= 1
- rightMutuallyExclusivePlanesVar_f0_th0.574839323759079 <= 1
+ rightMutuallyExclusivePlanesVar_f0_th0.027096017351054203 <= 1
+ rightMutuallyExclusivePlanesVar_f0_th0.04709474369883537 <= 1
+ rightMutuallyExclusivePlanesVar_f0_th0.06534229964017868 <= 1
+ rightMutuallyExclusivePlanesVar_f0_th0.0791400857269764 <= 1
+ rightMutuallyExclusivePlanesVar_f0_th0.08073211461305618 <= 1
+ rightMutuallyExclusivePlanesVar_f0_th0.08907450735569 <= 1
+ rightMutuallyExclusivePlanesVar_f0_th0.09496655687689781 <= 1
+ rightMutuallyExclusivePlanesVar_f0_th0.09643839299678802 <= 1
+ rightMutuallyExclusivePlanesVar_f0_th0.09879248961806297 <= 1
+ rightMutuallyExclusivePlanesVar_f0_th0.12242572382092476 <= 1
+ rightMutuallyExclusivePlanesVar_f0_th0.13332924246788025 <= 1
+ rightMutuallyExclusivePlanesVar_f0_th0.2540372759103775 <= 1
+ rightMutuallyExclusivePlanesVar_f0_th0.3341166079044342 <= 1
+ rightMutuallyExclusivePlanesVar_f0_th0.3343973159790039 <= 1
+ rightMutuallyExclusivePlanesVar_f0_th0.33506934344768524 <= 1
+ rightMutuallyExclusivePlanesVar_f0_th0.3356069475412369 <= 1
+ rightMutuallyExclusivePlanesVar_f0_th0.33684203028678894 <= 1
+ rightMutuallyExclusivePlanesVar_f0_th0.3368981182575226 <= 1
+ rightMutuallyExclusivePlanesVar_f0_th0.3378014415502548 <= 1
+ rightMutuallyExclusivePlanesVar_f0_th0.34504014253616333 <= 1
+ rightMutuallyExclusivePlanesVar_f0_th0.3493066728115082 <= 1
+ rightMutuallyExclusivePlanesVar_f0_th0.35618312656879425 <= 1
+ rightMutuallyExclusivePlanesVar_f0_th0.3562789112329483 <= 1
+ rightMutuallyExclusivePlanesVar_f0_th0.35879792273044586 <= 1
+ rightMutuallyExclusivePlanesVar_f0_th0.35949374735355377 <= 1
  rightMutuallyExclusivePlanesVar_f1_th0 <= 1
- rightMutuallyExclusivePlanesVar_f1_th0.41767553985118866 <= 1
- rightMutuallyExclusivePlanesVar_f1_th0.4975786805152893 <= 1
- rightMutuallyExclusivePlanesVar_f1_th0.5024213045835495 <= 1
- rightMutuallyExclusivePlanesVar_f1_th0.5060532540082932 <= 1
- rightMutuallyExclusivePlanesVar_f1_th0.5072639137506485 <= 1
- rightMutuallyExclusivePlanesVar_f1_th0.5084745585918427 <= 1
- rightMutuallyExclusivePlanesVar_f1_th0.509685218334198 <= 1
- rightMutuallyExclusivePlanesVar_f1_th0.5254237204790115 <= 1
- rightMutuallyExclusivePlanesVar_f1_th0.5290556848049164 <= 1
- rightMutuallyExclusivePlanesVar_f1_th0.5447941869497299 <= 1
- rightMutuallyExclusivePlanesVar_f1_th0.5472154915332794 <= 1
- rightMutuallyExclusivePlanesVar_f1_th0.5544794201850891 <= 1
- rightMutuallyExclusivePlanesVar_f1_th0.5569007396697998 <= 1
- rightMutuallyExclusivePlanesVar_f1_th0.5738498866558075 <= 1
- rightMutuallyExclusivePlanesVar_f1_th0.5883777141571045 <= 1
- rightMutuallyExclusivePlanesVar_f1_th0.6041162014007568 <= 1
- rightMutuallyExclusivePlanesVar_f1_th0.6065375208854675 <= 1
- rightMutuallyExclusivePlanesVar_f1_th0.6186440587043762 <= 1
- rightMutuallyExclusivePlanesVar_f1_th0.6428571343421936 <= 1
- rightMutuallyExclusivePlanesVar_f1_th0.6440677966101697 <= 1
- rightMutuallyExclusivePlanesVar_f1_th0.6598063111305237 <= 1
- rightMutuallyExclusivePlanesVar_f1_th0.662227600812912 <= 1
- rightMutuallyExclusivePlanesVar_f1_th0.6634382605552673 <= 1
+ rightMutuallyExclusivePlanesVar_f1_th0.03974596597254276 <= 1
+ rightMutuallyExclusivePlanesVar_f1_th0.040300214663147926 <= 1
+ rightMutuallyExclusivePlanesVar_f1_th0.040319718420505524 <= 1
+ rightMutuallyExclusivePlanesVar_f1_th0.04079108517758657 <= 1
+ rightMutuallyExclusivePlanesVar_f1_th0.10028063505887985 <= 1
+ rightMutuallyExclusivePlanesVar_f1_th0.10061411932110786 <= 1
+ rightMutuallyExclusivePlanesVar_f1_th0.10527825355529785 <= 1
+ rightMutuallyExclusivePlanesVar_f1_th0.10827904939651489 <= 1
+ rightMutuallyExclusivePlanesVar_f1_th0.11673849821090698 <= 1
+ rightMutuallyExclusivePlanesVar_f1_th0.12969163805246353 <= 1
+ rightMutuallyExclusivePlanesVar_f1_th0.15222343802452087 <= 1
+ rightMutuallyExclusivePlanesVar_f1_th0.15863750129938126 <= 1
+ rightMutuallyExclusivePlanesVar_f1_th0.17800937592983246 <= 1
+ rightMutuallyExclusivePlanesVar_f1_th0.18105444312095642 <= 1
+ rightMutuallyExclusivePlanesVar_f1_th0.1865893453359604 <= 1
+ rightMutuallyExclusivePlanesVar_f1_th0.1867556944489479 <= 1
+ rightMutuallyExclusivePlanesVar_f1_th0.19504430890083313 <= 1
  rightMutuallyExclusivePlanesVar_f2_th0 <= 1
- rightMutuallyExclusivePlanesVar_f2_th0.35301506519317627 <= 1
- rightMutuallyExclusivePlanesVar_f2_th0.6947236061096191 <= 1
- rightMutuallyExclusivePlanesVar_f2_th0.7148241400718689 <= 1
- rightMutuallyExclusivePlanesVar_f2_th0.7650753557682037 <= 1
- rightMutuallyExclusivePlanesVar_f2_th0.8178391754627228 <= 1
- rightMutuallyExclusivePlanesVar_f2_th0.8253768682479858 <= 1
- rightMutuallyExclusivePlanesVar_f2_th0.8266331553459167 <= 1
- rightMutuallyExclusivePlanesVar_f2_th0.8341708481311798 <= 1
- rightMutuallyExclusivePlanesVar_f2_th0.8643216192722321 <= 1
- rightMutuallyExclusivePlanesVar_f2_th0.8655778765678406 <= 1
- rightMutuallyExclusivePlanesVar_f2_th0.8831658065319061 <= 1
- rightMutuallyExclusivePlanesVar_f2_th0.8869346678256989 <= 1
- rightMutuallyExclusivePlanesVar_f2_th0.893216073513031 <= 1
- rightMutuallyExclusivePlanesVar_f2_th0.9007537662982941 <= 1
- rightMutuallyExclusivePlanesVar_f2_th0.9120603203773499 <= 1
- rightMutuallyExclusivePlanesVar_f2_th0.9195979899497487 <= 1
- rightMutuallyExclusivePlanesVar_f2_th0.9233668446540833 <= 1
- rightMutuallyExclusivePlanesVar_f2_th0.9522612988948822 <= 1
- rightMutuallyExclusivePlanesVar_f2_th0.9798994958400726 <= 1
- rightMutuallyExclusivePlanesVar_f2_th0.9886934757232666 <= 1
+ rightMutuallyExclusivePlanesVar_f2_th0.07732111176818447 <= 1
+ rightMutuallyExclusivePlanesVar_f2_th0.13097279518842697 <= 1
+ rightMutuallyExclusivePlanesVar_f2_th0.1433471292257309 <= 1
+ rightMutuallyExclusivePlanesVar_f2_th0.15232111513614655 <= 1
+ rightMutuallyExclusivePlanesVar_f2_th0.15715552866458893 <= 1
+ rightMutuallyExclusivePlanesVar_f2_th0.15994973480701447 <= 1
+ rightMutuallyExclusivePlanesVar_f2_th0.1627735048532486 <= 1
+ rightMutuallyExclusivePlanesVar_f2_th0.1840626820921898 <= 1
+ rightMutuallyExclusivePlanesVar_f2_th0.2393258437514305 <= 1
+ rightMutuallyExclusivePlanesVar_f2_th0.3200916647911072 <= 1
+ rightMutuallyExclusivePlanesVar_f2_th0.3834860920906067 <= 1
+ rightMutuallyExclusivePlanesVar_f2_th0.4596097022294998 <= 1
+ rightMutuallyExclusivePlanesVar_f2_th0.5469987988471985 <= 1
+ rightMutuallyExclusivePlanesVar_f2_th0.654302179813385 <= 1
+ rightMutuallyExclusivePlanesVar_f2_th0.8063867688179016 <= 1
+ rightMutuallyExclusivePlanesVar_f2_th0.839015394449234 <= 1
  rightMutuallyExclusivePlanesVar_f3_th0 <= 1
- rightMutuallyExclusivePlanesVar_f3_th0.43989071249961853 <= 1
- rightMutuallyExclusivePlanesVar_f3_th0.48360656201839447 <= 1
- rightMutuallyExclusivePlanesVar_f3_th0.4918032786885245 <= 1
- rightMutuallyExclusivePlanesVar_f3_th0.5245901644229889 <= 1
- rightMutuallyExclusivePlanesVar_f3_th0.5300546586513519 <= 1
- rightMutuallyExclusivePlanesVar_f3_th0.5601092875003815 <= 1
- rightMutuallyExclusivePlanesVar_f3_th0.5710382461547852 <= 1
- rightMutuallyExclusivePlanesVar_f3_th0.5846994519233704 <= 1
- rightMutuallyExclusivePlanesVar_f3_th0.6038251221179962 <= 1
- rightMutuallyExclusivePlanesVar_f3_th0.6065573692321777 <= 1
- rightMutuallyExclusivePlanesVar_f3_th0.6174863278865814 <= 1
- rightMutuallyExclusivePlanesVar_f3_th0.6256830394268036 <= 1
- rightMutuallyExclusivePlanesVar_f3_th0.6338797807693481 <= 1
- rightMutuallyExclusivePlanesVar_f3_th0.6639344394207001 <= 1
- rightMutuallyExclusivePlanesVar_f3_th0.6666666567325592 <= 1
- rightMutuallyExclusivePlanesVar_f3_th0.7131147384643555 <= 1
- rightMutuallyExclusivePlanesVar_f3_th0.7595628499984741 <= 1
+ rightMutuallyExclusivePlanesVar_f3_th0.2571883201599121 <= 1
+ rightMutuallyExclusivePlanesVar_f3_th0.29213546216487885 <= 1
+ rightMutuallyExclusivePlanesVar_f3_th0.2934424430131912 <= 1
+ rightMutuallyExclusivePlanesVar_f3_th0.4087396264076233 <= 1
+ rightMutuallyExclusivePlanesVar_f3_th0.5652346909046173 <= 1
+ rightMutuallyExclusivePlanesVar_f3_th0.6186498403549194 <= 1
+ rightMutuallyExclusivePlanesVar_f3_th0.882941243323105 <= 1
  rightMutuallyExclusivePlanesVar_f4_th0 <= 1
- rightMutuallyExclusivePlanesVar_f4_th0.35021552443504333 <= 1
- rightMutuallyExclusivePlanesVar_f4_th0.35991379618644714 <= 1
- rightMutuallyExclusivePlanesVar_f4_th0.5140086263418198 <= 1
- rightMutuallyExclusivePlanesVar_f4_th0.5237068831920624 <= 1
- rightMutuallyExclusivePlanesVar_f4_th0.5301724225282669 <= 1
- rightMutuallyExclusivePlanesVar_f4_th0.536637932062149 <= 1
- rightMutuallyExclusivePlanesVar_f4_th0.5431034564971924 <= 1
- rightMutuallyExclusivePlanesVar_f4_th0.567887932062149 <= 1
- rightMutuallyExclusivePlanesVar_f4_th0.5786637961864471 <= 1
- rightMutuallyExclusivePlanesVar_f4_th0.5829741358757019 <= 1
- rightMutuallyExclusivePlanesVar_f4_th0.6023706793785095 <= 1
- rightMutuallyExclusivePlanesVar_f4_th0.6163793206214905 <= 1
- rightMutuallyExclusivePlanesVar_f4_th0.6228448152542114 <= 1
- rightMutuallyExclusivePlanesVar_f4_th0.6282327771186829 <= 1
- rightMutuallyExclusivePlanesVar_f4_th0.6346982717514038 <= 1
- rightMutuallyExclusivePlanesVar_f4_th0.6368534564971924 <= 1
- rightMutuallyExclusivePlanesVar_f4_th0.6422413793103456 <= 1
- rightMutuallyExclusivePlanesVar_f4_th0.64439657330513 <= 1
- rightMutuallyExclusivePlanesVar_f4_th0.65625 <= 1
- rightMutuallyExclusivePlanesVar_f4_th0.682112067937851 <= 1
- rightMutuallyExclusivePlanesVar_f4_th0.6875 <= 1
- rightMutuallyExclusivePlanesVar_f4_th0.7036637961864471 <= 1
- rightMutuallyExclusivePlanesVar_f4_th0.7209051847457886 <= 1
- rightMutuallyExclusivePlanesVar_f4_th0.7316810488700867 <= 1
- rightMutuallyExclusivePlanesVar_f4_th0.7381465435028076 <= 1
- rightMutuallyExclusivePlanesVar_f4_th0.744612067937851 <= 1
- rightMutuallyExclusivePlanesVar_f4_th0.7683189809322357 <= 1
+ rightMutuallyExclusivePlanesVar_f4_th0.2475922331213951 <= 1
+ rightMutuallyExclusivePlanesVar_f4_th0.2530745416879654 <= 1
+ rightMutuallyExclusivePlanesVar_f4_th0.3420506715774536 <= 1
+ rightMutuallyExclusivePlanesVar_f4_th0.35464513301849365 <= 1
+ rightMutuallyExclusivePlanesVar_f4_th0.3568676859140396 <= 1
+ rightMutuallyExclusivePlanesVar_f4_th0.37124018371105194 <= 1
+ rightMutuallyExclusivePlanesVar_f4_th0.7009927396651354 <= 1
  rightMutuallyExclusivePlanesVar_f5_th0 <= 1
- rightMutuallyExclusivePlanesVar_f5_th0.040909089148044586 <= 1
- rightMutuallyExclusivePlanesVar_f5_th0.11818181723356247 <= 1
- rightMutuallyExclusivePlanesVar_f5_th0.23181817680597305 <= 1
- rightMutuallyExclusivePlanesVar_f5_th0.3181818202137947 <= 1
- rightMutuallyExclusivePlanesVar_f5_th0.34545453637838364 <= 1
- rightMutuallyExclusivePlanesVar_f5_th0.38181817531585693 <= 1
- rightMutuallyExclusivePlanesVar_f5_th0.3909090906381607 <= 1
- rightMutuallyExclusivePlanesVar_f5_th0.45000000298023224 <= 1
- rightMutuallyExclusivePlanesVar_f5_th0.459090918302536 <= 1
- rightMutuallyExclusivePlanesVar_f5_th0.4681818187236786 <= 1
- rightMutuallyExclusivePlanesVar_f5_th0.5181818181818181 <= 1
- rightMutuallyExclusivePlanesVar_f5_th0.5227272808551788 <= 1
- rightMutuallyExclusivePlanesVar_f5_th0.5363636314868927 <= 1
- rightMutuallyExclusivePlanesVar_f5_th0.5545454323291779 <= 1
- rightMutuallyExclusivePlanesVar_f5_th0.5590909123420715 <= 1
- rightMutuallyExclusivePlanesVar_f5_th0.5681818127632141 <= 1
- rightMutuallyExclusivePlanesVar_f5_th0.5727272629737854 <= 1
- rightMutuallyExclusivePlanesVar_f5_th0.5863636434078217 <= 1
- rightMutuallyExclusivePlanesVar_f5_th0.6136363744735718 <= 1
+ rightMutuallyExclusivePlanesVar_f5_th0.26479703187942505 <= 1
+ rightMutuallyExclusivePlanesVar_f5_th0.3501214534044266 <= 1
+ rightMutuallyExclusivePlanesVar_f5_th0.3697996735572815 <= 1
+ rightMutuallyExclusivePlanesVar_f5_th0.3729969561100006 <= 1
+ rightMutuallyExclusivePlanesVar_f5_th0.3877960294485092 <= 1
+ rightMutuallyExclusivePlanesVar_f5_th0.4171677976846695 <= 1
+ rightMutuallyExclusivePlanesVar_f5_th0.42388615012168884 <= 1
+ rightMutuallyExclusivePlanesVar_f5_th0.4253869354724884 <= 1
+ rightMutuallyExclusivePlanesVar_f5_th0.4431868940591812 <= 1
+ rightMutuallyExclusivePlanesVar_f5_th0.45627236833750695 <= 1
  rightMutuallyExclusivePlanesVar_f6_th0 <= 1
- rightMutuallyExclusivePlanesVar_f6_th0.08287596330046654 <= 1
- rightMutuallyExclusivePlanesVar_f6_th0.08342481032013893 <= 1
- rightMutuallyExclusivePlanesVar_f6_th0.0856201983988285 <= 1
- rightMutuallyExclusivePlanesVar_f6_th0.1119648739695549 <= 1
- rightMutuallyExclusivePlanesVar_f6_th0.13062568605927544 <= 1
- rightMutuallyExclusivePlanesVar_f6_th0.13336992263793945 <= 1
- rightMutuallyExclusivePlanesVar_f6_th0.14324917644262314 <= 1
- rightMutuallyExclusivePlanesVar_f6_th0.1476399526000023 <= 1
- rightMutuallyExclusivePlanesVar_f6_th0.15148188918828964 <= 1
- rightMutuallyExclusivePlanesVar_f6_th0.15861690789461136 <= 1
- rightMutuallyExclusivePlanesVar_f6_th0.16190999001264572 <= 1
- rightMutuallyExclusivePlanesVar_f6_th0.1734357848763466 <= 1
- rightMutuallyExclusivePlanesVar_f6_th0.17618002742528915 <= 1
- rightMutuallyExclusivePlanesVar_f6_th0.19648737460374832 <= 1
- rightMutuallyExclusivePlanesVar_f6_th0.20142699778079987 <= 1
- rightMutuallyExclusivePlanesVar_f6_th0.3556531220674515 <= 1
- rightMutuallyExclusivePlanesVar_f6_th0.36498352885246277 <= 1
- rightMutuallyExclusivePlanesVar_f6_th0.36717891693115234 <= 1
- rightMutuallyExclusivePlanesVar_f6_th0.3781558722257614 <= 1
- rightMutuallyExclusivePlanesVar_f6_th0.4072447866201401 <= 1
+ rightMutuallyExclusivePlanesVar_f6_th0.42845749855041504 <= 1
+ rightMutuallyExclusivePlanesVar_f6_th0.4549831598997116 <= 1
+ rightMutuallyExclusivePlanesVar_f6_th0.4625789076089859 <= 1
+ rightMutuallyExclusivePlanesVar_f6_th0.4630121737718582 <= 1
+ rightMutuallyExclusivePlanesVar_f6_th0.46358802914619446 <= 1
+ rightMutuallyExclusivePlanesVar_f6_th0.4844895005226135 <= 1
+ rightMutuallyExclusivePlanesVar_f6_th0.48462440073490143 <= 1
+ rightMutuallyExclusivePlanesVar_f6_th0.4857873320579529 <= 1
+ rightMutuallyExclusivePlanesVar_f6_th0.4874393343925476 <= 1
+ rightMutuallyExclusivePlanesVar_f6_th0.48922839760780334 <= 1
+ rightMutuallyExclusivePlanesVar_f6_th0.5061003267765045 <= 1
+ rightMutuallyExclusivePlanesVar_f6_th0.508878767490387 <= 1
+ rightMutuallyExclusivePlanesVar_f6_th0.5126359164714813 <= 1
+ rightMutuallyExclusivePlanesVar_f6_th0.5143159925937653 <= 1
+ rightMutuallyExclusivePlanesVar_f6_th0.5143923759460449 <= 1
+ rightMutuallyExclusivePlanesVar_f6_th0.5283508598804474 <= 1
+ rightMutuallyExclusivePlanesVar_f6_th0.5916691954583486 <= 1
+ rightMutuallyExclusivePlanesVar_f6_th0.6502995193004608 <= 1
+ rightMutuallyExclusivePlanesVar_f6_th0.760267049074173 <= 1
  rightMutuallyExclusivePlanesVar_f7_th0 <= 1
- rightMutuallyExclusivePlanesVar_f7_th0.0 <= 1
+ rightMutuallyExclusivePlanesVar_f7_th0.41285035014152527 <= 1
+ rightMutuallyExclusivePlanesVar_f7_th0.46164973080158234 <= 1
+ rightMutuallyExclusivePlanesVar_f7_th0.5625011503692718 <= 1
+ rightMutuallyExclusivePlanesVar_f7_th0.6190357804298401 <= 1
  rightMutuallyExclusivePlanesVar_f8_th0 <= 1
- rightMutuallyExclusivePlanesVar_f8_th0.09459459781646729 <= 1
- rightMutuallyExclusivePlanesVar_f8_th0.1621621549129486 <= 1
- rightMutuallyExclusivePlanesVar_f8_th0.20270270109176636 <= 1
- rightMutuallyExclusivePlanesVar_f8_th0.22972973436117172 <= 1
- rightMutuallyExclusivePlanesVar_f8_th0.2567567527294159 <= 1
- rightMutuallyExclusivePlanesVar_f8_th0.2972972972972973 <= 1
- rightMutuallyExclusivePlanesVar_f8_th0.31081080436706543 <= 1
- rightMutuallyExclusivePlanesVar_f8_th0.3513513505458832 <= 1
- rightMutuallyExclusivePlanesVar_f8_th0.3918918967247009 <= 1
- rightMutuallyExclusivePlanesVar_f8_th0.44594593346118927 <= 1
- rightMutuallyExclusivePlanesVar_f8_th0.5540540367364883 <= 1
- rightMutuallyExclusivePlanesVar_f8_th0.5810810774564743 <= 1
- rightMutuallyExclusivePlanesVar_f8_th0.6081081032752991 <= 1
- rightMutuallyExclusivePlanesVar_f8_th0.6216216087341309 <= 1
- rightMutuallyExclusivePlanesVar_f8_th0.6891891956329346 <= 1
- rightMutuallyExclusivePlanesVar_f8_th0.8918918669223785 <= 1
+ rightMutuallyExclusivePlanesVar_f8_th0.041305555030703545 <= 1
+ rightMutuallyExclusivePlanesVar_f8_th0.0541333332657814 <= 1
+ rightMutuallyExclusivePlanesVar_f8_th0.054419444873929024 <= 1
+ rightMutuallyExclusivePlanesVar_f8_th0.061391666531562805 <= 1
+ rightMutuallyExclusivePlanesVar_f8_th0.07651111111044884 <= 1
+ rightMutuallyExclusivePlanesVar_f8_th0.08008888736367226 <= 1
+ rightMutuallyExclusivePlanesVar_f8_th0.0955333337187767 <= 1
+ rightMutuallyExclusivePlanesVar_f8_th0.09651888906955719 <= 1
+ rightMutuallyExclusivePlanesVar_f8_th0.10388500243425369 <= 1
+ rightMutuallyExclusivePlanesVar_f8_th0.1087755560874939 <= 1
+ rightMutuallyExclusivePlanesVar_f8_th0.11599055305123329 <= 1
+ rightMutuallyExclusivePlanesVar_f8_th0.11733222007751465 <= 1
+ rightMutuallyExclusivePlanesVar_f8_th0.16298333555459976 <= 1
+ rightMutuallyExclusivePlanesVar_f8_th0.1893077716231346 <= 1
+ rightMutuallyExclusivePlanesVar_f8_th0.19140110909938812 <= 1
+ rightMutuallyExclusivePlanesVar_f8_th0.2040816694498062 <= 1
+ rightMutuallyExclusivePlanesVar_f8_th0.21203555166721344 <= 1
+ rightMutuallyExclusivePlanesVar_f8_th0.21335944533348083 <= 1
+ rightMutuallyExclusivePlanesVar_f8_th0.234507218003273 <= 1
+ rightMutuallyExclusivePlanesVar_f8_th0.23702888935804367 <= 1
+ rightMutuallyExclusivePlanesVar_f8_th0.24018388986587524 <= 1
+ rightMutuallyExclusivePlanesVar_f8_th0.26197388768196106 <= 1
+ rightMutuallyExclusivePlanesVar_f8_th0.28935833275318146 <= 1
+ rightMutuallyExclusivePlanesVar_f8_th0.28969332575798035 <= 1
+ rightMutuallyExclusivePlanesVar_f8_th0.2920183390378952 <= 1
+ rightMutuallyExclusivePlanesVar_f8_th0.3015383332967758 <= 1
+ rightMutuallyExclusivePlanesVar_f8_th0.30257222056388855 <= 1
+ rightMutuallyExclusivePlanesVar_f8_th0.3590305596590042 <= 1
+ rightMutuallyExclusivePlanesVar_f8_th0.42267611622810364 <= 1
+ rightMutuallyExclusivePlanesVar_f8_th0.4443711191415787 <= 1
+ rightMutuallyExclusivePlanesVar_f8_th0.5347666666666666 <= 1
+ rightMutuallyExclusivePlanesVar_f9_th0 <= 1
+ rightMutuallyExclusivePlanesVar_f9_th0.3316317281920472 <= 1
+ rightMutuallyExclusivePlanesVar_f9_th0.4123384654521942 <= 1
+ rightMutuallyExclusivePlanesVar_f9_th0.43681344389915466 <= 1
+ rightMutuallyExclusivePlanesVar_f9_th0.44101886451244354 <= 1
+ rightMutuallyExclusivePlanesVar_f9_th0.6559600830078125 <= 1
  Constant = 1
 Binaries
- y0_t401280 y1_t401280 y2_t401280 y3_t401280 y4_t401280 y5_t401280
- y6_t401280 y7_t401280 y8_t401280 y9_t401280 y10_t401280 y11_t401280
- y12_t401280 y13_t401280 y14_t401280 y15_t401280 y16_t401280 y17_t401280
- y18_t401280 y0_t401281 y1_t401281 y2_t401281 y3_t401281 y4_t401281
- y5_t401281 y6_t401281 y7_t401281 y8_t401281 y9_t401281 y10_t401281
- y11_t401281 y12_t401281 y13_t401281 y14_t401281 y15_t401281 y16_t401281
- y0_t401282 y1_t401282 y2_t401282 y3_t401282 y4_t401282 y5_t401282
- y6_t401282 y7_t401282 y8_t401282 y9_t401282 y10_t401282 y11_t401282
- y12_t401282 y13_t401282 y14_t401282 y15_t401282 y16_t401282 y17_t401282
- y18_t401282 y0_t401283 y1_t401283 y2_t401283 y3_t401283 y4_t401283
- y5_t401283 y6_t401283 y7_t401283 y8_t401283 y9_t401283 y10_t401283
- y11_t401283 y12_t401283 y13_t401283 y14_t401283 y15_t401283 y16_t401283
- y17_t401283 y18_t401283 y19_t401283 y20_t401283 y0_t401284 y1_t401284
- y2_t401284 y3_t401284 y4_t401284 y5_t401284 y6_t401284 y7_t401284
- y8_t401284 y9_t401284 y10_t401284 y11_t401284 y12_t401284 y13_t401284
- y14_t401284 y15_t401284 y16_t401284 y17_t401284 y18_t401284 y19_t401284
- y20_t401284 y21_t401284 y22_t401284 y23_t401284 y24_t401284 y25_t401284
- y26_t401284 y0_t401285 y1_t401285 y2_t401285 y3_t401285 y4_t401285
- y5_t401285 y6_t401285 y7_t401285 y8_t401285 y9_t401285 y10_t401285
- y11_t401285 y12_t401285 y13_t401285 y14_t401285 y15_t401285 y16_t401285
- y17_t401285 y18_t401285 y19_t401285 y20_t401285 y21_t401285 y22_t401285
- y23_t401285 y24_t401285 y25_t401285 y26_t401285 y0_t401286 y1_t401286
- y2_t401286 y3_t401286 y4_t401286 y5_t401286 y6_t401286 y7_t401286
- y8_t401286 y9_t401286 y10_t401286 y11_t401286 y12_t401286 y13_t401286
- y14_t401286 y15_t401286 y16_t401286 y17_t401286 y18_t401286 y19_t401286
- y20_t401286 y21_t401286 y22_t401286 y0_t401287 y1_t401287 y2_t401287
- y3_t401287 y4_t401287 y5_t401287 y6_t401287 y7_t401287 y8_t401287
- y9_t401287 y10_t401287 y11_t401287 y12_t401287 y13_t401287 y14_t401287
- y15_t401287 y16_t401287 y17_t401287 y18_t401287 y19_t401287 y20_t401287
- y21_t401287 y22_t401287 y0_t401288 y1_t401288 y2_t401288 y3_t401288
- y4_t401288 y5_t401288 y6_t401288 y7_t401288 y8_t401288 y9_t401288
- y10_t401288 y11_t401288 y12_t401288 y13_t401288 y14_t401288 y15_t401288
- y16_t401288 y17_t401288 y18_t401288 y19_t401288 y20_t401288 y21_t401288
- y22_t401288 y23_t401288 y24_t401288 y25_t401288 y26_t401288 y0_t401289
- y1_t401289 y2_t401289 y3_t401289 y4_t401289 y5_t401289 y6_t401289
- y7_t401289 y8_t401289 y9_t401289 y10_t401289 y11_t401289 y12_t401289
- y13_t401289 y14_t401289 y15_t401289 y16_t401289 y17_t401289 y18_t401289
- y0_t401290 y1_t401290 y2_t401290 y3_t401290 y4_t401290 y5_t401290
- y6_t401290 y7_t401290 y8_t401290 y9_t401290 y10_t401290 y11_t401290
- y12_t401290 y13_t401290 y14_t401290 y15_t401290 y16_t401290 y17_t401290
- y18_t401290 y19_t401290 y20_t401290 y21_t401290 y22_t401290 y0_t401291
- y1_t401291 y2_t401291 y3_t401291 y4_t401291 y5_t401291 y6_t401291
- y7_t401291 y8_t401291 y9_t401291 y10_t401291 y11_t401291 y12_t401291
- y13_t401291 y14_t401291 y15_t401291 y16_t401291 y17_t401291 y18_t401291
- y0_t401292 y1_t401292 y2_t401292 y3_t401292 y4_t401292 y5_t401292
- y6_t401292 y7_t401292 y8_t401292 y9_t401292 y10_t401292 y11_t401292
- y12_t401292 y13_t401292 y14_t401292 y15_t401292 y16_t401292 y17_t401292
- y18_t401292 y19_t401292 y20_t401292 y0_t401293 y1_t401293 y2_t401293
- y3_t401293 y4_t401293 y5_t401293 y6_t401293 y7_t401293 y8_t401293
- y9_t401293 y10_t401293 y11_t401293 y12_t401293 y13_t401293 y14_t401293
- y15_t401293 y16_t401293 y17_t401293 y18_t401293 y0_t401294 y1_t401294
- y2_t401294 y3_t401294 y4_t401294 y5_t401294 y6_t401294 y7_t401294
- y8_t401294 y9_t401294 y10_t401294 y11_t401294 y12_t401294 y13_t401294
- y14_t401294 y15_t401294 y16_t401294 y17_t401294 y18_t401294 y19_t401294
- y20_t401294 y0_t401295 y1_t401295 y2_t401295 y3_t401295 y4_t401295
- y5_t401295 y6_t401295 y7_t401295 y8_t401295 y9_t401295 y10_t401295
- y11_t401295 y12_t401295 y13_t401295 y14_t401295 y15_t401295 y16_t401295
- y17_t401295 y18_t401295 y19_t401295 y20_t401295 y21_t401295 y22_t401295
- y0_t401296 y1_t401296 y2_t401296 y3_t401296 y4_t401296 y5_t401296
- y6_t401296 y7_t401296 y8_t401296 y9_t401296 y10_t401296 y11_t401296
- y12_t401296 y13_t401296 y14_t401296 y15_t401296 y16_t401296 y17_t401296
- y18_t401296 y19_t401296 y20_t401296 y0_t401297 y1_t401297 y2_t401297
- y3_t401297 y4_t401297 y5_t401297 y6_t401297 y7_t401297 y8_t401297
- y9_t401297 y10_t401297 y11_t401297 y12_t401297 y13_t401297 y14_t401297
- y15_t401297 y16_t401297 y0_t401298 y1_t401298 y2_t401298 y3_t401298
- y4_t401298 y5_t401298 y6_t401298 y7_t401298 y8_t401298 y9_t401298
- y10_t401298 y11_t401298 y12_t401298 y13_t401298 y14_t401298 y15_t401298
- y16_t401298 y17_t401298 y18_t401298 y19_t401298 y20_t401298 y21_t401298
- y22_t401298 y0_t401299 y1_t401299 y2_t401299 y3_t401299 y4_t401299
- y5_t401299 y6_t401299 y7_t401299 y8_t401299 y9_t401299 y10_t401299
- y11_t401299 y12_t401299 y13_t401299 y14_t401299 y15_t401299 y16_t401299
- y17_t401299 y18_t401299 y19_t401299 y20_t401299 y21_t401299 y22_t401299
+ y0_t780 y1_t780 y2_t780 y3_t780 y4_t780 y5_t780 y6_t780 y7_t780 y8_t780
+ y9_t780 y10_t780 y11_t780 y12_t780 y13_t780 y14_t780 y0_t781 y1_t781
+ y2_t781 y3_t781 y4_t781 y5_t781 y6_t781 y7_t781 y8_t781 y9_t781 y10_t781
+ y11_t781 y12_t781 y13_t781 y14_t781 y0_t782 y1_t782 y2_t782 y3_t782
+ y4_t782 y5_t782 y6_t782 y7_t782 y8_t782 y9_t782 y10_t782 y11_t782 y12_t782
+ y13_t782 y14_t782 y0_t783 y1_t783 y2_t783 y3_t783 y4_t783 y5_t783 y6_t783
+ y7_t783 y8_t783 y9_t783 y10_t783 y11_t783 y12_t783 y13_t783 y14_t783
+ y0_t784 y1_t784 y2_t784 y3_t784 y4_t784 y5_t784 y6_t784 y7_t784 y8_t784
+ y9_t784 y10_t784 y11_t784 y12_t784 y13_t784 y14_t784 y0_t785 y1_t785
+ y2_t785 y3_t785 y4_t785 y5_t785 y6_t785 y7_t785 y8_t785 y9_t785 y10_t785
+ y11_t785 y12_t785 y13_t785 y14_t785 y0_t786 y1_t786 y2_t786 y3_t786
+ y4_t786 y5_t786 y6_t786 y7_t786 y8_t786 y9_t786 y10_t786 y11_t786 y12_t786
+ y13_t786 y14_t786 y0_t787 y1_t787 y2_t787 y3_t787 y4_t787 y5_t787 y6_t787
+ y7_t787 y8_t787 y9_t787 y10_t787 y11_t787 y12_t787 y13_t787 y14_t787
+ y0_t788 y1_t788 y2_t788 y3_t788 y4_t788 y5_t788 y6_t788 y7_t788 y8_t788
+ y9_t788 y10_t788 y11_t788 y12_t788 y13_t788 y14_t788 y0_t789 y1_t789
+ y2_t789 y3_t789 y4_t789 y5_t789 y6_t789 y7_t789 y8_t789 y9_t789 y10_t789
+ y11_t789 y12_t789 y0_t790 y1_t790 y2_t790 y3_t790 y4_t790 y5_t790 y6_t790
+ y7_t790 y8_t790 y9_t790 y10_t790 y11_t790 y12_t790 y13_t790 y14_t790
+ y0_t791 y1_t791 y2_t791 y3_t791 y4_t791 y5_t791 y6_t791 y7_t791 y8_t791
+ y9_t791 y10_t791 y11_t791 y12_t791 y13_t791 y14_t791 y0_t792 y1_t792
+ y2_t792 y3_t792 y4_t792 y5_t792 y6_t792 y7_t792 y8_t792 y9_t792 y10_t792
+ y11_t792 y12_t792 y13_t792 y14_t792 y0_t793 y1_t793 y2_t793 y3_t793
+ y4_t793 y5_t793 y6_t793 y7_t793 y8_t793 y9_t793 y10_t793 y11_t793 y12_t793
+ y13_t793 y14_t793 y0_t794 y1_t794 y2_t794 y3_t794 y4_t794 y5_t794 y6_t794
+ y7_t794 y8_t794 y9_t794 y10_t794 y11_t794 y12_t794 y13_t794 y14_t794
+ y0_t795 y1_t795 y2_t795 y3_t795 y4_t795 y5_t795 y6_t795 y7_t795 y8_t795
+ y9_t795 y10_t795 y11_t795 y12_t795 y13_t795 y14_t795 y0_t796 y1_t796
+ y2_t796 y3_t796 y4_t796 y5_t796 y6_t796 y7_t796 y8_t796 y9_t796 y10_t796
+ y11_t796 y12_t796 y13_t796 y14_t796 y0_t797 y1_t797 y2_t797 y3_t797
+ y4_t797 y5_t797 y6_t797 y7_t797 y8_t797 y9_t797 y10_t797 y11_t797 y12_t797
+ y13_t797 y14_t797 y0_t798 y1_t798 y2_t798 y3_t798 y4_t798 y5_t798 y6_t798
+ y7_t798 y8_t798 y9_t798 y10_t798 y11_t798 y12_t798 y13_t798 y14_t798
+ y0_t799 y1_t799 y2_t799 y3_t799 y4_t799 y5_t799 y6_t799 y7_t799 y8_t799
+ y9_t799 y10_t799 y11_t799 y12_t799 y13_t799 y14_t799
 End

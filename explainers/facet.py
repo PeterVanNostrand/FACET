@@ -24,7 +24,7 @@ class FACET(Explainer):
         self.build_graph()
 
     def build_graph(self):
-        if self.graph_type == "Disjoint":
+        if self.graph_type == "disjoint":
             self.build_disjoint_graph()
         else:
             self.build_nondisjoint_graph()
@@ -43,7 +43,7 @@ class FACET(Explainer):
         best_examples : an array of contrastive examples with dimensions (nsamples, nfeatures). Each of final_examples[i] corresponds to
         the best examples which explains x[i] from those suggested by the detectors
         '''
-        if self.graph_type == "Disjoint":
+        if self.graph_type == "disjoint":
             return self.explain_disjoint(x, y)
         else:
             return self.explain_nondisjoint(x, y)
@@ -137,12 +137,12 @@ class FACET(Explainer):
         graph_type = hyperparameters.get("facet_graphtype")
         if graph_type is None:
             print("facet_graphtype is not set, defaulting to disjoint")
-            self.graph_type = "Disjoint"
-        elif graph_type == "Disjoint" or graph_type == "NonDisjoint":
+            self.graph_type = "disjoint"
+        elif graph_type == "disjoint" or graph_type == "nondisjoint":
             self.graph_type = graph_type
         else:
-            print("unknown facet_graphtype, defaulting to Disjoint")
-            self.graph_type = "Disjoint"
+            print("unknown facet_graphtype, defaulting to disjoint")
+            self.graph_type = "disjoint"
 
     def compute_disjoint_adjacency(self, rf_detector):
         '''

@@ -21,12 +21,14 @@ def simple_run(dataset_name):
         "rf_difference": 0.01,
         "rf_distance": distance,
         "rf_k": 1,
-        "rf_ntrees": 20,
-        "rf_maxdepth": 5,
+        "rf_ntrees": 10,
+        "rf_maxdepth": 3,
         "rf_threads": 8,
         "expl_greedy": False,
         "expl_distance": distance,
-        "facet_graphtype": "Disjoint"
+        "facet_graphtype": "disjoint",
+        "facet_offset": 0.001,
+        "facet_mode": "exhaustive"
     }
 
     # Create, train, and predict with the model
@@ -47,7 +49,7 @@ def simple_run(dataset_name):
     print("Jaccard Index:", J)
 
     # generate the explanations
-    explanations = model.explain(x, y)
+    explanations = model.explain(x, preds)
 
     # measure model performance
     accuracy, precision, recall, f1 = classification_metrics(preds, y, verbose=False)
@@ -66,6 +68,6 @@ def simple_run(dataset_name):
 if __name__ == "__main__":
     # run_ds = DS_NAMES.copy()
     # run_ds.remove("spambase")
-    # compare_methods(['cancer', 'magic', 'vertebral', 'glass'], num_iters=5,
-    #                 explainers=["FACETTrees", "BestCandidate", "OCEAN"])
-    simple_run("magic")
+    compare_methods(["vertebral", "magic"], num_iters=1, explainers=["FACETPaths",
+                    "BestCandidate", "OCEAN"], distance="Euclidean")
+    # simple_run("vertebral")

@@ -99,8 +99,8 @@ class FACETTrees(Explainer):
 
         return xprime
 
-    def get_clique(self):
-        return self.fully_disjoint_trees
+    def get_clique_size(self):
+        return len(self.fully_disjoint_trees)
 
     def parse_hyperparameters(self, hyperparameters):
         self.hyperparameters = hyperparameters
@@ -123,14 +123,3 @@ class FACETTrees(Explainer):
             self.greedy = False
         else:
             self.greedy = hyperparameters.get("expl_greedy")
-
-        # graph type
-        graph_type = hyperparameters.get("facet_graphtype")
-        if graph_type is None:
-            print("facet_graphtype is not set, defaulting to disjoint")
-            self.graph_type = "Disjoint"
-        elif graph_type == "Disjoint" or graph_type == "NonDisjoint":
-            self.graph_type = graph_type
-        else:
-            print("unknown facet_graphtype, defaulting to Disjoint")
-            self.graph_type = "Disjoint"
