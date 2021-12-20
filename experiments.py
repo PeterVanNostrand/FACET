@@ -530,3 +530,118 @@ def compare_methods(ds_names, explainers=["BestCandidate", "FACET"], distance="E
 
     progress_bar.close()
     print("Finished comparing explainers")
+
+
+def time_cliques(ds_names, ntrees=[1, 5, 10, 15, 20]):
+    # output directory
+    run_id, run_path = check_create_directory("./results/time-cliques/")
+    distance = "Euclidean"
+    num_iters = 1
+
+    # run configuration
+    explainers = ["FACETPaths"]
+    expl = explainers[0]
+    dets = ["RandomForest"]
+    agg = "NoAggregator"
+    params = {
+        "rf_ntrees": 20,
+        "rf_threads": 1,
+        "rf_maxdepth": 3,
+        "expl_distance": distance,
+        "num_iters": num_iters,
+        "facet_graphtype": "disjoint",
+        "facet_offset": 0.001,
+        "facet_mode": "exhaustive",
+        "rf_difference": 0.01,
+        "rf_difference": 0.01,
+        "rf_distance": distance,
+        "rf_k": 1,
+        "expl_greedy": False,
+    }
+
+    # save the run information
+    with open(run_path + "/" + "config.txt", 'a') as f:
+        f.write("comparing explanation methods\n\n")
+        f.write("iterations: {:d}\n\n".format(num_iters))
+        f.write("detectors: ")
+        for d in dets:
+            f.write(d + ", ")
+        f.write("\n")
+        f.write("aggregator: " + agg + "\n")
+        f.write("explainers: ")
+        for e in explainers:
+            f.write(e + ", ")
+        f.write("\n")
+        f.write("hyperparameters{\n")
+        for k in params.keys():
+            f.write("\t" + k + ": " + str(params[k]) + "\n")
+        f.write("}\n")
+
+    # compute the total number of runs for this experiment
+    total_runs = len(ds_names) * num_iters * len(ntrees)
+
+    # perform the experiment
+    print("Timing Cliques")
+    print("\tExplainers:", explainers)
+    print("\tDatasets:", ds_names)
+    progress_bar = tqdm(total=total_runs, desc="Overall Progress", position=0)
+
+    for ds in ds_names:
+        print("DS:", ds)
+
+        x, y = load_data(ds, normalize=True)
+
+        file_path = run_path + "/" + ds + ".csv"
+        with open(file_path, "a") as results_file:
+            results_file.write(
+                "rf_ntrees, rf_maxdepth, avg_nnodes, avg_nleaves, avg_depth, init_time, clique_time, nkcliques \n")
+
+        for i in range(num_iters):
+            for n in ntrees:
+                params["rf_ntrees"] = n
+                xtrain, xtest, ytrain, ytest = train_test_split(
+                    x, y, test_size=0.2, shuffle=True, random_state=None)
+                n_samples = DS_DIMENSIONS[ds][0]
+                n_features = DS_DIMENSIONS[ds][1]
+
+                # Create and train the model
+                model = HEEAD(detectors=dets, aggregator=agg, hyperparameters=params)
+                model.train(xtrain, ytrain)
+                preds = model.predict(xtest)
+
+                # compute forest metrics
+                accuracy, precision, recall, f1 = classification_metrics(preds, ytest, verbose=False)
+                avg_nnodes, avg_nleaves, avg_depth = model.detectors[0].get_tree_information()
+                Q, qs = model.detectors[0].compute_qs(xtest, ytest)
+                J, jaccards = compute_jaccard(model.detectors[0])
+
+                model.set_explainer(expl, hyperparameters=params)
+                start_build = time.time()
+                model.prepare()
+                end_build = time.time()
+                clique_time, nkcliques = model.explainer.get_clique_stats()
+                init_time = end_build - start_build
+
+                # Save results
+                with open(file_path, "a") as results_file:
+                    results_file.write("{ntrees}, {mdepth}, {nnodes}, {nleaves}, {avdepth}, {itime}, {ctime}, {ncliques} \n".format(
+                        ntrees=params["rf_ntrees"],
+                        mdepth=params["rf_maxdepth"],
+                        nnodes=avg_nnodes,
+                        nleaves=avg_nleaves,
+                        avdepth=avg_depth,
+                        itime=init_time,
+                        ctime=clique_time,
+                        ncliques=nkcliques
+                    ))
+
+                if init_time > 100:
+                    break
+
+                # log progress
+                progress_bar.update()
+
+        progress_bar.close()
+
+    progress_bar.close()
+    print("Finished timing cliques")

@@ -21,7 +21,7 @@ def simple_run(dataset_name):
         "rf_difference": 0.01,
         "rf_distance": distance,
         "rf_k": 1,
-        "rf_ntrees": 10,
+        "rf_ntrees": 15,
         "rf_maxdepth": 3,
         "rf_threads": 8,
         "expl_greedy": False,
@@ -37,8 +37,15 @@ def simple_run(dataset_name):
     model.prepare()
     preds = model.predict(x)
 
+    # measure model performance
+    accuracy, precision, recall, f1 = classification_metrics(preds, y, verbose=False)
+    print("accuracy:", accuracy)
+    print("precision:", precision)
+    print("recall:", recall)
+    print("f1:", f1)
+
     # anomaly detection performance
-    accuracy, precision, recall, f1 = classification_metrics(preds, y, verbose=True)
+    # accuracy, precision, recall, f1 = classification_metrics(preds, y, verbose=True)
 
     # Q-stastic
     # Q, qs = model.detectors[0].compute_qs(x, y)
@@ -49,25 +56,21 @@ def simple_run(dataset_name):
     print("Jaccard Index:", J)
 
     # generate the explanations
-    explanations = model.explain(x, preds)
-
-    # measure model performance
-    accuracy, precision, recall, f1 = classification_metrics(preds, y, verbose=False)
-    print("accuracy:", accuracy)
-    print("precision:", precision)
-    print("recall:", recall)
-    print("f1:", f1)
-    coverage_ratio = coverage(explanations)
-    print("coverage_ratio:", coverage_ratio)
-    mean_dist = average_distance(x, explanations, distance_metric="Euclidean")
-    print("mean_dist:", mean_dist)
-    mean_length = average_distance(x, explanations, distance_metric="FeaturesChanged")
-    print("mean_length", mean_length)
+    explain = False
+    if explain:
+        explanations = model.explain(x, preds)
+        coverage_ratio = coverage(explanations)
+        print("coverage_ratio:", coverage_ratio)
+        mean_dist = average_distance(x, explanations, distance_metric="Euclidean")
+        print("mean_dist:", mean_dist)
+        mean_length = average_distance(x, explanations, distance_metric="FeaturesChanged")
+        print("mean_length", mean_length)
 
 
 if __name__ == "__main__":
     # run_ds = DS_NAMES.copy()
     # run_ds.remove("spambase")
-    compare_methods(["vertebral", "magic"], num_iters=1, explainers=["FACETPaths",
-                    "BestCandidate", "OCEAN"], distance="Euclidean")
+    # compare_methods(["vertebral", "magic"], num_iters=1, explainers=["FACETPaths",
+    #                 "BestCandidate", "OCEAN"], distance="Euclidean")
     # simple_run("vertebral")
+    time_cliques(ds_names=["cancer"], ntrees=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])

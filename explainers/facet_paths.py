@@ -1,4 +1,5 @@
 import math
+import time
 from os import replace
 from networkx.readwrite.json_graph import adjacency
 from explainers.explainer import Explainer
@@ -6,6 +7,9 @@ import numpy as np
 
 import networkx as nx
 from networkx.algorithms.approximation import max_clique as get_max_clique
+from networkx.algorithms.clique import enumerate_all_cliques
+
+from igraph import Graph
 
 from utilities.metrics import dist_euclidean
 from utilities.metrics import dist_features_changed
@@ -28,17 +32,32 @@ class FACETPaths(Explainer):
         rf_nfeatures = len(rf_detector.model.feature_importances_)
 
         self.build_paths(rf_trees)
-        self.index_paths()
+        self.index_paths(rf_nclasses)
         self.find_synthesizeable_paths(rf_trees)
-        self.build_graph(rf_trees, rf_nclasses)
+        self.build_graphs(rf_trees, rf_nclasses)
 
-    def build_graph(self, trees, nclasses):
-        adjacencys = self.build_adjacencys(trees, nclasses)
-        graphs = []
+        timings = True
+        all_cliques = True
+        if timings:
+            start = time.time()
+            if all_cliques:
+                self.nkcliques = self.find_kcliques()
+            else:
+                self.find_maxcliques()
+            end = time.time()
+            self.clique_time = end - start
+        else:
+            if all_cliques:
+                self.find_kcliques()
+            else:
+                self.find_maxcliques()
+
+    def get_clique_stats(self):
+        return self.clique_time, self.nkcliques
+
+    def find_maxcliques(self):
         max_cliques = []
-        for i in range(nclasses):
-            g = nx.Graph(adjacencys[i])
-
+        for g in self.graphs:
             clique_idxs = list(get_max_clique(g))
             clique_paths = []
             for idx in clique_idxs:
@@ -46,30 +65,58 @@ class FACETPaths(Explainer):
             clique_paths = np.array(clique_paths)
             clique_paths = clique_paths[clique_paths[:, 0].argsort()]
 
-            graphs.append(g)
             max_cliques.append(clique_paths)
-
-        self.graphs = graphs
         self.max_cliques = max_cliques
 
-        if(not self.check_cliques(max_cliques)):
-            print("BAD CLIQUE")
         print("Clique Sizes:")
         for clique in max_cliques:
             print("\t {}".format(len(clique)))
 
+    def find_kcliques(self):
+        majority_size = math.floor(len(self.all_paths) / 2) + 1
+        kcliques = []
+
+        nkcliques = 0
+
+        for g in self.graphs:
+            clique_iterator = g.cliques()
+            for clique in clique_iterator:
+                k = len(clique)
+                if k == majority_size:
+                    nkcliques += 1
+                    # kcliques.append(clique)
+                # if k > majority_size:
+                #     break
+
+        self.kcliques = kcliques
+
+        return nkcliques
+
+    def build_graphs(self, trees, nclasses):
+        self.adjacencys = self.build_adjacencys(trees, nclasses)
+        graphs = []
+        for a in self.adjacencys:
+            # g = nx.Graph(a)
+            g = Graph.Adjacency(a, mode="undirected")
+            graphs.append(g)
+        self.graphs = graphs
+
     def build_adjacencys(self, trees, nclasses):
+        # TODO update for split index by class
         ntrees = len(trees)
-        adjacencys = np.zeros(shape=(nclasses, self.npaths, self.npaths))
+        adjacencys = []
+
+        for i in range(nclasses):
+            adjacencys.append(np.zeros(shape=(self.npaths, self.npaths), dtype=int))
 
         for t1_id in range(ntrees):
             for t2_id in range(ntrees):
                 t1_t2_merges = self.sythesizable_paths[t1_id][t2_id]
                 for p1_id in range(len(t1_t2_merges)):
-                    t1p1_index = self.treepath_to_idx[t1_id][p1_id]
+                    t1p1_index = self.treepath_to_idx[t1_id][p1_id][1]  # index is classid, pathid
                     t1p1_class = int(self.all_paths[t1_id][p1_id][-1:, 3:][0][0])
                     for p2_id in t1_t2_merges[p1_id]:
-                        t2p2_index = self.treepath_to_idx[t2_id][p2_id]
+                        t2p2_index = self.treepath_to_idx[t2_id][p2_id][1]
                         adjacencys[t1p1_class][t1p1_index][t2p2_index] = 1
 
         return adjacencys
@@ -89,23 +136,33 @@ class FACETPaths(Explainer):
 
         self.all_paths = all_paths
 
-    def index_paths(self):
+    def index_paths(self, nclasses):
         ntrees = len(self.all_paths)
-        treepath_to_idx = []
-        idx_to_treepath = []
 
-        index = 0
+        # takes [tree_id, path_id] and turns it into a [class_id, index]
+        treepath_to_idx = []  # list of (ntrees, npaths, 2)
+
+        # takes [class_id, index] and turns it into (tree_id, path_id)
+        idx_to_treepath = [[] for _ in range(nclasses)]  # list of (nclasses, npaths)
+
+        indexs = [0] * nclasses
         for i in range(ntrees):
             treei_to_idx = []
             for j in range(len(self.all_paths[i])):
-                treei_to_idx.append(index)
-                idx_to_treepath.append((i, j))
-                index += 1
+                p = self.all_paths[i][j]
+                path_class = int(p[-1:, 3:][0][0])
+                treei_to_idx.append((path_class, indexs[path_class]))
+                idx_to_treepath[path_class].append((i, j))
+                indexs[path_class] += 1
             treepath_to_idx.append(treei_to_idx)
 
-        print("Num paths: {}".format(index))
+        total_paths = 0
+        for idx in indexs:
+            total_paths += idx
 
-        self.npaths = index
+        print("Num paths: {}".format(total_paths))
+
+        self.npaths = total_paths
         self.treepath_to_idx = treepath_to_idx
         self.idx_to_treepath = idx_to_treepath
 
@@ -127,7 +184,7 @@ class FACETPaths(Explainer):
         Returns
         ----------
         t1_merges: a list of lists which maps path ids from t1 to a list of path ids from t2
-                   mergeable_paths[t1pi] = [t2pj, t2pk, t2pl, ...] 
+                   mergeable_paths[t1pi] = [t2pj, t2pk, t2pl, ...]
         '''
         t1_paths = self.all_paths[t1_id]
         t2_paths = self.all_paths[t2_id]
