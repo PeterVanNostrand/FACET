@@ -449,7 +449,7 @@ def compare_methods(ds_names, explainers=["BestCandidate", "FACET"], distance="E
         # dataframe to store results of each datasets runs
         results = pd.DataFrame(
             columns=[
-                "explainer", "n_samples", "n_samples_explained", "n_features", "accuracy", "precision", "recall", "f1", "avg_nnodes", "avg_nleaves", "avg_depth", "q", "jaccard", "coverage_ratio", "mean_distance", "mean_length", "runtime", "clique_size", "init_time"
+                "explainer", "n_samples", "n_samples_explained", "n_features", "accuracy", "precision", "recall", "f1", "avg_nnodes", "avg_nleaves", "avg_depth", "q", "jaccard", "coverage_ratio", "mean_distance", "mean_length", "runtime", "clique_size", "grown_clique_size", "init_time"
             ])
         progress_bar_ds = tqdm(total=len(explainers) * num_iters, desc=ds, leave=False)
 
@@ -476,19 +476,28 @@ def compare_methods(ds_names, explainers=["BestCandidate", "FACET"], distance="E
             J, jaccards = compute_jaccard(model.detectors[0])
 
             for expl in explainers:
+                # create and prep explainer
                 model.set_explainer(expl, hyperparameters=params)
                 start_build = time.time()
                 model.prepare()
                 end_build = time.time()
-                if expl == "FACETTrees" or expl == "FACETPaths":
-                    clique_size = model.explainer.get_clique_size()
-                else:
-                    clique_size = -1
+
+                # explain instances
                 start = time.time()
                 explanations = model.explain(xtest, preds)
                 end = time.time()
                 runtime = end-start  # wall time in seconds
                 init_time = end_build - start_build
+
+                # collect optional statistics
+                if expl == "FACETTrees" or expl == "FACETPaths":
+                    clique_size = model.explainer.get_clique_size()
+                    grown_clique_size = -1
+                elif expl == "FACETGrow":
+                    clique_size, grown_clique_size = model.explainer.get_clique_size()
+                else:
+                    clique_size = -1
+                    grown_clique_size = -1
 
                 # Compute explanation metrics
                 coverage_ratio = coverage(explanations)
@@ -516,7 +525,8 @@ def compare_methods(ds_names, explainers=["BestCandidate", "FACET"], distance="E
                     "mean_length": mean_length,
                     "runtime": runtime,
                     "clique_size": clique_size,
-                    "init_time": init_time,
+                    "grown_clique_size": grown_clique_size,
+                    "init_time": init_time
                 }
                 results = results.append(run_result, ignore_index=True)
 

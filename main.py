@@ -21,7 +21,7 @@ def simple_run(dataset_name):
         "rf_difference": 0.01,
         "rf_distance": distance,
         "rf_k": 1,
-        "rf_ntrees": 15,
+        "rf_ntrees": 20,
         "rf_maxdepth": 3,
         "rf_threads": 8,
         "expl_greedy": False,
@@ -32,7 +32,7 @@ def simple_run(dataset_name):
     }
 
     # Create, train, and predict with the model
-    model = HEEAD(detectors=["RandomForest"], aggregator="NoAggregator", explainer="FACETPaths", hyperparameters=params)
+    model = HEEAD(detectors=["RandomForest"], aggregator="NoAggregator", explainer="FACETGrow", hyperparameters=params)
     model.train(x, y)
     model.prepare()
     preds = model.predict(x)
@@ -56,7 +56,7 @@ def simple_run(dataset_name):
     print("Jaccard Index:", J)
 
     # generate the explanations
-    explain = False
+    explain = True
     if explain:
         explanations = model.explain(x, preds)
         coverage_ratio = coverage(explanations)
@@ -68,9 +68,8 @@ def simple_run(dataset_name):
 
 
 if __name__ == "__main__":
-    # run_ds = DS_NAMES.copy()
+    run_ds = DS_NAMES.copy()
     # run_ds.remove("spambase")
-    # compare_methods(["vertebral", "magic"], num_iters=1, explainers=["FACETPaths",
-    #                 "BestCandidate", "OCEAN"], distance="Euclidean")
+    compare_methods(run_ds, num_iters=1, explainers=["FACETGrow"])
     # simple_run("vertebral")
-    time_cliques(ds_names=["cancer"], ntrees=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
+    # time_cliques(ds_names=["cancer"], ntrees=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
