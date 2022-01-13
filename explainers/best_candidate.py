@@ -5,7 +5,7 @@ from utilities.metrics import dist_euclidean
 from utilities.metrics import dist_features_changed
 
 
-class BestCandidate(Explainer):
+class AFT(Explainer):
     def __init__(self, model, hyperparameters=None):
         self.model = model
         self.hyperparameters = hyperparameters

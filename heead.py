@@ -14,7 +14,7 @@ from detectors.random_forest import RandomForest
 
 # Explainer classes
 from explainers import *
-from explainers.best_candidate import BestCandidate
+from explainers.best_candidate import AFT
 from explainers.ocean import OCEAN
 from explainers.mace import MACE
 from explainers.facet import FACET
@@ -51,8 +51,8 @@ class HEEAD():
             self.set_explainer(explainer, hyperparameters)
 
     def set_explainer(self, explainer, hyperparameters):
-        if explainer == "BestCandidate":
-            self.explainer = BestCandidate(model=self, hyperparameters=hyperparameters)
+        if explainer == "AFT":
+            self.explainer = AFT(model=self, hyperparameters=hyperparameters)
         elif explainer == "OCEAN":
             self.explainer = OCEAN(model=self, hyperparameters=hyperparameters)
         elif explainer == "MACE":
@@ -68,7 +68,7 @@ class HEEAD():
         else:
             print("Unknown explainer type of " + explainer)
             print("using best candidate explainer")
-            self.explainer = BestCandidate(model=self, hyperparameters=hyperparameters)
+            self.explainer = AFT(model=self, hyperparameters=hyperparameters)
 
     def train(self, x, y=None):
         # Use semi-supervised approach to train aggregator using 5% of data, use remainder as unsupervised for detectors

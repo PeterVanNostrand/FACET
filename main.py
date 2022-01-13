@@ -70,6 +70,6 @@ def simple_run(dataset_name):
 if __name__ == "__main__":
     run_ds = DS_NAMES.copy()
     # run_ds.remove("spambase")
-    compare_methods(run_ds, num_iters=1, explainers=["FACETGrow"])
+    compare_methods(run_ds, num_iters=5, explainers=["FACETGrow", "AFT", "OCEAN"], eval_samples=None)
     # simple_run("vertebral")
     # time_cliques(ds_names=["cancer"], ntrees=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])

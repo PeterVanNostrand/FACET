@@ -97,7 +97,7 @@ def vary_difference():
 
     dets = ["RandomForest"]
     agg = "LogisticRegression"
-    expl = "BestCandidate"
+    expl = "AFT"
     params = {
         "rf_distance": "Euclidean",
         "rf_k": 1,
@@ -168,7 +168,7 @@ def vary_k():
 
     dets = ["RandomForest"]
     agg = "LogisticRegression"
-    expl = "BestCandidate"
+    expl = "AFT"
     params = {
         "rf_difference": 0.01,
         "rf_distance": "Euclidean",
@@ -225,7 +225,7 @@ def vary_k():
         print("finished", ds_name)
 
 
-def vary_dim(ds_names, explainer="BestCandidate", distance="Euclidean"):
+def vary_dim(ds_names, explainer="AFT", distance="Euclidean"):
     '''
     Experiment to observe the effect of the the number of features on explanation
     '''
@@ -319,7 +319,7 @@ def vary_dim(ds_names, explainer="BestCandidate", distance="Euclidean"):
     print("Finished varying dimension")
 
 
-def vary_ntrees(ds_names, explainer="BestCandidate", distance="Euclidean"):
+def vary_ntrees(ds_names, explainer="AFT", distance="Euclidean"):
     '''
     Experiment to observe the effect of the the number of features on explanation
     '''
@@ -388,7 +388,7 @@ def vary_ntrees(ds_names, explainer="BestCandidate", distance="Euclidean"):
         print("finished", ds)
 
 
-def compare_methods(ds_names, explainers=["BestCandidate", "FACET"], distance="Euclidean", num_iters=5, eval_samples=20, test_size=0.2):
+def compare_methods(ds_names, explainers=["AFT", "FACET"], distance="Euclidean", num_iters=5, eval_samples=20, test_size=0.2):
     '''
     Experiment to compare the performanec of different explanation methods
     '''
@@ -449,7 +449,7 @@ def compare_methods(ds_names, explainers=["BestCandidate", "FACET"], distance="E
         # dataframe to store results of each datasets runs
         results = pd.DataFrame(
             columns=[
-                "explainer", "n_samples", "n_samples_explained", "n_features", "accuracy", "precision", "recall", "f1", "avg_nnodes", "avg_nleaves", "avg_depth", "q", "jaccard", "coverage_ratio", "mean_distance", "mean_length", "runtime", "clique_size", "grown_clique_size", "init_time"
+                "explainer", "n_samples", "n_samples_explained", "n_features", "accuracy", "precision", "recall", "f1", "avg_nnodes", "avg_nleaves", "avg_depth", "q", "jaccard", "coverage_ratio", "mean_distance", "mean_length", "init_time", "runtime", "clique_size", "grown_clique_size"
             ])
         progress_bar_ds = tqdm(total=len(explainers) * num_iters, desc=ds, leave=False)
 
@@ -523,10 +523,10 @@ def compare_methods(ds_names, explainers=["BestCandidate", "FACET"], distance="E
                     "coverage_ratio": coverage_ratio,
                     "mean_distance": mean_dist,
                     "mean_length": mean_length,
+                    "init_time": init_time,
                     "runtime": runtime,
                     "clique_size": clique_size,
                     "grown_clique_size": grown_clique_size,
-                    "init_time": init_time
                 }
                 results = results.append(run_result, ignore_index=True)
 

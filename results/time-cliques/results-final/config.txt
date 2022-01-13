@@ -1,0 +1,21 @@
+comparing explanation methods
+
+iterations: 1
+
+detectors: RandomForest, 
+aggregator: NoAggregator
+explainers: FACETPaths, 
+hyperparameters{
+	rf_ntrees: 20
+	rf_threads: 1
+	rf_maxdepth: 3
+	expl_distance: Euclidean
+	num_iters: 1
+	facet_graphtype: disjoint
+	facet_offset: 0.001
+	facet_mode: exhaustive
+	rf_difference: 0.01
+	rf_distance: Euclidean
+	rf_k: 1
+	expl_greedy: False
+}
