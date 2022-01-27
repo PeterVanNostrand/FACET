@@ -1,6 +1,6 @@
 # FACET
 
-This report contains prototype code for the project *Fast Actionable Counterfactual Examples for Ensembles of Trees* which generates simple human understandable explanations of the decisions made by a random forest model. Explanations are generated as counterfactual examples, for example given a sample `x` which is classified `y=f(x)=A` the sample `x'` would be minimally modified version of `x` such that `y'!=y` so `y'=B`.
+This repository contains prototype code for the project *Fast Actionable Counterfactual Examples for Ensembles of Trees* which generates simple human understandable explanations of the decisions made by a random forest model. Explanations are generated as counterfactual examples, for example given a sample `x` which is classified `y=f(x)=A` the sample `x'` would be minimally modified version of `x` such that `y'!=y` so `y'=B`.
 
 ## Requirements
 
