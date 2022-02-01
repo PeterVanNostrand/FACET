@@ -21,6 +21,7 @@ from explainers.facet import FACET
 from explainers.facet_trees import FACETTrees
 from explainers.facet_paths import FACETPaths
 from explainers.facet_grow import FACETGrow
+from explainers.facet_bb import FACETBranchBound
 
 
 class HEEAD():
@@ -65,6 +66,8 @@ class HEEAD():
             self.explainer = FACETPaths(model=self, hyperparameters=hyperparameters)
         elif explainer == "FACETGrow":
             self.explainer = FACETGrow(model=self, hyperparameters=hyperparameters)
+        elif explainer == "FACETBranchBound":
+            self.explainer = FACETBranchBound(model=self, hyperparameters=hyperparameters)
         else:
             print("Unknown explainer type of " + explainer)
             print("using best candidate explainer")

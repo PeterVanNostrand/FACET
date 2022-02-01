@@ -1,15 +1,18 @@
 import math
 import time
 from os import replace
+from tokenize import Double
 from networkx.readwrite.json_graph import adjacency
 from explainers.explainer import Explainer
 import numpy as np
+from heapq import heappush, heappop
 
 import networkx as nx
 from networkx.algorithms.approximation import max_clique as get_max_clique
 from networkx.algorithms.clique import enumerate_all_cliques
 
 from strawberryfields.apps.clique import grow as sf_grow
+from strawberryfields.apps.clique import c_0 as sf_C0
 
 from utilities.metrics import dist_euclidean
 from utilities.metrics import dist_features_changed
@@ -19,7 +22,7 @@ from sklearn import tree
 from itertools import combinations
 
 
-class FACETGrow(Explainer):
+class FACETBranchBound(Explainer):
     def __init__(self, model, hyperparameters=None):
         self.model = model
         self.parse_hyperparameters(hyperparameters)
@@ -31,13 +34,14 @@ class FACETGrow(Explainer):
         rf_nclasses = rf_detector.model.n_classes_
         rf_nfeatures = len(rf_detector.model.feature_importances_)
 
+        # the number of trees which much aggree for a prediction
+        self.majority_size = math.floor(len(self.all_paths) / 2) + 1
+
         self.build_paths(rf_trees)
         self.index_paths(rf_nclasses)
         self.find_synthesizeable_paths(rf_trees)
         self.build_graphs(rf_trees, rf_nclasses)
-
-    def get_clique_stats(self):
-        return self.clique_time, self.nkcliques
+        self.find_maxcliques()
 
     def find_maxcliques(self):
         max_cliques = []
@@ -51,27 +55,6 @@ class FACETGrow(Explainer):
 
             max_cliques.append(clique_paths)
         self.max_cliques = max_cliques
-
-        print("Clique Sizes:")
-        for clique in max_cliques:
-            print("\t {}".format(len(clique)))
-
-    def find_kcliques(self):
-        majority_size = math.floor(len(self.all_paths) / 2) + 1
-        kcliques = []
-
-        nkcliques = 0
-
-        for g in self.graphs:
-            clique_iterator = g.cliques()
-            for clique in clique_iterator:
-                k = len(clique)
-                if k == majority_size:
-                    nkcliques += 1
-
-        self.kcliques = kcliques
-
-        return nkcliques
 
     def build_graphs(self, trees, nclasses):
         self.adjacencys = self.build_adjacencys(trees, nclasses)
@@ -321,96 +304,6 @@ class FACETGrow(Explainer):
             built_paths.append(finished_path)
             return built_paths
 
-    def explain(self, x, y):
-        '''
-        Parameters
-        ----------
-        x               : an array of samples, dimensions (nsamples, nfeatures)
-        y               : an array of predicted labels which correspond to the labels, (nsamples, )
-
-        Returns
-        -------
-        xprime : an array of contrastive examples with dimensions (nsamples, nfeatures)
-
-        explains a given instance by growing a clique around the region of xi starting with trees which predict the counterfactual class
-        '''
-        xprime = x.copy()  # an array for the constructed contrastive examples
-
-        # the number of trees which much aggree for a prediction
-        majority_size = math.floor(len(self.all_paths) / 2) + 1
-
-        # assumimg binary classification [0, 1] set counterfactual class
-        counterfactual_classes = ((y - 1) * -1)
-
-        skrf = self.model.detectors[0].model
-        # an array of size (n_samples, n_estimators) containing the leaf
-        # node id xi ends up for each tree for all samples
-        x_leaves = skrf.apply(x)
-
-        counter_clique_start = np.zeros(shape=(x.shape[0]))
-        counter_clique_end = np.zeros(shape=(x.shape[0]))
-
-        for i in range(x.shape[0]):
-            counter_class = counterfactual_classes[i]  # the counterfactual class for explanation
-            leaf_nodes = x_leaves[i]  # the leaf nodes in each tree that x ends up in
-            leaf_classes = np.zeros_like(leaf_nodes)  # the class of each of those leaf nodes
-            leaf_indexs = np.zeros_like(leaf_nodes)  # the index of that leaf node in the graph
-
-            # get the class and index of each predicted leaf
-            for tree_id in range(len(leaf_nodes)):
-                leaf_id = leaf_nodes[tree_id]
-
-                # get the id of the path leading to this leaf
-                path_id = 0
-                for path in self.all_paths[tree_id]:
-                    path_leaf_id = int(path[-1, 0])
-                    if(path_leaf_id == leaf_id):
-                        break
-                    path_id += 1
-
-                leaf_class, leaf_index = self.treepath_to_idx[tree_id][path_id]
-                leaf_classes[tree_id] = leaf_class
-                leaf_indexs[tree_id] = leaf_index
-
-            # determine which leafs are of the counterfactual class
-            counter_leaves = (leaf_classes == counter_class)
-
-            # treat these leaves as a clique of the counterfactual class
-            counter_clique = leaf_indexs[counter_leaves]
-
-            # iteratively grow this clique to a majority size
-            counter_clique_start[i] = len(counter_clique)
-            counter_clique = sf_grow(counter_clique, self.graphs[counter_class], node_select="degree")
-            counter_clique_end[i] = len(counter_clique)
-
-            # if the counter clique is greater than majority size take first nmajority
-            if(len(counter_clique)) > majority_size:
-                counter_clique = counter_clique[:majority_size]
-
-            # convert the path indexs to path ids
-            tree_paths = []
-            for idx in counter_clique:
-                tree_paths.append(self.idx_to_treepath[counter_class][idx])
-
-            # build the counterfactual example from this clique
-            feature_bounds = self.compute_syth_thresholds(tree_paths, x.shape[1])
-            xprime[i] = self.fit_thresholds(xprime[i], feature_bounds)
-
-        # collect clique size statistics
-        self.mean_clique_start = np.mean(counter_clique_start)
-        self.mean_clique_end = np.mean(counter_clique_end)
-        print("Start counter clique: {}".format(self.mean_clique_start))
-        print("End counter clique: {}".format(self.mean_clique_end))
-
-        # check that all counterfactuals result in a different class
-        preds = self.model.predict(xprime)
-        failed_explanation = (preds == y)
-        xprime[failed_explanation] = np.tile(np.inf, x.shape[1])
-
-        print("failed x':", failed_explanation.sum())
-
-        return xprime
-
     def compute_syth_thresholds(self, path_idxs, nfeatures):
         # the minimum and maximum possible values for each feature, represented by pair [min_value, max_value]
         feature_bounds = [[-float("inf"), float("inf")] for _ in range(nfeatures)]  # min_value < x'[i] < max_value
@@ -445,8 +338,46 @@ class FACETGrow(Explainer):
 
         return xprime
 
-    def get_clique_size(self):
-        return self.mean_clique_start, self.mean_clique_end
+    def explain(self, x, y):
+        '''
+        Parameters
+        ----------
+        x               : an array of samples, dimensions (nsamples, nfeatures)
+        y               : an array of predicted labels which correspond to the labels, (nsamples, )
+
+        Returns
+        -------
+        xprime : an array of contrastive examples with dimensions (nsamples, nfeatures)
+
+        explains a given instance by growing a clique around the region of xi starting with trees which predict the counterfactual class
+        '''
+        xprime = x.copy()  # an array for the constructed contrastive examples
+
+        # assumimg binary classification [0, 1] set counterfactual class
+        counterfactual_classes = ((y - 1) * -1)
+
+        skrf = self.model.detectors[0].model
+        # an array of size (n_samples, n_estimators) containing the leaf
+        # node id xi ends up for each tree for all samples
+        x_leaves = skrf.apply(x)
+
+        counter_clique_start = np.zeros(shape=(x.shape[0]))
+        counter_clique_end = np.zeros(shape=(x.shape[0]))
+
+        for i in range(x.shape[0]):
+            self.build_counterfactual(x[i], counterfactual_classes[i])
+
+        # check that all counterfactuals result in a different class
+        preds = self.model.predict(xprime)
+        failed_explanation = (preds == y)
+        xprime[failed_explanation] = np.tile(np.inf, x.shape[1])
+
+        print("failed x':", failed_explanation.sum())
+
+        return xprime
+
+    def build_counterfactual(self, instance, desired_label):
+        pass
 
     def parse_hyperparameters(self, hyperparameters):
         self.hyperparameters = hyperparameters
@@ -485,3 +416,138 @@ class FACETGrow(Explainer):
             self.mode = "exhaustive"
         else:
             self.mode = mode
+
+
+class BBNode():
+    '''
+    A class for representing nodes in the branch and bound search tree
+
+    Throughout we use type hinting `variable : type = value` to indicate the expected type of variable, this helps with readability and IDE code completion suggestions
+    '''
+
+    def __init__(self, parent, vertex: int, children=[]):
+        '''
+        Parameters
+        ----------
+        parent : branch and bound node
+        vertex : the integer index of the graph vertex from the adjancency matrix
+        children : an optional list of branch and bound nodes
+        '''
+        self.parent: BBNode = parent
+        self.children: list[BBNode] = children
+        self.partial_example = None
+        self.lower_bound = np.inf
+
+        if parent:
+            self.clique = self.parent.clique + [vertex]
+        else:
+            self.clique = []  # if parent is None, this is the root node, start with empty clique
+
+    def find_candidates(self, adjacency: np.ndarray):
+        # Find C0: the set of all vertices in G which are sythesizaeble with the current clique
+        self.clique_candidates: list[int] = []
+
+        a = adjacency
+
+        if self.parent:
+            # C0 for this node is a strict subset of C0 for the parent, reduces # of vertices to check
+            idxs = self.parent.clique_candidates
+            a = a[idxs][:, idxs]  # keep only the rows and colums corresponding to C0 of the parent
+
+        g = nx.graph(a)
+        self.clique_candidates = sf_C0((self.clique, g))  # returns all nodes when self.clique = []
+
+    def solution_possible(self, majority_size: int):
+        return (len(self.clique) + len(self.clique_candidates)) >= majority_size
+
+
+class BranchBound():
+    def __init__(self, instance: np.ndarray, desired_label: int, explainer: FACETBranchBound):
+        self.explainer = explainer
+        self.majority_size = explainer.majority_size
+
+    def initial_guess(self):
+        '''
+        A heuristic for selecting a first counterfactual example
+
+        Creates a counterfactual example from a random majority size subset of paths from the desired class's maxclique
+        '''
+        # initialize the counterfactual as a copy of the instance
+        example = self.instance.copy()
+        # the set of sythesizeable paths for the predicted class
+        max_clique = self.max_cliques[self.desired_label]
+        # randomly pick a set of paths to merge, stored as index pairs [[tree_id, path_id]]
+        merge_paths_idxs = max_clique[np.random.choice(len(max_clique), size=self.majority_size, replace=False)]
+        # determine the bounds of the hyper-rectangle formed by those paths
+        feature_bounds = self.explainer.compute_syth_thresholds(merge_paths_idxs, example.shape[1])
+        # sythesize a counterfactual example which falls within those bounds with minimum distance from x
+        example = self.explainer.fit_thresholds(example, feature_bounds)
+        return example
+
+    def branch(self, node: BBNode):
+        # determine C0 the set of vertices which are sythesizable with C
+        node.find_candidates(self.explainer.adjacencys[self.desired_label])
+
+        # if there are sufficient vertices to reach majority size
+        if node.solution_possible(self.majority_size):
+            # create node for each clique candidate
+            for vertex in node.clique_candidates:
+                child = BBNode(parent=node, vertex=vertex)
+                child.partial_example, child.lower_bound = self.bound(node)
+                # if the resulting nodes has a higher lower bound than the current best, do not add it
+                if(child.lower_bound < self.best_distance):
+                    node.children += child
+                    heappush(self.queue, (child.lower_bound, child))
+
+    def bound(self, node: BBNode):
+        # convert the path indexs to path ids
+        tree_paths = []
+        for idx in node.clique:
+            tree_paths.append(self.explainer.idx_to_treepath[self.desired_label][idx])
+
+        # build the counterfactual example from this clique
+        example = self.instance.copy()
+        feature_bounds = self.explainer.compute_syth_thresholds(tree_paths, example.shape[1])
+        example = self.explainer.fit_thresholds(example, feature_bounds)
+
+        lower_bound = self.explainer.distance_fn(self.instance, example)
+        return example, lower_bound
+
+    def is_solution(self, node: BBNode):
+        return len(node.clique) >= self.majority_size
+
+    def solve(self, instance, desired_label):
+        self.instance = instance
+        self.desired_label = desired_label
+
+        # initialize the first guess using a heuristic method
+        self.best_solution = self.initial_guess()
+        self.best_distance = self.explainer.distance_fn(self.instance, self.best_solution)
+
+        # create a root node and add it to the queue
+        self.queue = []
+        root = BBNode(parent=None, vertex=-1, children=[])
+        root.lower_bound = 0
+        heappush(self.queue, (root.lower_bound, root))
+
+        # while there is nodes in the queue
+        while len(self.queue) > 0:
+            # fetch the next node nodes are popped in increasing order of lower bound
+            node: BBNode = heappop(self.queue)[1]  # heappop returns (priority, node)
+
+            # if the current node is at best worse than the best guess, then we can stop searching
+            if node.lower_bound >= self.best_distance:
+                return self.best_solution
+
+            # otherwise, keep searching
+            else:
+                # if node is a solution, its partial example is counterfactual
+                if self.is_solution(node):
+                    # check if its solution is better than the current best
+                    if node.lower_bound < self.best_distance:
+                        self.best_solution = node.partial_example
+                        self.best_distance = node.lower_bound
+
+                # if the node is not a solution, expand it by branching
+                else:
+                    self.branch(node)
