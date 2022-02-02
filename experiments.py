@@ -449,7 +449,7 @@ def compare_methods(ds_names, explainers=["AFT", "FACET"], distance="Euclidean",
         # dataframe to store results of each datasets runs
         results = pd.DataFrame(
             columns=[
-                "explainer", "n_samples", "n_samples_explained", "n_features", "accuracy", "precision", "recall", "f1", "avg_nnodes", "avg_nleaves", "avg_depth", "q", "jaccard", "coverage_ratio", "mean_distance", "mean_length", "init_time", "runtime", "clique_size", "grown_clique_size"
+                "explainer", "n_samples", "n_samples_explained", "n_features", "accuracy", "precision", "recall", "f1", "avg_nnodes", "avg_nleaves", "avg_depth", "q", "jaccard", "coverage_ratio", "mean_distance", "mean_length", "init_time", "runtime", "clique_size", "grown_clique_size", "ext_min", "ext_avg", "ext_max"
             ])
         progress_bar_ds = tqdm(total=len(explainers) * num_iters, desc=ds, leave=False)
 
@@ -495,9 +495,18 @@ def compare_methods(ds_names, explainers=["AFT", "FACET"], distance="Euclidean",
                     grown_clique_size = -1
                 elif expl == "FACETGrow":
                     clique_size, grown_clique_size = model.explainer.get_clique_size()
+                elif expl == "FACETBranchBound":
+                    clique_size = -1
+                    grown_clique_size = -1
+                    ext_min = model.explainer.ext_min
+                    ext_avg = model.explainer.ext_avg
+                    ext_max = model.explainer.ext_max
                 else:
                     clique_size = -1
                     grown_clique_size = -1
+                    ext_min = -1
+                    ext_avg = -1
+                    ext_max = -1
 
                 # Compute explanation metrics
                 coverage_ratio = coverage(explanations)
@@ -527,6 +536,9 @@ def compare_methods(ds_names, explainers=["AFT", "FACET"], distance="Euclidean",
                     "runtime": runtime,
                     "clique_size": clique_size,
                     "grown_clique_size": grown_clique_size,
+                    "ext_min": ext_min,
+                    "ext_avg": ext_avg,
+                    "ext_max": ext_max
                 }
                 results = results.append(run_result, ignore_index=True)
 

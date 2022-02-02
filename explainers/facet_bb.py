@@ -1,26 +1,24 @@
+# core python packages
 import math
-import time
 from os import replace
-from tokenize import Double
-from xmlrpc.client import Boolean
-from networkx.readwrite.json_graph import adjacency
-from explainers.explainer import Explainer
-import numpy as np
 from heapq import heappush, heappop
+import bisect
 
-import networkx as nx
-from networkx.algorithms.approximation import max_clique as get_max_clique
-from networkx.algorithms.clique import enumerate_all_cliques
-
-from strawberryfields.apps.clique import grow as sf_grow
-from strawberryfields.apps.clique import c_0 as sf_C0
-
-from utilities.metrics import dist_euclidean
-from utilities.metrics import dist_features_changed
-
+# scientific and utility packages
+import numpy as np
 import matplotlib.pyplot as plt
 from sklearn import tree
-from itertools import combinations
+from tqdm import tqdm
+
+# graph packages
+import networkx as nx
+from networkx.algorithms.approximation import max_clique as get_max_clique
+from strawberryfields.apps.clique import c_0 as sf_C0
+
+# custom classes
+from utilities.metrics import dist_euclidean
+from utilities.metrics import dist_features_changed
+from explainers.explainer import Explainer
 from detectors.random_forest import RandomForest
 
 
@@ -392,16 +390,22 @@ class FACETBranchBound(Explainer):
         counter_clique_start = np.zeros(shape=(x.shape[0]))
         counter_clique_end = np.zeros(shape=(x.shape[0]))
 
-        solver = BranchBound(explainer=self)
-        for i in range(x.shape[0]):
+        nextensions = []
+        for i in tqdm(range(x.shape[0])):
+            solver = BranchBound(explainer=self)
             xprime[i] = solver.solve(instance=x[i], desired_label=counterfactual_classes[i])
-            print("solved {}".format(i))
+            nextensions.append(solver.nextensions)
             # xprime[i] = self.build_counterfactual(x[i], counterfactual_classes[i])
 
+        # branch and bound stats
+        self.ext_min = np.min(nextensions)
+        self.ext_avg = np.mean(nextensions)
+        self.ext_max = np.max(nextensions)
+
         print("N Extensions")
-        print("\tmin:", np.min(solver.nextensions))
-        print("\tavg", np.mean(solver.nextensions))
-        print("\tmax:", np.max(solver.nextensions))
+        print("\tmin:", self.ext_min)
+        print("\tavg", self.ext_avg)
+        print("\tmax:", self.ext_max)
         print("lucky guesses:", solver.nlucky_guesses)
 
         # check that all counterfactuals result in a different class
@@ -476,9 +480,11 @@ class BBNode():
         self.children: list[BBNode] = children
         self.partial_example = None
         self.lower_bound = np.inf
+        self.new_vertex = vertex
 
         if parent:
-            self.clique = self.parent.clique + [vertex]
+            self.clique = self.parent.clique.copy()  # starting from parent clique
+            bisect.insort(self.clique, vertex)  # insert the new vertex, keeping the list sorted
         else:
             self.clique = []  # if parent is None, this is the root node, start with empty clique
 
@@ -488,21 +494,21 @@ class BBNode():
         '''
         return len(self.clique) > len(other.clique)
 
-    def find_candidates(self, adjacency: np.ndarray):
+    def find_candidates(self, G: nx.Graph):
         # Find C0: the set of all vertices in G which are sythesizaeble with the current clique
         self.clique_candidates: list[int] = []
-        a = adjacency
 
         # TODO: When looking for C0 of this node, it must be a strict subset of its parents C0, attempted to shrink the adjacency matrix to consider, but need to reindex the resulting array which is smaller. Essentially would need a data structure which maps between the original adjacency indexs and the shrunken adjacency indexs
+        # a = adjacency
         # if self.parent:
         #     # C0 for this node is a strict subset of C0 for the parent, reduces # of vertices to check
         #     idxs = self.parent.clique_candidates
         #     a = a[idxs][:, idxs]  # keep only the rows and colums corresponding to C0 of the parent
+        # g = nx.Graph(a)
 
-        g = nx.Graph(a)
-        self.clique_candidates = sf_C0(self.clique, g)  # returns all nodes when self.clique = []
+        self.clique_candidates = sf_C0(self.clique, G)  # returns all nodes when self.clique = []
 
-    def solution_possible(self, majority_size: int) -> Boolean:
+    def solution_possible(self, majority_size: int) -> bool:
         # !WARNING: currently checking all options to resolve soft voting
         return (len(self.clique) + len(self.clique_candidates)) >= majority_size
         # return True
@@ -537,20 +543,25 @@ class BranchBound():
 
     def branch(self, node: BBNode, instance: np.ndarray, desired_label: int):
         # determine C0 the set of vertices which are sythesizable with C
-        node.find_candidates(self.explainer.adjacencys[desired_label])
+        node.find_candidates(self.explainer.graphs[desired_label])
 
         # if there are sufficient vertices to reach majority size
         if node.solution_possible(self.majority_size):
             # create node for each clique candidate
             for vertex in node.clique_candidates:
                 child = BBNode(parent=node, vertex=vertex)
-                child.partial_example, child.lower_bound = self.bound(child, instance, desired_label)
-                # self.clique_visited[hash(tuple(child.clique))]
-                # if the resulting nodes has a higher lower bound than the current best, do not add it
-                if(child.lower_bound < self.best_distance):
-                    node.children.append(child)
-                    heappush(self.queue, (child.lower_bound, child))
-                    self.nextensions[-1] += 1
+                # check that we haven't have visited this clique before
+                key = hash(tuple(child.clique))
+                if not key in self.clique_visited:
+                    # remember we have visited the clique
+                    self.clique_visited[key] = True
+                    # compute lower bound for the node
+                    child.partial_example, child.lower_bound = self.bound(child, instance, desired_label)
+                    # if the resulting nodes has a better lower bound than the current best, add it to the tree
+                    if(child.lower_bound < self.best_distance):
+                        node.children.append(child)
+                        heappush(self.queue, (child.lower_bound, child))
+                        self.nextensions[-1] += 1
 
     def bound(self, node: BBNode, instance: np.ndarray, desired_label: int) -> float:
         # convert the path indexs to path ids
@@ -558,15 +569,16 @@ class BranchBound():
         for idx in node.clique:
             tree_paths.append(self.explainer.idx_to_treepath[desired_label][idx])
 
+        # TODO improve performance of feature bounding by having bounds be added recursively relative to the parent, rather than build from scratch each time
         # build the counterfactual example from this clique
-        example = instance.copy()
+        example = node.parent.partial_example.copy()
         feature_bounds = self.explainer.compute_syth_thresholds(tree_paths, example.shape[0])
         example = self.explainer.fit_thresholds(example, feature_bounds)
 
         lower_bound = self.explainer.distance_fn(instance, example)
         return example, lower_bound
 
-    def is_solution(self, node: BBNode, instance: np.ndarray, desired_label: int) -> Boolean:
+    def is_solution(self, node: BBNode, instance: np.ndarray, desired_label: int) -> bool:
         # return len(node.clique) >= self.majority_size:
         # !WARNING: currently performing prediction on each sample to resolve soft voting
 
@@ -586,11 +598,12 @@ class BranchBound():
         self.best_solution = initial_guess.copy()
         self.best_distance = self.explainer.distance_fn(instance, self.best_solution)
         self.nextensions.append(0)
-        # self.clique_visited = {}
+        self.clique_visited = {}
 
         # create a root node and add it to the queue
         self.queue = []
         root = BBNode(parent=None, vertex=-1, children=[])
+        root.partial_example = instance.copy()
         root.lower_bound = 0
         heappush(self.queue, (root.lower_bound, root))
 
