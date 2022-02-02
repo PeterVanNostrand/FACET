@@ -9,6 +9,7 @@ from utilities.tree_tools import compute_jaccard
 from dataset import load_data
 from dataset import DS_NAMES
 from experiments import *
+import cProfile
 
 
 def simple_run(dataset_name):
@@ -21,8 +22,8 @@ def simple_run(dataset_name):
         "rf_difference": 0.01,
         "rf_distance": distance,
         "rf_k": 1,
-        "rf_ntrees": 20,
-        "rf_maxdepth": 3,
+        "rf_ntrees": 3,
+        "rf_maxdepth": 1,
         "rf_threads": 8,
         "expl_greedy": False,
         "expl_distance": distance,
@@ -32,7 +33,8 @@ def simple_run(dataset_name):
     }
 
     # Create, train, and predict with the model
-    model = HEEAD(detectors=["RandomForest"], aggregator="NoAggregator", explainer="FACETGrow", hyperparameters=params)
+    model = HEEAD(detectors=["RandomForest"], aggregator="NoAggregator",
+                  explainer="FACETBranchBound", hyperparameters=params)
     model.train(x, y)
     model.prepare()
     preds = model.predict(x)
@@ -70,6 +72,7 @@ def simple_run(dataset_name):
 if __name__ == "__main__":
     run_ds = DS_NAMES.copy()
     # run_ds.remove("spambase")
-    compare_methods(run_ds, num_iters=5, explainers=["FACETGrow", "AFT", "OCEAN"], eval_samples=None)
+    # compare_methods(run_ds, num_iters=5, explainers=["FACETGrow", "AFT", "OCEAN"], eval_samples=None)
     # simple_run("vertebral")
+    simple_run("vertebral")
     # time_cliques(ds_names=["cancer"], ntrees=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])

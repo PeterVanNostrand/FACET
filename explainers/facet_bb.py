@@ -2,6 +2,7 @@ import math
 import time
 from os import replace
 from tokenize import Double
+from xmlrpc.client import Boolean
 from networkx.readwrite.json_graph import adjacency
 from explainers.explainer import Explainer
 import numpy as np
@@ -20,6 +21,7 @@ from utilities.metrics import dist_features_changed
 import matplotlib.pyplot as plt
 from sklearn import tree
 from itertools import combinations
+from detectors.random_forest import RandomForest
 
 
 class FACETBranchBound(Explainer):
@@ -28,14 +30,14 @@ class FACETBranchBound(Explainer):
         self.parse_hyperparameters(hyperparameters)
 
     def prepare(self):
-        rf_detector = self.model.detectors[0]
+        rf_detector: RandomForest = self.model.detectors[0]
         rf_trees = rf_detector.model.estimators_
         rf_ntrees = len(rf_trees)
         rf_nclasses = rf_detector.model.n_classes_
         rf_nfeatures = len(rf_detector.model.feature_importances_)
 
         # the number of trees which much aggree for a prediction
-        self.majority_size = math.floor(len(self.all_paths) / 2) + 1
+        self.majority_size = math.floor(rf_ntrees / 2) + 1
 
         self.build_paths(rf_trees)
         self.index_paths(rf_nclasses)
@@ -44,17 +46,29 @@ class FACETBranchBound(Explainer):
         self.find_maxcliques()
 
     def find_maxcliques(self):
+        '''
+        Finds a set of paths for each class which correspond to the maximum clique of vertices in the graph for that class. self.max_cliques stores an array with dimensions (max_clique_size, 2) where each row represents a path encoded as (tree_id, path_id)
+        '''
         max_cliques = []
-        for g in self.graphs:
+
+        for class_id in range(len(self.graphs)):  # for each class
+            # find the max clique, returns index of vertices in adjacency matrix
+            g = self.graphs[class_id]
             clique_idxs = list(get_max_clique(g))
             clique_paths = []
+
+            # convert index of vertices into paths
             for idx in clique_idxs:
-                clique_paths.append(self.idx_to_treepath[idx])
+                clique_paths.append(self.idx_to_treepath[class_id][idx])
             clique_paths = np.array(clique_paths)
             clique_paths = clique_paths[clique_paths[:, 0].argsort()]
 
             max_cliques.append(clique_paths)
         self.max_cliques = max_cliques
+
+        print("Clique Sizes:")
+        for clique in max_cliques:
+            print("\t {}".format(len(clique)))
 
     def build_graphs(self, trees, nclasses):
         self.adjacencys = self.build_adjacencys(trees, nclasses)
@@ -68,15 +82,21 @@ class FACETBranchBound(Explainer):
         ntrees = len(trees)
         adjacencys = []
 
-        for i in range(nclasses):
-            adjacencys.append(np.zeros(shape=(self.npaths, self.npaths), dtype=int))
+        # create an adjacency matrix for each class, each matrix is the size of npaths x npaths (classwise)
+        # an entry adjancy[i][j] indicates that those two paths are sythesizeable and should be connected in the graph
+        for class_id in range(nclasses):
+            adjacencys.append(
+                np.zeros(shape=(self.npaths[class_id], self.npaths[class_id]), dtype=int))
 
-        for t1_id in range(ntrees):
-            for t2_id in range(ntrees):
+        for t1_id in range(ntrees):  # for each tree
+            for t2_id in range(ntrees):  # check every other tree pairwise
+                # for every path in t1, find the set of paths that are sythesizeable with it in t2
                 t1_t2_merges = self.sythesizable_paths[t1_id][t2_id]
+                # for each path in t1 with at least one sythesizeable path in t2
                 for p1_id in range(len(t1_t2_merges)):
                     t1p1_index = self.treepath_to_idx[t1_id][p1_id][1]  # index is classid, pathid
-                    t1p1_class = int(self.all_paths[t1_id][p1_id][-1:, 3:][0][0])
+                    t1p1_class = int(self.all_paths[t1_id][p1_id][-1, 3])
+                    # iterate over each sythesizeable path and connect them
                     for p2_id in t1_t2_merges[p1_id]:
                         t2p2_index = self.treepath_to_idx[t2_id][p2_id][1]
                         adjacencys[t1p1_class][t1p1_index][t2p2_index] = 1
@@ -99,6 +119,13 @@ class FACETBranchBound(Explainer):
         self.all_paths = all_paths
 
     def index_paths(self, nclasses):
+        '''
+        Creates a pair of data structures which index the paths of the decision trees. By iterating by tree and then by path each path is assigned an increasing index. Each class is indexed independently
+
+        treepath_to_idx: takes [tree_id, path_id] and returns [class_id, index]
+        idx_to_treepath: takes [class_id, index] and returns [tree_id, path_id]
+        '''
+
         ntrees = len(self.all_paths)
 
         # takes [tree_id, path_id] and turns it into a [class_id, index]
@@ -112,7 +139,7 @@ class FACETBranchBound(Explainer):
             treei_to_idx = []
             for j in range(len(self.all_paths[i])):
                 p = self.all_paths[i][j]
-                path_class = int(p[-1:, 3:][0][0])
+                path_class = int(p[-1, 3])
                 treei_to_idx.append((path_class, indexs[path_class]))
                 idx_to_treepath[path_class].append((i, j))
                 indexs[path_class] += 1
@@ -124,7 +151,8 @@ class FACETBranchBound(Explainer):
 
         print("Num paths: {}".format(total_paths))
 
-        self.npaths = total_paths
+        self.total_paths = total_paths
+        self.npaths = indexs
         self.treepath_to_idx = treepath_to_idx
         self.idx_to_treepath = idx_to_treepath
 
@@ -364,8 +392,17 @@ class FACETBranchBound(Explainer):
         counter_clique_start = np.zeros(shape=(x.shape[0]))
         counter_clique_end = np.zeros(shape=(x.shape[0]))
 
+        solver = BranchBound(explainer=self)
         for i in range(x.shape[0]):
-            self.build_counterfactual(x[i], counterfactual_classes[i])
+            xprime[i] = solver.solve(instance=x[i], desired_label=counterfactual_classes[i])
+            print("solved {}".format(i))
+            # xprime[i] = self.build_counterfactual(x[i], counterfactual_classes[i])
+
+        print("N Extensions")
+        print("\tmin:", np.min(solver.nextensions))
+        print("\tavg", np.mean(solver.nextensions))
+        print("\tmax:", np.max(solver.nextensions))
+        print("lucky guesses:", solver.nlucky_guesses)
 
         # check that all counterfactuals result in a different class
         preds = self.model.predict(xprime)
@@ -376,8 +413,10 @@ class FACETBranchBound(Explainer):
 
         return xprime
 
-    def build_counterfactual(self, instance, desired_label):
-        pass
+    # def build_counterfactual(self, instance, desired_label):
+    #     solver = BranchBound(explainer=self)
+    #     example = solver.solve(instance=instance, desired_label=desired_label)
+    #     return example
 
     def parse_hyperparameters(self, hyperparameters):
         self.hyperparameters = hyperparameters
@@ -443,86 +482,111 @@ class BBNode():
         else:
             self.clique = []  # if parent is None, this is the root node, start with empty clique
 
+    def __lt__(self, other):
+        '''
+        In heapq algorithm, if two items have the same priority they are compared directly to determine which one should be higher in the priority queue. In this case if we have two nodes representing cliques with equal distances size we favor cliques which are closer to the majority size.
+        '''
+        return len(self.clique) > len(other.clique)
+
     def find_candidates(self, adjacency: np.ndarray):
         # Find C0: the set of all vertices in G which are sythesizaeble with the current clique
         self.clique_candidates: list[int] = []
-
         a = adjacency
 
-        if self.parent:
-            # C0 for this node is a strict subset of C0 for the parent, reduces # of vertices to check
-            idxs = self.parent.clique_candidates
-            a = a[idxs][:, idxs]  # keep only the rows and colums corresponding to C0 of the parent
+        # TODO: When looking for C0 of this node, it must be a strict subset of its parents C0, attempted to shrink the adjacency matrix to consider, but need to reindex the resulting array which is smaller. Essentially would need a data structure which maps between the original adjacency indexs and the shrunken adjacency indexs
+        # if self.parent:
+        #     # C0 for this node is a strict subset of C0 for the parent, reduces # of vertices to check
+        #     idxs = self.parent.clique_candidates
+        #     a = a[idxs][:, idxs]  # keep only the rows and colums corresponding to C0 of the parent
 
-        g = nx.graph(a)
-        self.clique_candidates = sf_C0((self.clique, g))  # returns all nodes when self.clique = []
+        g = nx.Graph(a)
+        self.clique_candidates = sf_C0(self.clique, g)  # returns all nodes when self.clique = []
 
-    def solution_possible(self, majority_size: int):
+    def solution_possible(self, majority_size: int) -> Boolean:
+        # !WARNING: currently checking all options to resolve soft voting
         return (len(self.clique) + len(self.clique_candidates)) >= majority_size
+        # return True
 
 
 class BranchBound():
-    def __init__(self, instance: np.ndarray, desired_label: int, explainer: FACETBranchBound):
+    def __init__(self, explainer: FACETBranchBound):
         self.explainer = explainer
         self.majority_size = explainer.majority_size
+        self.nlucky_guesses = 0  # how often is the heuristic the optimal solution
+        self.nextensions = []
 
-    def initial_guess(self):
+    def initial_guess(self, instance: np.ndarray, desired_label: int) -> np.ndarray:
         '''
         A heuristic for selecting a first counterfactual example
 
         Creates a counterfactual example from a random majority size subset of paths from the desired class's maxclique
         '''
         # initialize the counterfactual as a copy of the instance
-        example = self.instance.copy()
+        example = instance.copy()
         # the set of sythesizeable paths for the predicted class
-        max_clique = self.max_cliques[self.desired_label]
+        max_clique = self.explainer.max_cliques[desired_label]
         # randomly pick a set of paths to merge, stored as index pairs [[tree_id, path_id]]
-        merge_paths_idxs = max_clique[np.random.choice(len(max_clique), size=self.majority_size, replace=False)]
+        # merge_paths_idxs = max_clique[np.random.choice(len(max_clique), size=self.majority_size, replace=False)]
+        # !WARNING: currently using entire max clique rather than nmajority of max clique to resolve soft voting
+        merge_paths_idxs = max_clique
         # determine the bounds of the hyper-rectangle formed by those paths
-        feature_bounds = self.explainer.compute_syth_thresholds(merge_paths_idxs, example.shape[1])
+        feature_bounds = self.explainer.compute_syth_thresholds(merge_paths_idxs, example.shape[0])
         # sythesize a counterfactual example which falls within those bounds with minimum distance from x
         example = self.explainer.fit_thresholds(example, feature_bounds)
         return example
 
-    def branch(self, node: BBNode):
+    def branch(self, node: BBNode, instance: np.ndarray, desired_label: int):
         # determine C0 the set of vertices which are sythesizable with C
-        node.find_candidates(self.explainer.adjacencys[self.desired_label])
+        node.find_candidates(self.explainer.adjacencys[desired_label])
 
         # if there are sufficient vertices to reach majority size
         if node.solution_possible(self.majority_size):
             # create node for each clique candidate
             for vertex in node.clique_candidates:
                 child = BBNode(parent=node, vertex=vertex)
-                child.partial_example, child.lower_bound = self.bound(node)
+                child.partial_example, child.lower_bound = self.bound(child, instance, desired_label)
+                # self.clique_visited[hash(tuple(child.clique))]
                 # if the resulting nodes has a higher lower bound than the current best, do not add it
                 if(child.lower_bound < self.best_distance):
-                    node.children += child
+                    node.children.append(child)
                     heappush(self.queue, (child.lower_bound, child))
+                    self.nextensions[-1] += 1
 
-    def bound(self, node: BBNode):
+    def bound(self, node: BBNode, instance: np.ndarray, desired_label: int) -> float:
         # convert the path indexs to path ids
         tree_paths = []
         for idx in node.clique:
-            tree_paths.append(self.explainer.idx_to_treepath[self.desired_label][idx])
+            tree_paths.append(self.explainer.idx_to_treepath[desired_label][idx])
 
         # build the counterfactual example from this clique
-        example = self.instance.copy()
-        feature_bounds = self.explainer.compute_syth_thresholds(tree_paths, example.shape[1])
+        example = instance.copy()
+        feature_bounds = self.explainer.compute_syth_thresholds(tree_paths, example.shape[0])
         example = self.explainer.fit_thresholds(example, feature_bounds)
 
-        lower_bound = self.explainer.distance_fn(self.instance, example)
+        lower_bound = self.explainer.distance_fn(instance, example)
         return example, lower_bound
 
-    def is_solution(self, node: BBNode):
-        return len(node.clique) >= self.majority_size
+    def is_solution(self, node: BBNode, instance: np.ndarray, desired_label: int) -> Boolean:
+        # return len(node.clique) >= self.majority_size:
+        # !WARNING: currently performing prediction on each sample to resolve soft voting
 
-    def solve(self, instance, desired_label):
-        self.instance = instance
-        self.desired_label = desired_label
+        # if(node.partial_example is not None):
+        #     return self.explainer.model.predict([node.partial_example]) == desired_label
+        # else:
+        #     return False
 
+        if len(node.clique) >= self.majority_size:
+            return self.explainer.model.predict([node.partial_example]) == desired_label
+        else:
+            return False
+
+    def solve(self, instance: np.ndarray, desired_label: int) -> np.ndarray:
         # initialize the first guess using a heuristic method
-        self.best_solution = self.initial_guess()
-        self.best_distance = self.explainer.distance_fn(self.instance, self.best_solution)
+        initial_guess = self.initial_guess(instance, desired_label)
+        self.best_solution = initial_guess.copy()
+        self.best_distance = self.explainer.distance_fn(instance, self.best_solution)
+        self.nextensions.append(0)
+        # self.clique_visited = {}
 
         # create a root node and add it to the queue
         self.queue = []
@@ -542,7 +606,7 @@ class BranchBound():
             # otherwise, keep searching
             else:
                 # if node is a solution, its partial example is counterfactual
-                if self.is_solution(node):
+                if self.is_solution(node, instance, desired_label):
                     # check if its solution is better than the current best
                     if node.lower_bound < self.best_distance:
                         self.best_solution = node.partial_example
@@ -550,4 +614,8 @@ class BranchBound():
 
                 # if the node is not a solution, expand it by branching
                 else:
-                    self.branch(node)
+                    self.branch(node, instance, desired_label)
+
+        if(self.best_solution == initial_guess).all():
+            self.nlucky_guesses += 1
+        return self.best_solution

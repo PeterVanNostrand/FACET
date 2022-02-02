@@ -1,0 +1,10 @@
+## vetebral dataset 309 instances 6 features
+N Extensions
+        min: 1498
+        avg 37839.051779935275
+        max: 217679
+lucky guesses: 0
+failed x': 0
+coverage_ratio: 1.0
+mean_dist: 0.13429859385618517
+mean_length 2.6019417475728157
