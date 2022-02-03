@@ -92,6 +92,7 @@ if __name__ == "__main__":
     # run_ds.remove("spambase")
     # compare_methods(run_ds, num_iters=1, explainers=["FACETBranchBound"], eval_samples=20)
     # simple_run("vertebral")
-    for ntrees in [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]:
-        simple_run("vertebral")
+    # for ntrees in [5, 10, 15, 20, 25]:
+    # simple_run("vertebral", ntrees)
     # time_cliques(ds_names=["cancer"], ntrees=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
+    bb_ntrees(["spambase"], explainer="FACETBranchBound", ntrees=[5, 10, 15, 20], num_iters=1)

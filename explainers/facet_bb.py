@@ -64,9 +64,10 @@ class FACETBranchBound(Explainer):
             max_cliques.append(clique_paths)
         self.max_cliques = max_cliques
 
-        print("Clique Sizes:")
-        for clique in max_cliques:
-            print("\t {}".format(len(clique)))
+        if self.verbose:
+            print("Clique Sizes:")
+            for clique in max_cliques:
+                print("\t {}".format(len(clique)))
 
     def build_graphs(self, trees, nclasses):
         self.adjacencys = self.build_adjacencys(trees, nclasses)
@@ -147,7 +148,8 @@ class FACETBranchBound(Explainer):
         for idx in indexs:
             total_paths += idx
 
-        print("Num paths: {}".format(total_paths))
+        if self.verbose:
+            print("Num paths: {}".format(total_paths))
 
         self.total_paths = total_paths
         self.npaths = indexs
@@ -402,18 +404,20 @@ class FACETBranchBound(Explainer):
         self.ext_avg = np.mean(nextensions)
         self.ext_max = np.max(nextensions)
 
-        print("N Extensions")
-        print("\tmin:", self.ext_min)
-        print("\tavg", self.ext_avg)
-        print("\tmax:", self.ext_max)
-        print("lucky guesses:", solver.nlucky_guesses)
+        if self.verbose:
+            print("N Extensions")
+            print("\tmin:", self.ext_min)
+            print("\tavg", self.ext_avg)
+            print("\tmax:", self.ext_max)
+            print("lucky guesses:", solver.nlucky_guesses)
 
         # check that all counterfactuals result in a different class
         preds = self.model.predict(xprime)
         failed_explanation = (preds == y)
         xprime[failed_explanation] = np.tile(np.inf, x.shape[1])
 
-        print("failed x':", failed_explanation.sum())
+        if self.verbose:
+            print("failed x':", failed_explanation.sum())
 
         return xprime
 
@@ -452,13 +456,11 @@ class FACETBranchBound(Explainer):
         else:
             self.offset = offset
 
-        # explanation mode: fast or exhaustive
-        mode = hyperparameters.get("facet_mode")
-        if mode is None:
-            print("No facet_mode provided, using exhaustive")
-            self.mode = "exhaustive"
+        # print messages
+        if hyperparameters.get("verbose") is None:
+            self.verbose = False
         else:
-            self.mode = mode
+            self.verbose = hyperparameters.get("verbose")
 
 
 class BBNode():

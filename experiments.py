@@ -667,3 +667,167 @@ def time_cliques(ds_names, ntrees=[1, 5, 10, 15, 20]):
 
     progress_bar.close()
     print("Finished timing cliques")
+
+
+def bb_ntrees(ds_names, explainer="FACETBranchBound", distance="Euclidean", num_iters=5, eval_samples=20, test_size=0.2, ntrees=[5, 10, 15, 20]):
+    '''
+    Experiment to compare the performanec of different explanation methods
+    '''
+    # output directory
+    run_id, run_path = check_create_directory("./results/bb-ntrees/")
+
+    # run configuration
+    max_depth = 3
+    dets = ["RandomForest"]
+    agg = "NoAggregator"
+    params = {
+        "rf_difference": 0.01,
+        "rf_distance": distance,
+        "rf_k": 1,
+        "rf_ntrees": ntrees[0],
+        "rf_threads": 1,
+        "rf_maxdepth": max_depth,
+        "expl_greedy": False,
+        "expl_distance": distance,
+        "num_iters": num_iters,
+        "eval_samples": eval_samples,
+        "test_size": test_size,
+        "facet_offset": 0.001,
+    }
+
+    # save the run information
+    with open(run_path + "/" + "config.txt", 'a') as f:
+        f.write("comparing explanation methods\n\n")
+        f.write("iterations: {:d}\n\n".format(num_iters))
+        f.write("detectors: ")
+        for d in dets:
+            f.write(d + ", ")
+        f.write("\n")
+        f.write("aggregator: " + agg + "\n")
+        f.write("explainers: " + explainer + "\n")
+        f.write("\n")
+        f.write("hyperparameters{\n")
+        for k in params.keys():
+            f.write("\t" + k + ": " + str(params[k]) + "\n")
+        f.write("}\n")
+
+    # compute the total number of runs for this experiment
+    total_runs = len(ds_names) * num_iters * len(ntrees)
+
+    # perform the experiment
+    print("BB Runtime vs Ntrees")
+    print("\tDatasets:", ds_names)
+    progress_bar = tqdm(total=total_runs, desc="Overall Progress", position=0, disable=True)
+
+    for ds in ds_names:
+        print("DS:", ds)
+        # dataframe to store results of each datasets runs
+        results = pd.DataFrame(
+            columns=[
+                "explainer",
+                "n_trees",
+                "max_depth",
+                "n_samples",
+                "n_samples_explained",
+                "n_features",
+                "accuracy",
+                "precision",
+                "recall",
+                "f1",
+                "q",
+                "jaccard",
+                "coverage_ratio",
+                "mean_distance",
+                "mean_length",
+                "init_time",
+                "runtime",
+                "ext_min",
+                "ext_avg",
+                "ext_max"
+            ])
+        progress_bar_ds = tqdm(total=len(ntrees) * num_iters, desc=ds, leave=False)
+
+        x, y = load_data(ds, normalize=True)
+        for i in range(num_iters):
+            xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=test_size, shuffle=True, random_state=None)
+            n_samples = DS_DIMENSIONS[ds][0]
+            n_features = DS_DIMENSIONS[ds][1]
+
+            if eval_samples is not None:
+                xtest = xtest[:eval_samples]
+                ytest = ytest[:eval_samples]
+                n_samples = eval_samples
+
+            for n in ntrees:
+                # Create and train the model
+                params["rf_ntrees"] = n
+                model = HEEAD(detectors=dets, aggregator=agg, hyperparameters=params, explainer=explainer)
+                model.train(xtrain, ytrain)
+                preds = model.predict(xtest)
+
+                # compute forest metrics
+                accuracy, precision, recall, f1 = classification_metrics(preds, ytest, verbose=False)
+                avg_nnodes, avg_nleaves, avg_depth = model.detectors[0].get_tree_information()
+                Q, qs = model.detectors[0].compute_qs(xtest, ytest)
+                J, jaccards = compute_jaccard(model.detectors[0])
+
+                # create and prep explainer
+                start_build = time.time()
+                model.prepare()
+                end_build = time.time()
+
+                # explain instances
+                start = time.time()
+                explanations = model.explain(xtest, preds)
+                end = time.time()
+                runtime = end-start  # wall time in seconds
+                init_time = end_build - start_build
+
+                # collect optional statistics
+                clique_size = -1
+                grown_clique_size = -1
+                ext_min = model.explainer.ext_min
+                ext_avg = model.explainer.ext_avg
+                ext_max = model.explainer.ext_max
+
+                # Compute explanation metrics
+                coverage_ratio = coverage(explanations)
+                mean_dist = average_distance(xtest, explanations, distance_metric="Euclidean")
+                mean_length = average_distance(xtest, explanations, distance_metric="FeaturesChanged")
+
+                # Save results
+                # save the performance
+                run_result = {
+                    "explainer": explainer,
+                    "n_trees": n,
+                    "max_depth": max_depth,
+                    "n_samples": n_samples,
+                    "n_samples_explained": xtest.shape[0],
+                    "n_features": n_features,
+                    "accuracy": accuracy,
+                    "precision": precision,
+                    "recall": recall,
+                    "f1": f1,
+                    "q": Q,
+                    "jaccard": J,
+                    "coverage_ratio": coverage_ratio,
+                    "mean_distance": mean_dist,
+                    "mean_length": mean_length,
+                    "init_time": init_time,
+                    "runtime": runtime,
+                    "ext_min": ext_min,
+                    "ext_avg": ext_avg,
+                    "ext_max": ext_max
+                }
+                results = results.append(run_result, ignore_index=True)
+
+                # log progress
+                progress_bar.update()
+                progress_bar_ds.update()
+
+        # save the results for this ds
+        results.to_csv(run_path + "/" + ds + ".csv", index=False)
+        progress_bar_ds.close()
+
+    progress_bar.close()
+    print("Finished bb ntrees runtime")

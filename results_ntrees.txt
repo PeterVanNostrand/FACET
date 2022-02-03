@@ -1,0 +1,111 @@
+python main.py
+{'rf_difference': 0.01, 'rf_distance': 'Euclidean', 'rf_k': 1, 'rf_ntrees': 5, 'rf_maxdepth': 3, 'rf_threads': 8, 'expl_greedy': False, 'expl_distance': 'Euclidean', 'facet_graphtype': 'disjoint', 'facet_offset': 0.001, 'facet_mode': 'exhaustive'}
+Num paths: 33
+Clique Sizes:
+         4
+         5
+accuracy: 0.8709677419354839
+precision: 0.925
+recall: 0.8809523809523809
+f1: 0.9024390243902439
+Jaccard Index: 0.39
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████| 20/20 [00:00<00:00, 487.82it/s] 
+N Extensions
+        min: 27
+        avg 49.9
+        max: 70
+lucky guesses: 0
+failed x': 0
+runtime: 0.04400014877319336
+sample_time: 0.002200007438659668
+coverage_ratio: 1.0
+mean_dist: 0.0741341875518386
+mean_length 1.75
+{'rf_difference': 0.01, 'rf_distance': 'Euclidean', 'rf_k': 1, 'rf_ntrees': 10, 'rf_maxdepth': 3, 'rf_threads': 8, 'expl_greedy': False, 'expl_distance': 'Euclidean', 'facet_graphtype': 'disjoint', 'facet_offset': 0.001, 'facet_mode': 'exhaustive'}
+Num paths: 67
+Clique Sizes:
+         9
+         10
+accuracy: 0.6612903225806451
+precision: 0.7692307692307693
+recall: 0.7142857142857143
+f1: 0.7407407407407408
+Jaccard Index: 0.6303703703703704
+100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████| 20/20 [00:00<00:00, 52.36it/s] 
+N Extensions
+        min: 207
+        avg 553.45
+        max: 1372
+lucky guesses: 0
+failed x': 0
+runtime: 0.38499927520751953
+sample_time: 0.019249963760375976
+coverage_ratio: 1.0
+mean_dist: 0.07980242769315268
+mean_length 1.7
+{'rf_difference': 0.01, 'rf_distance': 'Euclidean', 'rf_k': 1, 'rf_ntrees': 15, 'rf_maxdepth': 3, 'rf_threads': 8, 'expl_greedy': False, 'expl_distance': 'Euclidean', 'facet_graphtype': 'disjoint', 'facet_offset': 0.001, 'facet_mode': 'exhaustive'}
+Num paths: 101
+Clique Sizes:
+         12
+         15
+accuracy: 0.8548387096774194
+precision: 0.8974358974358975
+recall: 0.875
+f1: 0.8860759493670887
+Jaccard Index: 0.5587301587301587
+100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████| 20/20 [00:03<00:00,  5.03it/s] 
+N Extensions
+        min: 437
+        avg 4977.05
+        max: 14335
+lucky guesses: 0
+failed x': 0
+runtime: 3.976300001144409
+sample_time: 0.19881500005722047
+coverage_ratio: 1.0
+mean_dist: 0.07971661715905684
+mean_length 1.55
+{'rf_difference': 0.01, 'rf_distance': 'Euclidean', 'rf_k': 1, 'rf_ntrees': 20, 'rf_maxdepth': 3, 'rf_threads': 8, 'expl_greedy': False, 'expl_distance': 'Euclidean', 'facet_graphtype': 'disjoint', 'facet_offset': 0.001, 'facet_mode': 'exhaustive'}
+Num paths: 131
+Clique Sizes:
+         17
+         20
+accuracy: 0.7580645161290323
+precision: 0.7608695652173914
+recall: 0.8974358974358975
+f1: 0.8235294117647058
+Jaccard Index: 0.5388596491228069
+100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████| 20/20 [00:34<00:00,  1.73s/it] 
+N Extensions
+        min: 10840
+        avg 38399.05
+        max: 133412
+lucky guesses: 0
+failed x': 0
+runtime: 34.58903408050537
+sample_time: 1.7294517040252686
+coverage_ratio: 1.0
+mean_dist: 0.06165924222360954
+mean_length 2.0
+{'rf_difference': 0.01, 'rf_distance': 'Euclidean', 'rf_k': 1, 'rf_ntrees': 25, 'rf_maxdepth': 3, 'rf_threads': 8, 'expl_greedy': False, 'expl_distance': 'Euclidean', 'facet_graphtype': 'disjoint', 'facet_offset': 0.001, 'facet_mode': 'exhaustive'}
+Num paths: 160
+Clique Sizes:
+         25  
+         24  
+accuracy: 0.7580645161290323 
+precision: 0.8292682926829268
+recall: 0.8095238095238095   
+f1: 0.8192771084337348
+Jaccard Index: 0.4858888888888889
+100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████| 20/20 [11:47<00:00, 35.38s/it] 
+N Extensions
+        min: 41768
+        avg 600412.7
+        max: 1951947
+lucky guesses: 0
+failed x': 0
+runtime: 707.9141058921814
+sample_time: 35.39570529460907
+coverage_ratio: 1.0
+mean_dist: 0.06856101114759719
+mean_length 2.3
