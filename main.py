@@ -13,7 +13,7 @@ import cProfile
 import time
 
 
-def simple_run(dataset_name, ntrees):
+def simple_run(dataset_name):
     # Load the dataset
     x, y = load_data(dataset_name)
     xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=0.2, shuffle=True, random_state=None)
@@ -24,7 +24,7 @@ def simple_run(dataset_name, ntrees):
         "rf_difference": 0.01,
         "rf_distance": distance,
         "rf_k": 1,
-        "rf_ntrees": ntrees,
+        "rf_ntrees": 20,
         "rf_maxdepth": 3,
         "rf_threads": 8,
         "expl_greedy": False,
@@ -92,7 +92,6 @@ if __name__ == "__main__":
     # run_ds.remove("spambase")
     # compare_methods(run_ds, num_iters=1, explainers=["FACETBranchBound"], eval_samples=20)
     # simple_run("vertebral")
-    # for ntrees in [5, 10, 15, 20, 25]:
-    # simple_run("vertebral", ntrees)
+    simple_run("vertebral")
     # time_cliques(ds_names=["cancer"], ntrees=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
-    bb_ntrees(["spambase"], explainer="FACETBranchBound", ntrees=[5, 10, 15, 20], num_iters=1)
+    # bb_ntrees(["spambase"], explainer="FACETBranchBound", ntrees=[5, 10, 15, 20], num_iters=1)

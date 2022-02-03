@@ -512,8 +512,8 @@ class BBNode():
 
     def solution_possible(self, majority_size: int) -> bool:
         # !WARNING: currently checking all options to resolve soft voting
-        return (len(self.clique) + len(self.clique_candidates)) >= majority_size
         # return True
+        return (len(self.clique) + len(self.clique_candidates)) >= majority_size
 
 
 class BranchBound():
@@ -581,18 +581,17 @@ class BranchBound():
         return example, lower_bound
 
     def is_solution(self, node: BBNode, instance: np.ndarray, desired_label: int) -> bool:
-        # return len(node.clique) >= self.majority_size:
         # !WARNING: currently performing prediction on each sample to resolve soft voting
+        if len(node.clique) >= self.majority_size:
+            return self.explainer.model.predict([node.partial_example]) == desired_label
+        else:
+            return False
 
         # if(node.partial_example is not None):
         #     return self.explainer.model.predict([node.partial_example]) == desired_label
         # else:
         #     return False
-
-        if len(node.clique) >= self.majority_size:
-            return self.explainer.model.predict([node.partial_example]) == desired_label
-        else:
-            return False
+        # return len(node.clique) >= self.majority_size:
 
     def solve(self, instance: np.ndarray, desired_label: int) -> np.ndarray:
         # initialize the first guess using a heuristic method
