@@ -24,14 +24,15 @@ def simple_run(dataset_name):
         "rf_difference": 0.01,
         "rf_distance": distance,
         "rf_k": 1,
-        "rf_ntrees": 20,
+        "rf_ntrees": 10,
         "rf_maxdepth": 3,
         "rf_threads": 8,
         "expl_greedy": False,
         "expl_distance": distance,
         "facet_graphtype": "disjoint",
         "facet_offset": 0.001,
-        "facet_mode": "exhaustive"
+        "facet_mode": "exhaustive",
+        "rf_hardvoting": True
     }
 
     print(params)
@@ -50,20 +51,17 @@ def simple_run(dataset_name):
     print("recall:", recall)
     print("f1:", f1)
 
-    # anomaly detection performance
-    # accuracy, precision, recall, f1 = classification_metrics(preds, ytest, verbose=True)
-
     # Q-stastic
     # Q, qs = model.detectors[0].compute_qs(xtest, ytest)
     # print("Q-Statistic:", Q)
 
     # jaccard similarity
-    J, jaccards = compute_jaccard(model.detectors[0])
-    print("Jaccard Index:", J)
+    # J, jaccards = compute_jaccard(model.detectors[0])
+    # print("Jaccard Index:", J)
 
     # generate the explanations
     explain = True
-    eval_samples = 20
+    eval_samples = 5
     if explain:
         if eval_samples is not None:
             xtest = xtest[:eval_samples]
@@ -86,12 +84,19 @@ def simple_run(dataset_name):
         mean_length = average_distance(xtest, explanations, distance_metric="FeaturesChanged")
         print("mean_length", mean_length)
 
+        ext_min = model.explainer.ext_min
+        ext_avg = model.explainer.ext_avg
+        ext_max = model.explainer.ext_max
+
+        print("ext_min:", ext_min)
+        print("ext_avg:", ext_avg)
+        print("ext_max:", ext_max)
+
 
 if __name__ == "__main__":
     run_ds = DS_NAMES.copy()
     # run_ds.remove("spambase")
     # compare_methods(run_ds, num_iters=1, explainers=["FACETBranchBound"], eval_samples=20)
     # simple_run("vertebral")
-    simple_run("vertebral")
-    # time_cliques(ds_names=["cancer"], ntrees=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
-    # bb_ntrees(["spambase"], explainer="FACETBranchBound", ntrees=[5, 10, 15, 20], num_iters=1)
+    bb_ntrees(ds_names=["vertebral"], ntrees=[5, 10, 15, 20], depths=[3], num_iters=1, eval_samples=3)
+    # hard_vs_soft(run_ds, num_iters=10)

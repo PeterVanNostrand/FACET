@@ -3,6 +3,7 @@ import math
 from os import replace
 from heapq import heappush, heappop
 import bisect
+from typing import Tuple
 
 # scientific and utility packages
 import numpy as np
@@ -441,13 +442,6 @@ class FACETBranchBound(Explainer):
             print("Unknown expl_distance function {}, using Euclidean distance".format(hyperparameters.get("expl_distance")))
             self.distance_fn = dist_euclidean
 
-        # greedy sythesis
-        if hyperparameters.get("expl_greedy") is None:
-            print("No expl_greedy set, defaulting to False")
-            self.greedy = False
-        else:
-            self.greedy = hyperparameters.get("expl_greedy")
-
         # threshold offest for picking new values
         offset = hyperparameters.get("facet_offset")
         if offset is None:
@@ -483,12 +477,17 @@ class BBNode():
         self.partial_example = None
         self.lower_bound = np.inf
         self.new_vertex = vertex
+        self.clique_candidates = None
 
         if parent:
             self.clique = self.parent.clique.copy()  # starting from parent clique
             bisect.insort(self.clique, vertex)  # insert the new vertex, keeping the list sorted
         else:
             self.clique = []  # if parent is None, this is the root node, start with empty clique
+
+    # def __del__(self):
+    #     # print("destructed")
+    #     pass
 
     def __lt__(self, other):
         '''
@@ -545,27 +544,80 @@ class BranchBound():
 
     def branch(self, node: BBNode, instance: np.ndarray, desired_label: int):
         # determine C0 the set of vertices which are sythesizable with C
-        node.find_candidates(self.explainer.graphs[desired_label])
+        if node.clique_candidates is None:
+            node.find_candidates(self.explainer.graphs[desired_label])
 
         # if there are sufficient vertices to reach majority size
-        if node.solution_possible(self.majority_size):
-            # create node for each clique candidate
-            for vertex in node.clique_candidates:
-                child = BBNode(parent=node, vertex=vertex)
-                # check that we haven't have visited this clique before
-                key = hash(tuple(child.clique))
-                if not key in self.clique_visited:
-                    # remember we have visited the clique
-                    self.clique_visited[key] = True
-                    # compute lower bound for the node
-                    child.partial_example, child.lower_bound = self.bound(child, instance, desired_label)
+        # if node.solution_possible(self.majority_size):
+
+        # create node for each clique candidate
+        for vertex in node.clique_candidates:
+            child = BBNode(parent=node, vertex=vertex)
+            # check that we haven't have visited this clique before
+            key = hash(tuple(child.clique))
+            if not key in self.clique_visited:
+                # remember we have visited the clique
+                self.clique_visited[key] = True
+                # compute the upper bounds for this branch, look ahead for the branch and see if a solution exists
+                pessimistic_example, upper_bound = self.upper_bound(child, instance, desired_label)
+                # if this branch will contain a solution
+                if(pessimistic_example is not None):
+                    # if the lookahead solution is good, keep it
+                    if upper_bound < self.best_distance:
+                        self.best_solution = pessimistic_example
+                        self.best_distance = upper_bound
+
+                    # compute the lower bound for the branch
+                    child.partial_example, child.lower_bound = self.lower_bound(child, instance, desired_label)
                     # if the resulting nodes has a better lower bound than the current best, add it to the tree
                     if(child.lower_bound < self.best_distance):
                         node.children.append(child)
                         heappush(self.queue, (child.lower_bound, child))
                         self.nextensions[-1] += 1
 
-    def bound(self, node: BBNode, instance: np.ndarray, desired_label: int) -> float:
+    def upper_bound(self, node: BBNode, instance: np.ndarray, desired_label: int) -> Tuple[np.ndarray, float]:
+        # determine C0 the set of vertices which are sythesizable with C
+        if node.clique_candidates is None:
+            node.find_candidates(self.explainer.graphs[desired_label])
+
+        # get the list of all vertices which can be inherited from this node
+        possible_vertices = node.clique + node.clique_candidates
+
+        # select on the adjacency rows which contain these vertices
+        adjacency = self.explainer.adjacencys[desired_label]
+        adjacency = adjacency[possible_vertices][:, possible_vertices]
+
+        # treat this as a graph and find the max clique
+        g = nx.Graph(adjacency)
+        max_clique_ixds = get_max_clique(g)
+        max_clique_vertices = []
+        for idx in max_clique_ixds:
+            max_clique_vertices.append(possible_vertices[idx])
+
+        # build a counterfactual example in the max clique as a worst case
+        tree_paths = []
+        for idx in max_clique_vertices:
+            tree_paths.append(self.explainer.idx_to_treepath[desired_label][idx])
+        example = instance.copy()
+        feature_bounds = self.explainer.compute_syth_thresholds(tree_paths, example.shape[0])
+        example = self.explainer.fit_thresholds(example, feature_bounds)
+        upper_bound = self.explainer.distance_fn(instance, example)
+
+        # tree_preds = []
+        # for pair in tree_paths:
+        #     tree_id = pair[0]
+        #     path_id = pair[1]
+        #     tree_preds.append(int(self.explainer.model.detectors[0].model.estimators_[tree_id].predict([example])[0]))
+
+        # if the max clique is of insufficient size, the example may not be counterfactual
+        # we indicate this by returning null
+        if(self.explainer.model.predict([example]) != desired_label):
+            example = None
+            upper_bound = np.inf
+
+        return example, upper_bound
+
+    def lower_bound(self, node: BBNode, instance: np.ndarray, desired_label: int) -> Tuple[np.ndarray, float]:
         # convert the path indexs to path ids
         tree_paths = []
         for idx in node.clique:

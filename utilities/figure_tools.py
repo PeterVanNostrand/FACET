@@ -48,7 +48,6 @@ def make_fig_directory(run_id):
 
 
 def load_results(run_path, group_fields=["n_features"]):
-    print("group_fields")
     file_names = os.listdir(run_path)
     found_ds = []
     for name in file_names:

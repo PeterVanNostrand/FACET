@@ -1,11 +1,14 @@
 from sys import prefix
 from detectors.detector import Detector
+
 from sklearn.ensemble import RandomForestClassifier as skRandomForestClassifier
-from sklearn import tree
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import VotingClassifier
 import numpy as np
+from scipy.stats import mode
+
 from utilities.tree_tools import TreeContraster
 from utilities.tree_tools import get_best_of_tree
-
 from utilities.metrics import dist_euclidean, dist_features_changed
 
 import multiprocessing as mp
@@ -59,6 +62,13 @@ class RandomForest(Detector):
             else:
                 self.threads = np.max((mp.cpu_count() - 2, 1))  # cap thread usage to leave at 2 free for the user
                 print("using rf_threads:", self.threads)
+
+            # hard voting
+            if hyperparameters.get("rf_hardvoting") is None:
+                print("No rf_hardvoting set, using default True")
+                self.hard_voting = True
+            else:
+                self.hard_voting = hyperparameters.get("rf_hardvoting")
         else:
             self.difference = 0.01
             self.distance_fn = dist_euclidean
@@ -72,7 +82,14 @@ class RandomForest(Detector):
         self.model.fit(x, y)
 
     def predict(self, x):
-        return self.model.predict(x)
+        if(self.hard_voting):
+            tree_preds = np.empty(shape=(self.ntrees, len(x)))
+            for i in range(self.ntrees):
+                tree_preds[i] = self.model.estimators_[i].predict(x)
+            preds = mode(tree_preds, axis=0)[0][0].astype(int)
+            return preds
+        else:
+            return self.model.predict(x)
 
     def get_candidate_examples(self, x, y):
         '''
