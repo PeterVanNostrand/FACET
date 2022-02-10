@@ -24,7 +24,7 @@ def simple_run(dataset_name):
         "rf_difference": 0.01,
         "rf_distance": distance,
         "rf_k": 1,
-        "rf_ntrees": 20,
+        "rf_ntrees": 15,
         "rf_maxdepth": 3,
         "rf_threads": 8,
         "expl_greedy": False,
@@ -32,7 +32,9 @@ def simple_run(dataset_name):
         "facet_graphtype": "disjoint",
         "facet_offset": 0.001,
         "facet_mode": "exhaustive",
-        "rf_hardvoting": True
+        "rf_hardvoting": True,
+        "bb_upperbound": False,
+        "bb_ordering": "Stack"
     }
 
     print(params)
@@ -61,7 +63,7 @@ def simple_run(dataset_name):
 
     # generate the explanations
     explain = True
-    eval_samples = 5
+    eval_samples = 20
     if explain:
         if eval_samples is not None:
             xtest = xtest[:eval_samples]
@@ -97,6 +99,8 @@ if __name__ == "__main__":
     run_ds = DS_NAMES.copy()
     # run_ds.remove("spambase")
     # compare_methods(run_ds, num_iters=1, explainers=["FACETBranchBound"], eval_samples=20)
-    # simple_run("vertebral")
-    bb_ntrees(run_ds, ntrees=[5, 10, 15, 20], depths=[3], num_iters=1, eval_samples=3)
+    # simple_run("magic")
+    # bb_ntrees(run_ds, ntrees=[5, 10, 15, 20], depths=[3], num_iters=1, eval_samples=10)
     # hard_vs_soft(run_ds, num_iters=10)
+    bb_ordering(run_ds, orderings=["PriorityQueue", "Stack", "Queue"], num_iters=1,
+                test_size=0.2, ntrees=15, max_depth=3, eval_samples=20)

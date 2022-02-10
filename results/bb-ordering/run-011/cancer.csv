@@ -1,0 +1,2 @@
+n_samples,n_samples_explained,n_features,n_trees,max_depth,avg_nnodes,avg_nleaves,avg_depth,accuracy,precision,recall,f1,ext_min,ext_avg,ext_max,init_time,runtime,order,coverage_ratio,mean_dist,mean_length,dataset
+568,20,30,15,3,13.4,7.2,3.0,0.8596491228070176,0.8709677419354839,0.6923076923076923,0.7714285714285716,4323,28466.05,58261,0.17025351524353027,29.814504146575928,PriorityQueue,1.0,0.13650402855063765,4.45,cancer
