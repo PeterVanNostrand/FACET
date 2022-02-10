@@ -510,8 +510,7 @@ class BBNode():
         self.clique_candidates = sf_C0(self.clique, G)  # returns all nodes when self.clique = []
 
     def solution_possible(self, majority_size: int) -> bool:
-        # !WARNING: currently checking all options to resolve soft voting
-        # return True
+        # !WARNING: only works with hard voting
         return (len(self.clique) + len(self.clique_candidates)) >= majority_size
 
 
@@ -558,22 +557,27 @@ class BranchBound():
             if not key in self.clique_visited:
                 # remember we have visited the clique
                 self.clique_visited[key] = True
-                # compute the upper bounds for this branch, look ahead for the branch and see if a solution exists
-                pessimistic_example, upper_bound = self.upper_bound(child, instance, desired_label)
-                # if this branch will contain a solution
-                if(pessimistic_example is not None):
-                    # if the lookahead solution is good, keep it
-                    if upper_bound < self.best_distance:
-                        self.best_solution = pessimistic_example
-                        self.best_distance = upper_bound
 
-                    # compute the lower bound for the branch
+                # check if the child can have a solution
+                child.find_candidates(self.explainer.graphs[desired_label])
+                if child.solution_possible(self.majority_size):
+                    # compute the best possible distance of a solution which could exist
                     child.partial_example, child.lower_bound = self.lower_bound(child, instance, desired_label)
-                    # if the resulting nodes has a better lower bound than the current best, add it to the tree
+                    # if the possible solution could be better than the current solution
                     if(child.lower_bound < self.best_distance):
-                        node.children.append(child)
-                        heappush(self.queue, (child.lower_bound, child))
-                        self.nextensions[-1] += 1
+                        # look ahead and attempt to find a solution along the branch
+                        pessimistic_example, upper_bound = self.upper_bound(child, instance, desired_label)
+                        # if the lookahead solution actually exists
+                        if(pessimistic_example is not None):
+                            # if the lookahead solution is good, keep it
+                            if upper_bound < self.best_distance:
+                                self.best_solution = pessimistic_example
+                                self.best_distance = upper_bound
+                            # if the child could contain a better solution than the current best, enqueue it
+                            if(child.lower_bound < self.best_distance):
+                                node.children.append(child)
+                                heappush(self.queue, (child.lower_bound, child))
+                                self.nextensions[-1] += 1
 
     def upper_bound(self, node: BBNode, instance: np.ndarray, desired_label: int) -> Tuple[np.ndarray, float]:
         # determine C0 the set of vertices which are sythesizable with C

@@ -546,8 +546,8 @@ def compare_methods(ds_names, explainers=["AFT", "FACET"], distance="Euclidean",
                 progress_bar.update()
                 progress_bar_ds.update()
 
-        # save the results for this ds
-        results.to_csv(run_path + "/" + ds + ".csv", index=False)
+                # save the results for this ds
+                results.to_csv(run_path + "/" + ds + ".csv", index=False)
         progress_bar_ds.close()
 
     progress_bar.close()
@@ -760,7 +760,6 @@ def bb_ntrees(ds_names, explainer="FACETBranchBound", distance="Euclidean", num_
             if eval_samples is not None:
                 xtest = xtest[:eval_samples]
                 ytest = ytest[:eval_samples]
-                n_samples = eval_samples
 
             for n in ntrees:
                 for d in depths:
@@ -835,8 +834,8 @@ def bb_ntrees(ds_names, explainer="FACETBranchBound", distance="Euclidean", num_
                     progress_bar.update()
                     progress_bar_ds.update()
 
-        # save the results for this ds
-        results.to_csv(run_path + "/" + ds + ".csv", index=False)
+                    # save the results for this ds
+                    results.to_csv(run_path + "/" + ds + ".csv", index=False)
         progress_bar_ds.close()
 
     progress_bar.close()
@@ -929,6 +928,6 @@ def hard_vs_soft(ds_names, num_iters=5, test_size=0.2, ntrees=20, max_depth=3):
             }
             results = results.append(run_result, ignore_index=True)
             progress_bar.update()
-        results.to_csv(run_path + "/" + ds + ".csv", index=False)
+            results.to_csv(run_path + "/" + ds + ".csv", index=False)
     progress_bar.close()
     print("Finished copmaring hard vs soft voting")

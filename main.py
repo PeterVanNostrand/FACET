@@ -24,7 +24,7 @@ def simple_run(dataset_name):
         "rf_difference": 0.01,
         "rf_distance": distance,
         "rf_k": 1,
-        "rf_ntrees": 10,
+        "rf_ntrees": 20,
         "rf_maxdepth": 3,
         "rf_threads": 8,
         "expl_greedy": False,
@@ -98,5 +98,5 @@ if __name__ == "__main__":
     # run_ds.remove("spambase")
     # compare_methods(run_ds, num_iters=1, explainers=["FACETBranchBound"], eval_samples=20)
     # simple_run("vertebral")
-    bb_ntrees(ds_names=["vertebral"], ntrees=[5, 10, 15, 20], depths=[3], num_iters=1, eval_samples=3)
+    bb_ntrees(run_ds, ntrees=[5, 10, 15, 20], depths=[3], num_iters=1, eval_samples=3)
     # hard_vs_soft(run_ds, num_iters=10)
