@@ -954,6 +954,12 @@ def bb_ordering(ds_names, orderings=["PriorityQueue", "Stack", "Queue"], num_ite
         "ext_min",
         "ext_avg",
         "ext_max",
+        "lb_min",
+        "lb_avg",
+        "lb_max",
+        "bt_min",
+        "bt_avg",
+        "bt_max",
         "init_time",
         "runtime",
         "order",
@@ -975,7 +981,8 @@ def bb_ordering(ds_names, orderings=["PriorityQueue", "Stack", "Queue"], num_ite
         "expl_distance": "Euclidean",
         "facet_offset": 0.001,
         "bb_upperbound": False,
-        "bb_ordering": orderings[0]
+        "bb_ordering": orderings[0],
+        "bb_logdists": True
     }
 
     total_runs = len(ds_names) * num_iters * len(orderings)
@@ -1016,9 +1023,6 @@ def bb_ordering(ds_names, orderings=["PriorityQueue", "Stack", "Queue"], num_ite
                 coverage_ratio = coverage(explanations)
                 mean_dist = average_distance(xtest_expl, explanations, distance_metric="Euclidean")
                 mean_length = average_distance(xtest_expl, explanations, distance_metric="FeaturesChanged")
-                ext_min = model.explainer.ext_min
-                ext_avg = model.explainer.ext_avg
-                ext_max = model.explainer.ext_max
 
                 run_result = {
                     "n_samples": x.shape[0],
@@ -1033,9 +1037,15 @@ def bb_ordering(ds_names, orderings=["PriorityQueue", "Stack", "Queue"], num_ite
                     "precision": precision,
                     "recall": recall,
                     "f1": f1,
-                    "ext_min": ext_min,
-                    "ext_avg": ext_avg,
-                    "ext_max": ext_max,
+                    "ext_min": model.explainer.ext_min,
+                    "ext_avg": model.explainer.ext_avg,
+                    "ext_max": model.explainer.ext_max,
+                    "lb_min": model.explainer.lb_min,
+                    "lb_avg": model.explainer.lb_avg,
+                    "lb_max": model.explainer.lb_max,
+                    "bt_min": model.explainer.bt_min,
+                    "bt_avg": model.explainer.bt_avg,
+                    "bt_max": model.explainer.bt_max,
                     "init_time": init_time,
                     "runtime": runtime,
                     "order": order,

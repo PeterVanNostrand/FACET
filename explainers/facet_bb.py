@@ -10,6 +10,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn import tree
 from tqdm import tqdm
+import pandas as pd
 
 # graph packages
 import networkx as nx
@@ -385,31 +386,38 @@ class FACETBranchBound(Explainer):
         # assumimg binary classification [0, 1] set counterfactual class
         counterfactual_classes = ((y - 1) * -1)
 
-        skrf = self.model.detectors[0].model
-        # an array of size (n_samples, n_estimators) containing the leaf
-        # node id xi ends up for each tree for all samples
-        x_leaves = skrf.apply(x)
-
-        counter_clique_start = np.zeros(shape=(x.shape[0]))
-        counter_clique_end = np.zeros(shape=(x.shape[0]))
-
-        nextensions = []
+        solver = BranchBound(explainer=self, hyperparameters=self.hyperparameters)
         for i in range(x.shape[0]):
-            solver = BranchBound(explainer=self, hyperparameters=self.hyperparameters)
             xprime[i] = solver.solve(instance=x[i], desired_label=counterfactual_classes[i])
-            nextensions.append(solver.nextensions)
-            # xprime[i] = self.build_counterfactual(x[i], counterfactual_classes[i])
 
         # branch and bound stats
-        self.ext_min = np.min(nextensions)
-        self.ext_avg = np.mean(nextensions)
-        self.ext_max = np.max(nextensions)
+        self.ext_min = np.min(solver.nextensions)
+        self.ext_avg = np.mean(solver.nextensions)
+        self.ext_max = np.max(solver.nextensions)
+        self.lb_min = np.min(solver.nlower_bounds)
+        self.lb_avg = np.mean(solver.nlower_bounds)
+        self.lb_max = np.max(solver.nlower_bounds)
+        self.bt_min = np.min(solver.best_times)
+        self.bt_avg = np.mean(solver.best_times)
+        self.bt_max = np.max(solver.best_times)
+
+        # save intermediate distances if neccessary
+        if solver.log_dist:
+            pd.DataFrame(solver.intermediate_dists).to_csv("dists_" + solver.ordering.lower() + ".csv")
 
         if self.verbose:
             print("N Extensions")
             print("\tmin:", self.ext_min)
             print("\tavg", self.ext_avg)
             print("\tmax:", self.ext_max)
+            print("N Lower Bounds")
+            print("\tmin:", self.lb_min)
+            print("\tavg", self.lb_avg)
+            print("\tmax:", self.lb_max)
+            print("Time to find best solution")
+            print("\tmin:", self.bt_min)
+            print("\tavg", self.bt_avg)
+            print("\tmax:", self.bt_max)
             print("lucky guesses:", solver.nlucky_guesses)
 
         # check that all counterfactuals result in a different class
@@ -421,11 +429,6 @@ class FACETBranchBound(Explainer):
             print("failed x':", failed_explanation.sum())
 
         return xprime
-
-    # def build_counterfactual(self, instance, desired_label):
-    #     solver = BranchBound(explainer=self)
-    #     example = solver.solve(instance=instance, desired_label=desired_label)
-    #     return example
 
     def parse_hyperparameters(self, hyperparameters):
         self.hyperparameters = hyperparameters

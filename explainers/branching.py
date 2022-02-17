@@ -83,6 +83,8 @@ class BranchBound():
         self.majority_size = explainer.majority_size
         self.nlucky_guesses = 0  # how often is the heuristic the optimal solution
         self.nextensions = []
+        self.nlower_bounds = []
+        self.best_times = []
         self.hyperparameters = hyperparameters
 
         # parse bounding methods to use
@@ -108,6 +110,16 @@ class BranchBound():
             self.double_check = True
         else:
             self.double_check = False
+
+        # distance logging
+        log_dist = hyperparameters.get("bb_logdists")
+        if log_dist is not None:
+            self.log_dist = log_dist
+        else:
+            self.log_dist = False
+
+        if self.log_dist:
+            self.intermediate_dists = []
 
     def initial_guess(self, instance: np.ndarray, desired_label: int) -> np.ndarray:
         '''
@@ -155,7 +167,6 @@ class BranchBound():
                     if(child.lower_bound < self.best_distance):
                         node.children.append(child)
                         self.enqueue(child)
-                        self.nextensions[-1] += 1
 
     def branch_lower_upper(self, node: BBNode, instance: np.ndarray, desired_label: int):
         # determine C0 the set of vertices which are sythesizable with C
@@ -187,13 +198,11 @@ class BranchBound():
                         if(pessimistic_example is not None):
                             # if the lookahead solution is good, keep it
                             if upper_bound < self.best_distance:
-                                self.best_solution = pessimistic_example
-                                self.best_distance = upper_bound
+                                self.set_best_solution(example=pessimistic_example, distance=upper_bound)
                             # if the child could contain a better solution than the current best, enqueue it
                             if(child.lower_bound < self.best_distance):
                                 node.children.append(child)
                                 self.enqueue(child)
-                                self.nextensions[-1] += 1
 
     def upper_bound(self, node: BBNode, instance: np.ndarray, desired_label: int) -> Tuple[np.ndarray, float]:
         # determine C0 the set of vertices which are sythesizable with C
@@ -236,6 +245,7 @@ class BranchBound():
         return example, upper_bound
 
     def lower_bound(self, node: BBNode, instance: np.ndarray, desired_label: int) -> Tuple[np.ndarray, float]:
+        self.nlower_bounds[-1] += 1
         # convert the path indexs to path ids
         tree_paths = []
         for idx in node.clique:
@@ -259,7 +269,17 @@ class BranchBound():
         if not self.double_check:
             return len(node.clique) >= self.majority_size
 
+    def set_best_solution(self, example: np.ndarray, distance):
+        self.best_solution = example
+        self.best_distance = distance
+        # track the number of nodes bounded before the optimal solution is found
+        self.best_times[-1] = self.nlower_bounds[-1]
+        if self.log_dist:
+            self.intermediate_dists[-1].append([self.best_times[-1], self.best_distance])
+        # print("New Best {:d}, {:.6f}".format(self.best_times[-1], self.best_distance))
+
     def enqueue(self, node: BBNode):
+        self.nextensions[-1] += 1
         if self.ordering == "PriorityQueue":
             heappush(self.queue, (node.lower_bound, node))
         elif self.ordering == "Stack":
@@ -284,11 +304,17 @@ class BranchBound():
             self.queue = deque()
 
     def solve(self, instance: np.ndarray, desired_label: int) -> np.ndarray:
+        self.nextensions.append(0)
+        self.nlower_bounds.append(0)
+        self.best_times.append(0)
+        if self.log_dist:
+            self.intermediate_dists.append([])
+
         # initialize the first guess using a heuristic method
         initial_guess = self.initial_guess(instance, desired_label)
-        self.best_solution = initial_guess.copy()
-        self.best_distance = self.explainer.distance_fn(instance, self.best_solution)
-        self.nextensions.append(0)
+        initial_dist = self.explainer.distance_fn(instance, initial_guess)
+        self.set_best_solution(example=initial_guess, distance=initial_dist)
+
         self.clique_visited = {}
 
         # create a root node and add it to the queue
@@ -305,8 +331,7 @@ class BranchBound():
                 # if node is a solution, its partial example is counterfactual
                 if self.is_solution(node, instance, desired_label):
                     # update the current best solution
-                    self.best_solution = node.partial_example
-                    self.best_distance = node.lower_bound
+                    self.set_best_solution(node.partial_example, node.lower_bound)
                 else:  # if the node is not a solution, expand it by branching
                     self.branch(node, instance, desired_label)
             # if the current node can't be better than the current best
