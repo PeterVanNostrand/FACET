@@ -42,9 +42,9 @@ def simple_run(dataset_name):
 
     # Create, train, and predict with the model
     model = HEEAD(detectors=["RandomForest"], aggregator="NoAggregator",
-                  explainer="FACETBranchBound", hyperparameters=params)
+                  explainer="FACETIndex", hyperparameters=params)
     model.train(xtrain, ytrain)
-    model.prepare()
+    model.prepare(data=xtrain)
     preds = model.predict(xtest)
 
     # measure model performance
@@ -87,21 +87,22 @@ def simple_run(dataset_name):
         mean_length = average_distance(xtest, explanations, distance_metric="FeaturesChanged")
         print("mean_length", mean_length)
 
-        ext_min = model.explainer.ext_min
-        ext_avg = model.explainer.ext_avg
-        ext_max = model.explainer.ext_max
+        if False:
+            ext_min = model.explainer.ext_min
+            ext_avg = model.explainer.ext_avg
+            ext_max = model.explainer.ext_max
 
-        print("ext_min:", ext_min)
-        print("ext_avg:", ext_avg)
-        print("ext_max:", ext_max)
+            print("ext_min:", ext_min)
+            print("ext_avg:", ext_avg)
+            print("ext_max:", ext_max)
 
 
 if __name__ == "__main__":
     run_ds = DS_NAMES.copy()
     # run_ds.remove("spambase")
     # compare_methods(run_ds, num_iters=1, explainers=["FACETBranchBound"], eval_samples=20)
-    # simple_run("magic")
-    bb_ntrees(run_ds, ntrees=[25], depths=[3], num_iters=1, eval_samples=5)
+    simple_run("magic")
+    # bb_ntrees(run_ds, ntrees=[25], depths=[3], num_iters=1, eval_samples=5)
     # hard_vs_soft(run_ds, num_iters=10)
     # bb_ordering(run_ds, orderings=["PriorityQueue", "Stack", "ModifiedPriorityQueue"], num_iters=1,
     # test_size=0.2, ntrees=15, max_depth=3, eval_samples=5)

@@ -316,3 +316,6 @@ class RandomForest(Detector):
 
     def get_trees(self):
         return self.model.estimators_
+
+    def apply(self, x):
+        return self.model.apply(x)
