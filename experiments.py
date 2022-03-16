@@ -695,7 +695,7 @@ def bb_ntrees(ds_names, explainer="FACETBranchBound", distance="Euclidean", num_
         "test_size": test_size,
         "facet_offset": 0.001,
         "rf_hardvoting": True,
-        "bb_ordering": "Stack",
+        "bb_ordering": "ModifiedPriorityQueue",
         "bb_upperbound": False
     }
 
@@ -1018,6 +1018,11 @@ def bb_ordering(ds_names, orderings=["PriorityQueue", "Stack", "Queue"], num_ite
                 end = time.time()
                 runtime = end-start  # wall time in seconds
                 init_time = end_build - start_build
+
+                if params["bb_logdists"]:
+                    # save the distance of solutions found during the optimization process
+                    intermediate_dists = model.explainer.intermediate_dists
+                    pd.DataFrame(intermediate_dists).to_csv(run_path + "/" + ds + "_dists_" + order.lower() + ".csv")
 
                 # explanation performance and stats
                 coverage_ratio = coverage(explanations)

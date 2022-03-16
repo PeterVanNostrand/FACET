@@ -1,0 +1,2 @@
+explainer,n_trees,max_depth,n_samples,n_samples_explained,n_features,accuracy,precision,recall,f1,q,jaccard,coverage_ratio,mean_distance,mean_length,init_time,runtime,ext_min,ext_avg,ext_max,avg_nnodes,avg_nleaves,avg_depth
+FACETBranchBound,25,3,568,10,30,0.9,0.6666666666666666,1.0,0.8,0.35,0.14977945202945203,0.9,0.17901618955575413,5.666666666666667,0.6489989757537842,1962.2886171340942,10788,105154.0,230219,13.8,7.4,3.0

@@ -34,7 +34,7 @@ def simple_run(dataset_name):
         "facet_mode": "exhaustive",
         "rf_hardvoting": True,
         "bb_upperbound": False,
-        "bb_ordering": "Stack",
+        "bb_ordering": "ModifiedPriorityQueue",
         "bb_logdists": False
     }
 
@@ -64,7 +64,7 @@ def simple_run(dataset_name):
 
     # generate the explanations
     explain = True
-    eval_samples = 20
+    eval_samples = 5
     if explain:
         if eval_samples is not None:
             xtest = xtest[:eval_samples]
@@ -101,7 +101,7 @@ if __name__ == "__main__":
     # run_ds.remove("spambase")
     # compare_methods(run_ds, num_iters=1, explainers=["FACETBranchBound"], eval_samples=20)
     # simple_run("magic")
-    # bb_ntrees(run_ds, ntrees=[25, 30], depths=[3], num_iters=1, eval_samples=10)
+    bb_ntrees(run_ds, ntrees=[25], depths=[3], num_iters=1, eval_samples=5)
     # hard_vs_soft(run_ds, num_iters=10)
-    bb_ordering(run_ds, orderings=["PriorityQueue", "Stack"], num_iters=1,
-                test_size=0.2, ntrees=15, max_depth=3, eval_samples=5)
+    # bb_ordering(run_ds, orderings=["PriorityQueue", "Stack", "ModifiedPriorityQueue"], num_iters=1,
+    # test_size=0.2, ntrees=15, max_depth=3, eval_samples=5)

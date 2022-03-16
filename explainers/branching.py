@@ -19,6 +19,8 @@ from typing import TYPE_CHECKING, Tuple
 if TYPE_CHECKING:
     from explainers.facet_bb import FACETBranchBound
 
+ordering = ""  # global for what ordering to use for the Branch and Bound tree exploration
+
 
 class BBNode():
     '''
@@ -52,11 +54,15 @@ class BBNode():
     #     # print("destructed")
     #     pass
 
-    def __lt__(self, other):
+    def __lt__(self, other: BBNode):
         '''
         In heapq algorithm, if two items have the same priority they are compared directly to determine which one should be higher in the priority queue. In this case if we have two nodes representing cliques with equal distances size we favor cliques which are closer to the majority size.
         '''
-        return len(self.clique) > len(other.clique)
+        global ordering
+        if ordering == "ModifiedPriorityQueue":
+            return self.lower_bound < other.lower_bound
+        else:
+            return len(self.clique) > len(other.clique)
 
     def find_candidates(self, G: nx.Graph):
         # Find C0: the set of all vertices in G which are sythesizaeble with the current clique
@@ -71,10 +77,6 @@ class BBNode():
         # g = nx.Graph(a)
 
         self.clique_candidates = sf_C0(self.clique, G)  # returns all nodes when self.clique = []
-
-    def solution_possible(self, majority_size: int) -> bool:
-        # !WARNING: only works with hard voting
-        return (len(self.clique) + len(self.clique_candidates)) >= majority_size
 
 
 class BranchBound():
@@ -95,14 +97,18 @@ class BranchBound():
             self.use_upper_bound = hyperparameters.get("bb_upperbound")
 
         # parse ordering datastructure type to use
+        global ordering
         if hyperparameters.get("bb_ordering") is None:
             print("No bb_ordering set, defaulting to PriorityQueue")
             self.ordering = "PriorityQueue"
+            ordering = "PriorityQueue"
         else:
             self.ordering = hyperparameters.get("bb_ordering")
-            if self.ordering not in ["PriorityQueue", "Stack", "Queue"]:
+            ordering = hyperparameters.get("bb_ordering")
+            if self.ordering not in ["PriorityQueue", "Stack", "Queue", "ModifiedPriorityQueue"]:
                 print("invalid bb_ordering, using PriorityQueue")
                 self.ordering = "PriorityQueue"
+                ordering = "PriorityQueue"
 
         # parse ordering datastructure type to use
         hard_voting = hyperparameters.get("rf_hardvoting")
@@ -152,7 +158,7 @@ class BranchBound():
         node.find_candidates(self.explainer.graphs[desired_label])
 
         # if there are sufficient vertices to reach majority size
-        if node.solution_possible(self.majority_size):
+        if self.solution_possible(node):
             # create node for each clique candidate
             for vertex in node.clique_candidates:
                 child = BBNode(parent=node, vertex=vertex)
@@ -187,7 +193,7 @@ class BranchBound():
 
                 # check if the child can have a solution
                 child.find_candidates(self.explainer.graphs[desired_label])
-                if child.solution_possible(self.majority_size):
+                if self.solution_possible(child):
                     # compute the best possible distance of a solution which could exist
                     child.partial_example, child.lower_bound = self.lower_bound(child, instance, desired_label)
                     # if the possible solution could be better than the current solution
@@ -263,6 +269,10 @@ class BranchBound():
     def check_example(self, example: np.ndarray, desired_label: int) -> bool:
         return self.explainer.model.predict([example]) == desired_label
 
+    def solution_possible(self, node: BBNode) -> bool:
+        # !WARNING: only works with hard voting
+        return (len(node.clique) + len(node.clique_candidates)) >= self.majority_size
+
     def is_solution(self, node: BBNode, instance: np.ndarray, desired_label: int) -> bool:
         if self.double_check:
             return self.check_example(node.partial_example, desired_label)
@@ -282,6 +292,9 @@ class BranchBound():
         self.nextensions[-1] += 1
         if self.ordering == "PriorityQueue":
             heappush(self.queue, (node.lower_bound, node))
+        elif self.ordering == "ModifiedPriorityQueue":
+            priority = self.majority_size - len(node.clique)
+            heappush(self.queue, (priority, node))
         elif self.ordering == "Stack":
             self.queue.append(node)
         elif self.ordering == "Queue":
@@ -290,6 +303,8 @@ class BranchBound():
     def dequeue(self) -> BBNode:
         if self.ordering == "PriorityQueue":
             return heappop(self.queue)[1]  # heappop yields (priority, node)
+        elif self.ordering == "ModifiedPriorityQueue":
+            return heappop(self.queue)[1]  # heappop yields (priority, node)
         elif self.ordering == "Stack":
             return self.queue.pop()
         elif self.ordering == "Queue":
@@ -297,6 +312,8 @@ class BranchBound():
 
     def init_queue(self):
         if self.ordering == "PriorityQueue":
+            self.queue = []
+        elif self.ordering == "ModifiedPriorityQueue":
             self.queue = []
         elif self.ordering == "Stack":
             self.queue = deque()

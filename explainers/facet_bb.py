@@ -403,7 +403,7 @@ class FACETBranchBound(Explainer):
 
         # save intermediate distances if neccessary
         if solver.log_dist:
-            pd.DataFrame(solver.intermediate_dists).to_csv("dists_" + solver.ordering.lower() + ".csv")
+            self.intermediate_dists = solver.intermediate_dists
 
         if self.verbose:
             print("N Extensions")
