@@ -35,7 +35,8 @@ def simple_run(dataset_name):
         "rf_hardvoting": True,
         "bb_upperbound": False,
         "bb_ordering": "ModifiedPriorityQueue",
-        "bb_logdists": False
+        "bb_logdists": False,
+        "verbose": True
     }
 
     print(params)
@@ -64,7 +65,7 @@ def simple_run(dataset_name):
 
     # generate the explanations
     explain = True
-    eval_samples = 5
+    eval_samples = 50
     if explain:
         if eval_samples is not None:
             xtest = xtest[:eval_samples]
