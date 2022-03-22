@@ -480,7 +480,7 @@ def compare_methods(ds_names, explainers=["AFT", "FACET"], distance="Euclidean",
                 # create and prep explainer
                 model.set_explainer(expl, hyperparameters=params)
                 start_build = time.time()
-                model.prepare()
+                model.prepare(data=xtrain)
                 end_build = time.time()
 
                 # explain instances

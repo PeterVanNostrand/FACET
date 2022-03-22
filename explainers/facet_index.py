@@ -63,18 +63,19 @@ class FACETIndex(Explainer):
         self.initialize_index()
         preds = self.model.predict(xtrain)
         rf_detector: RandomForest = self.model.detectors[0]
-        leaves = rf_detector.apply(xtrain)
+        all_leaves = rf_detector.apply(xtrain)
+        #! BUG HERE!!! Calling apply gets the leaf node for each tree that x ends up in however, not all trees are guaranteed to predict the same class, we need to check the prediction of each tree and discard the trees which classify the minority class. Then intersecting the remaining nmajority leaf rectangles with
 
         # for each instance in the training set
-        for instance, class_id, leaf_ids in zip(xtrain, preds, leaves):
-            rect = self.enumerate_rectangle(leaf_ids)
-            self.add_to_index(class_id, rect)
+        for instance, label, leaf_ids in zip(xtrain, preds, all_leaves):
+            rect = self.enumerate_rectangle(leaf_ids, label)
+            self.add_to_index(label, rect)
 
-    def add_to_index(self, class_id: int, rectangle: np.ndarray) -> None:
+    def add_to_index(self, label: int, rectangle: np.ndarray) -> None:
         '''
         Add the rectangle to the index
         '''
-        self.index[class_id].append(rectangle)
+        self.index[label].append(rectangle)
 
     def initialize_index(self) -> None:
         '''
@@ -82,7 +83,7 @@ class FACETIndex(Explainer):
         '''
         self.index = [[] for _ in range(self.rf_nclasses)]
 
-    def enumerate_rectangle(self, leaf_ids: list[int]) -> np.ndarray:
+    def enumerate_rectangle(self, leaf_ids: list[int], label: int) -> np.ndarray:
         '''
         Given a set of scikitlearns leaf_ids, one per tree in the ensemble, extracts the paths which correspond to these leaves and constructs a majority size hyper-rectangle from their interserction
 
@@ -90,6 +91,8 @@ class FACETIndex(Explainer):
         ---------
         leaf_ids: a list of integer values of size ntrees, where leaf_ids[i] is the scikit learn integer id of the leaf node selected by tree i
         '''
+
+        # TODO: Build an index which can take the tree_id and scikit node_id and convert it into the path record from all_paths
 
         # for each tree, find the indexed path that ends in the selected leaf node and get the corresponding bounds
         all_bounds = [None] * self.rf_ntrees
@@ -99,19 +102,23 @@ class FACETIndex(Explainer):
                 if path_leaf == leaf_ids[tid]:  # if it matches the found leaf
                     # walk the path and update the feature bounds
                     path = self.all_paths[tid][pid]
-                    bounds = self.leaf_rect(path)
-                    all_bounds[tid] = bounds
-                    #! DEBUG
-                    # x = np.zeros(self.rf_nfeatures)
-                    # xprime = self.fit_to_rectangle(x, bounds)
-                    # pred = self.model.detectors[0].model.estimators_[tid].predict([xprime])
-                    # if pred != path[-1, -1]:
-                    #     print("Bad bound")
+                    path_class = int(path[-1, -1])
+                    # only interested in trees which agree with ensemble label
+                    if path_class == label:
+                        bounds = self.leaf_rect(path)
+                        all_bounds[tid] = bounds
 
-        rect = self.select_intersection(all_bounds)
+                        #! DEBUG
+                        # x = np.zeros(self.rf_nfeatures)
+                        # xprime = self.fit_to_rectangle(x, bounds)
+                        # pred = int(self.model.detectors[0].model.estimators_[tid].predict([xprime])[0])
+                        # if pred != label:
+                        #     print("Bad bound")
+
+        rect = self.select_intersection(all_bounds, label)
         return rect
 
-    def select_intersection(self, all_bounds: list[np.ndarray]) -> np.ndarray:
+    def select_intersection(self, all_bounds: list[np.ndarray], label: int) -> np.ndarray:
         '''
         Given a list of ntrees hyper-rectangles each corresponing to a leaf node, constructs a majority size hyper-rectangle by taking the intersection of nmajority leaf node hyper-rectangles
 
@@ -125,9 +132,21 @@ class FACETIndex(Explainer):
         rect[:, 1] = np.inf
 
         # Simple solution: take the intersection of the first nmajority hyper-rectangles
-        for i in range(self.majority_size+1):
-            rect[:, 0] = np.maximum(rect[:, 0], all_bounds[i][:, 0])  # intersction of minimums
-            rect[:, 1] = np.minimum(rect[:, 1], all_bounds[i][:, 1])  # intersection of maximums
+        i = 0
+        nmerged = 0
+        while i < self.rf_ntrees and nmerged < self.majority_size:
+            if all_bounds[i] is not None:
+                rect[:, 0] = np.maximum(rect[:, 0], all_bounds[i][:, 0])  # intersction of minimums
+                rect[:, 1] = np.minimum(rect[:, 1], all_bounds[i][:, 1])  # intersection of maximums
+                nmerged += 1
+            i += 1
+
+        # ! debug
+        # x = np.zeros(self.rf_nfeatures)
+        # xprime = self.fit_to_rectangle(x, rect)
+        # pred = int(self.model.predict([xprime]))
+        # if pred != label:
+        #     print("Bad Rectangle")
 
         return rect
 

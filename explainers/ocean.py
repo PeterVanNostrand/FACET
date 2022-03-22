@@ -16,7 +16,7 @@ class OCEAN(Explainer):
         else:
             self.objectiveNorm = hyperparameters.get("ocean_norm")
 
-    def prepare(self):
+    def prepare(self, data=None):
         pass
 
     def explain(self, x, y):
