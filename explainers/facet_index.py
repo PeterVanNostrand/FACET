@@ -45,9 +45,10 @@ class FACETIndex(Explainer):
 
         self.build_paths(rf_trees)
         self.index_rectangles(data)
-        self.check_indexed_rects()
+        # self.check_indexed_rects()
 
     def check_indexed_rects(self):
+        #! DEBUG tool
         for class_id in range(self.rf_nclasses):
             for rect in self.index[class_id]:
                 x = np.zeros(self.rf_nfeatures)
@@ -142,11 +143,11 @@ class FACETIndex(Explainer):
             i += 1
 
         # ! debug
-        # x = np.zeros(self.rf_nfeatures)
-        # xprime = self.fit_to_rectangle(x, rect)
-        # pred = int(self.model.predict([xprime]))
-        # if pred != label:
-        #     print("Bad Rectangle")
+        x = np.zeros(self.rf_nfeatures)
+        xprime = self.fit_to_rectangle(x, rect)
+        pred = int(self.model.predict([xprime]))
+        if pred != label:
+            print("Bad Rectangle")
 
         return rect
 

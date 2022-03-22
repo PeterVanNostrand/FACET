@@ -107,7 +107,7 @@ def simple_run(dataset_name):
 if __name__ == "__main__":
     run_ds = DS_NAMES.copy()
     # run_ds.remove("spambase")
-    compare_methods(["vertebral"], num_iters=1, explainers=["OCEAN", "FACETIndex"], eval_samples=5)
+    compare_methods(run_ds, num_iters=5, explainers=["OCEAN", "FACETIndex"], eval_samples=20)
     # simple_run("magic")
     # bb_ntrees(run_ds, ntrees=[25], depths=[3], num_iters=1, eval_samples=5)
     # hard_vs_soft(run_ds, num_iters=10)

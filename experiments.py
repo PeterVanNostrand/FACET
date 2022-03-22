@@ -415,7 +415,8 @@ def compare_methods(ds_names, explainers=["AFT", "FACET"], distance="Euclidean",
         "test_size": test_size,
         "facet_graphtype": "disjoint",
         "facet_offset": 0.001,
-        "facet_mode": "exhaustive"
+        "facet_mode": "exhaustive",
+        "rf_hardvoting": False,  # TODO consider how this effects OCEAN performance, observed "it does not make sense to seek a counterfactual" from OCEAN, related?
     }
 
     # save the run information
@@ -479,6 +480,16 @@ def compare_methods(ds_names, explainers=["AFT", "FACET"], distance="Euclidean",
             for expl in explainers:
                 # create and prep explainer
                 model.set_explainer(expl, hyperparameters=params)
+
+                # FACET Index requires the use of hard-voting which is not supported by OCEAN
+                if expl == "FACETIndex":
+                    model.detectors[0].hard_voting = True
+                elif expl == "OCEAN":
+                    model.detectors[0].hard_voting = False
+                else:
+                    model.detectors[0].hard_voting = False
+                preds = model.predict(xtest)
+
                 start_build = time.time()
                 model.prepare(data=xtrain)
                 end_build = time.time()
