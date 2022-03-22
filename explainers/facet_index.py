@@ -43,9 +43,34 @@ class FACETIndex(Explainer):
         # the number of trees which much aggree for a prediction
         self.majority_size = math.floor(self.rf_ntrees / 2) + 1
 
-        self.build_paths(rf_trees)
+        all_paths = self.build_paths(rf_trees)
+        self.leaf_rects = self.leaves_to_rects(all_paths)
         self.index_rectangles(data)
         # self.check_indexed_rects()
+
+    def leaves_to_rects(self, all_paths: list[list[np.ndarray]]) -> list[dict]:
+        '''
+        For each path in the ensemble, identifies the leaf node of that path and builds the corresponding hyper-rectangle
+
+        Parameters
+        ----------
+        The enumerated paths from build_paths, a ragged list of (ntrees, npaths_i) 
+
+        Returns
+        -------
+        leaf_rects: a list of dictionarys where leaft_rects[i][j] returns the (leaf_class, rect) corresponding to the path ending in scikit node if j from tree i
+        '''
+        leaf_rects = [{} for _ in range(self.rf_ntrees)]
+        for tid in range(self.rf_ntrees):
+            for path in all_paths[tid]:
+                # get the scikit node id of the leaf and its class
+                leaf_node_id = int(path[-1, 0])
+                leaf_class = int(path[-1, -1])
+                # build and save the hyper-rectangle that corresponds to this leaf
+                rect = self.leaf_rect(path)
+                # save the class and the hyper-rectangle
+                leaf_rects[tid][leaf_node_id] = (leaf_class, rect)
+        return leaf_rects
 
     def check_indexed_rects(self):
         #! DEBUG tool
@@ -64,8 +89,8 @@ class FACETIndex(Explainer):
         self.initialize_index()
         preds = self.model.predict(xtrain)
         rf_detector: RandomForest = self.model.detectors[0]
-        all_leaves = rf_detector.apply(xtrain)
-        #! BUG HERE!!! Calling apply gets the leaf node for each tree that x ends up in however, not all trees are guaranteed to predict the same class, we need to check the prediction of each tree and discard the trees which classify the minority class. Then intersecting the remaining nmajority leaf rectangles with
+        # get the leaves that each sample ends up in
+        all_leaves = rf_detector.apply(xtrain)  # shape (nsamples in xtrain, ntrees)
 
         # for each instance in the training set
         for instance, label, leaf_ids in zip(xtrain, preds, all_leaves):
@@ -92,30 +117,11 @@ class FACETIndex(Explainer):
         ---------
         leaf_ids: a list of integer values of size ntrees, where leaf_ids[i] is the scikit learn integer id of the leaf node selected by tree i
         '''
-
-        # TODO: Build an index which can take the tree_id and scikit node_id and convert it into the path record from all_paths
-
-        # for each tree, find the indexed path that ends in the selected leaf node and get the corresponding bounds
-        all_bounds = [None] * self.rf_ntrees
-        for tid in range(self.rf_ntrees):
-            for pid in range(len(self.all_paths[tid])):
-                path_leaf = self.all_paths[tid][pid][-1, 0]  # get the id of the leaf node at the end of the path
-                if path_leaf == leaf_ids[tid]:  # if it matches the found leaf
-                    # walk the path and update the feature bounds
-                    path = self.all_paths[tid][pid]
-                    path_class = int(path[-1, -1])
-                    # only interested in trees which agree with ensemble label
-                    if path_class == label:
-                        bounds = self.leaf_rect(path)
-                        all_bounds[tid] = bounds
-
-                        #! DEBUG
-                        # x = np.zeros(self.rf_nfeatures)
-                        # xprime = self.fit_to_rectangle(x, bounds)
-                        # pred = int(self.model.detectors[0].model.estimators_[tid].predict([xprime])[0])
-                        # if pred != label:
-                        #     print("Bad bound")
-
+        all_bounds = []
+        for tree_id in range(self.rf_ntrees):
+            leaf_class, leaf_rect = self.leaf_rects[tree_id][leaf_ids[tree_id]]
+            if leaf_class == label:
+                all_bounds.append(leaf_rect)
         rect = self.select_intersection(all_bounds, label)
         return rect
 
@@ -134,20 +140,17 @@ class FACETIndex(Explainer):
 
         # Simple solution: take the intersection of the first nmajority hyper-rectangles
         i = 0
-        nmerged = 0
-        while i < self.rf_ntrees and nmerged < self.majority_size:
-            if all_bounds[i] is not None:
-                rect[:, 0] = np.maximum(rect[:, 0], all_bounds[i][:, 0])  # intersction of minimums
-                rect[:, 1] = np.minimum(rect[:, 1], all_bounds[i][:, 1])  # intersection of maximums
-                nmerged += 1
+        while i < len(all_bounds) and i < self.majority_size:
+            rect[:, 0] = np.maximum(rect[:, 0], all_bounds[i][:, 0])  # intersction of minimums
+            rect[:, 1] = np.minimum(rect[:, 1], all_bounds[i][:, 1])  # intersection of maximums
             i += 1
 
         # ! debug
-        x = np.zeros(self.rf_nfeatures)
-        xprime = self.fit_to_rectangle(x, rect)
-        pred = int(self.model.predict([xprime]))
-        if pred != label:
-            print("Bad Rectangle")
+        # x = np.zeros(self.rf_nfeatures)
+        # xprime = self.fit_to_rectangle(x, rect)
+        # pred = int(self.model.predict([xprime]))
+        # if pred != label:
+        #     print("Bad Rectangle")
 
         return rect
 
@@ -178,20 +181,20 @@ class FACETIndex(Explainer):
                 feature_bounds[feature][0] = max(threshold, feature_bounds[feature][0])
         return feature_bounds
 
-    def build_paths(self, trees):
+    def build_paths(self, trees: list[tree.DecisionTreeClassifier]) -> list[list[np.ndarray]]:
         '''
         Walks each tree and extracts each path from root to leaf into a data structure. Each tree is represented as a list of paths, with each path stored into an array
 
         Returns
         -------
-        all_paths: a list of length ntrees
+        all_paths: a list of length ntrees, where all_paths[i] contains a list of the paths in tree i each represented by a numpy array as generated by in_order_path
         '''
         ntrees = len(trees)
         all_paths = [[] for _ in range(ntrees)]
         for i in range(ntrees):
             all_paths[i] = self.__in_order_path(t=trees[i], built_paths=[])
 
-        self.all_paths = all_paths
+        return all_paths
 
     def __in_order_path(self, t, built_paths=[], node_id=0, path=[]):
         '''
@@ -249,10 +252,7 @@ class FACETIndex(Explainer):
         '''
         Returns true if x falls inside the given rectangle, false otherwise
         '''
-        low_values = (x > rect[:, 0]).all() and (x < rect[:, 1]).all()
-        high_values = x > rect[:, 1]
-
-        return low_values.any() or high_values.any()
+        return (x > rect[:, 0]).all() and (x < rect[:, 1]).all()
 
     def fit_to_rectangle(self, x: np.ndarray, rect: np.ndarray) -> np.ndarray:
         '''
@@ -268,10 +268,26 @@ class FACETIndex(Explainer):
         xprime: the adjusted instance
         '''
         xprime = x.copy()
+        # determine which values need to adjusted to be smaller, and which need to be larger
         low_values = xprime < rect[:, 0]
         high_values = xprime > rect[:, 1]
+
+        # check that the offset will not overstep the min or max value, this occurs when the range between
+        # a min and max value is less than the offset size
+        overstep_range = (rect[:, 1] - rect[:, 0]) <= self.offset
+        # identify features which need to be adjusted and will overstep the min or max value
+        idx_overstep = np.logical_and(overstep_range, np.logical_or(low_values, high_values))
+
+        # increase low feature values to one offset above min
         xprime[low_values] = rect[low_values, 0] + self.offset
+        # decrease high features one to one offset below min
         xprime[high_values] = rect[high_values, 1] - self.offset
+        # for oversteped bounds use the average between min and max
+        xprime[idx_overstep] = rect[idx_overstep, 0] + (rect[idx_overstep, 1] - rect[idx_overstep, 0]) / 2
+
+        #! debug
+        # if not self.is_inside(xprime, rect):
+        #     print("Bad Counterfactual")
 
         return xprime
 
@@ -307,6 +323,9 @@ class FACETIndex(Explainer):
 
             # generate a counterfactual example which falls within this rectangle
             xprime[i] = self.fit_to_rectangle(x[i], closest_rect)
+            #! debug
+            # if not self.is_inside(xprime[i], closest_rect):
+            #     print("Bad counterfactual 2")
 
         # check that all counterfactuals result in a different class
         preds = self.model.predict(xprime)

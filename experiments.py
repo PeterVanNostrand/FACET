@@ -43,7 +43,7 @@ def check_create_directory(dir_path="./results"):
     return run_id, run_path
 
 
-def execute_run(model, xtrain, xtest, ytrain, ytest):
+def execute_run(model: HEEAD, xtrain, xtest, ytrain, ytest):
     '''
     A general method for testing the given model with the provided data
 
@@ -59,6 +59,7 @@ def execute_run(model, xtrain, xtest, ytrain, ytest):
     -------
     run_perf : a dictionary of important performance metrics for the model on the given data
     '''
+    model.prepare()
     model.train(xtrain, ytrain)
     preds = model.predict(xtest)
 
@@ -320,7 +321,7 @@ def vary_dim(ds_names, explainer="AFT", distance="Euclidean"):
     print("Finished varying dimension")
 
 
-def vary_ntrees(ds_names, explainer="AFT", distance="Euclidean"):
+def vary_ntrees(ds_names, explainer="FACETIndex", ntrees=[5, 10, 15], distance="Euclidean", num_iters=5, eval_samples=20, test_size=0.2):
     '''
     Experiment to observe the effect of the the number of features on explanation
     '''
@@ -332,61 +333,159 @@ def vary_ntrees(ds_names, explainer="AFT", distance="Euclidean"):
     max_trees = 100
     num_iters = 1
     dets = ["RandomForest"]
-    agg = "LogisticRegression"
+    agg = "NoAggregator"
     expl = explainer
     params = {
         "rf_difference": 0.01,
         "rf_distance": distance,
         "rf_k": 1,
-        "rf_ntrees": min_trees,
-        "expl_distance": distance
+        "rf_ntrees": 20,
+        "rf_threads": 1,
+        "rf_maxdepth": 3,
+        "expl_greedy": False,
+        "expl_distance": distance,
+        "ocean_norm": 2,
+        "mace_maxtime": 300,
+        "num_iters": num_iters,
+        "eval_samples": eval_samples,
+        "test_size": test_size,
+        "facet_graphtype": "disjoint",
+        "facet_offset": 0.001,
+        "facet_mode": "exhaustive",
+        "verbose": True,
+        "rf_hardvoting": True,  # TODO consider OCEAN vs FACETIndex soft vs hard requirment
     }
 
     # save the run information
     with open(run_path + "/" + "config.txt", 'a') as f:
-        f.write("varying the number of trees\n\n")
-        f.write("min trees: {:d}\n".format(min_trees))
-        f.write("max trees: {:d}\n".format(max_trees))
+        f.write("comparing explanation methods\n\n")
         f.write("iterations: {:d}\n\n".format(num_iters))
         f.write("detectors: ")
         for d in dets:
             f.write(d + ", ")
         f.write("\n")
         f.write("aggregator: " + agg + "\n")
-        f.write("explainer: " + expl + "\n\n")
+        f.write("explainer:" + explainer + "\n")
+        f.write("\n")
         f.write("hyperparameters{\n")
         for k in params.keys():
             f.write("\t" + k + ": " + str(params[k]) + "\n")
         f.write("}\n")
+        f.write("ntrees: ")
+        for n in ntrees:
+            f.write(str(n) + ", ")
+
+    print("Varying ntrees")
+    print("\tDatasets:", ds_names)
+    print("\ntrees:", ntrees)
+
+    # compute the total number of runs for this experiment
+    total_runs = len(ds_names) * len(ntrees) * num_iters
+    progress_bar = tqdm(total=total_runs, desc="Overall Progress", position=0, disable=True)
 
     for ds in ds_names:
+        progress_bar_ds = tqdm(total=len(ntrees) * num_iters, desc=ds, leave=False)
+
         x, y = load_data(ds, normalize=True)
         # dataframe to store results of each datasets runs
-        results = pd.DataFrame(columns=["n_trees", "accuracy", "precision",
-                               "recall", "f1", "coverage_ratio", "mean_distance"])
-        runs_complete = 0
+        results = pd.DataFrame(columns=["n_trees", "explainer", "n_samples", "n_samples_explained", "n_features", "accuracy", "precision", "recall", "f1", "avg_nnodes", "avg_nleaves",
+                               "avg_depth", "q", "jaccard", "coverage_ratio", "mean_distance", "mean_length", "init_time", "runtime", "clique_size", "grown_clique_size", "ext_min", "ext_avg", "ext_max"])
 
-        for n in range(min_trees, max_trees + 1, 10):
+        for n in ntrees:
             params["rf_ntrees"] = n
             for i in range(num_iters):
                 # random split the data
-                xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=0.2, shuffle=True)
+                xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=test_size, shuffle=True)
+                n_samples = DS_DIMENSIONS[ds][0]
+                n_features = DS_DIMENSIONS[ds][1]
 
-                # Create, train, and predict with the model
-                model = HEEAD(detectors=dets, aggregator=agg, explainer=expl, hyperparameters=params)
-                run_perf = execute_run(model, xtrain[:, :n], xtest[:, :n], ytrain, ytest)
+                if eval_samples is not None:
+                    xtest = xtest[:eval_samples]
+                    ytest = ytest[:eval_samples]
+                    n_samples = eval_samples
 
-                # store results
-                diff_val = {"n_trees": n}
-                run_result = {**diff_val, **run_perf}
+                # Create and train the model
+                model = HEEAD(detectors=dets, aggregator=agg, hyperparameters=params)
+                model.set_explainer(expl, hyperparameters=params)
+                model.train(xtrain, ytrain)
+                preds = model.predict(xtest)
+
+                # compute forest metrics
+                accuracy, precision, recall, f1 = classification_metrics(preds, ytest, verbose=False)
+                avg_nnodes, avg_nleaves, avg_depth = model.detectors[0].get_tree_information()
+                Q, qs = model.detectors[0].compute_qs(xtest, ytest)
+                J, jaccards = compute_jaccard(model.detectors[0])
+
+                # explain instances
+                start_build = time.time()
+                model.prepare(data=xtrain)
+                end_build = time.time()
+                start = time.time()
+                explanations = model.explain(xtest, preds)
+                end = time.time()
+                runtime = end-start  # wall time in seconds
+                init_time = end_build - start_build
+
+                # collect optional statistics
+                if expl == "FACETTrees" or expl == "FACETPaths":
+                    clique_size = model.explainer.get_clique_size()
+                    grown_clique_size = -1
+                elif expl == "FACETGrow":
+                    clique_size, grown_clique_size = model.explainer.get_clique_size()
+                elif expl == "FACETBranchBound":
+                    clique_size = -1
+                    grown_clique_size = -1
+                    ext_min = model.explainer.ext_min
+                    ext_avg = model.explainer.ext_avg
+                    ext_max = model.explainer.ext_max
+                else:
+                    clique_size = -1
+                    grown_clique_size = -1
+                    ext_min = -1
+                    ext_avg = -1
+                    ext_max = -1
+
+                # Compute explanation metrics
+                coverage_ratio = coverage(explanations)
+                mean_dist = average_distance(xtest, explanations, distance_metric="Euclidean")
+                mean_length = average_distance(xtest, explanations, distance_metric="FeaturesChanged")
+
+                # Save results
+                # save the performance
+                run_result = {
+                    "n_trees": n,
+                    "explainer": expl,
+                    "n_samples": n_samples,
+                    "n_samples_explained": xtest.shape[0],
+                    "n_features": n_features,
+                    "accuracy": accuracy,
+                    "precision": precision,
+                    "recall": recall,
+                    "f1": f1,
+                    "avg_nnodes": avg_nnodes,
+                    "avg_nleaves": avg_nleaves,
+                    "avg_depth": avg_depth,
+                    "q": Q,
+                    "jaccard": J,
+                    "coverage_ratio": coverage_ratio,
+                    "mean_distance": mean_dist,
+                    "mean_length": mean_length,
+                    "init_time": init_time,
+                    "runtime": runtime,
+                    "clique_size": clique_size,
+                    "grown_clique_size": grown_clique_size,
+                    "ext_min": ext_min,
+                    "ext_avg": ext_avg,
+                    "ext_max": ext_max
+                }
                 results = results.append(run_result, ignore_index=True)
-
+                results.to_csv(run_path + "/" + ds + ".csv", index=False)
                 # log progress
-                runs_complete += 1
-                print("\truns complete:", runs_complete)
-        # save the results for this dataset
-        results.to_csv(run_path + "/" + ds + ".csv")
-        print("finished", ds)
+                progress_bar.update()
+                progress_bar_ds.update()
+        progress_bar_ds.close()
+    progress_bar.close()
+    print("Finished varying ntrees")
 
 
 def compare_methods(ds_names, explainers=["AFT", "FACET"], distance="Euclidean", num_iters=5, eval_samples=20, test_size=0.2):
@@ -416,7 +515,7 @@ def compare_methods(ds_names, explainers=["AFT", "FACET"], distance="Euclidean",
         "facet_graphtype": "disjoint",
         "facet_offset": 0.001,
         "facet_mode": "exhaustive",
-        "rf_hardvoting": False,  # TODO consider how this effects OCEAN performance, observed "it does not make sense to seek a counterfactual" from OCEAN, related?
+        "rf_hardvoting": True,  # TODO consider OCEAN vs FACETIndex soft vs hard requirment
     }
 
     # save the run information

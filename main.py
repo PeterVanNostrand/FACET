@@ -71,7 +71,7 @@ def simple_run(dataset_name):
 
     # generate the explanations
     explain = True
-    eval_samples = 50
+    eval_samples = None
     if explain:
         if eval_samples is not None:
             xtest = xtest[:eval_samples]
@@ -107,8 +107,9 @@ def simple_run(dataset_name):
 if __name__ == "__main__":
     run_ds = DS_NAMES.copy()
     # run_ds.remove("spambase")
-    compare_methods(run_ds, num_iters=5, explainers=["OCEAN", "FACETIndex"], eval_samples=20)
-    # simple_run("magic")
+    # compare_methods(run_ds, num_iters=5, explainers=["OCEAN", "FACETIndex"], eval_samples=20)
+    vary_ntrees(run_ds, explainer="FACETIndex")
+    # simple_run("glass")
     # bb_ntrees(run_ds, ntrees=[25], depths=[3], num_iters=1, eval_samples=5)
     # hard_vs_soft(run_ds, num_iters=10)
     # bb_ordering(run_ds, orderings=["PriorityQueue", "Stack", "ModifiedPriorityQueue"], num_iters=1,
