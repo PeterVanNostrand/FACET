@@ -1,0 +1,2 @@
+dataset,n_trees,explainer,n_samples,n_samples_explained,n_features,accuracy,precision,recall,f1,avg_nnodes,avg_nleaves,avg_depth,q,jaccard,coverage_ratio,mean_distance,mean_length,init_time,runtime,clique_size,grown_clique_size,ext_min,ext_avg,ext_max,n_rects,cover_xtrain,cover_xtest
+magic,100,FACETIndex,20,20,10,0.85,0.7692307692307693,1.0,0.8695652173913044,14.94,7.97,3.0,0.9079024874197376,0.4885125861792528,1.0,0.23036612404301993,4.8,24.269617080688477,4.874343156814575,-1,-1,-1,-1,-1,20000,0.24009201445941505,0.15

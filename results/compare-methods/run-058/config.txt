@@ -1,0 +1,28 @@
+comparing explanation methods
+
+iterations: 1
+
+detectors: RandomForest, 
+aggregator: NoAggregator
+explainers: OCEAN, FACETIndex, 
+hyperparameters{
+	rf_difference: 0.01
+	rf_distance: Euclidean
+	rf_k: 1
+	rf_ntrees: 100
+	rf_threads: 1
+	rf_maxdepth: 3
+	expl_greedy: False
+	expl_distance: Euclidean
+	ocean_norm: 2
+	mace_maxtime: 300
+	num_iters: 1
+	eval_samples: 20
+	test_size: 0.2
+	facet_graphtype: disjoint
+	facet_offset: 0.001
+	facet_mode: exhaustive
+	rf_hardvoting: True
+	facet_sample: Training
+	facet_nrects: 50000
+}
