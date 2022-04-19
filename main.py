@@ -11,12 +11,13 @@ from dataset import DS_NAMES
 from experiments import *
 import cProfile
 import time
+import random
 
 
 def simple_run(dataset_name):
     # Load the dataset
     x, y = load_data(dataset_name)
-    xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=0.2, shuffle=True, random_state=None)
+    xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=0.2, shuffle=True, random_state=0)
 
     # Euclidean, FeaturesChanged
     distance = "Euclidean"
@@ -24,7 +25,7 @@ def simple_run(dataset_name):
         "rf_difference": 0.01,
         "rf_distance": distance,
         "rf_k": 1,
-        "rf_ntrees": 20,
+        "rf_ntrees": 10,
         "rf_maxdepth": 3,
         "rf_threads": 8,
         "expl_greedy": False,
@@ -36,7 +37,10 @@ def simple_run(dataset_name):
         "bb_upperbound": False,
         "bb_ordering": "ModifiedPriorityQueue",
         "bb_logdists": False,
-        "verbose": True
+        "verbose": True,
+        "facet_enumerate": "GraphBased",
+        "facet_sample": "Augment",
+        "facet_nrects": 20000
     }
 
     print(params)
@@ -47,6 +51,10 @@ def simple_run(dataset_name):
     model.train(xtrain, ytrain)
     prep_start = time.time()
     model.prepare(data=xtrain)
+    cover_xtrain = model.explainer.explore_index(points=xtrain)
+    cover_xtest = model.explainer.explore_index(points=xtest)
+    print("xtrain index coverage:", cover_xtrain)
+    print("xtest index coverage:", cover_xtest)
     prep_end = time.time()
     preptime = prep_end-prep_start
     print("preptime:", preptime)
@@ -71,7 +79,7 @@ def simple_run(dataset_name):
 
     # generate the explanations
     explain = True
-    eval_samples = None
+    eval_samples = 20
     if explain:
         if eval_samples is not None:
             xtest = xtest[:eval_samples]
@@ -105,12 +113,18 @@ def simple_run(dataset_name):
 
 
 if __name__ == "__main__":
+    RAND_SEED = 0
+    random.seed(RAND_SEED)
+    np.random.seed(RAND_SEED)
     run_ds = DS_NAMES.copy()
     # run_ds.remove("spambase")
-    # compare_methods(run_ds, num_iters=5, explainers=["OCEAN", "FACETIndex"], eval_samples=20)
-    vary_ntrees(run_ds, explainer="FACETIndex")
-    # simple_run("glass")
+    # compare_methods(run_ds, num_iters=10, explainers=["FACETGrow", "OCEAN", "FACETIndex", "FACETBranchBound"],
+                    # eval_samples=20, seed=RAND_SEED)  # "FACETGrow", "OCEAN", "FACETIndex", "FACETBranchBound"
+    # vary_ntrees(run_ds, explainer="FACETIndex", ntrees=list(range(5, 105, 5)), num_iters=5, seed=SEED)
+    simple_run("vertebral")
     # bb_ntrees(run_ds, ntrees=[25], depths=[3], num_iters=1, eval_samples=5)
     # hard_vs_soft(run_ds, num_iters=10)
     # bb_ordering(run_ds, orderings=["PriorityQueue", "Stack", "ModifiedPriorityQueue"], num_iters=1,
     # test_size=0.2, ntrees=15, max_depth=3, eval_samples=5)
+    # vary_nrects(run_ds, nrects=[100, 1000, 5000, 10000, 20000, 30000, 40000, 50000],
+    # num_iters=1, eval_samples=20, seed=RAND_SEED)

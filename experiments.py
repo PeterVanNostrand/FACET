@@ -488,7 +488,7 @@ def vary_ntrees(ds_names, explainer="FACETIndex", ntrees=[5, 10, 15], distance="
     print("Finished varying ntrees")
 
 
-def compare_methods(ds_names, explainers=["AFT", "FACET"], distance="Euclidean", num_iters=5, eval_samples=20, test_size=0.2):
+def compare_methods(ds_names, explainers=["FACETIndex", "OCEAN"], distance="Euclidean", num_iters=5, eval_samples=20, test_size=0.2, seed=None):
     '''
     Experiment to compare the performanec of different explanation methods
     '''
@@ -502,7 +502,7 @@ def compare_methods(ds_names, explainers=["AFT", "FACET"], distance="Euclidean",
         "rf_difference": 0.01,
         "rf_distance": distance,
         "rf_k": 1,
-        "rf_ntrees": 20,
+        "rf_ntrees": 10,
         "rf_threads": 1,
         "rf_maxdepth": 3,
         "expl_greedy": False,
@@ -515,7 +515,13 @@ def compare_methods(ds_names, explainers=["AFT", "FACET"], distance="Euclidean",
         "facet_graphtype": "disjoint",
         "facet_offset": 0.001,
         "facet_mode": "exhaustive",
-        "rf_hardvoting": True,  # TODO consider OCEAN vs FACETIndex soft vs hard requirment
+        "rf_hardvoting": True,  # TODO consider OCEAN vs FACETIndex soft vs hard requirment,
+        "facet_sample": "Augment",
+        "facet_nrects": 20000,
+        "bb_upperbound": False,
+        "bb_ordering": "ModifiedPriorityQueue",
+        "bb_logdists": False,
+        "verbose": False
     }
 
     # save the run information
@@ -556,7 +562,8 @@ def compare_methods(ds_names, explainers=["AFT", "FACET"], distance="Euclidean",
 
         x, y = load_data(ds, normalize=True)
         for i in range(num_iters):
-            xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=test_size, shuffle=True, random_state=None)
+            xtrain, xtest, ytrain, ytest = train_test_split(
+                x, y, test_size=test_size, shuffle=True, random_state=seed+i)
             n_samples = DS_DIMENSIONS[ds][0]
             n_features = DS_DIMENSIONS[ds][1]
 
@@ -581,8 +588,9 @@ def compare_methods(ds_names, explainers=["AFT", "FACET"], distance="Euclidean",
                 model.set_explainer(expl, hyperparameters=params)
 
                 # FACET Index requires the use of hard-voting which is not supported by OCEAN
-                if expl == "FACETIndex":
+                if expl == "FACETIndex" or expl == "FACETBranchBound" or expl == "FACETGrow":
                     model.detectors[0].hard_voting = True
+                    # print("hard_voting", expl + " " + str(model.detectors[0].hard_voting))
                 elif expl == "OCEAN":
                     model.detectors[0].hard_voting = False
                 else:
@@ -606,6 +614,9 @@ def compare_methods(ds_names, explainers=["AFT", "FACET"], distance="Euclidean",
                     grown_clique_size = -1
                 elif expl == "FACETGrow":
                     clique_size, grown_clique_size = model.explainer.get_clique_size()
+                    ext_min = -1
+                    ext_avg = -1
+                    ext_max = -1
                 elif expl == "FACETBranchBound":
                     clique_size = -1
                     grown_clique_size = -1
@@ -665,7 +676,7 @@ def compare_methods(ds_names, explainers=["AFT", "FACET"], distance="Euclidean",
     print("Finished comparing explainers")
 
 
-def time_cliques(ds_names, ntrees=[1, 5, 10, 15, 20]):
+def time_cliques(ds_names, ntrees=[1, 5, 10, 15, 20], seed=None):
     # output directory
     run_id, run_path = check_create_directory("./results/time-cliques/")
     distance = "Euclidean"
@@ -733,7 +744,7 @@ def time_cliques(ds_names, ntrees=[1, 5, 10, 15, 20]):
             for n in ntrees:
                 params["rf_ntrees"] = n
                 xtrain, xtest, ytrain, ytest = train_test_split(
-                    x, y, test_size=0.2, shuffle=True, random_state=None)
+                    x, y, test_size=0.2, shuffle=True, random_state=seed)
                 n_samples = DS_DIMENSIONS[ds][0]
                 n_features = DS_DIMENSIONS[ds][1]
 
@@ -780,7 +791,7 @@ def time_cliques(ds_names, ntrees=[1, 5, 10, 15, 20]):
     print("Finished timing cliques")
 
 
-def bb_ntrees(ds_names, explainer="FACETBranchBound", distance="Euclidean", num_iters=5, eval_samples=20, test_size=0.2, ntrees=[5, 10, 15, 20], depths=[3]):
+def bb_ntrees(ds_names, explainer="FACETBranchBound", distance="Euclidean", num_iters=5, eval_samples=20, test_size=0.2, ntrees=[5, 10, 15, 20], depths=[3], seed=None):
     '''
     Experiment to compare the performanec of different explanation methods
     '''
@@ -865,7 +876,7 @@ def bb_ntrees(ds_names, explainer="FACETBranchBound", distance="Euclidean", num_
 
         x, y = load_data(ds, normalize=True)
         for i in range(num_iters):
-            xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=test_size, shuffle=True, random_state=None)
+            xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=test_size, shuffle=True, random_state=seed)
             n_samples = DS_DIMENSIONS[ds][0]
             n_features = DS_DIMENSIONS[ds][1]
 
@@ -954,7 +965,7 @@ def bb_ntrees(ds_names, explainer="FACETBranchBound", distance="Euclidean", num_
     print("Finished bb ntrees runtime")
 
 
-def hard_vs_soft(ds_names, num_iters=5, test_size=0.2, ntrees=20, max_depth=3):
+def hard_vs_soft(ds_names, num_iters=5, test_size=0.2, ntrees=20, max_depth=3, seed=None):
     run_id, run_path = check_create_directory("./results/hard-soft/")
 
     results = pd.DataFrame(
@@ -997,7 +1008,7 @@ def hard_vs_soft(ds_names, num_iters=5, test_size=0.2, ntrees=20, max_depth=3):
         for i in range(num_iters):
             x, y = load_data(ds)
             xtrain, xtest, ytrain, ytest = train_test_split(
-                x, y, test_size=test_size, shuffle=True, random_state=None)
+                x, y, test_size=test_size, shuffle=True, random_state=seed)
 
             # Create, train, and predict with the model
             model = HEEAD(detectors=["RandomForest"], aggregator="NoAggregator",
@@ -1045,7 +1056,7 @@ def hard_vs_soft(ds_names, num_iters=5, test_size=0.2, ntrees=20, max_depth=3):
     print("Finished copmaring hard vs soft voting")
 
 
-def bb_ordering(ds_names, orderings=["PriorityQueue", "Stack", "Queue"], num_iters=5, test_size=0.2, ntrees=10, max_depth=3, eval_samples=5):
+def bb_ordering(ds_names, orderings=["PriorityQueue", "Stack", "Queue"], num_iters=5, test_size=0.2, ntrees=10, max_depth=3, eval_samples=5, seed=None):
     run_id, run_path = check_create_directory("./results/bb-ordering/")
 
     result_columns = [
@@ -1101,14 +1112,14 @@ def bb_ordering(ds_names, orderings=["PriorityQueue", "Stack", "Queue"], num_ite
         x, y = load_data(ds)
         results = pd.DataFrame(columns=result_columns)
         for i in range(num_iters):
-            xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=test_size, shuffle=True, random_state=None)
+            xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=test_size, shuffle=True, random_state=seed)
             # Create, train, and predict with the model
             model = HEEAD(detectors=["RandomForest"], aggregator="NoAggregator",
                           explainer="FACETBranchBound", hyperparameters=params)
             model.train(xtrain, ytrain)
             # create and prep explainer
             start_build = time.time()
-            model.prepare()
+            model.prepare(data=xtrain)
             end_build = time.time()
 
             # measure model performance and stats
@@ -1174,3 +1185,170 @@ def bb_ordering(ds_names, orderings=["PriorityQueue", "Stack", "Queue"], num_ite
                 results.to_csv(run_path + "/" + ds + ".csv", index=False)
     progress_bar.close()
     print("Finished comparing branch and bound orderings")
+
+
+def vary_nrects(ds_names, nrects=[5, 10, 15], num_iters=5, eval_samples=20, test_size=0.2, seed=None):
+    '''
+    Experiment to observe the effect of the the number of features on explanation
+    '''
+    # output directory
+    run_id, run_path = check_create_directory("./results/vary-nrects/")
+
+    # run configuration
+    min_trees = 1
+    max_trees = 100
+    num_iters = 1
+    dets = ["RandomForest"]
+    agg = "NoAggregator"
+    expl = "FACETIndex"
+    distance = "Euclidean"
+    rf_ntrees = 100
+    params = {
+        "rf_difference": 0.01,
+        "rf_distance": distance,
+        "rf_k": 1,
+        "rf_ntrees": rf_ntrees,
+        "rf_threads": 1,
+        "rf_maxdepth": 3,
+        "expl_greedy": False,
+        "expl_distance": distance,
+        "ocean_norm": 2,
+        "mace_maxtime": 300,
+        "num_iters": num_iters,
+        "eval_samples": eval_samples,
+        "test_size": test_size,
+        "facet_graphtype": "disjoint",
+        "facet_offset": 0.001,
+        "facet_mode": "exhaustive",
+        "verbose": False,
+        "rf_hardvoting": True,  # note OCEAN and FACETIndex use soft and hard requirment
+        "facet_sample": "Augment",
+        "facet_nrects": None  # will be varied in experiment
+    }
+
+    # save the run information
+    with open(run_path + "/" + "config.txt", 'a') as f:
+        f.write("comparing explanation methods\n\n")
+        f.write("iterations: {:d}\n\n".format(num_iters))
+        f.write("detectors: ")
+        for d in dets:
+            f.write(d + ", ")
+        f.write("\n")
+        f.write("aggregator: " + agg + "\n")
+        f.write("explainer:" + expl + "\n")
+        f.write("\n")
+        f.write("hyperparameters{\n")
+        for k in params.keys():
+            f.write("\t" + k + ": " + str(params[k]) + "\n")
+        f.write("}\n")
+        f.write("ntrees: ")
+        for r in nrects:
+            f.write(str(r) + ", ")
+
+    print("Varying ntrees")
+    print("\tDatasets:", ds_names)
+    print("\nnrects:", nrects)
+
+    # compute the total number of runs for this experiment
+    total_runs = len(ds_names) * len(nrects) * num_iters
+    progress_bar = tqdm(total=total_runs, desc="Overall Progress", position=0, disable=True)
+
+    for ds in ds_names:
+        progress_bar_ds = tqdm(total=len(nrects) * num_iters, desc=ds, leave=False)
+
+        x, y = load_data(ds, normalize=True)
+        # dataframe to store results of each datasets runs
+        results = pd.DataFrame(columns=["dataset", "n_trees", "explainer", "n_samples", "n_samples_explained", "n_features", "accuracy", "precision", "recall", "f1", "avg_nnodes", "avg_nleaves",
+                               "avg_depth", "q", "jaccard", "coverage_ratio", "mean_distance", "mean_length", "init_time", "runtime", "clique_size", "grown_clique_size", "ext_min", "ext_avg", "ext_max", "n_rects", "cover_xtrain", "cover_xtest"])
+
+        for i in range(num_iters):
+            # random split the data
+            xtrain, xtest, ytrain, ytest = train_test_split(
+                x, y, test_size=test_size, shuffle=True, random_state=seed+i)
+            n_samples = DS_DIMENSIONS[ds][0]
+            n_features = DS_DIMENSIONS[ds][1]
+
+            if eval_samples is not None:
+                xtest = xtest[:eval_samples]
+                ytest = ytest[:eval_samples]
+                n_samples = eval_samples
+
+            # Create and train the model
+            model = HEEAD(detectors=dets, aggregator=agg, hyperparameters=params)
+            model.set_explainer(expl, hyperparameters=params)
+            model.train(xtrain, ytrain)
+            preds = model.predict(xtest)
+
+            # compute forest metrics
+            accuracy, precision, recall, f1 = classification_metrics(preds, ytest, verbose=False)
+            avg_nnodes, avg_nleaves, avg_depth = model.detectors[0].get_tree_information()
+            Q, qs = model.detectors[0].compute_qs(xtest, ytest)
+            J, jaccards = compute_jaccard(model.detectors[0])
+            for r in nrects:
+                # params["facet_nrects"] = r
+                model.explainer.n_rects = r
+
+                # explain instances
+                start_build = time.time()
+                model.prepare(data=xtrain)
+                end_build = time.time()
+                start = time.time()
+                explanations = model.explain(xtest, preds)
+                end = time.time()
+                runtime = end-start  # wall time in seconds
+                init_time = end_build - start_build
+
+                cover_xtrain = model.explainer.explore_index(points=xtrain)
+                cover_xtest = model.explainer.explore_index(points=xtest)
+
+                clique_size = -1
+                grown_clique_size = -1
+                ext_min = -1
+                ext_avg = -1
+                ext_max = -1
+
+                # Compute explanation metrics
+                coverage_ratio = coverage(explanations)
+                mean_dist = average_distance(xtest, explanations, distance_metric="Euclidean")
+                mean_length = average_distance(xtest, explanations, distance_metric="FeaturesChanged")
+
+                # Save results
+                # save the performance
+                run_result = {
+                    "dataset": ds,
+                    "n_trees": rf_ntrees,
+                    "explainer": expl,
+                    "n_samples": n_samples,
+                    "n_samples_explained": xtest.shape[0],
+                    "n_features": n_features,
+                    "accuracy": accuracy,
+                    "precision": precision,
+                    "recall": recall,
+                    "f1": f1,
+                    "avg_nnodes": avg_nnodes,
+                    "avg_nleaves": avg_nleaves,
+                    "avg_depth": avg_depth,
+                    "q": Q,
+                    "jaccard": J,
+                    "coverage_ratio": coverage_ratio,
+                    "mean_distance": mean_dist,
+                    "mean_length": mean_length,
+                    "init_time": init_time,
+                    "runtime": runtime,
+                    "clique_size": clique_size,
+                    "grown_clique_size": grown_clique_size,
+                    "ext_min": ext_min,
+                    "ext_avg": ext_avg,
+                    "ext_max": ext_max,
+                    "n_rects": r,
+                    "cover_xtrain": cover_xtrain,
+                    "cover_xtest": cover_xtest
+                }
+                results = results.append(run_result, ignore_index=True)
+                results.to_csv(run_path + "/" + ds + ".csv", index=False)
+                # log progress
+                progress_bar.update()
+                progress_bar_ds.update()
+        progress_bar_ds.close()
+    progress_bar.close()
+    print("Finished varying nrects")

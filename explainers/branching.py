@@ -116,6 +116,12 @@ class BranchBound():
             self.double_check = True
         else:
             self.double_check = False
+        #! debug
+        #! WARNING: When hard voting is enabled, double checking should not be neccessary, however incomplete
+        #! coverage was observed so this has been enabled to ensure good counterfactuals. I believe the cause
+        #! of this difference may be the way ties are broken when an equal number of trees predict each class
+        #! or a floating point comparision issue with the counterfactual being very near the hyper-rectangles edge
+        self.double_check = True
 
         # distance logging
         log_dist = hyperparameters.get("bb_logdists")

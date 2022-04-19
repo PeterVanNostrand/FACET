@@ -24,7 +24,7 @@ class FACETGrow(Explainer):
         self.model = model
         self.parse_hyperparameters(hyperparameters)
 
-    def prepare(self):
+    def prepare(self, data=None):
         rf_detector = self.model.detectors[0]
         rf_trees = rf_detector.model.estimators_
         rf_ntrees = len(rf_trees)
@@ -139,7 +139,8 @@ class FACETGrow(Explainer):
         for idx in indexs:
             total_paths += idx
 
-        print("Num paths: {}".format(total_paths))
+        if self.verbose:
+            print("Num paths: {}".format(total_paths))
 
         self.npaths = total_paths
         self.treepath_to_idx = treepath_to_idx
@@ -399,15 +400,17 @@ class FACETGrow(Explainer):
         # collect clique size statistics
         self.mean_clique_start = np.mean(counter_clique_start)
         self.mean_clique_end = np.mean(counter_clique_end)
-        print("Start counter clique: {}".format(self.mean_clique_start))
-        print("End counter clique: {}".format(self.mean_clique_end))
+        if self.verbose:
+            print("Start counter clique: {}".format(self.mean_clique_start))
+            print("End counter clique: {}".format(self.mean_clique_end))
 
         # check that all counterfactuals result in a different class
         preds = self.model.predict(xprime)
         failed_explanation = (preds == y)
         xprime[failed_explanation] = np.tile(np.inf, x.shape[1])
 
-        print("failed x':", failed_explanation.sum())
+        if self.verbose:
+            print("failed x':", failed_explanation.sum())
 
         return xprime
 
@@ -485,3 +488,9 @@ class FACETGrow(Explainer):
             self.mode = "exhaustive"
         else:
             self.mode = mode
+
+        # print messages
+        if hyperparameters.get("verbose") is None:
+            self.verbose = False
+        else:
+            self.verbose = hyperparameters.get("verbose")

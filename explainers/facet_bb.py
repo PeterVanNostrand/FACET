@@ -29,7 +29,7 @@ class FACETBranchBound(Explainer):
         self.model = model
         self.parse_hyperparameters(hyperparameters)
 
-    def prepare(self):
+    def prepare(self, data=None):
         rf_detector: RandomForest = self.model.detectors[0]
         rf_trees = rf_detector.model.estimators_
         rf_ntrees = len(rf_trees)

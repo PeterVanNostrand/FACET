@@ -5,6 +5,7 @@ from gettext import install
 # core python packages
 import math
 from os import replace
+from xmlrpc.client import Boolean
 
 # scientific and utility packages
 import numpy as np
@@ -39,14 +40,153 @@ class FACETIndex(Explainer):
         self.rf_ntrees = len(rf_trees)
         self.rf_nclasses = rf_detector.model.n_classes_
         self.rf_nfeatures = len(rf_detector.model.feature_importances_)
-
         # the number of trees which much aggree for a prediction
         self.majority_size = math.floor(self.rf_ntrees / 2) + 1
 
-        all_paths = self.build_paths(rf_trees)
-        self.leaf_rects = self.leaves_to_rects(all_paths)
-        self.index_rectangles(data)
-        # self.check_indexed_rects()
+        # walk each path and store their representation in an array
+        self.all_paths = self.build_paths(rf_trees)
+        # convert each leaf node into its corresponding hyper-rectangle
+        self.leaf_rects = self.leaves_to_rects(self.all_paths)
+
+        # build the index of majority size hyper-rectangles
+        if self.enumeration_type == "PointBased":
+            self.point_enumerate(data)
+        elif self.enumeration_type == "GraphBased":
+            self.graph_enumerate(data)
+
+    def graph_enumerate(self, data: np.ndarray) -> None:
+        '''
+        Converts the random forest ensemble into a graph representation, then uses a branching technique to find k-sized cliques on this graph which correspond to majority sized hyper-rectangles which are added to the index
+        '''
+        # 1. build the graphs, one per class
+        rf_detector: RandomForest = self.model.detectors[0]
+        rf_trees: list[tree.DecisionTreeClassifier] = rf_detector.model.estimators_
+        self.index_paths(self.rf_nclasses)
+        self.find_synthesizeable_paths(rf_trees)
+        self.build_graphs(rf_trees, self.rf_nclasses)
+
+        all_leaves = rf_detector.apply(data)  # leaves that each sample ends up in (nsamples in xtrain, ntrees)
+        preds = self.model.predict(data)  # the predicted class for each sample
+
+        # compute the support of each vertex in the predictions of the training data
+        # i.e. what fraction of the training predictions classify into each leaf
+        vertex_supports = []
+        pairwise_supports = []
+        for class_id in range(self.rf_nclasses):
+            # instantiate arrays to hold the support values
+            nvertices = self.adjacencys[class_id].shape[0]
+            vertex_supports.append(np.zeros(shape=(nvertices,)))
+            pairwise_supports.append(np.zeros(shape=(nvertices, nvertices)))
+
+            # for each vertex
+            for vertex_i in range(nvertices):
+                # get the id of the tree and leaf which correspond to this vertex
+                vi_tree_id, vi_leaf_id = self.idx_to_treepath[class_id][vertex_i]
+                # find and count all instances where the given tree classified to the given leaf
+                contains_vi = all_leaves[:, vi_tree_id] == vi_leaf_id
+                vertex_supports[class_id][vertex_i] = contains_vi.sum()
+                # compute its pairwise support with other vertices
+                for vertex_j in range(vertex_i+1, nvertices):
+                    # get the id of the tree and leaf which correspond to this vertex
+                    vj_tree_id, leaf_id_j = self.idx_to_treepath[class_id][vertex_j]
+                    # find all instances where the given tree classified to the given leaf
+                    contains_vj = all_leaves[:, vj_tree_id] == leaf_id_j
+                    # find and count all instance where both vi and vj appear
+                    pair_support = np.logical_and(contains_vi, contains_vj).sum()
+                    # save the pairwise support
+                    pairwise_supports[class_id][vertex_i][vertex_j] = pair_support
+                    pairwise_supports[class_id][vertex_j][vertex_i] = pair_support
+            # support =  support count / num of records (# of training samples)
+            vertex_supports[class_id] = vertex_supports[class_id] / data.shape[0]
+            pairwise_supports[class_id] = pairwise_supports[class_id] / data.shape[0]
+
+        # 4. explore graph by branching using the support values as priority
+
+    def point_enumerate(self, data: np.ndarray) -> None:
+        '''
+        Uses the provided set of data to select a set of points in the input space, then selects and indexes one hyper-rectangle around each point
+        '''
+        rect_points = self.select_points(training_data=data)
+        self.index_rectangles(data=rect_points)
+
+    def select_points(self, training_data: np.ndarray) -> np.ndarray:
+        '''
+        Given the training data, selects a set of points which will be used to determine
+        the location of each hyper-rectangle to be indexed
+        '''
+        if self.sample_type == "Training":
+            rect_points = training_data
+        elif self.sample_type == "Random":
+            all_same_class = True
+            while all_same_class:
+                # create a set of points randomly placed with a uniform distribution along each axis
+                rect_points = np.random.uniform(low=0.0, high=1.0, size=(self.n_rects, training_data.shape[1]))
+                # check to make sure the resulting set has points of both classes, redraw if needed
+                preds = self.model.predict(rect_points)
+                all_same_class = len(np.unique(preds)) < 2
+        elif self.sample_type == "Augment":
+            all_same_class = True
+            while all_same_class:
+                # take a bootstrap sample of the training data
+                rand_idxs = np.random.randint(low=0, high=training_data.shape[0], size=self.n_rects)
+                rect_points = training_data[rand_idxs]
+                # augment these points with random normally distributed noise
+                noise = np.random.normal(loc=0.0, scale=0.5, size=rect_points.shape)
+                rect_points += noise
+                # check to make sure the resulting set has points of both classes, redraw if needed
+                preds = self.model.predict(rect_points)
+                all_same_class = len(np.unique(preds)) < 2
+        return rect_points
+
+    def explore_index(self, nfeatures: int = 0, npoints: int = 1000, points: np.ndarray = None) -> float:
+        '''
+        Randomly samples a number of points and checks what percentage of those points fall in the index
+        '''
+        # generate points if not provided
+        if points is None:
+            if nfeatures == 0:
+                nfeatures = self.rf_nfeatures
+            points = np.random.uniform(low=0.0, high=1.0, size=(npoints, nfeatures))
+        # check the points
+        num_inside = 0
+        for p in points:
+            if self.inside_index(p):
+                num_inside += 1
+        percent_covered = num_inside / points.shape[0]
+        return percent_covered
+
+    def mean_rect_sizes(self):
+        mean_size = np.zeros(shape=(self.rf_nclasses, self.rf_nfeatures))
+        # mean_noninf_size = np.zeros(shape=(self.rf_nclasses, self.rf_nfeatures))
+        for label in range(self.rf_nclasses):
+            for rect in self.index[label]:
+                widths = self.rect_width(rect)
+                mean_size[label] += widths
+            mean_size[label] = mean_size[label] / len(self.index[label])
+        return mean_size
+
+    def rect_width(self, rect: np.ndarray) -> np.ndarray:
+        '''
+        Returns the width of the rectangle along each axis
+        Unbounded axis minimums and maximums are treated as zero and one respectively
+        '''
+        test_rect = rect.copy()
+        test_rect[:, 0][test_rect[:, 0] == -np.inf] = 0
+        test_rect[:, 1][test_rect[:, 1] == np.inf] = 1
+        widths = test_rect[:, 1] - test_rect[:, 0]
+        return widths
+
+    def inside_index(self, point: np.ndarray) -> Boolean:
+        '''
+        Checks if the given point falls within a hyper-rectangle included in the index
+        '''
+        label = self.model.predict([point])
+        covered = False
+        i = 0
+        while i < len(self.index[label]) and not covered:
+            covered = covered or self.is_inside(point, self.index[label][i])
+            i += 1
+        return covered
 
     def leaves_to_rects(self, all_paths: list[list[np.ndarray]]) -> list[dict]:
         '''
@@ -82,18 +222,18 @@ class FACETIndex(Explainer):
                 if pred != class_id:
                     print("Bad Rectangle")
 
-    def index_rectangles(self, xtrain):
+    def index_rectangles(self, data: np.ndarray):
         '''
         This method using the training data to enumerate a set of hyper-rectangles of each classes and adds them to an index for later searching during explanation
         '''
         self.initialize_index()
-        preds = self.model.predict(xtrain)
+        preds = self.model.predict(data)
         rf_detector: RandomForest = self.model.detectors[0]
         # get the leaves that each sample ends up in
-        all_leaves = rf_detector.apply(xtrain)  # shape (nsamples in xtrain, ntrees)
+        all_leaves = rf_detector.apply(data)  # shape (nsamples in xtrain, ntrees)
 
         # for each instance in the training set
-        for instance, label, leaf_ids in zip(xtrain, preds, all_leaves):
+        for instance, label, leaf_ids in zip(data, preds, all_leaves):
             rect = self.enumerate_rectangle(leaf_ids, label)
             self.add_to_index(label, rect)
 
@@ -133,7 +273,19 @@ class FACETIndex(Explainer):
         ----------
         all_bounds: a list of ntrees numpy arrays, each of size (nfeatures, 2) generated by leaf_rect
         '''
-        # initialize the hyper-rectangle as unbounded on both side of all axis
+        # compute how many axes each rectangle bounds, this is equal to the number of noninfinite threshold
+        # values in the hyper-rectangle array. Ranges [0, 2*ndims]
+        n_bounded_axes = [0] * len(all_bounds)
+        mean_rect_widths = [0] * len(all_bounds)
+        for i in range(len(all_bounds)):
+            n_bounded_axes[i] = np.isfinite(all_bounds[i]).sum()
+            mean_rect_widths[i] = self.rect_width(all_bounds[i]).mean()
+        order_axes = np.argsort(n_bounded_axes)  # take rects with the fewest bounds first
+        order_size = np.argsort(mean_rect_widths)  # take largest rects first
+        order_forest = list(range(len(all_bounds)))  # take rects in order of trees in ensemble
+        order = order_size
+
+        # initialize the hyper-rectangle as unbounded on both side of all axes
         rect = np.zeros((self.rf_nfeatures, 2))
         rect[:, 0] = -np.inf
         rect[:, 1] = np.inf
@@ -141,8 +293,8 @@ class FACETIndex(Explainer):
         # Simple solution: take the intersection of the first nmajority hyper-rectangles
         i = 0
         while i < len(all_bounds) and i < self.majority_size:
-            rect[:, 0] = np.maximum(rect[:, 0], all_bounds[i][:, 0])  # intersction of minimums
-            rect[:, 1] = np.minimum(rect[:, 1], all_bounds[i][:, 1])  # intersection of maximums
+            rect[:, 0] = np.maximum(rect[:, 0], all_bounds[order[i]][:, 0])  # intersection of minimums
+            rect[:, 1] = np.minimum(rect[:, 1], all_bounds[order[i]][:, 1])  # intersection of maximums
             i += 1
 
         # ! debug
@@ -337,6 +489,155 @@ class FACETIndex(Explainer):
 
         return xprime
 
+    def find_synthesizeable_paths(self, trees):
+        ntrees = len(trees)
+        sythesizable_paths = [[[] for _ in range(ntrees)] for _ in range(ntrees)]
+        for i in range(ntrees):
+            for k in range(ntrees):
+                if(i != k):
+                    t1_t2_merges = self.get_merges(t1_id=i, t2_id=k)
+                    sythesizable_paths[i][k] = t1_t2_merges
+
+        self.sythesizable_paths = sythesizable_paths
+
+    def get_merges(self, t1_id, t2_id):
+        '''
+        For each path p in t1, identifies all paths in t2 which are mergable with p
+
+        Returns
+        ----------
+        t1_merges: a list of lists which maps path ids from t1 to a list of path ids from t2
+                   mergeable_paths[t1pi] = [t2pj, t2pk, t2pl, ...]
+        '''
+        t1_paths = self.all_paths[t1_id]
+        t2_paths = self.all_paths[t2_id]
+
+        t1_merges = []
+        for p1 in t1_paths:  # for each path in tree 1
+            p1_merges = []
+
+            for i in range(len(t2_paths)):  # for each path in tree 2
+                p2 = t2_paths[i]
+                if self.is_mergable(p1, p2):
+                    p1_merges.append(i)
+            t1_merges.append(p1_merges)
+
+        return t1_merges
+
+    def is_mergable(self, p1, p2):
+        p1_pred = p1[-1:, -1:][0][0]
+        p2_pred = p2[-1:, -1:][0][0]
+
+        # if both paths lead to leafs of the same class
+        if p1_pred != p2_pred:
+            return False
+        else:
+            p1_features = p1[:-1, 1:2]
+            p2_features = p2[:-1, 1:2]
+            shared_features = np.intersect1d(p1_features, p2_features)
+
+            mergable = True
+            # check that all shared features are resolveable collisions
+            for feature_i in shared_features:
+                mergable = mergable and self.is_resolveable(p1, p2, feature_i)
+            return mergable
+
+    def build_graphs(self, trees, nclasses):
+        self.adjacencys = self.build_adjacencys(trees, nclasses)
+        graphs = []
+        for a in self.adjacencys:
+            g = nx.Graph(a)
+            graphs.append(g)
+        self.graphs = graphs
+
+    def build_adjacencys(self, trees, nclasses):
+        ntrees = len(trees)
+        adjacencys = []
+
+        # create an adjacency matrix for each class, each matrix is the size of npaths x npaths (classwise)
+        # an entry adjancy[i][j] indicates that those two paths are sythesizeable and should be connected in the graph
+        for class_id in range(nclasses):
+            adjacencys.append(
+                np.zeros(shape=(self.npaths[class_id], self.npaths[class_id]), dtype=int))
+
+        for t1_id in range(ntrees):  # for each tree
+            for t2_id in range(ntrees):  # check every other tree pairwise
+                # for every path in t1, find the set of paths that are sythesizeable with it in t2
+                t1_t2_merges = self.sythesizable_paths[t1_id][t2_id]
+                # for each path in t1 with at least one sythesizeable path in t2
+                for p1_id in range(len(t1_t2_merges)):
+                    t1p1_index = self.treepath_to_idx[t1_id][p1_id][1]  # index is classid, pathid
+                    t1p1_class = int(self.all_paths[t1_id][p1_id][-1, 3])
+                    # iterate over each sythesizeable path and connect them
+                    for p2_id in t1_t2_merges[p1_id]:
+                        t2p2_index = self.treepath_to_idx[t2_id][p2_id][1]
+                        adjacencys[t1p1_class][t1p1_index][t2p2_index] = 1
+
+        return adjacencys
+
+    def index_paths(self, nclasses):
+        '''
+        Creates a pair of data structures which index the paths of the decision trees. By iterating by tree and then by path each path is assigned an increasing index. Each class is indexed independently
+
+        treepath_to_idx: takes [tree_id, path_id] and returns [class_id, index]
+        idx_to_treepath: takes [class_id, index] and returns [tree_id, path_id]
+        '''
+
+        ntrees = len(self.all_paths)
+
+        # takes [tree_id, path_id] and turns it into a [class_id, index]
+        treepath_to_idx = []  # list of (ntrees, npaths, 2)
+
+        # takes [class_id, index] and turns it into (tree_id, path_id)
+        idx_to_treepath = [[] for _ in range(nclasses)]  # list of (nclasses, npaths)
+
+        indexs = [0] * nclasses
+        for i in range(ntrees):
+            treei_to_idx = []
+            for j in range(len(self.all_paths[i])):
+                p = self.all_paths[i][j]
+                path_class = int(p[-1, 3])
+                treei_to_idx.append((path_class, indexs[path_class]))
+                idx_to_treepath[path_class].append((i, j))
+                indexs[path_class] += 1
+            treepath_to_idx.append(treei_to_idx)
+
+        total_paths = 0
+        for idx in indexs:
+            total_paths += idx
+
+        if self.verbose:
+            print("Num paths: {}".format(total_paths))
+
+        self.total_paths = total_paths
+        self.npaths = indexs
+        self.treepath_to_idx = treepath_to_idx
+        self.idx_to_treepath = idx_to_treepath
+
+    def is_resolveable(self, p1, p2, feature_i):
+        '''
+        Find the nodes in p1 and p2 which condition feature_i and check that they don't have conflicting conditions
+        For two nodes n1 and n2 which condition feature i n1: x[i] <> a, n2: x[i] <> b, assuming a < b. Return false if the unresolveable condition n1: x[i] < a, n2: x[i] > b is found and true otherwise.
+        '''
+        idx1 = (p1[:, 1:2] == feature_i).squeeze()
+        idx2 = (p2[:, 1:2] == feature_i).squeeze()
+
+        all_resolveable = True
+
+        for cond1, thresh1 in p1[idx1, 2:4]:
+            for cond2, thresh2 in p2[idx2, 2:4]:
+                if thresh1 < thresh2:
+                    fails = (cond2 == 1) and (cond1 == 0)
+                elif thresh1 == thresh2:
+                    fails = (cond1 != cond2)
+                elif thresh1 > thresh2:
+                    fails = (cond1 == 1) and (cond2 == 0)
+
+                if fails:
+                    all_resolveable = False
+
+        return all_resolveable
+
     def parse_hyperparameters(self, hyperparameters: dict) -> None:
         self.hyperparameters = hyperparameters
 
@@ -359,6 +660,28 @@ class FACETIndex(Explainer):
             self.offset = 0.01
         else:
             self.offset = offset
+
+        # number of hyper-rectangles to index
+        if hyperparameters.get("facet_nrects") is None:
+            self.n_rects = 1000
+            print("No facet_nrects provided, using {}".format(self.n_rects))
+        else:
+            self.n_rects = hyperparameters.get("facet_nrects")
+
+        if hyperparameters.get("facet_sample") is None:
+            self.sample_type = "Training"
+            print("No facet_sample type provided, using training data")
+        else:
+            self.sample_type = hyperparameters.get("facet_sample")
+
+        if hyperparameters.get("facet_enumerate") is None:
+            self.enumeration_type = "PointBased"
+            print("No facet_enumerate type provided, using PointBased")
+        else:
+            self.enumeration_type = hyperparameters.get("facet_enumerate")
+            if self.enumeration_type not in ["PointBased", "GraphBased"]:
+                print("{} not a valid facet_enumerate, defaulting to PointBased")
+                self.enumeration_type = "PointBased"
 
         # print messages
         if hyperparameters.get("verbose") is None:
