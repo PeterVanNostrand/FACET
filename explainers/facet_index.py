@@ -23,7 +23,7 @@ from utilities.metrics import dist_euclidean
 from utilities.metrics import dist_features_changed
 from explainers.explainer import Explainer
 from detectors.random_forest import RandomForest
-from explainers.branching import BranchBound
+from explainers.branching import BranchIndex
 from typing import TYPE_CHECKING, Tuple
 if TYPE_CHECKING:
     from heead import HEEAD
@@ -52,21 +52,14 @@ class FACETIndex(Explainer):
         if self.enumeration_type == "PointBased":
             self.point_enumerate(data)
         elif self.enumeration_type == "GraphBased":
-            self.graph_enumerate(data)
+            self.graph_enumerate(training_data=data)
 
-    def graph_enumerate(self, data: np.ndarray) -> None:
+    def compute_supports(self, data: np.ndarray):
         '''
-        Converts the random forest ensemble into a graph representation, then uses a branching technique to find k-sized cliques on this graph which correspond to majority sized hyper-rectangles which are added to the index
+        Computes the support for each vertex and each pairs of vertices in the classification output of the training data. That is fraction of all samples which are classificed into vertex Vi or pair of vertices Vi, Vj. These values are stored in self.vertex_support[i] and self.pairwise_support[i][j] respectively
         '''
-        # 1. build the graphs, one per class
         rf_detector: RandomForest = self.model.detectors[0]
-        rf_trees: list[tree.DecisionTreeClassifier] = rf_detector.model.estimators_
-        self.index_paths(self.rf_nclasses)
-        self.find_synthesizeable_paths(rf_trees)
-        self.build_graphs(rf_trees, self.rf_nclasses)
-
         all_leaves = rf_detector.apply(data)  # leaves that each sample ends up in (nsamples in xtrain, ntrees)
-        preds = self.model.predict(data)  # the predicted class for each sample
 
         # compute the support of each vertex in the predictions of the training data
         # i.e. what fraction of the training predictions classify into each leaf
@@ -100,7 +93,32 @@ class FACETIndex(Explainer):
             vertex_supports[class_id] = vertex_supports[class_id] / data.shape[0]
             pairwise_supports[class_id] = pairwise_supports[class_id] / data.shape[0]
 
+        self.vertex_support = vertex_supports
+        self.pairwise_support = pairwise_supports
+
+    def graph_enumerate(self, training_data: np.ndarray) -> None:
+        '''
+        Converts the random forest ensemble into a graph representation, then uses a branching technique to find k-sized cliques on this graph which correspond to majority sized hyper-rectangles which are added to the index
+        '''
+        # 1. build the graphs, one per class
+        rf_detector: RandomForest = self.model.detectors[0]
+        rf_trees: list[tree.DecisionTreeClassifier] = rf_detector.model.estimators_
+        self.index_paths(self.rf_nclasses)
+        self.find_synthesizeable_paths(rf_trees)
+        self.build_graphs(rf_trees, self.rf_nclasses)
+        self.compute_supports(data=training_data)
+
         # 4. explore graph by branching using the support values as priority
+        self.initialize_index()
+        self.solution_cliques = [[] for _ in range(self.rf_nclasses)]
+        for class_id in range(self.rf_nclasses):
+            brancher = BranchIndex(
+                explainer=self, graph=self.graphs[class_id], class_id=class_id, hyperparameters=self.hyperparameters)
+            cliques, rects = brancher.solve()
+            self.index[class_id] = rects
+            self.solution_cliques[class_id] = cliques
+
+        self.check_indexed_rects()
 
     def point_enumerate(self, data: np.ndarray) -> None:
         '''
@@ -198,7 +216,7 @@ class FACETIndex(Explainer):
 
         Returns
         -------
-        leaf_rects: a list of dictionarys where leaft_rects[i][j] returns the (leaf_class, rect) corresponding to the path ending in scikit node if j from tree i
+        leaf_rects: a list of dictionarys where leaft_rects[i][j] returns the (leaf_class, rect) corresponding to the path ending in scikit node id j from tree i
         '''
         leaf_rects = [{} for _ in range(self.rf_ntrees)]
         for tid in range(self.rf_ntrees):
@@ -218,7 +236,7 @@ class FACETIndex(Explainer):
             for rect in self.index[class_id]:
                 x = np.zeros(self.rf_nfeatures)
                 xprime = self.fit_to_rectangle(x, rect)
-                pred = self.model.predict([xprime])
+                pred = int(self.model.predict([xprime]))
                 if pred != class_id:
                     print("Bad Rectangle")
 
@@ -251,7 +269,7 @@ class FACETIndex(Explainer):
 
     def enumerate_rectangle(self, leaf_ids: list[int], label: int) -> np.ndarray:
         '''
-        Given a set of scikitlearns leaf_ids, one per tree in the ensemble, extracts the paths which correspond to these leaves and constructs a majority size hyper-rectangle from their interserction
+        Given a set of scikitlearns leaf_ids, one per tree in the ensemble, extracts the paths which correspond to these leaves and constructs a majority size hyper-rectangle from their intersection
 
         Paramters
         ---------

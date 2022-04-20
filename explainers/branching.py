@@ -17,8 +17,8 @@ from networkx.algorithms.approximation import max_clique as get_max_clique
 # conditional import resolve circular import case caused by type hinting
 from typing import TYPE_CHECKING, Tuple
 
-from explainers.facet_index import FACETIndex
 if TYPE_CHECKING:
+    from explainers.facet_index import FACETIndex
     from explainers.facet_bb import FACETBranchBound
 
 ordering = ""  # global for what ordering to use for the Branch and Bound tree exploration
@@ -391,6 +391,7 @@ class BINode():
         self.new_vertex: int = vertex
         self.clique_candidates: list[int] = None
         self.children: list[BINode] = []
+        self.priority = None
 
         if parent:
             self.clique = self.parent.clique.copy()  # starting from parent clique
@@ -398,18 +399,11 @@ class BINode():
         else:
             self.clique = []  # if parent is None, this is the root node, start with empty clique
 
-        self.compute_priority()
-
-    def compute_priority(self):
-        # TODO: Compute the priority based on the vertex/pairwise frequency, temp placeholder
-        self.priority = 0
-        pass
-
     def __lt__(self, other: BINode) -> bool:
         '''
-        In heapq algorithm, if two items have the same priority they are compared directly to determine which one should be higher in the priority queue. In this case if we have two nodes representing cliques with equal distances size we favor cliques which are closer to the majority size.
+        In heapq algorithm, if two items have the same priority they are compared directly to determine which one should be higher in the priority queue. In this case if we have two nodes representing cliques with an equal number of vertices we favor cliques with the higher prioirty. As heapq stores smallest values first we flip the less than operator to return the node with greater priority first
         '''
-        return self.priority < other.priority
+        return self.priority > other.priority
 
     def find_candidates(self, G: nx.Graph):
         '''
@@ -419,14 +413,19 @@ class BINode():
 
 
 class BranchIndex():
-    def __init__(self, explainer: FACETIndex, hyperparameters: dict):
+    def __init__(self, explainer: FACETIndex, graph: nx.Graph, class_id: int, hyperparameters: dict):
         self.explainer = explainer
         self.majority_size = explainer.majority_size
         self.hyperparameters = hyperparameters
+        self.n_desired_rects = hyperparameters.get("bi_nrects")
+        self.desired_label = class_id
+        self.graph = graph
+        self.vertex_support = self.explainer.vertex_support[self.desired_label]
+        self.pairwise_support = self.explainer.pairwise_support[self.desired_label]
 
     def branch(self, node: BINode):
         # determine C0 the set of vertices which are sythesizable with C
-        node.find_candidates(self.explainer.graphs[self.desired_label])
+        node.find_candidates(self.graph)
         # if there are sufficient vertices to reach majority size
         if self.solution_possible(node):
             # create node for each clique candidate
@@ -435,46 +434,81 @@ class BranchIndex():
                 # check that we haven't have visited this clique before
                 key = hash(tuple(child.clique))
                 if not key in self.clique_visited:
-                    # add the node the
+                    # add the child node to the parents list
                     node.children.append(child)
+                    # compute the weight priority of the child
+                    self.compute_priority(child)
                     # remember we have visited the clique
                     self.clique_visited[key] = True
 
-    def check_example(self, example: np.ndarray, desired_label: int) -> bool:
-        return self.explainer.model.predict([example]) == desired_label
+    def check_example(self, example: np.ndarray) -> bool:
+        return self.explainer.model.predict([example]) == self.desired_label
 
     def solution_possible(self, node: BINode) -> bool:
         # !WARNING: only works with hard voting
         return (len(node.clique) + len(node.clique_candidates)) >= self.majority_size
 
     def is_solution(self, node: BINode) -> bool:
-        # if self.double_check:
-        #     return self.check_example(node.partial_example, desired_label)
-        # if not self.double_check:
-        # TODO: implement double checking or solve the need for it.
+        '''
+        Returns true iff the node defines a hyper-rectangle of majority size. False otherwise
+        '''
+        # TODO: investigate the need for double checking
         # IDEA: If the need for double checking is created by tie breaking a 50/50 forest split, determine the number
         # of rectangles actually needed to reach the classification and use this as the size to check for solution
         # e.g. if T=20 and the tie goes to the lower class then class 0 needs 10 trees while class 1 needs 11
-        return len(node.clique) >= self.majority_size
+
+        self.double_check = True
+        if len(node.clique) >= self.majority_size and self.double_check:
+            # get the rectangles which correspond to each leaf represented by the given vertex
+            # and take their intersection. Rect stores the final intersection
+            rect = self.build_intersection(node)
+            # generate a counterfactual example which falls inside this intersection
+            x = np.zeros(shape=(self.explainer.rf_nfeatures,))
+            xprime = self.explainer.fit_to_rectangle(x, rect)
+            # check that the resulting example is predicted to the desired class
+            return self.check_example(xprime)
+        else:
+            return len(node.clique) >= self.majority_size
+
+    def build_intersection(self, node: BINode) -> np.ndarray:
+        '''
+        Computes the intersection of the leaf rectangles that correspond to the vertices in the nodes clique
+
+        Returns
+        -------
+        rect : a numpy array of shape (nfeatures, 2) which contains the min and max values along each axis
+        '''
+        rect = np.zeros((self.explainer.rf_nfeatures, 2))
+        rect[:, 0] = -np.inf
+        rect[:, 1] = np.inf
+        for vertex in node.clique:
+            # get the tree id and path id which correspond to this vertex
+            tree_id, path_id = self.explainer.idx_to_treepath[self.desired_label][vertex]
+            # get the scikit node id of the leaf at the end of that path
+            leaf_id = int(self.explainer.all_paths[tree_id][path_id][-1][0])
+            # fetch the hyper-rectangle associated with that leaf on the given tree
+            leaf_class, leaf_rect = self.explainer.leaf_rects[tree_id][leaf_id]
+            # add it to the intersection
+            rect[:, 0] = np.maximum(rect[:, 0], leaf_rect[:, 0])  # intersection of minimums
+            rect[:, 1] = np.minimum(rect[:, 1], leaf_rect[:, 1])  # intersection of maximums
+        return rect
 
     def save_solution(self, node: BINode):
         self.solution_cliques.append(node.clique)
-        # TODO build the rect and add it to the index
-        # or only store the cliques and move hyper-rectangle generation into FACETIndex
-        # self.solution_rects.append(rect)
+        self.solution_rects.append(self.build_intersection(node))
 
     def sufficient_index(self):
         '''
         Used to control the termination of the branching process. Returns true if a set of user defined criteria for the index are met, false otherwise
         '''
-        return len(self.solution_cliques) > 1000
+        return len(self.solution_cliques) > self.n_desired_rects
 
     def return_to_global(self, local_queue: list):
         '''
         Removes all nodes from the given local_queue and adds them to the global queue with an ascending depth priority
         '''
         while len(local_queue) > 0:
-            node = heappop(local_queue)[1]  # heappop returns priority, node
+            node: BINode = heappop(local_queue)[1]  # heappop returns priority, node
             if self.is_solution(node):
                 self.save_solution(node)
             else:
@@ -492,30 +526,53 @@ class BranchIndex():
         heappush(local_queue, (priority, root))
 
         while len(local_queue) > 0:
-            node: BINode = self.dequeue()
+            node: BINode = heappop(local_queue)[1]  # heappop returns priority, node
             if self.is_solution(node):
-                self.save_solution()
+                self.save_solution(node)
                 # move all local nodes to the global queue, will exit on next iteration
                 self.return_to_global(local_queue)
             else:
                 self.branch(node)
                 for child in node.children:
-                    priority = self.majority_size - len(child.clique)
-                    heappush(local_queue, (priority, child))
+                    depth_priority = self.majority_size - len(child.clique)
+                    heappush(local_queue, (depth_priority, child))
 
-    def solve(self, desired_label: int) -> np.ndarray:
+    def compute_priority(self, node: BINode):
+        '''
+        Determines the priority of the given node. This is used to determine the branching order of nodes in the queue which have the same depth. When selecting between two nodes of the same depth both the gloabal and local queue will branch the node with highest priority first
+        '''
+        # root node has highest priority
+        if len(node.clique) == 0:
+            priority = np.inf
+        # nodes with one vertex use that vertices support
+        elif len(node.clique) == 1:
+            priority = self.vertex_support[node.clique[0]]
+        # nodes with more than one vertex compute the min pairwise support to the new vertex following the apriori
+        # principle from association rule mining - i.e. P({Vi, Vj}) < P({Vi}) and P({Vi, Vj}) < P({Vj})
+        elif len(node.clique) > 1:
+            priority = np.inf
+            # priority(node) = min(vi, vj) \forall vi in node.clique, where vj is the new vertex
+            for vi in node.clique:
+                if vi is not node.new_vertex:
+                    pair_supp = self.pairwise_support[vi][node.new_vertex]
+                    priority = min(priority, pair_supp)
+        node.priority = priority
+
+    def solve(self) -> np.ndarray:
         self.solution_cliques = []
         self.solution_rects = []
         self.clique_visited = {}
-        self.desired_label = desired_label
 
         # the global queue sorts nodes with an ascending depth priority (shallowest nodes first)
         self.global_queue = []
 
         # create a root node and add it to the queue
-        root = BINode(parent=None, vertex=-1, children=[])
+        root = BINode(parent=None, vertex=-1)
+        self.compute_priority(root)
         heappush(self.global_queue, (len(root.clique), root))
 
-        while len(self.queue) > 0 and not self.sufficient_index():  # while there is nodes in the queue
+        while len(self.global_queue) > 0 and not self.sufficient_index():  # while there is nodes in the queue
             node: BINode = heappop(self.global_queue)[1]  # heappop returns priority, node
             self.solve_local(node)
+
+        return self.solution_cliques, self.solution_rects

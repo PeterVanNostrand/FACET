@@ -37,20 +37,27 @@ def simple_run(dataset_name):
         "bb_upperbound": False,
         "bb_ordering": "ModifiedPriorityQueue",
         "bb_logdists": False,
-        "verbose": True,
-        "facet_enumerate": "GraphBased",
+        "verbose": False,
         "facet_sample": "Augment",
-        "facet_nrects": 20000
+        "facet_nrects": 20000,
+        "facet_enumerate": "GraphBased",
+        "bi_nrects": 20000
     }
 
     print(params)
 
     # Create, train, and predict with the model
+    expl = "FACETIndex"
     model = HEEAD(detectors=["RandomForest"], aggregator="NoAggregator",
-                  explainer="FACETIndex", hyperparameters=params)
+                  explainer=expl, hyperparameters=params)
     model.train(xtrain, ytrain)
     prep_start = time.time()
     model.prepare(data=xtrain)
+    if expl == "FACETIndex":
+        print("rects requested:", params.get("bi_nrects"))
+        print("rects enumerated")
+        print("\tclass 0:", len(model.explainer.index[0]))
+        print("\tclass 1:", len(model.explainer.index[1]))
     cover_xtrain = model.explainer.explore_index(points=xtrain)
     cover_xtest = model.explainer.explore_index(points=xtest)
     print("xtrain index coverage:", cover_xtrain)
@@ -119,7 +126,7 @@ if __name__ == "__main__":
     run_ds = DS_NAMES.copy()
     # run_ds.remove("spambase")
     # compare_methods(run_ds, num_iters=10, explainers=["FACETGrow", "OCEAN", "FACETIndex", "FACETBranchBound"],
-                    # eval_samples=20, seed=RAND_SEED)  # "FACETGrow", "OCEAN", "FACETIndex", "FACETBranchBound"
+    # eval_samples=20, seed=RAND_SEED)  # "FACETGrow", "OCEAN", "FACETIndex", "FACETBranchBound"
     # vary_ntrees(run_ds, explainer="FACETIndex", ntrees=list(range(5, 105, 5)), num_iters=5, seed=SEED)
     simple_run("vertebral")
     # bb_ntrees(run_ds, ntrees=[25], depths=[3], num_iters=1, eval_samples=5)
