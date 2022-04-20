@@ -16,6 +16,8 @@ from networkx.algorithms.approximation import max_clique as get_max_clique
 # TYPE_CHECKING is set to False at runtime, but is True for the type hinting pass
 # conditional import resolve circular import case caused by type hinting
 from typing import TYPE_CHECKING, Tuple
+
+from explainers.facet_index import FACETIndex
 if TYPE_CHECKING:
     from explainers.facet_bb import FACETBranchBound
 
@@ -368,3 +370,152 @@ class BranchBound():
         if(self.best_solution == initial_guess).all():
             self.nlucky_guesses += 1
         return self.best_solution
+
+
+class BINode():
+    '''
+    A class for representing nodes in the branch and bound search tree
+
+    Throughout we use type hinting `variable : type = value` to indicate the expected type of variable, this helps with readability and IDE code completion suggestions
+    '''
+
+    def __init__(self, parent, vertex: int):
+        '''
+        Parameters
+        ----------
+        parent : branch and bound node
+        vertex : the integer index of the graph vertex from the adjancency matrix
+        children : an optional list of branch and bound nodes
+        '''
+        self.parent: BINode = parent
+        self.new_vertex: int = vertex
+        self.clique_candidates: list[int] = None
+        self.children: list[BINode] = []
+
+        if parent:
+            self.clique = self.parent.clique.copy()  # starting from parent clique
+            bisect.insort(self.clique, vertex)  # insert the new vertex, keeping the list sorted
+        else:
+            self.clique = []  # if parent is None, this is the root node, start with empty clique
+
+        self.compute_priority()
+
+    def compute_priority(self):
+        # TODO: Compute the priority based on the vertex/pairwise frequency, temp placeholder
+        self.priority = 0
+        pass
+
+    def __lt__(self, other: BINode) -> bool:
+        '''
+        In heapq algorithm, if two items have the same priority they are compared directly to determine which one should be higher in the priority queue. In this case if we have two nodes representing cliques with equal distances size we favor cliques which are closer to the majority size.
+        '''
+        return self.priority < other.priority
+
+    def find_candidates(self, G: nx.Graph):
+        '''
+        Finds C0: the set of all vertices in G which are sythesizaeble with the current clique
+        '''
+        self.clique_candidates: list[int] = sf_C0(self.clique, G)  # returns all nodes when self.clique = []
+
+
+class BranchIndex():
+    def __init__(self, explainer: FACETIndex, hyperparameters: dict):
+        self.explainer = explainer
+        self.majority_size = explainer.majority_size
+        self.hyperparameters = hyperparameters
+
+    def branch(self, node: BINode):
+        # determine C0 the set of vertices which are sythesizable with C
+        node.find_candidates(self.explainer.graphs[self.desired_label])
+        # if there are sufficient vertices to reach majority size
+        if self.solution_possible(node):
+            # create node for each clique candidate
+            for vertex in node.clique_candidates:
+                child = BINode(parent=node, vertex=vertex)
+                # check that we haven't have visited this clique before
+                key = hash(tuple(child.clique))
+                if not key in self.clique_visited:
+                    # add the node the
+                    node.children.append(child)
+                    # remember we have visited the clique
+                    self.clique_visited[key] = True
+
+    def check_example(self, example: np.ndarray, desired_label: int) -> bool:
+        return self.explainer.model.predict([example]) == desired_label
+
+    def solution_possible(self, node: BINode) -> bool:
+        # !WARNING: only works with hard voting
+        return (len(node.clique) + len(node.clique_candidates)) >= self.majority_size
+
+    def is_solution(self, node: BINode) -> bool:
+        # if self.double_check:
+        #     return self.check_example(node.partial_example, desired_label)
+        # if not self.double_check:
+        # TODO: implement double checking or solve the need for it.
+        # IDEA: If the need for double checking is created by tie breaking a 50/50 forest split, determine the number
+        # of rectangles actually needed to reach the classification and use this as the size to check for solution
+        # e.g. if T=20 and the tie goes to the lower class then class 0 needs 10 trees while class 1 needs 11
+        return len(node.clique) >= self.majority_size
+
+    def save_solution(self, node: BINode):
+        self.solution_cliques.append(node.clique)
+        # TODO build the rect and add it to the index
+        # or only store the cliques and move hyper-rectangle generation into FACETIndex
+        # self.solution_rects.append(rect)
+
+    def sufficient_index(self):
+        '''
+        Used to control the termination of the branching process. Returns true if a set of user defined criteria for the index are met, false otherwise
+        '''
+        return len(self.solution_cliques) > 1000
+
+    def return_to_global(self, local_queue: list):
+        '''
+        Removes all nodes from the given local_queue and adds them to the global queue with an ascending depth priority
+        '''
+        while len(local_queue) > 0:
+            node = heappop(local_queue)[1]  # heappop returns priority, node
+            if self.is_solution(node):
+                self.save_solution(node)
+            else:
+                # the global queue sorts nodes with an ascending depth priority (shallowest nodes first)
+                global_priority = len(node.clique)
+                heappush(self.global_queue, (global_priority, node))
+
+    def solve_local(self, root: BINode):
+        '''
+        Starting at the root node, explore the roots subtree using a depth first approach until a solution is found or all nodes are exhausted. When a solution is found any remaining nodes are offloaded 
+        '''
+        local_queue = []
+        # the local queue sorts nodes with a descending depth priority (deepest nodes first)
+        priority = self.majority_size - len(root.clique)
+        heappush(local_queue, (priority, root))
+
+        while len(local_queue) > 0:
+            node: BINode = self.dequeue()
+            if self.is_solution(node):
+                self.save_solution()
+                # move all local nodes to the global queue, will exit on next iteration
+                self.return_to_global(local_queue)
+            else:
+                self.branch(node)
+                for child in node.children:
+                    priority = self.majority_size - len(child.clique)
+                    heappush(local_queue, (priority, child))
+
+    def solve(self, desired_label: int) -> np.ndarray:
+        self.solution_cliques = []
+        self.solution_rects = []
+        self.clique_visited = {}
+        self.desired_label = desired_label
+
+        # the global queue sorts nodes with an ascending depth priority (shallowest nodes first)
+        self.global_queue = []
+
+        # create a root node and add it to the queue
+        root = BINode(parent=None, vertex=-1, children=[])
+        heappush(self.global_queue, (len(root.clique), root))
+
+        while len(self.queue) > 0 and not self.sufficient_index():  # while there is nodes in the queue
+            node: BINode = heappop(self.global_queue)[1]  # heappop returns priority, node
+            self.solve_local(node)
