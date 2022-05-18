@@ -510,6 +510,7 @@ class BranchIndex():
         while len(local_queue) > 0:
             node: BINode = heappop(local_queue)[1]  # heappop returns priority, node
             if self.is_solution(node):
+                # pass
                 self.save_solution(node)
             else:
                 # the global queue sorts nodes with an ascending depth priority (shallowest nodes first)

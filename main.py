@@ -25,7 +25,7 @@ def simple_run(dataset_name):
         "rf_difference": 0.01,
         "rf_distance": distance,
         "rf_k": 1,
-        "rf_ntrees": 10,
+        "rf_ntrees": 20,
         "rf_maxdepth": 3,
         "rf_threads": 8,
         "expl_greedy": False,
@@ -40,7 +40,7 @@ def simple_run(dataset_name):
         "verbose": False,
         "facet_sample": "Augment",
         "facet_nrects": 20000,
-        "facet_enumerate": "GraphBased",
+        "facet_enumerate": "PointBased",
         "bi_nrects": 20000
     }
 
@@ -125,13 +125,13 @@ if __name__ == "__main__":
     np.random.seed(RAND_SEED)
     run_ds = DS_NAMES.copy()
     # run_ds.remove("spambase")
-    # compare_methods(run_ds, num_iters=10, explainers=["FACETGrow", "OCEAN", "FACETIndex", "FACETBranchBound"],
-    # eval_samples=20, seed=RAND_SEED)  # "FACETGrow", "OCEAN", "FACETIndex", "FACETBranchBound"
+    # compare_methods(run_ds, num_iters=10, explainers=["OCEAN", "FACETIndex"], eval_samples=20, seed=RAND_SEED)
     # vary_ntrees(run_ds, explainer="FACETIndex", ntrees=list(range(5, 105, 5)), num_iters=5, seed=SEED)
     simple_run("vertebral")
     # bb_ntrees(run_ds, ntrees=[25], depths=[3], num_iters=1, eval_samples=5)
     # hard_vs_soft(run_ds, num_iters=10)
     # bb_ordering(run_ds, orderings=["PriorityQueue", "Stack", "ModifiedPriorityQueue"], num_iters=1,
     # test_size=0.2, ntrees=15, max_depth=3, eval_samples=5)
-    # vary_nrects(run_ds, nrects=[100, 1000, 5000, 10000, 20000, 30000, 40000, 50000],
-    # num_iters=1, eval_samples=20, seed=RAND_SEED)
+    # 100, 1000, 5000, 10000, 20000, 30000, 40000, 50000
+    # vary_nrects(run_ds, nrects=[20000, 40000, 60000, 80000, 100000, 150000,
+    # 200000, 250000], num_iters=1, eval_samples=20, seed=RAND_SEED)

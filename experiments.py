@@ -502,9 +502,9 @@ def compare_methods(ds_names, explainers=["FACETIndex", "OCEAN"], distance="Eucl
         "rf_difference": 0.01,
         "rf_distance": distance,
         "rf_k": 1,
-        "rf_ntrees": 10,
+        "rf_ntrees": 100,
         "rf_threads": 1,
-        "rf_maxdepth": 3,
+        "rf_maxdepth": 5,
         "expl_greedy": False,
         "expl_distance": distance,
         "ocean_norm": 2,
@@ -521,7 +521,9 @@ def compare_methods(ds_names, explainers=["FACETIndex", "OCEAN"], distance="Eucl
         "bb_upperbound": False,
         "bb_ordering": "ModifiedPriorityQueue",
         "bb_logdists": False,
-        "verbose": False
+        "verbose": False,
+        "facet_enumerate": "PointBased",
+        "bi_nrects": 20000
     }
 
     # save the run information
@@ -1209,7 +1211,7 @@ def vary_nrects(ds_names, nrects=[5, 10, 15], num_iters=5, eval_samples=20, test
         "rf_k": 1,
         "rf_ntrees": rf_ntrees,
         "rf_threads": 1,
-        "rf_maxdepth": 3,
+        "rf_maxdepth": 5,
         "expl_greedy": False,
         "expl_distance": distance,
         "ocean_norm": 2,
@@ -1223,7 +1225,9 @@ def vary_nrects(ds_names, nrects=[5, 10, 15], num_iters=5, eval_samples=20, test
         "verbose": False,
         "rf_hardvoting": True,  # note OCEAN and FACETIndex use soft and hard requirment
         "facet_sample": "Augment",
-        "facet_nrects": None  # will be varied in experiment
+        "facet_nrects": None,  # will be varied in experiment,
+        "facet_enumerate": "PointBased",
+        "bi_nrects": 20000
     }
 
     # save the run information

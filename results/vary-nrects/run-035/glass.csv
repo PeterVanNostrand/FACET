@@ -1,0 +1,2 @@
+dataset,n_trees,explainer,n_samples,n_samples_explained,n_features,accuracy,precision,recall,f1,avg_nnodes,avg_nleaves,avg_depth,q,jaccard,coverage_ratio,mean_distance,mean_length,init_time,runtime,clique_size,grown_clique_size,ext_min,ext_avg,ext_max,n_rects,cover_xtrain,cover_xtest
+glass,20,FACETIndex,20,20,9,0.9,0.8181818181818182,1.0,0.9,12.5,6.75,3.0,0.40705995910424025,0.3991687552213868,1.0,0.15458119136875725,3.9,47.000953912734985,7.626923322677612,-1,-1,-1,-1,-1,20000,0.4573643410852713,0.45
