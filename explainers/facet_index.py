@@ -25,6 +25,7 @@ from utilities.metrics import dist_features_changed
 from explainers.explainer import Explainer
 from detectors.random_forest import RandomForest
 from explainers.branching import BranchIndex
+from explainers.bit_vector import BitVectorIndex
 from typing import TYPE_CHECKING, Tuple
 if TYPE_CHECKING:
     from heead import HEEAD
@@ -54,6 +55,13 @@ class FACETIndex(Explainer):
             self.point_enumerate(data)
         elif self.enumeration_type == "GraphBased":
             self.graph_enumerate(training_data=data)
+
+        if self.search_type == "BitVector":
+            # create redundant bit vector index
+            self.rbvs: list[BitVectorIndex] = []
+            for class_id in range(self.rf_nclasses):
+                print("class {}".format(class_id))
+                self.rbvs.append(BitVectorIndex(rects=self.index[class_id], explainer=self, m=4))
 
     def compute_supports(self, data: np.ndarray):
         '''
@@ -120,9 +128,6 @@ class FACETIndex(Explainer):
             self.index[class_id] = rects
             self.solution_cliques[class_id] = cliques
 
-        #! DEBUG
-        # self.check_indexed_rects()
-
     def point_enumerate(self, data: np.ndarray) -> None:
         '''
         Uses the provided set of data to select a set of points in the input space, then selects and indexes one hyper-rectangle around each point
@@ -152,7 +157,7 @@ class FACETIndex(Explainer):
                 rand_idxs = np.random.randint(low=0, high=training_data.shape[0], size=self.n_rects)
                 rect_points = training_data[rand_idxs]
                 # augment these points with random normally distributed noise
-                noise = np.random.normal(loc=0.0, scale=0.1, size=rect_points.shape)
+                noise = np.random.normal(loc=0.0, scale=self.standard_dev, size=rect_points.shape)
                 rect_points += noise
                 # check to make sure the resulting set has points of both classes, redraw if needed
                 preds = self.model.predict(rect_points)
@@ -245,7 +250,7 @@ class FACETIndex(Explainer):
 
     def index_rectangles(self, data: np.ndarray):
         '''
-        This method using the training data to enumerate a set of hyper-rectangles of each classes and adds them to an index for later searching during explanation
+        This method uses the training data to enumerate a set of hyper-rectangles of each classes and adds them to an index for later searching during explanation
         '''
         self.initialize_index()
         preds = self.model.predict(data)
@@ -322,6 +327,7 @@ class FACETIndex(Explainer):
         order_axes = np.argsort(n_bounded_axes)  # take rects with the fewest bounds first
         order_size = np.argsort(mean_rect_widths)  # take largest rects first
         order_forest = list(range(len(all_bounds)))  # take rects in order of trees in ensemble
+        # order = order_size
         order = order_size
 
         # initialize the hyper-rectangle as unbounded on both side of all axes
@@ -497,28 +503,44 @@ class FACETIndex(Explainer):
 
         explains a given instance by growing a clique around the region of xi starting with trees which predict the counterfactual class
         '''
+
         xprime = x.copy()  # an array for the constructed contrastive examples
 
         # assumimg binary classification [0, 1] set counterfactual class
         counterfactual_classes = ((y - 1) * -1)
 
-        for i in range(x.shape[0]):
-            closest_rect = None
-            min_dist = np.inf
+        if self.search_type == "Linear":
+            # perform a linear scan of all the hyper-rectangles
+            for i in range(x.shape[0]):
+                closest_rect = None
+                min_dist = np.inf
+                # find the indexed rectangle of the the counterfactual class that is cloest
+                for rect in self.index[counterfactual_classes[i]]:
+                    test_instance = self.fit_to_rectangle(x[i], rect)
+                    dist = self.distance_fn(x[i], test_instance)
+                    if dist < min_dist:
+                        min_dist = dist
+                        closest_rect = rect
+                # generate a counterfactual example which falls within this rectangle
+                xprime[i] = self.fit_to_rectangle(x[i], closest_rect)
 
-            # find the indexed rectangle of the the counterfactual class that tis cloest
-            for rect in self.index[counterfactual_classes[i]]:
-                test_instance = self.fit_to_rectangle(x[i], rect)
-                dist = self.distance_fn(x[i], test_instance)
-                if dist < min_dist:
-                    min_dist = dist
-                    closest_rect = rect
-
-            # generate a counterfactual example which falls within this rectangle
-            xprime[i] = self.fit_to_rectangle(x[i], closest_rect)
-            #! debug
-            # if not self.is_inside(xprime[i], closest_rect):
-            #     print("Bad counterfactual 2")
+        elif self.search_type == "BitVector":
+            for i in range(x.shape[0]):  # for each instance
+                # get the nearest hyper-rectangles from the bit vector
+                nearest_rect = self.rbvs[counterfactual_classes[i]].point_query(x[i])
+                xprime[i] = self.fit_to_rectangle(x[i], nearest_rect)
+                # print("{}: {} rects".format(i, nearby_rects.shape[0]))
+                # # find the nearest neighboring hyper-rectangle
+                # closest_rect = None
+                # min_dist = np.inf
+                # for rect in nearby_rects:
+                #     test_instance = self.fit_to_rectangle(x[i], rect)
+                #     dist = self.distance_fn(x[i], test_instance)
+                #     if dist < min_dist:
+                #         min_dist = dist
+                #         closest_rect = rect
+                # # generate a counterfactual example which falls within this rectangle
+                # xprime[i] = self.fit_to_rectangle(x[i], closest_rect)
 
         # check that all counterfactuals result in a different class
         preds = self.model.predict(xprime)
@@ -682,20 +704,22 @@ class FACETIndex(Explainer):
     def parse_hyperparameters(self, hyperparameters: dict) -> None:
         self.hyperparameters = hyperparameters
 
+        params: dict = hyperparameters.get("FACETIndex")
         # distance metric for explanation
-        if hyperparameters.get("expl_distance") is None:
-            print("No expl_distance function set, using Euclidean")
+        if params.get("facet_expl_distance") is None:
+            print("No facet_expl_distance function set, using Euclidean")
             self.distance_fn = dist_euclidean
-        elif hyperparameters.get("expl_distance") == "Euclidean":
+        elif params.get("facet_expl_distance") == "Euclidean":
             self.distance_fn = dist_euclidean
-        elif hyperparameters.get("expl_distance") == "FeaturesChanged":
+        elif params.get("facet_expl_distance") == "FeaturesChanged":
             self.distance_fn = dist_features_changed
         else:
-            print("Unknown expl_distance function {}, using Euclidean distance".format(hyperparameters.get("expl_distance")))
+            print("Unknown facet_expl_distance function {}, using Euclidean distance".format(
+                params.get("facet_expl_distance")))
             self.distance_fn = dist_euclidean
 
         # threshold offest for picking new values
-        offset = hyperparameters.get("facet_offset")
+        offset = params.get("facet_offset")
         if offset is None:
             print("No facet_offset provided, using 0.01")
             self.offset = 0.01
@@ -703,29 +727,40 @@ class FACETIndex(Explainer):
             self.offset = offset
 
         # number of hyper-rectangles to index
-        if hyperparameters.get("facet_nrects") is None:
+        if params.get("facet_nrects") is None:
             self.n_rects = 1000
             print("No facet_nrects provided, using {}".format(self.n_rects))
         else:
-            self.n_rects = hyperparameters.get("facet_nrects")
+            self.n_rects = params.get("facet_nrects")
 
-        if hyperparameters.get("facet_sample") is None:
+        if params.get("facet_sample") is None:
             self.sample_type = "Training"
             print("No facet_sample type provided, using training data")
         else:
-            self.sample_type = hyperparameters.get("facet_sample")
+            self.sample_type = params.get("facet_sample")
 
-        if hyperparameters.get("facet_enumerate") is None:
+        if params.get("facet_enumerate") is None:
             self.enumeration_type = "PointBased"
             print("No facet_enumerate type provided, using PointBased")
         else:
-            self.enumeration_type = hyperparameters.get("facet_enumerate")
+            self.enumeration_type = params.get("facet_enumerate")
             if self.enumeration_type not in ["PointBased", "GraphBased"]:
                 print("{} not a valid facet_enumerate, defaulting to PointBased")
                 self.enumeration_type = "PointBased"
 
+        if params.get("facet_search") is None:
+            self.search_type = "Linear"
+            print("No facet_search type provided, using Linear")
+        else:
+            self.search_type = params.get("facet_search")
+
         # print messages
-        if hyperparameters.get("verbose") is None:
+        if params.get("facet_verbose") is None:
             self.verbose = False
         else:
-            self.verbose = hyperparameters.get("verbose")
+            self.verbose = params.get("verbose")
+
+        if params.get("facet_sd") is None:
+            self.standard_dev = 0.1
+        else:
+            self.standard_dev = params.get("facet_sd")

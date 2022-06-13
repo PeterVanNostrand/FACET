@@ -417,7 +417,8 @@ class BranchIndex():
         self.explainer = explainer
         self.majority_size = explainer.majority_size
         self.hyperparameters = hyperparameters
-        self.n_desired_rects = hyperparameters.get("bi_nrects")
+        params = hyperparameters.get("FACETIndex")
+        self.n_desired_rects = params.get("bi_nrects")
         self.desired_label = class_id
         self.graph = graph
         self.vertex_support = self.explainer.vertex_support[self.desired_label]

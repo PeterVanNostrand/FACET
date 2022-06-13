@@ -12,6 +12,8 @@ from experiments import *
 import cProfile
 import time
 import random
+import math
+import json
 
 
 def simple_run(dataset_name):
@@ -21,30 +23,32 @@ def simple_run(dataset_name):
 
     # Euclidean, FeaturesChanged
     distance = "Euclidean"
-    params = {
+    rf_params = {
         "rf_difference": 0.01,
         "rf_distance": distance,
         "rf_k": 1,
         "rf_ntrees": 20,
+        "rf_threads": 1,
         "rf_maxdepth": 3,
-        "rf_threads": 8,
-        "expl_greedy": False,
-        "expl_distance": distance,
-        "facet_graphtype": "disjoint",
-        "facet_offset": 0.001,
-        "facet_mode": "exhaustive",
-        "rf_hardvoting": True,
-        "bb_upperbound": False,
-        "bb_ordering": "ModifiedPriorityQueue",
-        "bb_logdists": False,
-        "verbose": False,
-        "facet_sample": "Augment",
-        "facet_nrects": 20000,
-        "facet_enumerate": "PointBased",
-        "bi_nrects": 20000
+        "rf_hardvoting": True,  # note OCEAN and FACETIndex use soft and hard requirment
     }
-
-    print(params)
+    facet_params = {
+        "facet_expl_distance": distance,
+        "facet_offset": 0.001,
+        "facet_verbose": False,
+        "facet_sample": "Augment",
+        "facet_nrects": 20000,  # will be varied in experiment,
+        "facet_enumerate": "PointBased",
+        "bi_nrects": 60000,
+        "facet_sd": 0.3,
+        "facet_search": "BitVector"
+    }
+    params = {
+        "RandomForest": rf_params,
+        "FACETIndex": facet_params
+    }
+    json_text = json.dumps(params, indent=4)
+    print(json_text)
 
     # Create, train, and predict with the model
     expl = "FACETIndex"
@@ -54,7 +58,7 @@ def simple_run(dataset_name):
     prep_start = time.time()
     model.prepare(data=xtrain)
     if expl == "FACETIndex":
-        print("rects requested:", params.get("bi_nrects"))
+        print("rects requested:", params.get("FACETIndex").get("bi_nrects"))
         print("rects enumerated")
         print("\tclass 0:", len(model.explainer.index[0]))
         print("\tclass 1:", len(model.explainer.index[1]))
@@ -124,10 +128,15 @@ if __name__ == "__main__":
     random.seed(RAND_SEED)
     np.random.seed(RAND_SEED)
     run_ds = DS_NAMES.copy()
+    # index_test(ds_names=["vertebral"], exp_var="facet_nrects", exp_vals=[1000, 5000, 10000],
+    #            num_iters=1, eval_samples=20, test_size=0.2, seed=RAND_SEED)
+    # index_test(ds_names=run_ds, exp_var="facet_sd", exp_vals=[0.01, 0.1, 0.5, 0.75, 1.0],
+    #            num_iters=1, eval_samples=20, test_size=0.2, seed=RAND_SEED)
+    # index_test()
     # run_ds.remove("spambase")
     # compare_methods(run_ds, num_iters=10, explainers=["OCEAN", "FACETIndex"], eval_samples=20, seed=RAND_SEED)
     # vary_ntrees(run_ds, explainer="FACETIndex", ntrees=list(range(5, 105, 5)), num_iters=5, seed=SEED)
-    simple_run("vertebral")
+    simple_run("magic")
     # bb_ntrees(run_ds, ntrees=[25], depths=[3], num_iters=1, eval_samples=5)
     # hard_vs_soft(run_ds, num_iters=10)
     # bb_ordering(run_ds, orderings=["PriorityQueue", "Stack", "ModifiedPriorityQueue"], num_iters=1,

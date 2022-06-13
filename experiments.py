@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 import time
 from tqdm.auto import tqdm
-
+import json
 
 from heead import HEEAD
 from dataset import load_data
@@ -1189,81 +1189,66 @@ def bb_ordering(ds_names, orderings=["PriorityQueue", "Stack", "Queue"], num_ite
     print("Finished comparing branch and bound orderings")
 
 
-def vary_nrects(ds_names, nrects=[5, 10, 15], num_iters=5, eval_samples=20, test_size=0.2, seed=None):
+def index_test(ds_names, exp_var, exp_vals, num_iters=5, eval_samples=20, test_size=0.2, seed=None):
     '''
     Experiment to observe the effect of the the number of features on explanation
     '''
     # output directory
-    run_id, run_path = check_create_directory("./results/vary-nrects/")
+    run_id, run_path = check_create_directory("./results/index-test/")
 
     # run configuration
-    min_trees = 1
-    max_trees = 100
-    num_iters = 1
     dets = ["RandomForest"]
     agg = "NoAggregator"
     expl = "FACETIndex"
     distance = "Euclidean"
-    rf_ntrees = 100
-    params = {
-        "rf_difference": 0.01,
-        "rf_distance": distance,
-        "rf_k": 1,
-        "rf_ntrees": rf_ntrees,
-        "rf_threads": 1,
-        "rf_maxdepth": 5,
-        "expl_greedy": False,
-        "expl_distance": distance,
-        "ocean_norm": 2,
-        "mace_maxtime": 300,
+
+    test_params = {
         "num_iters": num_iters,
         "eval_samples": eval_samples,
         "test_size": test_size,
-        "facet_graphtype": "disjoint",
-        "facet_offset": 0.001,
-        "facet_mode": "exhaustive",
-        "verbose": False,
+        "exp_var": exp_var,
+        "exp_vals": exp_vals,
+    }
+    rf_params = {
+        "rf_difference": 0.01,
+        "rf_distance": distance,
+        "rf_k": 1,
+        "rf_ntrees": 50,
+        "rf_threads": 1,
+        "rf_maxdepth": 5,
         "rf_hardvoting": True,  # note OCEAN and FACETIndex use soft and hard requirment
+    }
+    facet_params = {
+        "facet_expl_distance": distance,
+        "facet_offset": 0.001,
+        "facet_verbose": False,
         "facet_sample": "Augment",
-        "facet_nrects": None,  # will be varied in experiment,
+        "facet_nrects": 20000,  # will be varied in experiment,
         "facet_enumerate": "PointBased",
-        "bi_nrects": 20000
+        "bi_nrects": 20000,
+        "facet_sd": 0.1
+    }
+    params = {
+        "test": test_params,
+        "RandomForest": rf_params,
+        "FACETIndex": facet_params
     }
 
-    # save the run information
     with open(run_path + "/" + "config.txt", 'a') as f:
-        f.write("comparing explanation methods\n\n")
-        f.write("iterations: {:d}\n\n".format(num_iters))
-        f.write("detectors: ")
-        for d in dets:
-            f.write(d + ", ")
-        f.write("\n")
-        f.write("aggregator: " + agg + "\n")
-        f.write("explainer:" + expl + "\n")
-        f.write("\n")
-        f.write("hyperparameters{\n")
-        for k in params.keys():
-            f.write("\t" + k + ": " + str(params[k]) + "\n")
-        f.write("}\n")
-        f.write("ntrees: ")
-        for r in nrects:
-            f.write(str(r) + ", ")
-
-    print("Varying ntrees")
-    print("\tDatasets:", ds_names)
-    print("\nnrects:", nrects)
+        json_text = json.dumps(params, indent=4)
+        f.write(json_text)
 
     # compute the total number of runs for this experiment
-    total_runs = len(ds_names) * len(nrects) * num_iters
+    total_runs = len(ds_names) * len(exp_vals) * num_iters
     progress_bar = tqdm(total=total_runs, desc="Overall Progress", position=0, disable=True)
 
     for ds in ds_names:
-        progress_bar_ds = tqdm(total=len(nrects) * num_iters, desc=ds, leave=False)
+        progress_bar_ds = tqdm(total=len(exp_vals) * num_iters, desc=ds, leave=False)
 
         x, y = load_data(ds, normalize=True)
         # dataframe to store results of each datasets runs
         results = pd.DataFrame(columns=["dataset", "n_trees", "explainer", "n_samples", "n_samples_explained", "n_features", "accuracy", "precision", "recall", "f1", "avg_nnodes", "avg_nleaves",
-                               "avg_depth", "q", "jaccard", "coverage_ratio", "mean_distance", "mean_length", "init_time", "runtime", "clique_size", "grown_clique_size", "ext_min", "ext_avg", "ext_max", "n_rects", "cover_xtrain", "cover_xtest"])
+                               "avg_depth", "q", "jaccard", "coverage_ratio", "mean_distance", "mean_length", "init_time", "runtime", "clique_size", "grown_clique_size", "ext_min", "ext_avg", "ext_max", "n_rects", "cover_xtrain", "cover_xtest", "rects_0", "rects_1", "facet_sd"])
 
         for i in range(num_iters):
             # random split the data
@@ -1288,9 +1273,10 @@ def vary_nrects(ds_names, nrects=[5, 10, 15], num_iters=5, eval_samples=20, test
             avg_nnodes, avg_nleaves, avg_depth = model.detectors[0].get_tree_information()
             Q, qs = model.detectors[0].compute_qs(xtest, ytest)
             J, jaccards = compute_jaccard(model.detectors[0])
-            for r in nrects:
-                # params["facet_nrects"] = r
-                model.explainer.n_rects = r
+            for val in exp_vals:
+                # update the experimental value
+                params[expl][exp_var] = val
+                model.set_explainer(expl, hyperparameters=params)
 
                 # explain instances
                 start_build = time.time()
@@ -1305,12 +1291,6 @@ def vary_nrects(ds_names, nrects=[5, 10, 15], num_iters=5, eval_samples=20, test
                 cover_xtrain = model.explainer.explore_index(points=xtrain)
                 cover_xtest = model.explainer.explore_index(points=xtest)
 
-                clique_size = -1
-                grown_clique_size = -1
-                ext_min = -1
-                ext_avg = -1
-                ext_max = -1
-
                 # Compute explanation metrics
                 coverage_ratio = coverage(explanations)
                 mean_dist = average_distance(xtest, explanations, distance_metric="Euclidean")
@@ -1320,7 +1300,7 @@ def vary_nrects(ds_names, nrects=[5, 10, 15], num_iters=5, eval_samples=20, test
                 # save the performance
                 run_result = {
                     "dataset": ds,
-                    "n_trees": rf_ntrees,
+                    "n_trees": params["RandomForest"]["rf_ntrees"],
                     "explainer": expl,
                     "n_samples": n_samples,
                     "n_samples_explained": xtest.shape[0],
@@ -1339,14 +1319,12 @@ def vary_nrects(ds_names, nrects=[5, 10, 15], num_iters=5, eval_samples=20, test
                     "mean_length": mean_length,
                     "init_time": init_time,
                     "runtime": runtime,
-                    "clique_size": clique_size,
-                    "grown_clique_size": grown_clique_size,
-                    "ext_min": ext_min,
-                    "ext_avg": ext_avg,
-                    "ext_max": ext_max,
-                    "n_rects": r,
+                    "n_rects": params["FACETIndex"]["facet_nrects"],
                     "cover_xtrain": cover_xtrain,
-                    "cover_xtest": cover_xtest
+                    "cover_xtest": cover_xtest,
+                    "rects_0": len(model.explainer.index[0]),
+                    "rects_1": len(model.explainer.index[1]),
+                    "facet_sd": model.explainer.standard_dev
                 }
                 results = results.append(run_result, ignore_index=True)
                 results.to_csv(run_path + "/" + ds + ".csv", index=False)

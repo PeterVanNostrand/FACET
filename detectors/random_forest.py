@@ -17,58 +17,59 @@ from functools import partial
 
 class RandomForest(Detector):
     def __init__(self, hyperparameters=None):
-        if hyperparameters is not None:
+        if hyperparameters.get("RandomForest") is not None:
+            params = hyperparameters.get("RandomForest")
             # difference value for explanation
-            if hyperparameters.get("rf_difference") is None:
+            if params.get("rf_difference") is None:
                 print("No rf_difference value set, using default 0.01")
                 self.difference = 0.01
             else:
-                self.difference = hyperparameters.get("rf_difference")
+                self.difference = params.get("rf_difference")
 
             # max depth
-            if hyperparameters.get("rf_maxdepth") is None:
+            if params.get("rf_maxdepth") is None:
                 self.maxdepth = None
             else:
-                self.maxdepth = hyperparameters.get("rf_maxdepth")
+                self.maxdepth = params.get("rf_maxdepth")
 
             # distance metric for explanation
-            if hyperparameters.get("rf_distance") is None:
+            if params.get("rf_distance") is None:
                 print("No rf_distance function set, using Euclidean")
                 self.distance_fn = dist_euclidean
-            elif hyperparameters.get("rf_distance") == "Euclidean":
+            elif params.get("rf_distance") == "Euclidean":
                 self.distance_fn = dist_euclidean
-            elif hyperparameters.get("rf_distance") == "FeaturesChanged":
+            elif params.get("rf_distance") == "FeaturesChanged":
                 self.distance_fn = dist_features_changed
             else:
-                print("Unknown rf_distance function {}, using Euclidean distance".format(hyperparameters.get("rf_distance")))
+                print("Unknown rf_distance function {}, using Euclidean distance".format(params.get("rf_distance")))
                 self.distance_fn = dist_euclidean
 
             # k for explanation
-            if hyperparameters.get("rf_k") is None:
+            if params.get("rf_k") is None:
                 print("No rf_k set, using default k=1")
                 self.k = 1
             else:
-                self.k = hyperparameters.get("rf_k")
+                self.k = params.get("rf_k")
 
             # number of trees
-            if hyperparameters.get("rf_ntrees") is None:
+            if params.get("rf_ntrees") is None:
                 print("No rf_ntrees set, using default ntrees=100")
                 self.ntrees = 100
             else:
-                self.ntrees = hyperparameters.get("rf_ntrees")
+                self.ntrees = params.get("rf_ntrees")
 
-            if hyperparameters.get("rf_threads") is not None:
-                self.threads = hyperparameters.get("rf_threads")
+            if params.get("rf_threads") is not None:
+                self.threads = params.get("rf_threads")
             else:
                 self.threads = np.max((mp.cpu_count() - 2, 1))  # cap thread usage to leave at 2 free for the user
                 print("using rf_threads:", self.threads)
 
             # hard voting
-            if hyperparameters.get("rf_hardvoting") is None:
+            if params.get("rf_hardvoting") is None:
                 print("No rf_hardvoting set, using default True")
                 self.hard_voting = True
             else:
-                self.hard_voting = hyperparameters.get("rf_hardvoting")
+                self.hard_voting = params.get("rf_hardvoting")
         else:
             self.difference = 0.01
             self.distance_fn = dist_euclidean
