@@ -20,16 +20,15 @@ class BitVectorIndex():
     Based on "Indexing High Dimensional Rectangles for Fast Multimedia Identification" by Jonathan Goldstein, John Platt, Christopher Burges. 2003 Microsoft Research tecnical report
     '''
 
-    def __init__(self, rects: list[np.ndarray], explainer: FACETIndex, m: int = 16, initial_radius=0.05):
+    def __init__(self, rects: list[np.ndarray], explainer: FACETIndex, hyperparameters: dict):
         '''
         Parameters
         ----------
         rects: the list of hyperrectangle records to index, all records should be of the same class
         m: the nuymber of intervals to create along each dimension
         '''
+        self.parse_hyperparameters(hyperparameters)
         self.explainer = explainer
-        self.initial_radius = initial_radius
-        self.m = m
         # combine the list of hyperrectangles into one array of shape (nrects, ndim, 2)
         self.rects: np.ndarray = np.stack(rects, axis=0)
         self.nrects = self.rects.shape[0]
@@ -39,6 +38,7 @@ class BitVectorIndex():
         self.intervals, self.indexed_dimensions = self.generate_intervals(self.rects)
         print("N Indexed Dimensions:", sum(self.indexed_dimensions))
         self.rbv = self.build_bit_vectors(self.rects)
+        self.search_log = []  # for experiments store the # of rects search for each sample explained
 
     def point_query(self, instance: np.ndarray):
         '''
@@ -53,34 +53,54 @@ class BitVectorIndex():
         matching_rects: a numpy array of shape(nrecords, ndim, 2) of the nearby hyper-rectangles
         '''
         # create a hyper-sphere around the point and indentify which intervals it covers. We do this by creating a hyper-sphere with the initial radius, converting it to a hyper-rectangle, and searching for records in that rect
-        search_radius = self.initial_radius
+        print("------------------------------")
         closest_rect = None
+        closest_dist = np.inf
         solution_found = False
-        n_rects_checked = 0
-        while not solution_found:  # if at least one bit is set, a HR record was found in our search region
+
+        # bit vector for the rects we have already checked the distance to
+        searched_bits = bitzeros(self.nrects)
+        search_radius = self.initial_radius
+        while not solution_found:
+            # convert the query hypersphere into a hyperrectangle
             query_rect = np.zeros(shape=(self.ndimensions, 2))
             query_rect[:, LOWER] = (instance - search_radius)
             query_rect[:, UPPER] = (instance + search_radius)
+            # get the set of hyper-rect records in the query rectangle
             matching_bits = self.rect_query(query_rect)
-            if matching_bits.any():
-                n_rects_checked += matching_bits.count()
+            # exclude rectangles which we have already checked the distance to
+            new_match_bits = (matching_bits & ~searched_bits)
+
+            # if we have new matches, check their distance
+            if new_match_bits.any():
+                print(new_match_bits.count())
+                # record the new matches as searched
+                searched_bits |= new_match_bits
                 # expand the packed bitarry to an array of booleans
-                matching_slice = np.array(matching_bits.tolist(), dtype=bool)
+                new_match_slice = np.array(new_match_bits.tolist(), dtype=bool)
                 # get the matching rectangles
-                matching_rects = self.rects[matching_slice]
+                new_rects = self.rects[new_match_slice]
                 # search the matching rects for the nearest rectangle within the search radius ts possible that the matching set is non-empty due to a rectangle in an unindexed dimension that is further than the search radius, which is not guaranteed to be the nearest to the point
-                closest_rect = None
-                min_dist = np.inf
-                for rect in matching_rects:
+                for rect in new_rects:
                     test_instance = self.explainer.fit_to_rectangle(instance, rect)
                     dist = self.explainer.distance_fn(instance, test_instance)
                     # valid solutions must fall within the search radius
-                    if dist < search_radius and dist < min_dist:
-                        solution_found = True
-                        min_dist = dist
+                    if dist < closest_dist:
                         closest_rect = rect
-            search_radius += self.initial_radius
-        print(matching_rects.shape[0], n_rects_checked)
+                        closest_dist = dist
+            # if the best solution falls within the search radius, exit
+            if closest_dist <= search_radius:
+                solution_found = True
+
+            if self.radius_growth == "Linear":
+                search_radius += self.initial_radius
+            elif self.radius_growth == "Exponential":
+                search_radius *= 2
+        # Experiment logging
+        nrects_searched = searched_bits.count()
+        self.search_log.append(nrects_searched)
+        if self.verbose:
+            print(nrects_searched)
         return closest_rect
 
     def rect_query(self, query_rect: np.ndarray):
@@ -235,3 +255,34 @@ class BitVectorIndex():
             #         else:
             #             intervals[dim, i, UPPER] = min_val + i * interval_width
         return intervals, indexed_dimensions
+
+    def parse_hyperparameters(self, hyperparameters: dict) -> None:
+        self.hyperparameters = hyperparameters
+        params: dict = hyperparameters.get("FACETIndex")
+
+        # Initial Radius
+        if params.get("rbv_initial_radius") is None:
+            print("No rbv_initial_radius provided, using 0.05")
+            self.initial_radius = 0.05
+        else:
+            self.initial_radius = params.get("rbv_initial_radius")
+
+        # Radius Growth Method
+        if params.get("rbv_radius_growth") is None:
+            print("No rbv_radius_growth provided, using Linear")
+            self.radius_growth = "Linear"
+        else:
+            self.radius_growth = params.get("rbv_radius_growth")
+
+        # Number of intervals (m)
+        if params.get("rbv_num_interval") is None:
+            print("No rbv_num_interval provided, using 4")
+            self.m = 4
+        else:
+            self.m = params.get("rbv_num_interval")
+
+        # print messages
+        if params.get("facet_verbose") is None:
+            self.verbose = False
+        else:
+            self.verbose = params.get("verbose")

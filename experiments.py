@@ -1213,9 +1213,9 @@ def index_test(ds_names, exp_var, exp_vals, num_iters=5, eval_samples=20, test_s
         "rf_difference": 0.01,
         "rf_distance": distance,
         "rf_k": 1,
-        "rf_ntrees": 50,
+        "rf_ntrees": 20,
         "rf_threads": 1,
-        "rf_maxdepth": 5,
+        "rf_maxdepth": 7,
         "rf_hardvoting": True,  # note OCEAN and FACETIndex use soft and hard requirment
     }
     facet_params = {
@@ -1223,10 +1223,14 @@ def index_test(ds_names, exp_var, exp_vals, num_iters=5, eval_samples=20, test_s
         "facet_offset": 0.001,
         "facet_verbose": False,
         "facet_sample": "Augment",
-        "facet_nrects": 20000,  # will be varied in experiment,
+        "facet_nrects": 60000,
         "facet_enumerate": "PointBased",
         "bi_nrects": 20000,
-        "facet_sd": 0.1
+        "facet_sd": 0.3,
+        "facet_search": "BitVector",
+        "rbv_initial_radius": 0.05,
+        "rbv_radius_growth": "Linear",
+        "rbv_num_interval": 4
     }
     params = {
         "test": test_params,
@@ -1248,7 +1252,7 @@ def index_test(ds_names, exp_var, exp_vals, num_iters=5, eval_samples=20, test_s
         x, y = load_data(ds, normalize=True)
         # dataframe to store results of each datasets runs
         results = pd.DataFrame(columns=["dataset", "n_trees", "explainer", "n_samples", "n_samples_explained", "n_features", "accuracy", "precision", "recall", "f1", "avg_nnodes", "avg_nleaves",
-                               "avg_depth", "q", "jaccard", "coverage_ratio", "mean_distance", "mean_length", "init_time", "runtime", "clique_size", "grown_clique_size", "ext_min", "ext_avg", "ext_max", "n_rects", "cover_xtrain", "cover_xtest", "rects_0", "rects_1", "facet_sd"])
+                               "avg_depth", "q", "jaccard", "coverage_ratio", "mean_distance", "mean_length", "init_time", "runtime", "clique_size", "grown_clique_size", "ext_min", "ext_avg", "ext_max", "n_rects", "cover_xtrain", "cover_xtest", "rects_0", "rects_1", "facet_sd", "facet_search", "rbv_initial_radius", "rbv_radius_growth", "rbv_num_interval", "rects_searched_0", "rects_searched_1", "idx_dim_0", "idx_dim_1"])
 
         for i in range(num_iters):
             # random split the data
@@ -1296,8 +1300,15 @@ def index_test(ds_names, exp_var, exp_vals, num_iters=5, eval_samples=20, test_s
                 mean_dist = average_distance(xtest, explanations, distance_metric="Euclidean")
                 mean_length = average_distance(xtest, explanations, distance_metric="FeaturesChanged")
 
+                if params["FACETIndex"]["facet_search"] == "BitVector":
+                    rects_searched_0 = sum(model.explainer.rbvs[0].search_log)
+                    rects_searched_1 = sum(model.explainer.rbvs[1].search_log)
+                    idx_dim_0 = sum(model.explainer.rbvs[0].indexed_dimensions)
+                    idx_dim_1 = sum(model.explainer.rbvs[1].indexed_dimensions)
+                else:
+                    rects_searched_0, rects_searched_1, idx_dim_0, idx_dim_1 = -1, -1, -1, -1
+
                 # Save results
-                # save the performance
                 run_result = {
                     "dataset": ds,
                     "n_trees": params["RandomForest"]["rf_ntrees"],
@@ -1324,7 +1335,15 @@ def index_test(ds_names, exp_var, exp_vals, num_iters=5, eval_samples=20, test_s
                     "cover_xtest": cover_xtest,
                     "rects_0": len(model.explainer.index[0]),
                     "rects_1": len(model.explainer.index[1]),
-                    "facet_sd": model.explainer.standard_dev
+                    "facet_sd": model.explainer.standard_dev,
+                    "facet_search": params["FACETIndex"]["facet_search"],
+                    "rbv_initial_radius": params["FACETIndex"]["rbv_initial_radius"],
+                    "rbv_radius_growth": params["FACETIndex"]["rbv_radius_growth"],
+                    "rbv_num_interval": params["FACETIndex"]["rbv_num_interval"],
+                    "rects_searched_0": rects_searched_0,
+                    "rects_searched_1": rects_searched_1,
+                    "idx_dim_0": idx_dim_0,
+                    "idx_dim_1": idx_dim_1,
                 }
                 results = results.append(run_result, ignore_index=True)
                 results.to_csv(run_path + "/" + ds + ".csv", index=False)

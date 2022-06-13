@@ -32,7 +32,7 @@ if TYPE_CHECKING:
 
 
 class FACETIndex(Explainer):
-    def __init__(self, model, hyperparameters: dict = None):
+    def __init__(self, model, hyperparameters: dict):
         self.model: HEEAD = model
         self.parse_hyperparameters(hyperparameters)
 
@@ -61,7 +61,8 @@ class FACETIndex(Explainer):
             self.rbvs: list[BitVectorIndex] = []
             for class_id in range(self.rf_nclasses):
                 print("class {}".format(class_id))
-                self.rbvs.append(BitVectorIndex(rects=self.index[class_id], explainer=self, m=4))
+                self.rbvs.append(BitVectorIndex(rects=self.index[class_id],
+                                 explainer=self, hyperparameters=self.hyperparameters))
 
     def compute_supports(self, data: np.ndarray):
         '''
