@@ -529,19 +529,8 @@ class FACETIndex(Explainer):
             for i in range(x.shape[0]):  # for each instance
                 # get the nearest hyper-rectangles from the bit vector
                 nearest_rect = self.rbvs[counterfactual_classes[i]].point_query(x[i])
+                # generate a counterfactual example in the nearest point of that hyper-rectangle
                 xprime[i] = self.fit_to_rectangle(x[i], nearest_rect)
-                # print("{}: {} rects".format(i, nearby_rects.shape[0]))
-                # # find the nearest neighboring hyper-rectangle
-                # closest_rect = None
-                # min_dist = np.inf
-                # for rect in nearby_rects:
-                #     test_instance = self.fit_to_rectangle(x[i], rect)
-                #     dist = self.distance_fn(x[i], test_instance)
-                #     if dist < min_dist:
-                #         min_dist = dist
-                #         closest_rect = rect
-                # # generate a counterfactual example which falls within this rectangle
-                # xprime[i] = self.fit_to_rectangle(x[i], closest_rect)
 
         # check that all counterfactuals result in a different class
         preds = self.model.predict(xprime)

@@ -53,7 +53,6 @@ class BitVectorIndex():
         matching_rects: a numpy array of shape(nrecords, ndim, 2) of the nearby hyper-rectangles
         '''
         # create a hyper-sphere around the point and indentify which intervals it covers. We do this by creating a hyper-sphere with the initial radius, converting it to a hyper-rectangle, and searching for records in that rect
-        print("------------------------------")
         closest_rect = None
         closest_dist = np.inf
         solution_found = False
@@ -73,14 +72,13 @@ class BitVectorIndex():
 
             # if we have new matches, check their distance
             if new_match_bits.any():
-                print(new_match_bits.count())
                 # record the new matches as searched
                 searched_bits |= new_match_bits
                 # expand the packed bitarry to an array of booleans
                 new_match_slice = np.array(new_match_bits.tolist(), dtype=bool)
                 # get the matching rectangles
                 new_rects = self.rects[new_match_slice]
-                # search the matching rects for the nearest rectangle within the search radius ts possible that the matching set is non-empty due to a rectangle in an unindexed dimension that is further than the search radius, which is not guaranteed to be the nearest to the point
+                # search the matching rects for the nearest rectangle within the search radius. Its possible that the matching set is non-empty due to a rectangle in an unindexed dimension that is further than the search radius, which is not guaranteed to be the nearest to the point
                 for rect in new_rects:
                     test_instance = self.explainer.fit_to_rectangle(instance, rect)
                     dist = self.explainer.distance_fn(instance, test_instance)
@@ -115,6 +113,7 @@ class BitVectorIndex():
         -------
         matching_bits: a bitarray of length nrects with each bit set to one iff the corresponding hyper-rectangle fall in the query region
         '''
+        # TODO rewrite using array slicing rather than iterative search?
         # start with the set of all record hyper-rectnalges
         matching_bits: bitarray = bitzeros(self.nrects)
         matching_bits.invert()

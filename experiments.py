@@ -498,51 +498,73 @@ def compare_methods(ds_names, explainers=["FACETIndex", "OCEAN"], distance="Eucl
     # run configuration
     dets = ["RandomForest"]
     agg = "NoAggregator"
-    params = {
-        "rf_difference": 0.01,
-        "rf_distance": distance,
-        "rf_k": 1,
-        "rf_ntrees": 100,
-        "rf_threads": 1,
-        "rf_maxdepth": 5,
-        "expl_greedy": False,
-        "expl_distance": distance,
-        "ocean_norm": 2,
-        "mace_maxtime": 300,
+    # params = {
+    #     "rf_difference": 0.01,
+    #     "rf_distance": distance,
+    #     "rf_k": 1,
+    #     "rf_ntrees": 100,
+    #     "rf_threads": 1,
+    #     "rf_maxdepth": 5,
+    #     "expl_greedy": False,
+    #     "expl_distance": distance,
+    #     "ocean_norm": 2,
+    #     "mace_maxtime": 300,
+    #     "num_iters": num_iters,
+    #     "eval_samples": eval_samples,
+    #     "test_size": test_size,
+    #     "facet_graphtype": "disjoint",
+    #     "facet_offset": 0.001,
+    #     "facet_mode": "exhaustive",
+    #     "rf_hardvoting": True,  # TODO consider OCEAN vs FACETIndex soft vs hard requirment,
+    #     "facet_sample": "Augment",
+    #     "facet_nrects": 20000,
+    #     "bb_upperbound": False,
+    #     "bb_ordering": "ModifiedPriorityQueue",
+    #     "bb_logdists": False,
+    #     "verbose": False,
+    #     "facet_enumerate": "PointBased",
+    #     "bi_nrects": 20000
+    # }
+
+    test_params = {
         "num_iters": num_iters,
         "eval_samples": eval_samples,
         "test_size": test_size,
-        "facet_graphtype": "disjoint",
+        "explainers": explainers
+    }
+    rf_params = {
+        "rf_difference": 0.01,
+        "rf_distance": distance,
+        "rf_k": 1,
+        "rf_ntrees": 20,
+        "rf_threads": 1,
+        "rf_maxdepth": 5,
+        "rf_hardvoting": True,  # note OCEAN and FACETIndex use soft and hard requirment
+    }
+    facet_params = {
+        "facet_expl_distance": distance,
         "facet_offset": 0.001,
-        "facet_mode": "exhaustive",
-        "rf_hardvoting": True,  # TODO consider OCEAN vs FACETIndex soft vs hard requirment,
+        "facet_verbose": False,
         "facet_sample": "Augment",
-        "facet_nrects": 20000,
-        "bb_upperbound": False,
-        "bb_ordering": "ModifiedPriorityQueue",
-        "bb_logdists": False,
-        "verbose": False,
+        "facet_nrects": 60000,
         "facet_enumerate": "PointBased",
-        "bi_nrects": 20000
+        "bi_nrects": 20000,
+        "facet_sd": 0.3,
+        "facet_search": "BitVector",
+        "rbv_initial_radius": 0.05,
+        "rbv_radius_growth": "Linear",
+        "rbv_num_interval": 4
+    }
+    params = {
+        "test": test_params,
+        "RandomForest": rf_params,
+        "FACETIndex": facet_params,
+        "ocean_norm": 2
     }
 
-    # save the run information
     with open(run_path + "/" + "config.txt", 'a') as f:
-        f.write("comparing explanation methods\n\n")
-        f.write("iterations: {:d}\n\n".format(num_iters))
-        f.write("detectors: ")
-        for d in dets:
-            f.write(d + ", ")
-        f.write("\n")
-        f.write("aggregator: " + agg + "\n")
-        f.write("explainers: ")
-        for e in explainers:
-            f.write(e + ", ")
-        f.write("\n")
-        f.write("hyperparameters{\n")
-        for k in params.keys():
-            f.write("\t" + k + ": " + str(params[k]) + "\n")
-        f.write("}\n")
+        json_text = json.dumps(params, indent=4)
+        f.write(json_text)
 
     # compute the total number of runs for this experiment
     total_runs = len(ds_names) * len(explainers) * num_iters
