@@ -72,14 +72,14 @@ class BitVectorIndex():
             nonzero_query_area = True
 
             # if applicable restrict the search radius to the user provided constraints
-            if constraints is not None and have_intersection(query_rect, constraints):
-                # take intersection of query_rect and constraints if possible
-                query_rect[:, LOWER] = np.maximum(query_rect[:, LOWER], constraints[:, LOWER])  # raise lower bounds
-                query_rect[:, UPPER] = np.minimum(query_rect[:, UPPER], constraints[:, UPPER])  # lower upper bounds
-                search_complete = (query_rect == constraints).all()  # search are encloses entire constrained region
-            # if they don't intersect continue to grow the radius until they do
-            else:
-                nonzero_query_area = False
+            if constraints is not None:
+                if have_intersection(query_rect, constraints):
+                    # take intersection of query_rect and constraints if possible
+                    query_rect[:, LOWER] = np.maximum(query_rect[:, LOWER], constraints[:, LOWER])  # raise lower bounds
+                    query_rect[:, UPPER] = np.minimum(query_rect[:, UPPER], constraints[:, UPPER])  # lower upper bounds
+                    search_complete = (query_rect == constraints).all()  # search are encloses entire constrained region
+                else:
+                    nonzero_query_area = True
 
             if nonzero_query_area:
                 # get the set of hyper-rect records in the query rectangle

@@ -528,14 +528,16 @@ class FACETIndex(Explainer):
         elif self.search_type == "BitVector":
             for i in range(x.shape[0]):  # for each instance
                 # get the nearest hyper-rectangles from the bit vector
-                #! TEMP testing value for constraints to 0.5
-                constraints = np.zeros(shape=(self.rf_nfeatures, 2))
-                constraints[:, 1] = 0.5
+                # #! TEMP testing value for constraints to 0.5
+                # constraints = np.zeros(shape=(self.rf_nfeatures, 2))
+                # constraints[:, 1] = 0.01
                 nearest_rect = self.rbvs[counterfactual_classes[i]].point_query(x[i], constraints=constraints)
                 # if a counterfactual region was found
                 if nearest_rect is not None:
                     # generate a counterfactual example in the nearest point of that hyper-rectangle
                     xprime[i] = self.fit_to_rectangle(x[i], nearest_rect)
+                    if not self.is_inside(xprime[i], constraints):
+                        print("out of bounds example")
                 else:
                     # no counterfactual example can be found, set all values to infinite
                     xprime[i][:] = np.inf
