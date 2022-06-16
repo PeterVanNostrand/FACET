@@ -1,0 +1,67 @@
+BitArray
+Magic
+initial_radius = 0.05
+m = 4
+search_radius += initial_radius
+{
+    "RandomForest": {
+        "rf_difference": 0.01,
+        "rf_distance": "Euclidean",
+        "rf_k": 1,
+        "rf_ntrees": 20,
+        "rf_threads": 1,
+        "rf_maxdepth": 3,
+        "rf_hardvoting": true
+    },
+    "FACETIndex": {
+        "facet_expl_distance": "Euclidean",
+        "facet_offset": 0.001,
+        "facet_verbose": false,
+        "facet_sample": "Augment",
+        "facet_nrects": 60000,
+        "facet_enumerate": "PointBased",
+        "bi_nrects": 20000,
+        "facet_sd": 0.3,
+        "facet_search": "BitVector"
+    }
+}
+class 0
+N Indexed Dimensions: 9
+class 1
+N Indexed Dimensions: 9
+rects requested: 20000
+rects enumerated
+        class 0: 19111
+        class 1: 3309
+xtrain index coverage: 0.8947091685836346
+xtest index coverage: 0.8937960042060988
+preptime: 147.8024115562439
+xtrain: (15215, 10)
+accuracy: 0.8146687697160884
+precision: 0.8227188081936685
+recall: 0.906070549630845
+f1: 0.8623853211009175
+594
+207
+3693
+2644
+1658
+142
+3309
+250
+77
+343
+343
+156
+2622
+2529
+3309
+1613
+3178
+2682
+3309
+runtime: 0.7049984931945801
+sample_time: 0.035249924659729
+coverage_ratio: 1.0
+mean_dist: 0.15947728214473655
+mean_length 2.9

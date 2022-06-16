@@ -6,6 +6,8 @@ from bitarray import bitarray
 from bitarray.util import zeros as bitzeros
 
 from typing import TYPE_CHECKING
+
+from pydantic import NoneIsAllowedError, constr
 if TYPE_CHECKING:  # circular import avoidance
     from explainers.facet_index import FACETIndex
 
@@ -40,13 +42,14 @@ class BitVectorIndex():
         self.rbv = self.build_bit_vectors(self.rects)
         self.search_log = []  # for experiments store the # of rects search for each sample explained
 
-    def point_query(self, instance: np.ndarray):
+    def point_query(self, instance: np.ndarray, constraints: np.ndarray = None) -> np.ndarray:
         '''
         Uses the bit vector index to find hyper-rectangles which are close to the given point
 
         Parameters
         ----------
         instance: a numpy array of shape (ndim,) to search around
+        constraints : a numpy array of shape (ndim, 2) representing the user's constrained min/max values along each axis
 
         Returns
         -------
@@ -56,39 +59,61 @@ class BitVectorIndex():
         closest_rect = None
         closest_dist = np.inf
         solution_found = False
+        search_complete = False  # we have searched the entire constraint range
 
         # bit vector for the rects we have already checked the distance to
         searched_bits = bitzeros(self.nrects)
         search_radius = self.initial_radius
-        while not solution_found:
+        while not solution_found and not search_complete:
             # convert the query hypersphere into a hyperrectangle
             query_rect = np.zeros(shape=(self.ndimensions, 2))
             query_rect[:, LOWER] = (instance - search_radius)
             query_rect[:, UPPER] = (instance + search_radius)
-            # get the set of hyper-rect records in the query rectangle
-            matching_bits = self.rect_query(query_rect)
-            # exclude rectangles which we have already checked the distance to
-            new_match_bits = (matching_bits & ~searched_bits)
+            nonzero_query_area = True
 
-            # if we have new matches, check their distance
-            if new_match_bits.any():
-                # record the new matches as searched
-                searched_bits |= new_match_bits
-                # expand the packed bitarry to an array of booleans
-                new_match_slice = np.array(new_match_bits.tolist(), dtype=bool)
-                # get the matching rectangles
-                new_rects = self.rects[new_match_slice]
-                # search the matching rects for the nearest rectangle within the search radius. Its possible that the matching set is non-empty due to a rectangle in an unindexed dimension that is further than the search radius, which is not guaranteed to be the nearest to the point
-                for rect in new_rects:
-                    test_instance = self.explainer.fit_to_rectangle(instance, rect)
-                    dist = self.explainer.distance_fn(instance, test_instance)
-                    # valid solutions must fall within the search radius
-                    if dist < closest_dist:
-                        closest_rect = rect
-                        closest_dist = dist
-            # if the best solution falls within the search radius, exit
-            if closest_dist <= search_radius:
-                solution_found = True
+            # if applicable restrict the search radius to the user provided constraints
+            if constraints is not None and have_intersection(query_rect, constraints):
+                # take intersection of query_rect and constraints if possible
+                query_rect[:, LOWER] = np.maximum(query_rect[:, LOWER], constraints[:, LOWER])  # raise lower bounds
+                query_rect[:, UPPER] = np.minimum(query_rect[:, UPPER], constraints[:, UPPER])  # lower upper bounds
+                search_complete = (query_rect == constraints).all()  # search are encloses entire constrained region
+            # if they don't intersect continue to grow the radius until they do
+            else:
+                nonzero_query_area = False
+
+            if nonzero_query_area:
+                # get the set of hyper-rect records in the query rectangle
+                matching_bits = self.rect_query(query_rect)
+                # exclude rectangles which we have already checked the distance to
+                new_match_bits = (matching_bits & ~searched_bits)
+
+                # if we have new matches, check their distance
+                if new_match_bits.any():
+                    # record the new matches as searched
+                    searched_bits |= new_match_bits
+                    # expand the packed bitarry to an array of booleans
+                    new_match_slice = np.array(new_match_bits.tolist(), dtype=bool)
+                    # get the matching rectangles
+                    new_rects = self.rects[new_match_slice]
+                    # search the matching rects for the nearest rectangle within the search radius. Its possible that the matching set is non-empty due to a rectangle in an unindexed dimension that is further than the search radius, which is not guaranteed to be the nearest to the point
+                    for rect in new_rects:
+                        # if applicable only consider the rectangle if it falls within the constraints
+                        if constraints is None or have_intersection(rect, constraints):
+                            if constraints is not None:  # take only part of rect which falls in constraints
+                                rect[:, LOWER] = np.maximum(rect[:, LOWER], constraints[:, LOWER])  # raise lower bounds
+                                rect[:, UPPER] = np.minimum(rect[:, UPPER], constraints[:, UPPER])  # lower upper bounds
+                            test_instance = self.explainer.fit_to_rectangle(instance, rect)
+                            dist = self.explainer.distance_fn(instance, test_instance)
+                            # valid solutions must fall within the search radius
+                            if dist < closest_dist:
+                                closest_rect = rect
+                                closest_dist = dist
+
+                # if the best solution falls within the search radius, exit
+                solution_found = (closest_dist <= search_radius)
+                # if we've searched the whole constraints region and found no solution
+                if search_complete and not solution_found:
+                    closest_rect = None  # return Null
 
             if self.radius_growth == "Linear":
                 search_radius += self.initial_radius
@@ -99,9 +124,10 @@ class BitVectorIndex():
         self.search_log.append(nrects_searched)
         if self.verbose:
             print(nrects_searched)
+
         return closest_rect
 
-    def rect_query(self, query_rect: np.ndarray):
+    def rect_query(self, query_rect: np.ndarray) -> bitarray:
         '''
         Finds the set of all record hyper-rectangles which overlap the region defined in the query rectangle
 
@@ -139,7 +165,18 @@ class BitVectorIndex():
                     i += 1
         return matching_bits
 
-    def build_bit_vectors(self, rects: np.ndarray):
+    def build_bit_vectors(self, rects: np.ndarray) -> list[list[list[bitarray]]]:
+        '''
+        Generates a redundant bit vector index for the given set of hyper-rectangle records
+
+        Parameters
+        ----------
+        rects: a list of numpy arrays, each of shape (ndim, 2) corresponding to min/max values along each dimension
+
+        Returns
+        -------
+        rbv: the bit vector index, a list of bitarrays of shape (ndim, 2, m), where rbv[i][UPPER/LOWER][j] corresponds to the bit vector index for the UPPER/LOWER bound for the jth interval of the ith dimension
+        '''
         # Determine which rectangles are above the lower bounds and below the upper bounds for each interval. Given the below set of rectangles and the three intervals along the horizontal axis, we set the bit for the lower bound vector if the rectangle falls within in the given interval or any interval above it. We set the bit for the upper bound if the rectangle falls within the given interval or any interval below it
         #  | █  █████████  ████████ ██      |     P(I2,LB) P(I2,UB)
         #  | ████  █████  █████ ██████      |  R1     0       1
@@ -223,36 +260,7 @@ class BitVectorIndex():
             # if not, disable indexing on this dimension
             else:
                 indexed_dimensions[dim] = False
-            # if not split the space evenly between the intervals
-            # else:
-            #     # remove +/- infinite values
-            #     idx_neg_inf = np.argwhere(dim_bounds != np.inf)
-            #     if idx_neg_inf.shape[0] > 0:
-            #         dim_bounds = dim_bounds[idx_neg_inf].squeeze()
-            #     idx_pos_inf = np.argwhere(dim_bounds != -np.inf)
-            #     if idx_pos_inf.shape[0] > 0:
-            #         dim_bounds = dim_bounds[idx_pos_inf].squeeze()
 
-            #     # there are at lest two bounds use them to set the inteval width
-            #     if dim_bounds.size >= 2:
-            #         min_val = np.min(dim_bounds)
-            #         data_range = np.max(dim_bounds) - min_val
-            #     # otherwise use the range zero to one
-            #     else:
-            #         min_val = 0
-            #         data_range = 1 - min_val
-            #     interval_width = data_range / (self.m - 1)
-            #     # assign lower and upper bounds on intervals
-            #     for i in range(self.m):
-            #         if i == 0:
-            #             intervals[dim, i, LOWER] = -np.inf
-            #         else:
-            #             intervals[dim, i, LOWER] = min_val + (i-1) * interval_width
-
-            #         if i == (self.m-1):
-            #             intervals[dim, i, UPPER] = np.inf
-            #         else:
-            #             intervals[dim, i, UPPER] = min_val + i * interval_width
         return intervals, indexed_dimensions
 
     def parse_hyperparameters(self, hyperparameters: dict) -> None:
@@ -285,3 +293,16 @@ class BitVectorIndex():
             self.verbose = False
         else:
             self.verbose = params.get("verbose")
+
+
+def have_intersection(rect_a: np.ndarray, rect_b: np.ndarray) -> bool:
+    '''
+    Returns true iff the overlap between the two rectangles is nonzero
+
+    Parameters
+    ----------
+    rect_a, rect_b: numpy arrays of shape (ndim, 2) representing min/max values along each axis
+    '''
+    lowers_match = (rect_a[:, LOWER] <= rect_b[:, UPPER]).all()
+    uppers_match = (rect_a[:, UPPER] >= rect_b[:, LOWER]).all()
+    return lowers_match and uppers_match

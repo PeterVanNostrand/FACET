@@ -37,7 +37,7 @@ def simple_run(dataset_name):
         "facet_offset": 0.001,
         "facet_verbose": False,
         "facet_sample": "Augment",
-        "facet_nrects": 60000,
+        "facet_nrects": 10000,
         "facet_enumerate": "PointBased",
         "bi_nrects": 20000,
         "facet_sd": 0.3,
@@ -65,10 +65,10 @@ def simple_run(dataset_name):
         print("rects enumerated")
         print("\tclass 0:", len(model.explainer.index[0]))
         print("\tclass 1:", len(model.explainer.index[1]))
-    cover_xtrain = model.explainer.explore_index(points=xtrain)
-    cover_xtest = model.explainer.explore_index(points=xtest)
-    print("xtrain index coverage:", cover_xtrain)
-    print("xtest index coverage:", cover_xtest)
+    # cover_xtrain = model.explainer.explore_index(points=xtrain)
+    # cover_xtest = model.explainer.explore_index(points=xtest)
+    # print("xtrain index coverage:", cover_xtrain)
+    # print("xtest index coverage:", cover_xtest)
     prep_end = time.time()
     preptime = prep_end-prep_start
     print("preptime:", preptime)
@@ -133,13 +133,13 @@ if __name__ == "__main__":
     run_ds = DS_NAMES.copy()
     # index_test(ds_names=["vertebral"], exp_var="facet_nrects", exp_vals=[1000, 5000, 10000],
     #            num_iters=1, eval_samples=20, test_size=0.2, seed=RAND_SEED)
-    index_test(ds_names=run_ds, exp_var="rbv_num_interval", exp_vals=[4, 8, 16, 32],
-               num_iters=1, eval_samples=20, test_size=0.2, seed=RAND_SEED)
+    # index_test(ds_names=run_ds, exp_var="rbv_num_interval", exp_vals=[4, 8, 16, 32],
+    #            num_iters=1, eval_samples=20, test_size=0.2, seed=RAND_SEED)
     # index_test()
     # run_ds.remove("spambase")
     # compare_methods(run_ds, num_iters=5, explainers=["OCEAN", "FACETIndex"], eval_samples=20, seed=RAND_SEED)
     # vary_ntrees(run_ds, explainer="FACETIndex", ntrees=list(range(5, 105, 5)), num_iters=5, seed=SEED)
-    # simple_run("magic")
+    simple_run("magic")
     # bb_ntrees(run_ds, ntrees=[25], depths=[3], num_iters=1, eval_samples=5)
     # hard_vs_soft(run_ds, num_iters=10)
     # bb_ordering(run_ds, orderings=["PriorityQueue", "Stack", "ModifiedPriorityQueue"], num_iters=1,

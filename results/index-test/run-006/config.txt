@@ -1,0 +1,37 @@
+{
+    "test": {
+        "num_iters": 1,
+        "eval_samples": 20,
+        "test_size": 0.2,
+        "exp_var": "rbv_num_interval",
+        "exp_vals": [
+            4,
+            8,
+            16,
+            32
+        ]
+    },
+    "RandomForest": {
+        "rf_difference": 0.01,
+        "rf_distance": "Euclidean",
+        "rf_k": 1,
+        "rf_ntrees": 20,
+        "rf_threads": 1,
+        "rf_maxdepth": 7,
+        "rf_hardvoting": true
+    },
+    "FACETIndex": {
+        "facet_expl_distance": "Euclidean",
+        "facet_offset": 0.001,
+        "facet_verbose": false,
+        "facet_sample": "Augment",
+        "facet_nrects": 60000,
+        "facet_enumerate": "PointBased",
+        "bi_nrects": 20000,
+        "facet_sd": 0.3,
+        "facet_search": "BitVector",
+        "rbv_initial_radius": 0.05,
+        "rbv_radius_growth": "Linear",
+        "rbv_num_interval": 4
+    }
+}

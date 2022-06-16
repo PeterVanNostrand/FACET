@@ -491,7 +491,7 @@ class FACETIndex(Explainer):
 
         return xprime
 
-    def explain(self, x: np.ndarray, y: np.ndarray) -> np.ndarray:
+    def explain(self, x: np.ndarray, y: np.ndarray, constraints: np.ndarray = None) -> np.ndarray:
         '''
         Parameters
         ----------
@@ -528,14 +528,27 @@ class FACETIndex(Explainer):
         elif self.search_type == "BitVector":
             for i in range(x.shape[0]):  # for each instance
                 # get the nearest hyper-rectangles from the bit vector
-                nearest_rect = self.rbvs[counterfactual_classes[i]].point_query(x[i])
-                # generate a counterfactual example in the nearest point of that hyper-rectangle
-                xprime[i] = self.fit_to_rectangle(x[i], nearest_rect)
+                #! TEMP testing value for constraints to 0.5
+                constraints = np.zeros(shape=(self.rf_nfeatures, 2))
+                constraints[:, 1] = 0.5
+                nearest_rect = self.rbvs[counterfactual_classes[i]].point_query(x[i], constraints=constraints)
+                # if a counterfactual region was found
+                if nearest_rect is not None:
+                    # generate a counterfactual example in the nearest point of that hyper-rectangle
+                    xprime[i] = self.fit_to_rectangle(x[i], nearest_rect)
+                else:
+                    # no counterfactual example can be found, set all values to infinite
+                    xprime[i][:] = np.inf
 
+        # swap np.inf (no explanatio found) for zeros to allow for prediction on xprime
+        idx_inf = np.argwhere(xprime == np.inf)
+        xprime[idx_inf] = np.tile(0, x.shape[1])
         # check that all counterfactuals result in a different class
         preds = self.model.predict(xprime)
         failed_explanation = (preds == y)
         xprime[failed_explanation] = np.tile(np.inf, x.shape[1])
+        # replace infinite values for invalid explanation
+        xprime[idx_inf] = np.tile(np.inf, x.shape[1])
 
         if self.verbose:
             print("failed x':", failed_explanation.sum())

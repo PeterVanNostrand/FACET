@@ -549,7 +549,7 @@ def compare_methods(ds_names, explainers=["FACETIndex", "OCEAN"], distance="Eucl
         "facet_nrects": 60000,
         "facet_enumerate": "PointBased",
         "bi_nrects": 20000,
-        "facet_sd": 0.3,
+        "facet_sd": 0.5,
         "facet_search": "BitVector",
         "rbv_initial_radius": 0.05,
         "rbv_radius_growth": "Linear",
@@ -1374,4 +1374,4 @@ def index_test(ds_names, exp_var, exp_vals, num_iters=5, eval_samples=20, test_s
                 progress_bar_ds.update()
         progress_bar_ds.close()
     progress_bar.close()
-    print("Finished varying nrects")
+    print("Finished index test")
