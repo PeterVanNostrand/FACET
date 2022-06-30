@@ -5,20 +5,26 @@ from sklearn.metrics import accuracy_score
 from sklearn.metrics import f1_score
 
 
-def dist_euclidean(x, xprime):
+def dist_euclidean(x, xprime, weights=None):
     '''
-    Computes the euclidean distance between `x` and `xprime`
+    Computes the weighted euclidean distance between `x` and `xprime` sqrt(sum(w*(x_i - xprime_i)**2))
 
     Parameters
     ----------
     x      : a array of dimension d
     xprime : an array of dimension d+1
+    weights: an array of shape (dimension,)
 
     Returns
     -------
     distance : an array of dimension d+1 containing the Euclidean distance between x and each example in xprime
     '''
     diff = x - xprime
+
+    if weights is not None:  # scale the difference by the weights, zero weighted features are unchangeable feature
+        diff[np.where(np.logical_and(diff != 0, weights == 0))] = np.inf  # changing unchangeable feature i->dist[i]=inf
+        np.divide(diff, weights, out=diff, where=(weights != 0))  # handle div by 0, values are set to 0 or inf
+
     squared_diff = np.square(diff)
     if len(xprime.shape) == 3:
         sos_diff = np.sum(squared_diff, axis=2)
@@ -29,6 +35,11 @@ def dist_euclidean(x, xprime):
 
     distance = np.sqrt(sos_diff)
     return distance
+
+# def weighted_dist(x, xprime, weights):
+#     diff = (x - xprime)
+#     squared_diff = np.square(diff)
+#     scaled_squared_diff = squared_diff / np.square(weights)
 
 
 def dist_features_changed(x, xprime):

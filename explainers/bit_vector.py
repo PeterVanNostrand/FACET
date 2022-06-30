@@ -1,5 +1,6 @@
 # handle circular imports that result from typehinting
 from __future__ import annotations
+import bisect
 
 import numpy as np
 from bitarray import bitarray
@@ -38,11 +39,12 @@ class BitVectorIndex():
 
         # select the partition values for each interval
         self.intervals, self.indexed_dimensions = self.generate_intervals(self.rects)
-        print("N Indexed Dimensions:", sum(self.indexed_dimensions))
+        if self.verbose:
+            print("N Indexed Dimensions:", sum(self.indexed_dimensions))
         self.rbv = self.build_bit_vectors(self.rects)
         self.search_log = []  # for experiments store the # of rects search for each sample explained
 
-    def point_query(self, instance: np.ndarray, constraints: np.ndarray = None) -> np.ndarray:
+    def point_query(self, instance: np.ndarray, constraints: np.ndarray = None, weights: np.ndarray = None) -> np.ndarray:
         '''
         Uses the bit vector index to find hyper-rectangles which are close to the given point
 
@@ -50,10 +52,11 @@ class BitVectorIndex():
         ----------
         instance: a numpy array of shape (ndim,) to search around
         constraints : a numpy array of shape (ndim, 2) representing the user's constrained min/max values along each axis
+        weights: a numpy array of shape (ndim) representing the user's willingness to change each feature with higher weight indicating more willing to change
 
         Returns
         -------
-        matching_rects: a numpy array of shape(nrecords, ndim, 2) of the nearby hyper-rectangles
+        closest-rect: a numpy array of shape(ndim, 2) of the nearest hyper-rectangle that matches the user constratints
         '''
         # create a hyper-sphere around the point and indentify which intervals it covers. We do this by creating a hyper-sphere with the initial radius, converting it to a hyper-rectangle, and searching for records in that rect
         closest_rect = None
@@ -67,8 +70,12 @@ class BitVectorIndex():
         while not solution_found and not search_complete:
             # convert the query hypersphere into a hyperrectangle
             query_rect = np.zeros(shape=(self.ndimensions, 2))
-            query_rect[:, LOWER] = (instance - search_radius)
-            query_rect[:, UPPER] = (instance + search_radius)
+            if weights is not None:
+                query_rect[:, LOWER] = (instance - weights * search_radius)
+                query_rect[:, UPPER] = (instance + weights * search_radius)
+            else:
+                query_rect[:, LOWER] = (instance - search_radius)
+                query_rect[:, UPPER] = (instance + search_radius)
             nonzero_query_area = True
 
             # if applicable restrict the search radius to the user provided constraints
@@ -79,7 +86,7 @@ class BitVectorIndex():
                     query_rect[:, UPPER] = np.minimum(query_rect[:, UPPER], constraints[:, UPPER])  # lower upper bounds
                     search_complete = (query_rect == constraints).all()  # search are encloses entire constrained region
                 else:
-                    nonzero_query_area = True
+                    nonzero_query_area = False
 
             if nonzero_query_area:
                 # get the set of hyper-rect records in the query rectangle
@@ -103,7 +110,7 @@ class BitVectorIndex():
                                 rect[:, LOWER] = np.maximum(rect[:, LOWER], constraints[:, LOWER])  # raise lower bounds
                                 rect[:, UPPER] = np.minimum(rect[:, UPPER], constraints[:, UPPER])  # lower upper bounds
                             test_instance = self.explainer.fit_to_rectangle(instance, rect)
-                            dist = self.explainer.distance_fn(instance, test_instance)
+                            dist = self.explainer.distance_fn(instance, test_instance, weights)
                             # valid solutions must fall within the search radius
                             if dist < closest_dist:
                                 closest_rect = rect
@@ -126,6 +133,108 @@ class BitVectorIndex():
             print(nrects_searched)
 
         return closest_rect
+
+    def k_point_query(self, instance: np.ndarray, constraints: np.ndarray = None, weights: np.ndarray = None, k: int = 1) -> np.ndarray:
+        '''
+        Uses the bit vector index to find hyper-rectangles which are close to the given point
+
+        Parameters
+        ----------
+        instance: a numpy array of shape (ndim,) to search around
+        constraints : a numpy array of shape (ndim, 2) representing the user's constrained min/max values along each axis
+        weights: a numpy array of shape (ndim) representing the user's willingness to change each feature with higher weight indicating more willing to change
+        k: int value >=1 corresponding the number of nearest counterfactuals to return
+
+        Returns
+        -------
+        k_closeset_rects: a list of arrays of shape(nrecords, ndim, 2) of the k nearest hyper-rectangles if found
+        '''
+        # create a hyper-sphere around the point and indentify which intervals it covers. We do this by creating a hyper-sphere with the initial radius, converting it to a hyper-rectangle, and searching for records in that rect
+        rect_dists = []  # a priority queue of the dist to each searched hyper-rect, ordered by increasing distance
+        trimmed_rects = {}  # a dict rect_id -> bool. True iff the rect was trimmed to fit in the constraints region
+        solution_found = False
+        search_complete = False  # we have searched the entire constraint range
+
+        # bit vector for the rects we have already checked the distance to
+        rect_ids = np.array(range(self.nrects))  # id each rect by its location in the enumerated list
+        searched_bits = bitzeros(self.nrects)  # keep track of which rects we've already checked
+        search_radius = self.initial_radius
+        while not solution_found and not search_complete:
+            # convert the query hypersphere into a hyperrectangle
+            query_rect = np.zeros(shape=(self.ndimensions, 2))
+            if weights is not None:
+                query_rect[:, LOWER] = (instance - weights * search_radius)
+                query_rect[:, UPPER] = (instance + weights * search_radius)
+            else:
+                query_rect[:, LOWER] = (instance - search_radius)
+                query_rect[:, UPPER] = (instance + search_radius)
+            nonzero_query_area = True
+
+            # if applicable restrict the search radius to the user provided constraints
+            if constraints is not None:
+                if have_intersection(query_rect, constraints):
+                    # take intersection of query_rect and constraints if possible
+                    query_rect[:, LOWER] = np.maximum(query_rect[:, LOWER], constraints[:, LOWER])  # raise lower bounds
+                    query_rect[:, UPPER] = np.minimum(query_rect[:, UPPER], constraints[:, UPPER])  # lower upper bounds
+                    search_complete = (query_rect == constraints).all()  # search are encloses entire constrained region
+                else:
+                    nonzero_query_area = False
+
+            if nonzero_query_area:
+                # get the set of hyper-rect records in the query rectangle
+                matching_bits = self.rect_query(query_rect)
+                # exclude rectangles which we have already checked the distance to
+                new_match_bits = (matching_bits & ~searched_bits)
+
+                # if we have new matches, check their distance
+                if new_match_bits.any():
+                    # record the new matches as searched
+                    searched_bits |= new_match_bits
+                    # expand the packed bitarry to an array of booleans
+                    new_match_slice = np.array(new_match_bits.tolist(), dtype=bool)
+                    # get the matching rectangles
+                    new_rects = self.rects[new_match_slice]
+                    new_rect_ids = rect_ids[new_match_slice]
+                    # filter matching rects for those which fall within the constraints region and compute their dists
+                    for rect, rect_id in zip(new_rects, new_rect_ids):
+                        # if applicable only consider the rectangle if it falls within the constraints
+                        if constraints is None or have_intersection(rect, constraints):
+                            if constraints is not None:  # take only part of rect which falls in constraints
+                                rect[:, LOWER] = np.maximum(rect[:, LOWER], constraints[:, LOWER])  # raise lower bounds
+                                rect[:, UPPER] = np.minimum(rect[:, UPPER], constraints[:, UPPER])  # lower upper bounds
+                                trimmed_rects[rect_id] = True
+                            test_instance = self.explainer.fit_to_rectangle(instance, rect)
+                            dist = self.explainer.distance_fn(instance, test_instance, weights)
+                            # record the dist to this rect on the priority queue
+                            bisect.insort(rect_dists, (dist, rect_id))
+
+                # if the closest k rects fall within the search radius sufficent solutions were found, search complete
+                solution_found = (len(rect_dists) >= k) and (rect_dists[k-1][0] <= search_radius)
+            if self.radius_growth == "Linear":
+                search_radius += self.initial_radius
+            elif self.radius_growth == "Exponential":
+                search_radius *= 2
+
+        # return the top-k closest rects, returning an empty list if no rects were found
+        k_closest_rects: list[np.ndarray] = []
+        i = 0
+        while i < k and i < len(rect_dists):
+            dist, rect_id = rect_dists[i]
+            # if only a portion of the rect falls in the constraints region
+            rect = self.rects[rect_id].copy() # make copy to prevent modifying self.rects
+            if constraints is not None and rect_id in trimmed_rects:
+                rect[:, LOWER] = np.maximum(rect[:, LOWER], constraints[:, LOWER])  # raise lower bounds
+                rect[:, UPPER] = np.minimum(rect[:, UPPER], constraints[:, UPPER])  # lower upper bounds
+            k_closest_rects.append(rect)
+            i += 1
+
+        # Experiment logging
+        nrects_searched = searched_bits.count()
+        self.search_log.append(nrects_searched)
+        if self.verbose:
+            print(nrects_searched)
+
+        return k_closest_rects
 
     def rect_query(self, query_rect: np.ndarray) -> bitarray:
         '''

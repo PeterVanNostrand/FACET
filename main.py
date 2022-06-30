@@ -133,13 +133,14 @@ if __name__ == "__main__":
     run_ds = DS_NAMES.copy()
     # index_test(ds_names=["vertebral"], exp_var="facet_nrects", exp_vals=[1000, 5000, 10000],
     #            num_iters=1, eval_samples=20, test_size=0.2, seed=RAND_SEED)
-    # index_test(ds_names=run_ds, exp_var="rbv_num_interval", exp_vals=[4, 8, 16, 32],
+
+    # index_test(ds_names=run_ds, exp_var="facet_intersect_order", exp_vals=["Axes", "Size", "Ensemble"],
     #            num_iters=1, eval_samples=20, test_size=0.2, seed=RAND_SEED)
     # index_test()
     # run_ds.remove("spambase")
     # compare_methods(run_ds, num_iters=5, explainers=["OCEAN", "FACETIndex"], eval_samples=20, seed=RAND_SEED)
     # vary_ntrees(run_ds, explainer="FACETIndex", ntrees=list(range(5, 105, 5)), num_iters=5, seed=SEED)
-    simple_run("magic")
+    simple_run("vertebral")
     # bb_ntrees(run_ds, ntrees=[25], depths=[3], num_iters=1, eval_samples=5)
     # hard_vs_soft(run_ds, num_iters=10)
     # bb_ordering(run_ds, orderings=["PriorityQueue", "Stack", "ModifiedPriorityQueue"], num_iters=1,

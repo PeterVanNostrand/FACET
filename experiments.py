@@ -536,7 +536,7 @@ def compare_methods(ds_names, explainers=["FACETIndex", "OCEAN"], distance="Eucl
         "rf_difference": 0.01,
         "rf_distance": distance,
         "rf_k": 1,
-        "rf_ntrees": 20,
+        "rf_ntrees": 100,
         "rf_threads": 1,
         "rf_maxdepth": 5,
         "rf_hardvoting": True,  # note OCEAN and FACETIndex use soft and hard requirment
@@ -545,14 +545,13 @@ def compare_methods(ds_names, explainers=["FACETIndex", "OCEAN"], distance="Eucl
         "facet_expl_distance": distance,
         "facet_offset": 0.001,
         "facet_verbose": False,
+        "facet_enumerate": "PointBased",
         "facet_sample": "Augment",
         "facet_nrects": 60000,
-        "facet_enumerate": "PointBased",
-        "bi_nrects": 20000,
-        "facet_sd": 0.5,
+        "facet_sd": 0.1,
         "facet_search": "BitVector",
-        "rbv_initial_radius": 0.05,
         "rbv_radius_growth": "Linear",
+        "rbv_initial_radius": 0.05,
         "rbv_num_interval": 4
     }
     params = {
@@ -580,7 +579,7 @@ def compare_methods(ds_names, explainers=["FACETIndex", "OCEAN"], distance="Eucl
         # dataframe to store results of each datasets runs
         results = pd.DataFrame(
             columns=[
-                "explainer", "n_samples", "n_samples_explained", "n_features", "accuracy", "precision", "recall", "f1", "avg_nnodes", "avg_nleaves", "avg_depth", "q", "jaccard", "coverage_ratio", "mean_distance", "mean_length", "init_time", "runtime", "clique_size", "grown_clique_size", "ext_min", "ext_avg", "ext_max"
+                "explainer", "n_samples", "n_samples_explained", "n_features", "accuracy", "precision", "recall", "f1", "avg_nnodes", "avg_nleaves", "avg_depth", "q", "jaccard", "coverage_ratio", "mean_distance", "mean_length", "init_time", "runtime", "clique_size", "grown_clique_size", "ext_min", "ext_avg", "ext_max", "rects_searched_0", "rects_searched_1", "idx_dim_0", "idx_dim_1"
             ])
         progress_bar_ds = tqdm(total=len(explainers) * num_iters, desc=ds, leave=False)
 
@@ -633,26 +632,27 @@ def compare_methods(ds_names, explainers=["FACETIndex", "OCEAN"], distance="Eucl
                 init_time = end_build - start_build
 
                 # collect optional statistics
+                if expl == "FACETIndex" and params["FACETIndex"]["facet_search"] == "BitVector":
+                    rects_searched_0 = sum(model.explainer.rbvs[0].search_log)
+                    rects_searched_1 = sum(model.explainer.rbvs[1].search_log)
+                    idx_dim_0 = sum(model.explainer.rbvs[0].indexed_dimensions)
+                    idx_dim_1 = sum(model.explainer.rbvs[1].indexed_dimensions)
+                else:
+                    rects_searched_0, rects_searched_1, idx_dim_0, idx_dim_1 = -1, -1, -1, -1
+
                 if expl == "FACETTrees" or expl == "FACETPaths":
                     clique_size = model.explainer.get_clique_size()
                     grown_clique_size = -1
                 elif expl == "FACETGrow":
                     clique_size, grown_clique_size = model.explainer.get_clique_size()
-                    ext_min = -1
-                    ext_avg = -1
-                    ext_max = -1
+                    ext_min, ext_avg, ext_max = -1, -1, -1
                 elif expl == "FACETBranchBound":
-                    clique_size = -1
-                    grown_clique_size = -1
+                    clique_size, grown_clique_size = -1, -1
                     ext_min = model.explainer.ext_min
                     ext_avg = model.explainer.ext_avg
                     ext_max = model.explainer.ext_max
                 else:
-                    clique_size = -1
-                    grown_clique_size = -1
-                    ext_min = -1
-                    ext_avg = -1
-                    ext_max = -1
+                    clique_size, grown_clique_size, ext_min, ext_avg, ext_max = -1, -1, -1, -1, -1
 
                 # Compute explanation metrics
                 coverage_ratio = coverage(explanations)
@@ -684,7 +684,11 @@ def compare_methods(ds_names, explainers=["FACETIndex", "OCEAN"], distance="Eucl
                     "grown_clique_size": grown_clique_size,
                     "ext_min": ext_min,
                     "ext_avg": ext_avg,
-                    "ext_max": ext_max
+                    "ext_max": ext_max,
+                    "rects_searched_0": rects_searched_0,
+                    "rects_searched_1": rects_searched_1,
+                    "idx_dim_0": idx_dim_0,
+                    "idx_dim_1": idx_dim_1,
                 }
                 results = results.append(run_result, ignore_index=True)
 
@@ -1235,9 +1239,9 @@ def index_test(ds_names, exp_var, exp_vals, num_iters=5, eval_samples=20, test_s
         "rf_difference": 0.01,
         "rf_distance": distance,
         "rf_k": 1,
-        "rf_ntrees": 20,
+        "rf_ntrees": 100,
         "rf_threads": 1,
-        "rf_maxdepth": 7,
+        "rf_maxdepth": 5,
         "rf_hardvoting": True,  # note OCEAN and FACETIndex use soft and hard requirment
     }
     facet_params = {
@@ -1252,7 +1256,8 @@ def index_test(ds_names, exp_var, exp_vals, num_iters=5, eval_samples=20, test_s
         "facet_search": "BitVector",
         "rbv_initial_radius": 0.05,
         "rbv_radius_growth": "Linear",
-        "rbv_num_interval": 4
+        "rbv_num_interval": 4,
+        "facet_intersect_order": "Size"
     }
     params = {
         "test": test_params,
@@ -1274,7 +1279,7 @@ def index_test(ds_names, exp_var, exp_vals, num_iters=5, eval_samples=20, test_s
         x, y = load_data(ds, normalize=True)
         # dataframe to store results of each datasets runs
         results = pd.DataFrame(columns=["dataset", "n_trees", "explainer", "n_samples", "n_samples_explained", "n_features", "accuracy", "precision", "recall", "f1", "avg_nnodes", "avg_nleaves",
-                               "avg_depth", "q", "jaccard", "coverage_ratio", "mean_distance", "mean_length", "init_time", "runtime", "clique_size", "grown_clique_size", "ext_min", "ext_avg", "ext_max", "n_rects", "cover_xtrain", "cover_xtest", "rects_0", "rects_1", "facet_sd", "facet_search", "rbv_initial_radius", "rbv_radius_growth", "rbv_num_interval", "rects_searched_0", "rects_searched_1", "idx_dim_0", "idx_dim_1"])
+                               "avg_depth", "q", "jaccard", "coverage_ratio", "mean_distance", "mean_length", "init_time", "runtime", "clique_size", "grown_clique_size", "ext_min", "ext_avg", "ext_max", "n_rects", "cover_xtrain", "cover_xtest", "rects_0", "rects_1", "facet_sd", "facet_search", "rbv_initial_radius", "rbv_radius_growth", "rbv_num_interval", "rects_searched_0", "rects_searched_1", "idx_dim_0", "idx_dim_1", "order"])
 
         for i in range(num_iters):
             # random split the data
@@ -1366,6 +1371,7 @@ def index_test(ds_names, exp_var, exp_vals, num_iters=5, eval_samples=20, test_s
                     "rects_searched_1": rects_searched_1,
                     "idx_dim_0": idx_dim_0,
                     "idx_dim_1": idx_dim_1,
+                    "order": params["FACETIndex"]["facet_intersect_order"]
                 }
                 results = results.append(run_result, ignore_index=True)
                 results.to_csv(run_path + "/" + ds + ".csv", index=False)

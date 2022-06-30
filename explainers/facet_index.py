@@ -20,8 +20,7 @@ import networkx as nx
 from networkx.algorithms.approximation import max_clique as get_max_clique
 
 # custom classes
-from utilities.metrics import dist_euclidean
-from utilities.metrics import dist_features_changed
+from utilities.metrics import dist_euclidean, dist_features_changed
 from explainers.explainer import Explainer
 from detectors.random_forest import RandomForest
 from explainers.branching import BranchIndex
@@ -60,7 +59,8 @@ class FACETIndex(Explainer):
             # create redundant bit vector index
             self.rbvs: list[BitVectorIndex] = []
             for class_id in range(self.rf_nclasses):
-                print("class {}".format(class_id))
+                if self.verbose:
+                    print("class {}".format(class_id))
                 self.rbvs.append(BitVectorIndex(rects=self.index[class_id],
                                  explainer=self, hyperparameters=self.hyperparameters))
 
@@ -325,11 +325,16 @@ class FACETIndex(Explainer):
         for i in range(len(all_bounds)):
             n_bounded_axes[i] = np.isfinite(all_bounds[i]).sum()
             mean_rect_widths[i] = self.rect_width(all_bounds[i]).mean()
-        order_axes = np.argsort(n_bounded_axes)  # take rects with the fewest bounds first
-        order_size = np.argsort(mean_rect_widths)  # take largest rects first
-        order_forest = list(range(len(all_bounds)))  # take rects in order of trees in ensemble
-        # order = order_size
-        order = order_size
+
+        if self.intersect_order == "Axes":
+            order_axes = np.argsort(n_bounded_axes)  # take rects with the fewest bounds first
+            order = order_axes
+        elif self.intersect_order == "Size":
+            order_size = np.argsort(mean_rect_widths)  # take largest rects first
+            order = order_size
+        elif self.intersect_order == "Ensemble":
+            order_forest = list(range(len(all_bounds)))  # take rects in order of trees in ensemble
+            order = order_forest
 
         # initialize the hyper-rectangle as unbounded on both side of all axes
         rect = np.zeros((self.rf_nfeatures, 2))
@@ -491,7 +496,7 @@ class FACETIndex(Explainer):
 
         return xprime
 
-    def explain(self, x: np.ndarray, y: np.ndarray, constraints: np.ndarray = None) -> np.ndarray:
+    def explain(self, x: np.ndarray, y: np.ndarray, constraints: np.ndarray = None, weights: np.ndarray = None) -> np.ndarray:
         '''
         Parameters
         ----------
@@ -510,6 +515,8 @@ class FACETIndex(Explainer):
         # assumimg binary classification [0, 1] set counterfactual class
         counterfactual_classes = ((y - 1) * -1)
 
+        weights = np.array([0.1, 0.5, 0.1, 0.1, 0.1, 0.1])
+
         if self.search_type == "Linear":
             # perform a linear scan of all the hyper-rectangles
             for i in range(x.shape[0]):
@@ -518,7 +525,7 @@ class FACETIndex(Explainer):
                 # find the indexed rectangle of the the counterfactual class that is cloest
                 for rect in self.index[counterfactual_classes[i]]:
                     test_instance = self.fit_to_rectangle(x[i], rect)
-                    dist = self.distance_fn(x[i], test_instance)
+                    dist = self.distance_fn(x[i], test_instance, weights)
                     if dist < min_dist:
                         min_dist = dist
                         closest_rect = rect
@@ -529,15 +536,19 @@ class FACETIndex(Explainer):
             for i in range(x.shape[0]):  # for each instance
                 # get the nearest hyper-rectangles from the bit vector
                 # #! TEMP testing value for constraints to 0.5
-                # constraints = np.zeros(shape=(self.rf_nfeatures, 2))
-                # constraints[:, 1] = 0.01
-                nearest_rect = self.rbvs[counterfactual_classes[i]].point_query(x[i], constraints=constraints)
+                constraints = np.zeros(shape=(self.rf_nfeatures, 2))
+                constraints[:, 1] = 0.5
+                nearest_rect = self.rbvs[counterfactual_classes[i]].point_query(
+                    instance=x[i], constraints=constraints, weights=weights)
+                nearest_rects = self.rbvs[counterfactual_classes[i]].k_point_query(
+                    instance=x[i], constraints=constraints, weights=weights, k=3)
+                # nearest_rect = self.rbvs[counterfactual_classes[i]].point_query(x[i], constraints, weights)
                 # if a counterfactual region was found
                 if nearest_rect is not None:
                     # generate a counterfactual example in the nearest point of that hyper-rectangle
                     xprime[i] = self.fit_to_rectangle(x[i], nearest_rect)
-                    if not self.is_inside(xprime[i], constraints):
-                        print("out of bounds example")
+                    # if not self.is_inside(xprime[i], constraints):
+                    #     print("out of bounds example")
                 else:
                     # no counterfactual example can be found, set all values to infinite
                     xprime[i][:] = np.inf
@@ -769,3 +780,8 @@ class FACETIndex(Explainer):
             self.standard_dev = 0.1
         else:
             self.standard_dev = params.get("facet_sd")
+
+        if params.get("facet_intersect_order") is None:
+            self.intersect_order = "Size"
+        else:
+            self.intersect_order = params.get("facet_intersect_order")
