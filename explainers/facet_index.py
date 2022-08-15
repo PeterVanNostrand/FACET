@@ -515,7 +515,8 @@ class FACETIndex(Explainer):
         # assumimg binary classification [0, 1] set counterfactual class
         counterfactual_classes = ((y - 1) * -1)
 
-        weights = np.array([0.1, 0.5, 0.1, 0.1, 0.1, 0.1])
+        # weights = np.array([0.1, 0.5, 0.1, 0.1, 0.1, 0.1])
+        weights = None
 
         if self.search_type == "Linear":
             # perform a linear scan of all the hyper-rectangles
@@ -536,12 +537,13 @@ class FACETIndex(Explainer):
             for i in range(x.shape[0]):  # for each instance
                 # get the nearest hyper-rectangles from the bit vector
                 # #! TEMP testing value for constraints to 0.5
-                constraints = np.zeros(shape=(self.rf_nfeatures, 2))
-                constraints[:, 1] = 0.5
+                # constraints = np.zeros(shape=(self.rf_nfeatures, 2))
+                # constraints[:, 1] = 0.5
                 # nearest_rect = self.rbvs[counterfactual_classes[i]].point_query(
                 #     instance=x[i], constraints=constraints, weights=weights)
-                self.k = 1
-                self.max_dist = np.inf
+                constraints = None
+                self.k = 3
+                self.max_dist = 100
                 if self.k is None or self.k > 1:
                     nearest_rects = self.rbvs[counterfactual_classes[i]].point_query(
                         instance=x[i], constraints=constraints, weights=weights, k=self.k, max_dist=self.max_dist)

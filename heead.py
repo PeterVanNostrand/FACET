@@ -23,6 +23,7 @@ from explainers.facet_paths import FACETPaths
 from explainers.facet_grow import FACETGrow
 from explainers.facet_bb import FACETBranchBound
 from explainers.facet_index import FACETIndex
+from explainers.rf_ocse import RFOCSE
 
 
 class HEEAD():
@@ -59,6 +60,8 @@ class HEEAD():
             self.explainer = OCEAN(model=self, hyperparameters=hyperparameters)
         elif explainer == "MACE":
             self.explainer = MACE(model=self, hyperparameters=hyperparameters)
+        elif explainer == "RF-OCSE":
+            self.explainer = RFOCSE(model=self, hyperparameters=hyperparameters)
         elif explainer == "FACET":
             self.explainer = FACET(model=self, hyperparameters=hyperparameters)
         elif explainer == "FACETTrees":

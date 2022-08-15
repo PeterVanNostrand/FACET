@@ -5,6 +5,7 @@ from explainers.explainer import Explainer
 from baselines.mace.newLoadData import loadDataset
 from baselines.mace.newBatchTest import generateExplanationsWithMaxTime
 from baselines.mace.newBatchTest import generateExplanations
+from baselines.mace.generateSATExplanations import genExp
 
 
 class MACE(Explainer):
@@ -18,7 +19,7 @@ class MACE(Explainer):
         else:
             self.maxtime = hyperparameters.get("mace_maxtime")
 
-    def prepare(self):
+    def prepare(self, data=None):
         pass
 
     def explain(self, x, y):
@@ -50,20 +51,34 @@ class MACE(Explainer):
         for factual_sample_index, factual_sample in iterate_over_data_dict.items():
             # note y is the predicted label not the true label
             factual_sample['y'] = bool(factual_sample['y'])
-            # explanation_object = generateExplanations(
-            #     approach_string=approach_string, explanation_file_name=explanation_file_name, model_trained=model_trained, dataset_obj=dataset_obj, factual_sample=factual_sample, norm_type_string=norm_type_string, standard_deviations=standard_deviations, observable_data_dict=observable_data_dict)
-
-            explanation_object = generateExplanationsWithMaxTime(
-                self.maxtime,
-                approach_string,
-                explanation_file_name,
-                model_trained,
-                dataset_obj,
-                factual_sample,
-                norm_type_string,
-                observable_data_dict,  # used solely for minimum_observable method
-                standard_deviations,  # used solely for feature_tweaking method
+            explanation_object = generateExplanations(
+                approach_string=approach_string,
+                explanation_file_name=explanation_file_name,
+                model_trained=model_trained,
+                dataset_obj=dataset_obj,
+                factual_sample=factual_sample,
+                norm_type_string=norm_type_string,
+                standard_deviations=standard_deviations,
+                observable_data_dict=observable_data_dict
             )
+
+            # explanation = genExp(
+            #     explanation_file_name=explanation_file_name,
+            #     model_trained=self.model.detectors[0].model,
+            #     dataset_obj=
+            # )
+
+            # explanation_object = generateExplanationsWithMaxTime(
+            #     self.maxtime,
+            #     approach_string,
+            #     explanation_file_name,
+            #     model_trained,
+            #     dataset_obj,
+            #     factual_sample,
+            #     norm_type_string,
+            #     observable_data_dict,  # used solely for minimum_observable method
+            #     standard_deviations,  # used solely for feature_tweaking method
+            # )
             example = explanation_object['counterfactual_sample']
             if example:
                 for i in range(len(col_names)):

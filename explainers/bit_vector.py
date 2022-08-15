@@ -175,8 +175,17 @@ class BitVectorIndex():
         # bit vector for the rects we have already checked the distance to
         rect_ids = np.array(range(self.nrects))  # id each rect by its location in the enumerated list
         searched_bits = bitzeros(self.nrects)  # keep track of which rects we've already checked
-        search_radius = self.initial_radius
+        if k is None and max_dist < np.inf:
+            search_radius = max_dist
+        else:
+            search_radius = self.initial_radius
+
         while not solution_found and not search_complete:
+            # if we've exceeded the max_dist, do final pass then exit
+            if search_radius > max_dist:
+                search_complete = True
+                search_radius = max_dist
+
             # convert the query hypersphere into a hyperrectangle
             query_rect = np.zeros(shape=(self.ndimensions, 2))
             if weights is not None:
@@ -200,10 +209,6 @@ class BitVectorIndex():
                     test_instance = self.explainer.fit_to_rectangle(instance, constraints)
                     dist = self.explainer.distance_fn(instance, test_instance, weights)
                     search_radius = dist
-            # if we've exceeded the max_dist, do final pass then exit
-            if search_radius > max_dist:
-                search_complete = True
-                search_radius = max_dist
 
             if not empty_query_region:
                 # get the set of hyper-rect records in the query rectangle
@@ -224,6 +229,7 @@ class BitVectorIndex():
                     for rect, rect_id in zip(new_rects, new_rect_ids):
                         # if applicable only consider the rectangle if it falls within the constraints
                         if constraints is None or have_intersection(rect, constraints):
+                            # TODO check if rects entirely in the constraints set are being marked as trimmed, only want those which are modified by the trimming to be marked
                             if constraints is not None:  # take only part of rect which falls in constraints
                                 rect[:, LOWER] = np.maximum(rect[:, LOWER], constraints[:, LOWER])  # raise lower bounds
                                 rect[:, UPPER] = np.minimum(rect[:, UPPER], constraints[:, UPPER])  # lower upper bounds

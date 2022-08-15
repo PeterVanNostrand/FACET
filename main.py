@@ -27,10 +27,10 @@ def simple_run(dataset_name):
         "rf_difference": 0.01,
         "rf_distance": distance,
         "rf_k": 1,
-        "rf_ntrees": 20,
+        "rf_ntrees": 10,
         "rf_threads": 1,
-        "rf_maxdepth": 3,
-        "rf_hardvoting": True,  # note OCEAN and FACETIndex use soft and hard requirment
+        "rf_maxdepth": 20,
+        "rf_hardvoting": False,  # note OCEAN and FACETIndex use soft and hard requirment
     }
     facet_params = {
         "facet_expl_distance": distance,
@@ -48,13 +48,14 @@ def simple_run(dataset_name):
     }
     params = {
         "RandomForest": rf_params,
-        "FACETIndex": facet_params
+        "FACETIndex": facet_params,
+        "mace_maxtime": 300,
     }
     json_text = json.dumps(params, indent=4)
     print(json_text)
 
     # Create, train, and predict with the model
-    expl = "FACETIndex"
+    expl = "RF-OCSE"
     model = HEEAD(detectors=["RandomForest"], aggregator="NoAggregator",
                   explainer=expl, hyperparameters=params)
     model.train(xtrain, ytrain)
@@ -138,7 +139,7 @@ if __name__ == "__main__":
     #            num_iters=1, eval_samples=20, test_size=0.2, seed=RAND_SEED)
     # index_test()
     # run_ds.remove("spambase")
-    # compare_methods(run_ds, num_iters=5, explainers=["OCEAN", "FACETIndex"], eval_samples=20, seed=RAND_SEED)
+    # compare_methods(["vertebral"], num_iters=1, explainers=["MACE"], eval_samples=20, seed=RAND_SEED)
     # vary_ntrees(run_ds, explainer="FACETIndex", ntrees=list(range(5, 105, 5)), num_iters=5, seed=SEED)
     simple_run("vertebral")
     # bb_ntrees(run_ds, ntrees=[25], depths=[3], num_iters=1, eval_samples=5)

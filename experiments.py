@@ -536,10 +536,10 @@ def compare_methods(ds_names, explainers=["FACETIndex", "OCEAN"], distance="Eucl
         "rf_difference": 0.01,
         "rf_distance": distance,
         "rf_k": 1,
-        "rf_ntrees": 100,
+        "rf_ntrees": 10,
         "rf_threads": 1,
         "rf_maxdepth": 5,
-        "rf_hardvoting": True,  # note OCEAN and FACETIndex use soft and hard requirment
+        "rf_hardvoting": False,  # note OCEAN and FACETIndex use soft and hard requirment
     }
     facet_params = {
         "facet_expl_distance": distance,
@@ -558,7 +558,8 @@ def compare_methods(ds_names, explainers=["FACETIndex", "OCEAN"], distance="Eucl
         "test": test_params,
         "RandomForest": rf_params,
         "FACETIndex": facet_params,
-        "ocean_norm": 2
+        "ocean_norm": 2,
+        "mace_maxtime": 300
     }
 
     with open(run_path + "/" + "config.txt", 'a') as f:
