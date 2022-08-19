@@ -60,7 +60,7 @@ class HEEAD():
             self.explainer = OCEAN(model=self, hyperparameters=hyperparameters)
         elif explainer == "MACE":
             self.explainer = MACE(model=self, hyperparameters=hyperparameters)
-        elif explainer == "RF-OCSE":
+        elif explainer == "RFOCSE":
             self.explainer = RFOCSE(model=self, hyperparameters=hyperparameters)
         elif explainer == "FACET":
             self.explainer = FACET(model=self, hyperparameters=hyperparameters)

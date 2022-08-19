@@ -1,3 +1,6 @@
 *__pycache__
 .vscode
 *.code-workspace
+fastcrf/*
+setup.py
+build/*
