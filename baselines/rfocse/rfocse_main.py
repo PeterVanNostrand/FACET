@@ -1,3 +1,4 @@
+from .debug import LOG_LEVEL, ExtractionProblem_tostr, ExtractionContext_tostr, Solution_tostr, instance_num
 from typing import List, Tuple
 import time
 import random
@@ -97,10 +98,21 @@ def batch_extraction(sklearn_rf, dataset_info, X, max_distance=-1,
     problem: ExtractionProblem = make_problem(parsed_rf, dataset_info, search_closest, log_every,
                                               max_iterations)
 
+    global instance_num
+    instance_num = 0
+    if LOG_LEVEL == "DEBUG":
+        print("Logging ExtractionProblem")
+        f = open("logs/py_log.txt", "a")
+        f.write("######################### BATCH EXTRACTION #########################\n")
+        f.write("problem:\n")
+        f.write(ExtractionProblem_tostr(problem))
+        f.close()
+
     for idx, observation in enumerate(X):
 
         start = time.time()
         res = extract_single_counterfactual_set(problem, sklearn_rf, parsed_rf, dataset_info, observation, dataset)
+        instance_num += 1
         end = time.time()
         res['_idx'] = idx
         res['extraction_time'] = end - start
@@ -109,6 +121,8 @@ def batch_extraction(sklearn_rf, dataset_info, X, max_distance=-1,
 
 
 def extract_single_counterfactual_set(problem: ExtractionProblem, sklearn_rf, parsed_rf, dataset_info, to_explain, dataset):
+    global instance_num
+
     closest_mo: Tuple[int, float]
 
     if dataset is not None:
@@ -119,19 +133,41 @@ def extract_single_counterfactual_set(problem: ExtractionProblem, sklearn_rf, pa
     global_state: ExtractionContext = create_extraction_state(problem, parsed_rf, factual_class, to_explain,
                                                               dataset_info, closest_mo[1])
 
+    if LOG_LEVEL == "DEBUG":
+        f = open("logs/py_log_{}.txt".format(instance_num), "a")
+        f.write("######################### SINGLE EXTRACTION #########################\n")
+        f.write("global_state (extract_single_counterfactual_set) START:\n")
+        f.write(ExtractionContext_tostr(global_state))
+        f.write("global_state (extract_single_counterfactual_set) END:\n")
+        f.close()
+
     solution: Solution = Solution(
         [],  # cppvector[SplitPoint] conditions
         [],  # cppvector[int] set_rules
         to_explain,  # cppvector[double] instance
-        -1,  # double distance
+        -1.0,  # double distance
         False,  # bool found
         0,  # long num_evaluations
         0,  # long num_discovered_non_foil
         -1  # int estimated_class
     )
 
+    if LOG_LEVEL == "DEBUG":
+        f = open("logs/py_log_{}.txt".format(instance_num), "a")
+        f.write("solution 1 (extract_single_counterfactual_set) START:\n")
+        f.write(Solution_tostr(solution))
+        f.write("solution 1 (extract_single_counterfactual_set) END:\n")
+        f.close()
+
     solution.found = False
     extract_counterfactual_impl(global_state, solution)
+
+    if LOG_LEVEL == "DEBUG" or LOG_LEVEL == "SOLUTIONS":
+        f = open("logs/py_log_{}.txt".format(instance_num), "a")
+        f.write("solution 2 (extract_single_counterfactual_set) START:\n")
+        f.write(Solution_tostr(solution))
+        f.write("solution 2 (extract_single_counterfactual_set) END:\n")
+        f.close()
 
     res = {
         'found': solution.found,

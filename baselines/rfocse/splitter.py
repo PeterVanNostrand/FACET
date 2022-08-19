@@ -11,6 +11,8 @@ from .extraction_problem_header import ConditionSide
 
 from .observations import CATEGORY_ACTIVATED, CATEGORY_DEACTIVATED, CATEGORY_UNKNOWN, CATEGORY_UNSET, ACTIVATED_MASK
 from .observations import set_category_state, is_category_state
+from .debug import LOG_LEVEL, ConditionSide_tostr, ExtractionContext_tostr, FeatureConditions_tostr, numerical_list_tostr, instance_num
+from .debug_splitter import PartitionProb_tostr
 
 
 def agg_partition_prob(global_state: ExtractionContext, partition_prob: PartitionProb, rule: int, add: bool) -> None:
@@ -25,16 +27,32 @@ def agg_partition_prob(global_state: ExtractionContext, partition_prob: Partitio
 
     previous_active_by_tree: int = partition_prob.active_by_tree[tree_id]
 
+    if LOG_LEVEL == "DEBUG":
+        f = open("logs/py_log_{}.txt".format(instance_num), "a")
+        f.write("mult (agg_partition_prob): " + str(mult) + "\n")
+        f.write("tree_id (agg_partition_prob): " + str(tree_id) + "\n")
+        f.write("previous_active_by_tree (agg_partition_prob): " + str(previous_active_by_tree) + "\n")
+        f.write("global state in (agg_partition_prob) START\n")
+        f.write(ExtractionContext_tostr(global_state))
+        f.write("global state in (agg_partition_prob) END\n")
+
     if partition_prob.active_by_tree[tree_id] == 1 and mult == -1:
         print("Attempting to remove last rule...", rule, "from tree", tree_id)
-        exit(0)
+        exit(0)  # ! ERROR LINE
 
     partition_prob.active_by_tree[tree_id] += mult
     partition_prob.num_active += mult
 
+    if LOG_LEVEL == "DEBUG":
+        f.write("partition_prob.active_by_tree[tree_id] (agg_partition_prob): " +
+                str(partition_prob.active_by_tree[tree_id]) + "\n")
+        f.write("partition_prob.num_active (agg_partition_prob): " + str(partition_prob.num_active) + "\n")
+
     for i in range(global_state.problem.n_labels):
         if previous_active_by_tree != 0:
             prev_label_prob: float = tree_prob_sum[i] / previous_active_by_tree
+            if LOG_LEVEL == "DEBUG":
+                f.write("tree_prob_sum[i] (agg_partition_prob): " + str(tree_prob_sum[i]) + "\n")
         else:
             prev_label_prob: float = 0
 
@@ -43,6 +61,20 @@ def agg_partition_prob(global_state: ExtractionContext, partition_prob: Partitio
         prob_delta_tree = (tree_prob_sum[i] / partition_prob.active_by_tree[tree_id]) - prev_label_prob
         partition_prob.prob[i] += prob_delta_tree / global_state.problem.n_trees
 
+        if LOG_LEVEL == "DEBUG":
+            f.write("prev_label_prob (agg_partition_prob): {:.4f}".format(prev_label_prob) + "\n")
+            f.write("rule_prob[i] (agg_partition_prob): " + str(rule_prob[i]) + "\n")
+            f.write("tree_prob_sum[i] (agg_partition_prob): " + str(tree_prob_sum[i]) + "\n")
+            f.write("prob_delta_tree (agg_partition_prob): {:.4f}".format(prob_delta_tree) + "\n")
+            f.write("partition_prob.prob[i] (agg_partition_prob): " + str(partition_prob.prob[i]) + "\n")
+            f.write("global_state out START:" + "\n")
+            f.write(ExtractionContext_tostr(global_state))
+            f.write("global_state out END:" + "\n")
+            f.write("partition_prob START:" + "\n")
+            f.write(PartitionProb_tostr(partition_prob))
+            f.write("partition_prob END:" + "\n")
+            f.write("########### END agg_partition_prob ###########" + "\n")
+
 
 def batch_set_values_bucket_state(global_state: ExtractionContext, partition: PartitionProb, condition_side: ConditionSide, bucket_from: int, bucket_to: int, state: bool) -> int:
     num_active: int = 0
@@ -50,6 +82,18 @@ def batch_set_values_bucket_state(global_state: ExtractionContext, partition: Pa
     # rule_pos: int
     # List[int].iterator it = condition_side.ids.begin() + condition_side.ids_values[bucket_from].ids_starts_at
     # List[int].iterator end = condition_side.ids.begin() + condition_side.ids_values[bucket_to].ids_ends_at
+
+    if LOG_LEVEL == "DEBUG":
+        f = open("logs/py_log_{}.txt".format(instance_num), "a")
+        f.write("global_state (batch_set_values_bucket_state) START:\n")
+        f.write(ExtractionContext_tostr(global_state))
+        f.write("global_state (batch_set_values_bucket_state) END:\n")
+        f.write("partition (batch_set_values_bucket_state) START:\n")
+        f.write(PartitionProb_tostr(partition))
+        f.write("partition (batch_set_values_bucket_state) END:\n")
+        f.write("ConditionSide (batch_set_values_bucket_state) START:\n")
+        f.write(ConditionSide_tostr(condition_side))
+        f.write("ConditionSide (batch_set_values_bucket_state) END:\n")
 
     if bucket_from <= bucket_to:
         start_pos: int = condition_side.ids_values[bucket_from].ids_starts_at
@@ -60,10 +104,19 @@ def batch_set_values_bucket_state(global_state: ExtractionContext, partition: Pa
         #     inc(it)
         while start_pos != end_pos:
             rule_id: int = condition_side.ids[start_pos]
+            if LOG_LEVEL == "DEBUG":
+                f.write("rule_id: " + str(rule_id) + "\n")
             start_pos += 1
             if global_state.active_rules[rule_id]:
                 agg_partition_prob(global_state, partition, rule_id, state)  # ! ERROR PATH
                 num_active += 1
+                if LOG_LEVEL == "DEBUG":
+                    f.write("global_state (batch_set_values_bucket_state) START:\n")
+                    f.write(ExtractionContext_tostr(global_state))
+                    f.write("global_state (batch_set_values_bucket_state) END:\n")
+                    f.write("partition (batch_set_values_bucket_state) START:\n")
+                    f.write(PartitionProb_tostr(partition))
+                    f.write("partition (batch_set_values_bucket_state) END:\n")
 
     return num_active
 
@@ -102,9 +155,11 @@ def calculate_category_score(global_state: ExtractionContext, conditions: Featur
 
 
 def make_partition_prob(global_state: ExtractionContext, global_prob: List[float]) -> PartitionProb:
-    tree_prob_sum: List[List[float]] = global_state.tree_prob_sum
-    active_by_tree: List[int] = global_state.active_by_tree
-    prob: List[float] = global_prob
+    tree_prob_sum: List[List[float]] = []
+    for i in range(len(global_state.tree_prob_sum)):
+        tree_prob_sum.append(global_state.tree_prob_sum[i].copy())
+    active_by_tree: List[int] = global_state.active_by_tree.copy()
+    prob: List[float] = global_prob.copy()
     num_active = global_state.num_active_rules
     partition_prob: PartitionProb = PartitionProb(tree_prob_sum, active_by_tree, prob, num_active)
     return partition_prob
@@ -213,18 +268,55 @@ def make_feature_bounds(bounds: List[int], categorical_mask: int, is_mask_set: b
 
 
 def numerical_max_split(global_state: ExtractionContext, feature: int) -> SplitPointScore:
+    if LOG_LEVEL == "DEBUG":
+        f = open("logs/py_log_{}.txt".format(instance_num), "a")
+        f.write("NUM MAX SPLIT 1\n")
+        f.write("global_state (numerical_max_split):\n")
+        f.write(ExtractionContext_tostr(global_state))
+
     global_prob: List[float] = estimate_probability(global_state)
     conditions: FeatureConditions = global_state.feature_conditions_view[feature]
     feature_bounds: FeatureBounds = global_state.feature_bounds[feature]
+    if LOG_LEVEL == "DEBUG":
+        f.write("NUM MAX SPLIT 2\n")
+        f.write("global_state (numerical_max_split):\n")
+        f.write(ExtractionContext_tostr(global_state))
+        f.write("global_prob (numerical_max_split): " + numerical_list_tostr(global_prob) + "\n")
 
     # Partition for rules that meet feat > x
     partition_not_meet: PartitionProb = make_partition_prob(global_state, global_prob)
+    if LOG_LEVEL == "DEBUG":
+        f.write("NUM MAX SPLIT 3\n")
+        f.write("global_state (numerical_max_split):\n")
+        f.write(ExtractionContext_tostr(global_state))
+        f.write("global_prob (numerical_max_split): " + numerical_list_tostr(global_prob) + "\n")
+        f.write("partition_not_meet (numerical_max_split):\n")
+        f.write(PartitionProb_tostr(partition_not_meet))
 
     # Partition for rules that meet feat <= x
     partition_meet: PartitionProb = make_partition_prob(global_state, global_prob)
+    if LOG_LEVEL == "DEBUG":
+        f.write("NUM MAX SPLIT 4\n")
+        f.write("global_state (numerical_max_split):\n")
+        f.write(ExtractionContext_tostr(global_state))
+        f.write("global_prob (numerical_max_split): " + numerical_list_tostr(global_prob) + "\n")
+        f.write("partition_not_meet (numerical_max_split):\n")
+        f.write(PartitionProb_tostr(partition_not_meet))
+        f.write("partition_meet (numerical_max_split):\n")
+        f.write(PartitionProb_tostr(partition_meet))
 
     # Compute global score (needed to compute the uncertainty reduction)
     global_score: float = criterion(partition_meet.prob)
+    if LOG_LEVEL == "DEBUG":
+        f.write("NUM MAX SPLIT 5\n")
+        f.write("global_state (numerical_max_split):\n")
+        f.write(ExtractionContext_tostr(global_state))
+        f.write("global_prob (numerical_max_split): " + numerical_list_tostr(global_prob) + "\n")
+        f.write("partition_not_meet (numerical_max_split):\n")
+        f.write(PartitionProb_tostr(partition_not_meet))
+        f.write("partition_meet (numerical_max_split):\n")
+        f.write(PartitionProb_tostr(partition_meet))
+        f.write("global_score: {:.4f}".format(global_score) + "\n")
 
     min_bucket: int = feature_bounds.numerical_bounds[0]
     max_bucket: int = feature_bounds.numerical_bounds[1]
@@ -235,6 +327,25 @@ def numerical_max_split(global_state: ExtractionContext, feature: int) -> SplitP
     # conditions are deactivated
     for bucket in range(min_bucket, max_bucket):
         set_values_bucket_state(global_state, partition_meet, conditions.side_2, bucket, False)
+
+    if LOG_LEVEL == "DEBUG":
+        f.write("NUM MAX SPLIT 6\n")
+        f.write("global_state (numerical_max_split):\n")
+        f.write(ExtractionContext_tostr(global_state))
+        f.write("global_prob (numerical_max_split): " + numerical_list_tostr(global_prob) + "\n")
+        f.write("partition_not_meet (numerical_max_split):\n")
+        f.write(PartitionProb_tostr(partition_not_meet))
+        f.write("partition_meet (numerical_max_split):\n")
+        f.write(PartitionProb_tostr(partition_meet))
+        f.write("global_score: {:.4f}".format(global_score) + "\n")
+        f.write("min_bucket: " + str(min_bucket) + "\n")
+        f.write("max_bucket: " + str(max_bucket) + "\n")
+        f.write("current_bucket: " + str(current_bucket) + "\n")
+        # f.write("current_score: " + str(current_score) + "\n")
+        # f.write("best_threshold: " + str(best_threshold) + "\n")
+        # f.write("best_score: " + str(best_score) + "\n")
+        # f.write("best_position: " + str(best_position) + "\n")
+        f.close()
 
     # In this iteration, the partition meet holds all lte rules and does not have any gt
     # since the threshold is the smallest (rules defined in <= smallest).
@@ -283,7 +394,11 @@ def numerical_max_split(global_state: ExtractionContext, feature: int) -> SplitP
 
 def calculate_feature_split(global_state: ExtractionContext, feature: int, verbose: bool) -> SplitPointScore:
     feature_conditions: FeatureConditions = global_state.feature_conditions_view[feature]
-
+    if LOG_LEVEL == "DEBUG":
+        f = open("logs/py_log_{}.txt".format(instance_num), "a")
+        f.write("feature_conditions (calculate_feature_split):\n")
+        f.write(FeatureConditions_tostr(feature_conditions))
+        f.close()
     if feature_conditions.feature_type == 4:
         # One-hot
         return categorical_max_split(global_state, feature, verbose)
@@ -309,7 +424,13 @@ def calculate_split(global_state: ExtractionContext, verbose: bool = False) -> T
         feature_type: int = global_state.feature_conditions_view[feature].feature_type
 
         if (feature_type == 4 and not feature_bounds.is_mask_set) or (feature_type != 4 and feature_bounds.numerical_bounds[0] < feature_bounds.numerical_bounds[1]):
-
+            if LOG_LEVEL == "DEBUG":
+                f = open("logs/py_log_{}.txt".format(instance_num), "a")
+                f.write("global_state (calculate_split):\n")
+                f.write(ExtractionContext_tostr(global_state))
+                f.write("feature: " + str(feature) + "\n")
+                f.write("verbose: " + str(verbose) + "\n")
+                f.close()
             current_split: SplitPointScore = calculate_feature_split(global_state,  feature, verbose)  # ! ERROR PATH
 
             if not best_split.is_ok or (current_split.is_ok and current_split.score > best_split.score):

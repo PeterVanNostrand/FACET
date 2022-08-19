@@ -3,6 +3,7 @@ import numpy as np
 from operator import itemgetter
 from typing import List, Tuple
 from .extractor_header import ExtractionProblem, FeatureConditions, SplitPoint
+from .debug import LOG_LEVEL, ExtractionProblem_tostr, DatasetInfo_tostr, instance_num
 
 CATEGORY_ACTIVATED = 2
 CATEGORY_DEACTIVATED = 1
@@ -75,6 +76,7 @@ def update_to_meet_split(problem: ExtractionProblem, counterfactual: List[float]
 def update_to_meet(counterfactual: List[float], feature: int, feature_type: int,
                    value: float, meet: bool, is_mask_set: bool = False, num_categories: int = -1,
                    enable_if_last: bool = False, epsilon: float = 0.0) -> bool:
+    counter_start = counterfactual.copy()
     offset: float = 0
     position: int
     updated: bool = False
@@ -91,9 +93,9 @@ def update_to_meet(counterfactual: List[float], feature: int, feature_type: int,
 
             counterfactual[feature] = value + offset
             updated = True
-    elif feature_type == 2 and feature_type == 3:
+    elif feature_type == 2 or feature_type == 3:  # ? MODIFIED FROM 'AND' TO 'OR' DUE TO CYTHON BUG
         if (meet and value < counterfactual[feature]) or (not meet and value >= counterfactual[feature]):
-            counterfactual[feature] = math.floor(value) if meet else math.foor(value + 1)
+            counterfactual[feature] = math.floor(value) if meet else math.floor(value + 1)
             updated = True
     elif feature_type == 4:
         position = value
@@ -162,14 +164,39 @@ def adapt_observation_representation(observation, dataset_info, include_all_cate
 
 def calculate_sorted_rule_distances(problem: ExtractionProblem, observation,
                                     parsed_rf, dataset_info) -> List[Tuple[int, float]]:
+
+    if LOG_LEVEL == "DEBUG":
+        frule = open("logs/py_log_{}.txt".format(instance_num), "a")
+        frule.write("######################### CALC SORTED RULE DISTANCE #########################\n")
+        frule.write(ExtractionProblem_tostr(problem))
+        frule.write("observation: " + str(observation) + "\n")
+        frule.write("dataset_info:\n")
+        frule.write(DatasetInfo_tostr(dataset_info))
+        frule.write("parsed_rf:\n")
+        frule.write(str(parsed_rf) + "\n")
+        frule.close()
+
     rule_distances = []
 
     to_explain: List[float] = adapt_observation_representation(observation, dataset_info,
                                                                include_all_categories=False)
-    current_obs: List[float]
-    rule_dist: float
+
+    if LOG_LEVEL == "DEBUG":
+        frule = open("logs/py_log_{}.txt".format(instance_num), "a")
+        out_str = "to_explain: ["
+        for i in range(len(to_explain)):
+            out_str += str(to_explain[i])
+            if i != len(to_explain)-1:
+                out_str += ", "
+        out_str += "]\n"
+        frule.write(out_str)
+        frule.close()
+
+    # current_obs: List[float]
+    # rule_dist: float
     for r_id, (t_id, rule) in enumerate(parsed_rf.rules):
-        current_obs = adapt_observation_representation(observation, dataset_info, include_all_categories=True)
+        current_obs: List[float] = adapt_observation_representation(
+            observation, dataset_info, include_all_categories=True)
 
         for feature_orig, threshold, is_leq in rule.conditions:
             feature = dataset_info.inverse_dataset_description[feature_orig]['current_position']
@@ -187,13 +214,37 @@ def calculate_sorted_rule_distances(problem: ExtractionProblem, observation,
             previous_value = current_obs[feature]
             update_to_meet(current_obs, feature, feature_type, value, meet_cond)
 
-        rule_dist = distance(problem, to_explain, current_obs)
+        if LOG_LEVEL == "DEBUG":
+            frule = open("logs/py_log_{}.txt".format(instance_num), "a")
+            out_str = "obs: ["
+            for i in range(len(current_obs)):
+                out_str += str(current_obs[i])
+                if i != len(current_obs)-1:
+                    out_str += ", "
+            out_str += "]\n"
+            frule.write(out_str)
+            frule.close()
+
+        rule_dist: float = distance(problem, to_explain, current_obs)
         rule_distances.append((r_id, rule_dist))
 
     rule_distances = sorted(rule_distances, key=itemgetter(1))
     rule_distances_c: List[Tuple[int, float]] = []
 
+    all_zero = True
     for r_id, r_distance in rule_distances:
         rule_distances_c.append((r_id, r_distance))
+        if LOG_LEVEL == "DEBUG":
+            frule = open("logs/py_log_{}.txt".format(instance_num), "a")
+            frule.write(("rid: {}, rdist: {}\n".format(r_id, r_distance)))
+            frule.close()
+            if r_distance > 0:
+                all_zero = False
+
+    if LOG_LEVEL == "DEBUG":
+        if all_zero:
+            print("ALL ZERO CASE")
+            print(str(to_explain))
+            print(str(current_obs))
 
     return rule_distances_c

@@ -55,7 +55,7 @@ def simple_run(dataset_name):
     print(json_text)
 
     # Create, train, and predict with the model
-    expl = "RF-OCSE"
+    expl = "FACETIndex"
     model = HEEAD(detectors=["RandomForest"], aggregator="NoAggregator",
                   explainer=expl, hyperparameters=params)
     model.train(xtrain, ytrain)

@@ -9,6 +9,8 @@ from .observations import is_category_state, set_category_state, does_meet_split
 from .observations import CATEGORY_ACTIVATED, CATEGORY_DEACTIVATED, CATEGORY_UNSET, CATEGORY_UNKNOWN
 from .splitter import calculate_split
 from .observations import distance as rule_distance
+from .debug import LOG_LEVEL, ExtractionContext_tostr, Solution_tostr, instance_num
+import copy
 
 
 def debug(global_state: ExtractionContext) -> None:
@@ -291,7 +293,7 @@ def apply_feature_bounds_categorical(global_state: ExtractionContext, split_poin
             # Category was previously deactivated (previous_category_state == -1) or is unset
             pass
 
-    state: StepState = StepState(removed_rules, global_state.feature_bounds)
+    state: StepState = StepState(removed_rules, copy.deepcopy(global_state.feature_bounds))
     global_state.feature_bounds[split_point.feature] = feature_bounds
     return state
 
@@ -315,7 +317,7 @@ def apply_feature_bounds_numerical(global_state: ExtractionContext, split_point:
     deactivate_bucket_batch(global_state, feature_conditions.side_1,
                             previous_min_bucket, current_min_bucket - 1, removed_rules)
 
-    state: StepState = StepState(removed_rules, global_state.feature_bounds)
+    state: StepState = StepState(removed_rules, copy.deepcopy(global_state.feature_bounds))
     global_state.feature_bounds[split_point.feature] = feature_bounds
     return state
 
@@ -396,12 +398,37 @@ def extract_counterfactual_impl(global_state: ExtractionContext, solution: Solut
     solution.num_evaluations += 1
     iteration: int = solution.num_evaluations
 
+    global instance_num
+    if LOG_LEVEL == "DEBUG":
+        f = open("logs/py_log_{}.txt".format(instance_num), "a")
+        f.write("global_state (extract_counterfactual_impl) in START:\n")
+        f.write(ExtractionContext_tostr(global_state))
+        f.write("global_state (extract_counterfactual_impl) in END:\n")
+        f.write("solution (extract_counterfactual_impl) in START:\n")
+        f.write(Solution_tostr(solution))
+        f.write("solution (extract_counterfactual_impl) in END:\n")
+        f.write("CHECKING CONDITIONS\n")
+        f.close()
+
     if (solution.found and not global_state.problem.search_closest) \
             or (global_state.problem.max_iterations != -1 and iteration >= global_state.problem.max_iterations):
         return
 
+    if LOG_LEVEL == "DEBUG":
+        f = open("logs/py_log_{}.txt".format(instance_num), "a")
+        f.write("solution:\n")
+        f.write(Solution_tostr(solution))
+        f.write("PRUNING RULES\n")
+        f.close()
+
     if prune_rules(global_state, solution) or solution.num_evaluations == 1:
         ensure_bounds_consistency(global_state, solution)
+
+    if LOG_LEVEL == "DEBUG":
+        f = open("logs/py_log_{}.txt".format(instance_num), "a")
+        f.write("solution:\n")
+        f.write(Solution_tostr(solution))
+        f.close()
 
     estimated_class: int = can_stop(global_state)
 
@@ -422,22 +449,34 @@ def extract_counterfactual_impl(global_state: ExtractionContext, solution: Solut
             global_state.max_distance
         ))
 
+    if LOG_LEVEL == "DEBUG":
+        f = open("logs/py_log_{}.txt".format(instance_num), "a")
+        f.write("global_state:\n")
+        f.write(ExtractionContext_tostr(global_state))
+        f.write("solution:\n")
+        f.write(Solution_tostr(solution))
+        f.write("estimated_class: " + str(estimated_class) + "\n")
+        f.close()
+
     if estimated_class != -1:
 
         if estimated_class == global_state.real_class:
             solution.num_discovered_non_foil += 1
         else:
             solution.found = True
-            solution.conditions: List[SplitPoint] = global_state.splits
+            solution.conditions: List[SplitPoint] = []
+            for i in range(len(global_state.splits)):
+                solution.conditions.append(copy.deepcopy(global_state.splits[i]))
             solution.set_rules = get_set_rules_ids(global_state)
             solution.distance = calculate_current_distance(global_state)
-            solution.instance: List[float] = global_state.current_obs
+            solution.instance: List[float] = global_state.current_obs.copy()
             solution.estimated_class = estimated_class
     else:
         verbose = False
         split_point_ok = calculate_split(global_state, verbose)  # ! ERROR PATH
 
         if not split_point_ok[0]:
+            print("INSTANCE: {}".format(instance_num))
             debug(global_state)
             exit(0)
 
