@@ -80,11 +80,8 @@ class HEEAD():
             self.explainer = AFT(model=self, hyperparameters=hyperparameters)
 
     def train(self, x, y=None):
-        # Use semi-supervised approach to train aggregator using 5% of data, use remainder as unsupervised for detectors
-        xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=0.33)
-
-        self.__train_detectors(xtrain, ytrain)
-        self.__train_aggregator(xtest, ytest)
+        self.__train_detectors(x, y)
+        # self.__train_aggregator(x, y)
 
     def predict(self, x):
         # make predictions using detectors

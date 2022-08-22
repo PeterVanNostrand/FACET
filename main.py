@@ -30,7 +30,7 @@ def simple_run(dataset_name):
         "rf_ntrees": 10,
         "rf_threads": 1,
         "rf_maxdepth": 20,
-        "rf_hardvoting": False,  # note OCEAN and FACETIndex use soft and hard requirment
+        "rf_hardvoting": True,  # note OCEAN and FACETIndex use soft and hard requirment
     }
     facet_params = {
         "facet_expl_distance": distance,
@@ -50,6 +50,7 @@ def simple_run(dataset_name):
         "RandomForest": rf_params,
         "FACETIndex": facet_params,
         "mace_maxtime": 300,
+        "rfoce_transform": False
     }
     json_text = json.dumps(params, indent=4)
     print(json_text)
@@ -60,7 +61,14 @@ def simple_run(dataset_name):
                   explainer=expl, hyperparameters=params)
     model.train(xtrain, ytrain)
     prep_start = time.time()
-    model.prepare(data=xtrain)
+    #! TEMP SWAP TO ALL DATA FOR RFOCSE
+    # model.prepare(data=xtrain)
+    model.prepare(data=x)
+    # if params["rfoce_transform"]:
+    #     model.train(model.explainer.float_transformer.transform(xtrain), ytrain)
+    # else:
+    #     model.train(xtrain, ytrain)
+
     if expl == "FACETIndex":
         print("rects requested:", params.get("FACETIndex").get("facet_nrects"))
         print("rects enumerated")
@@ -75,7 +83,10 @@ def simple_run(dataset_name):
     print("preptime:", preptime)
     print("xtrain:", xtrain.shape)
 
-    preds = model.predict(xtest)
+    if params["rfoce_transform"]:
+        preds = model.predict(model.explainer.float_transformer.transform(xtest))
+    else:
+        preds = model.predict(xtest)
 
     # measure model performance
     accuracy, precision, recall, f1 = classification_metrics(preds, ytest, verbose=False)
@@ -94,7 +105,7 @@ def simple_run(dataset_name):
 
     # generate the explanations
     explain = True
-    eval_samples = 20
+    eval_samples = None
     if explain:
         if eval_samples is not None:
             xtest = xtest[:eval_samples]

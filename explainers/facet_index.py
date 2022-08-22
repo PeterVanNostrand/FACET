@@ -542,19 +542,28 @@ class FACETIndex(Explainer):
                 # nearest_rect = self.rbvs[counterfactual_classes[i]].point_query(
                 #     instance=x[i], constraints=constraints, weights=weights)
                 constraints = None
-                self.k = 3
-                self.max_dist = 100
+                self.k = 1
+                self.max_dist = np.inf
                 if self.k is None or self.k > 1:
                     nearest_rects = self.rbvs[counterfactual_classes[i]].point_query(
-                        instance=x[i], constraints=constraints, weights=weights, k=self.k, max_dist=self.max_dist)
-                    print(len(nearest_rects))
+                        instance=x[i],
+                        constraints=constraints,
+                        weights=weights,
+                        k=self.k,
+                        max_dist=self.max_dis
+                    )
                     if len(nearest_rects) > 0:
                         nearest_rect = nearest_rects[0]
                     else:
                         nearest_rect = None
                 else:
                     nearest_rect = self.rbvs[counterfactual_classes[i]].point_query(
-                        instance=x[i], constraints=constraints, weights=weights, k=self.k, max_dist=self.max_dist)
+                        instance=x[i],
+                        constraints=constraints,
+                        weights=weights,
+                        k=self.k,
+                        max_dist=self.max_dist
+                    )
 
                 # nearest_rect = self.rbvs[counterfactual_classes[i]].point_query(x[i], constraints, weights)
                 # if a counterfactual region was found

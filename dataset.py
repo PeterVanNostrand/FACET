@@ -3,6 +3,7 @@ import pandas as pd
 import scipy.io as sio
 import h5py
 from sklearn import datasets as skdatasets
+from sklearn.preprocessing import StandardScaler, normalize
 
 # a list of the abbreviated name for all classification datasets
 DS_NAMES = [
@@ -61,14 +62,14 @@ ANOM_DS_PATHS = {
 }
 
 
-def load_data(dataset_name, normalize=True):
+def load_data(dataset_name, preprocessing="Scale"):
     '''
     Returns one of many possible anomaly detetion datasets based on the given `dataset_name`
 
     Parameters
     ----------
     dataset_name : the abbreviated name of the dataset to load, see README for all datset options
-    normalize    : if true, normalize the features of x to the range [0, 1]
+    preprocessing: if None do nothing, if Normalize normalize all features [0,1], if Scale Standardize features by removing the mean and scaling to unit variance
 
     Returns
     -------
@@ -76,18 +77,30 @@ def load_data(dataset_name, normalize=True):
     y : the dataset labels with shape (nsamples,) containing 0 to represent a normal label and 1 for an anomaly label
     '''
     if dataset_name == "cancer":
-        return util_load_cancer(normalize)
-    if dataset_name == "glass":
-        return util_load_glass(normalize)
-    if dataset_name == "magic":
-        return util_load_magic(normalize)
-    if dataset_name == "spambase":
-        return util_load_spambase(normalize)
-    if dataset_name == "vertebral":
-        return util_load_vertebral(normalize)
+        x, y = util_load_cancer()
+    elif dataset_name == "glass":
+        x, y = util_load_glass()
+    elif dataset_name == "magic":
+        x, y = util_load_magic()
+    elif dataset_name == "spambase":
+        x, y = util_load_spambase()
+    elif dataset_name == "vertebral":
+        x, y = util_load_vertebral()
+    else:
+        print("ERROR NO SUCH DATASET")
+        exit(0)
+
+    if preprocessing == "Normalize":
+        # normalize x to [0, 1]
+        # x = (x - min_value) / (max_value - min_value)
+        x = normalize(x)
+    elif preprocessing == "Scale":
+        float_transformer = StandardScaler()
+        x = float_transformer.fit_transform(x)
+    return x, y
 
 
-def util_load_cancer(normalize=True):
+def util_load_cancer():
     data = pd.read_csv(DS_PATHS["cancer"]).to_numpy()
     ids = data[:, 0:1]
     labels = data[:, 1:2].squeeze()  # lables of M=Malignant, B=Benign
@@ -96,17 +109,10 @@ def util_load_cancer(normalize=True):
     y = np.zeros(labels.shape[0], dtype=int)
     y[labels == "M"] = 1
     x = data[:, 2:].astype(float)
-
-    if normalize:
-        # normalize x on [0, 1]
-        max_value = np.max(x, axis=0)
-        min_value = np.min(x, axis=0)
-        x = (x - min_value) / (max_value - min_value)
-
     return x, y
 
 
-def util_load_glass(normalize=True):
+def util_load_glass():
     data = pd.read_csv(DS_PATHS["glass"]).to_numpy()
     ids = data[:, 0:1]
     labels = data[:, -1:].squeeze()
@@ -135,17 +141,10 @@ def util_load_glass(normalize=True):
     # drop all samples that are not float or nonfloat (keeps ~75% of dataset)
     y = y[is_float | is_nonfloat]
     x = x[is_float | is_nonfloat]
-
-    if normalize:
-        # normalize x on [0, 1]
-        max_value = np.max(x, axis=0)
-        min_value = np.min(x, axis=0)
-        x = (x - min_value) / (max_value - min_value)
-
     return x, y
 
 
-def util_load_magic(normalize):
+def util_load_magic():
     data = pd.read_csv(DS_PATHS["magic"]).to_numpy()
     labels = data[:, -1:].squeeze()  # lables of g=gamma (signal), h=hadron (background)
 
@@ -153,32 +152,19 @@ def util_load_magic(normalize):
     y = np.zeros(labels.shape[0], dtype=int)
     y[labels == "g"] = 1
     x = data[:, :-1].astype(float)
-
-    if normalize:
-        # normalize x on [0, 1]
-        max_value = np.max(x, axis=0)
-        min_value = np.min(x, axis=0)
-        x = (x - min_value) / (max_value - min_value)
-
     return x, y
 
 
-def util_load_spambase(normalize=True):
+def util_load_spambase():
     path = DS_PATHS["spambase"]
     data = pd.read_csv(path).to_numpy()
     ncols = data.shape[1]
     x = data[:, :-1]
     y = data[:, -1:].squeeze().astype('int')
-    if normalize:
-        # normalize x on [0, 1]
-        max_value = np.max(x, axis=0)
-        min_value = np.min(x, axis=0)
-        x = (x - min_value) / (max_value - min_value)
-
     return x, y
 
 
-def util_load_vertebral(normalize=True):
+def util_load_vertebral():
     data = pd.read_csv(DS_PATHS["vertebral"], delim_whitespace=True).to_numpy()
     labels = data[:, -1:].squeeze()  # lables of g=gamma (signal), h=hadron (background)
 
@@ -186,24 +172,17 @@ def util_load_vertebral(normalize=True):
     y = np.zeros(labels.shape[0], dtype=int)
     y[labels == "AB"] = 1
     x = data[:, :-1].astype(float)
-
-    if normalize:
-        # normalize x on [0, 1]
-        max_value = np.max(x, axis=0)
-        min_value = np.min(x, axis=0)
-        x = (x - min_value) / (max_value - min_value)
-
     return x, y
 
 
-def load_anom_data(dataset_name, normalize=True):
+def load_anom_data(dataset_name, preprocessing="Scale"):
     '''
     Returns one of many possible anomaly detetion datasets based on the given `dataset_name`
 
     Parameters
     ----------
     dataset_name : the abbreviated name of the dataset to load, see README for all datset options
-    normalize    : if true, normalize the features of x to the range [0, 1]
+    preprocessing: if None do nothing, if Normalize normalize all features [0,1], if Scale Standardize features by removing the mean and scaling to unit variance
 
     Returns
     -------
@@ -213,14 +192,24 @@ def load_anom_data(dataset_name, normalize=True):
 
     ds_odds_format = ["annthyroid", "cardio", "musk", "pendigits", "satimage", "shuttle", "thyroid", "wbc"]
     if dataset_name in ds_odds_format:
-        return util_load_stonybrook(dataset_name, normalize)
+        x, y = util_load_stonybrook(dataset_name)
     elif dataset_name == "http":
-        return load_http(normalize)
+        x, y = load_http()
     elif dataset_name == "mulcross":
-        return load_mulcross(normalize)
+        x, y = load_mulcross()
     else:
         print("Unknown Dataset! Using thyroid")
-        return util_load_stonybrook("thyroid", normalize)
+        x, y = util_load_stonybrook("thyroid", )
+
+    if preprocessing == "Normalize":
+        # normalize x to [0, 1]
+        # x = (x - min_value) / (max_value - min_value)
+        x = normalize(x)
+    elif preprocessing == "Scale":
+        float_transformer = StandardScaler()
+        x = float_transformer.fit_transform(x)
+
+    return x, y
 
 
 def validate_labels(ds_names):
@@ -244,7 +233,7 @@ def validate_labels(ds_names):
     return failed_ds
 
 
-def util_load_stonybrook(dataset_name, normalize=True):
+def util_load_stonybrook(dataset_name, ):
     '''
     A utility method for loading any data matrix formatted as in the StonyBrook Outlier Detection Datasets (ODDS)
     '''
@@ -252,36 +241,21 @@ def util_load_stonybrook(dataset_name, normalize=True):
     data_dict = sio.loadmat(matpath)
     x = data_dict["X"]
     y = data_dict["y"].astype('int')
-
     # make y have dimension (nsamples,)
     y = np.squeeze(y)
-
-    if normalize:
-        # normalize x on [0, 1]
-        max_value = np.max(x, axis=0)
-        min_value = np.min(x, axis=0)
-        x = (x - min_value) / (max_value - min_value)
-
     return x, y
 
 
-def load_http(normalize=True):
+def load_http():
     # Note the .mat file from StonyBrook ODDS is a version 7.3 mat file and not compataible with scipy, use HDF5 instead
     with h5py.File("./data/http/http.mat", "r") as f:
         x = f["X"][()].T
         y = f["y"][()].T.squeeze().astype('int')
     y = np.squeeze(y)
-
-    if normalize:
-        # normalize x on [0, 1]
-        max_value = np.max(x, axis=0)
-        min_value = np.min(x, axis=0)
-        x = (x - min_value) / (max_value - min_value)
-
     return x, y
 
 
-def load_mulcross(normalize=True):
+def load_mulcross():
     # load the dataset from a csv
     mulcross_df = pd.read_csv("./data/mulcross/mulcross.csv")
 
@@ -293,11 +267,10 @@ def load_mulcross(normalize=True):
     idx_anomaly = mulcross_df["Target"] == "'Anomaly'"
     mulcross_df.loc[idx_anomaly, "y"] = 1
     y = mulcross_df["y"].to_numpy()
-
     return x, y
 
 
-def load_iris(normalize=True):
+def load_iris():
     # import the iris dataset for testing
     iris = skdatasets.load_iris()
     x = iris.data
@@ -314,11 +287,4 @@ def load_iris(normalize=True):
 
     x = x[keep_idxs]
     y = y[keep_idxs]
-
-    if normalize:
-        # normalize x on [0, 1]
-        max_value = np.max(x, axis=0)
-        min_value = np.min(x, axis=0)
-        x = (x - min_value) / (max_value - min_value)
-
     return x, y
