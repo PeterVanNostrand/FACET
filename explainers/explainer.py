@@ -8,7 +8,7 @@ class Explainer(ABC):
     '''
 
     @abstractmethod
-    def __init__(self, model, hyperparameters=None):
+    def __init__(self, manager, hyperparameters=None):
         '''
         Function to instantiate the explanation method being used.
         Hyparameters should be a dictionary which contains the neccesary configuration values for the method.

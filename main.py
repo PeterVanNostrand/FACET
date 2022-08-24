@@ -1,141 +1,77 @@
 import numpy as np
 from numpy.core.fromnumeric import var
-from heead import HEEAD
+from manager import MethodManager
 import matplotlib.pyplot as plt
-from utilities.metrics import coverage
+from utilities.metrics import percent_valid
 from utilities.metrics import classification_metrics
 from utilities.metrics import average_distance
 from utilities.tree_tools import compute_jaccard
+from sklearn.model_selection import train_test_split
 from dataset import load_data
 from dataset import DS_NAMES
-from experiments import *
+
+# from experiments_old import *
 import cProfile
 import time
 import random
 import math
 import json
+from experiments import execute_run
 
 
 def simple_run(dataset_name):
     # Load the dataset
-    x, y = load_data(dataset_name)
+    x, y = load_data(dataset_name, preprocessing="Normalize")
     xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=0.2, shuffle=True, random_state=0)
 
     # Euclidean, FeaturesChanged
-    distance = "Euclidean"
     rf_params = {
-        "rf_difference": 0.01,
-        "rf_distance": distance,
-        "rf_k": 1,
+        "rf_maxdepth": 5,
         "rf_ntrees": 10,
-        "rf_threads": 1,
-        "rf_maxdepth": 20,
-        "rf_hardvoting": True,  # note OCEAN and FACETIndex use soft and hard requirment
+        "rf_hardvoting": False,  # note OCEAN and FACETIndex use soft and hard requirment
     }
     facet_params = {
-        "facet_expl_distance": distance,
-        "facet_offset": 0.001,
-        "facet_verbose": False,
-        "facet_sample": "Augment",
+        "facet_offset": 0.0001,
         "facet_nrects": 10000,
+        "facet_sample": "Augment",
         "facet_enumerate": "PointBased",
-        "bi_nrects": 20000,
+        "facet_verbose": False,
         "facet_sd": 0.3,
         "facet_search": "BitVector",
         "rbv_initial_radius": 0.01,
         "rbv_radius_growth": "Linear",
         "rbv_num_interval": 4
     }
+    rfocse_params = {
+        "rfoce_transform": False,
+        "rfoce_offset": 0.0001
+    }
+    aft_params = {
+        "aft_offset": 0.0001
+    }
+    mace_params = {
+        "mace_maxtime": 300,
+    }
+    ocean_params = {
+        "ocean_norm": 2
+    }
     params = {
         "RandomForest": rf_params,
         "FACETIndex": facet_params,
-        "mace_maxtime": 300,
-        "rfoce_transform": False
+        "MACE": mace_params,
+        "RFOCSE": rfocse_params,
+        "AFT": aft_params,
+        "OCEAN": ocean_params,
     }
-    json_text = json.dumps(params, indent=4)
+
+    explainer = "OCEAN"
+    iteration = 0
+    results = execute_run(dataset_name=dataset_name, explainer=explainer, params=params, output_path="test-run/",
+                          iteration=iteration, test_size=0.2, n_explain=20, random_state=1, preprocessing="Normalize")
+    print("explainer: " + explainer)
+    print("dataset: " + dataset_name)
+    json_text = json.dumps(results, indent=4)
     print(json_text)
-
-    # Create, train, and predict with the model
-    expl = "RFOCSE"
-    model = HEEAD(detectors=["RandomForest"], aggregator="NoAggregator",
-                  explainer=expl, hyperparameters=params)
-    model.train(xtrain, ytrain)
-    prep_start = time.time()
-    #! TEMP SWAP TO ALL DATA FOR RFOCSE
-    # model.prepare(data=xtrain)
-    model.prepare(data=x)
-    # if params["rfoce_transform"]:
-    #     model.train(model.explainer.float_transformer.transform(xtrain), ytrain)
-    # else:
-    #     model.train(xtrain, ytrain)
-
-    if expl == "FACETIndex":
-        print("rects requested:", params.get("FACETIndex").get("facet_nrects"))
-        print("rects enumerated")
-        print("\tclass 0:", len(model.explainer.index[0]))
-        print("\tclass 1:", len(model.explainer.index[1]))
-    # cover_xtrain = model.explainer.explore_index(points=xtrain)
-    # cover_xtest = model.explainer.explore_index(points=xtest)
-    # print("xtrain index coverage:", cover_xtrain)
-    # print("xtest index coverage:", cover_xtest)
-    prep_end = time.time()
-    preptime = prep_end-prep_start
-    print("preptime:", preptime)
-    print("xtrain:", xtrain.shape)
-
-    if params["rfoce_transform"]:
-        preds = model.predict(model.explainer.float_transformer.transform(xtest))
-    else:
-        preds = model.predict(xtest)
-
-    # measure model performance
-    accuracy, precision, recall, f1 = classification_metrics(preds, ytest, verbose=False)
-    print("accuracy:", accuracy)
-    print("precision:", precision)
-    print("recall:", recall)
-    print("f1:", f1)
-
-    # Q-stastic
-    # Q, qs = model.detectors[0].compute_qs(xtest, ytest)
-    # print("Q-Statistic:", Q)
-
-    # jaccard similarity
-    # J, jaccards = compute_jaccard(model.detectors[0])
-    # print("Jaccard Index:", J)
-
-    # generate the explanations
-    explain = True
-    eval_samples = None
-    if explain:
-        if eval_samples is not None:
-            xtest = xtest[:eval_samples]
-            preds = preds[:eval_samples]
-
-        start = time.time()
-        explanations = model.explain(xtest, preds)
-        end = time.time()
-        runtime = end-start
-        print("runtime:", runtime)
-
-        if eval_samples is not None:
-            sample_time = runtime / eval_samples
-            print("sample_time:", sample_time)
-
-        coverage_ratio = coverage(explanations)
-        print("coverage_ratio:", coverage_ratio)
-        mean_dist = average_distance(xtest, explanations, distance_metric="Euclidean")
-        print("mean_dist:", mean_dist)
-        mean_length = average_distance(xtest, explanations, distance_metric="FeaturesChanged")
-        print("mean_length", mean_length)
-
-        if False:
-            ext_min = model.explainer.ext_min
-            ext_avg = model.explainer.ext_avg
-            ext_max = model.explainer.ext_max
-
-            print("ext_min:", ext_min)
-            print("ext_avg:", ext_avg)
-            print("ext_max:", ext_max)
 
 
 if __name__ == "__main__":

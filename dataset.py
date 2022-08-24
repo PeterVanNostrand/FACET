@@ -3,7 +3,7 @@ import pandas as pd
 import scipy.io as sio
 import h5py
 from sklearn import datasets as skdatasets
-from sklearn.preprocessing import StandardScaler, normalize
+from sklearn.preprocessing import StandardScaler
 
 # a list of the abbreviated name for all classification datasets
 DS_NAMES = [
@@ -62,7 +62,7 @@ ANOM_DS_PATHS = {
 }
 
 
-def load_data(dataset_name, preprocessing="Scale"):
+def load_data(dataset_name, preprocessing: str = "Normalize"):
     '''
     Returns one of many possible anomaly detetion datasets based on the given `dataset_name`
 
@@ -92,8 +92,9 @@ def load_data(dataset_name, preprocessing="Scale"):
 
     if preprocessing == "Normalize":
         # normalize x to [0, 1]
-        # x = (x - min_value) / (max_value - min_value)
-        x = normalize(x)
+        max_value = np.max(x, axis=0)
+        min_value = np.min(x, axis=0)
+        x = (x - min_value) / (max_value - min_value)
     elif preprocessing == "Scale":
         float_transformer = StandardScaler()
         x = float_transformer.fit_transform(x)

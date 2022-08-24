@@ -4,12 +4,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
 
-# Aggregator classes
-from aggregators.logistic_regression import LogisticRegression
-from aggregators.no_aggregator import NoAggregator
-
 # Detector classes
-from detectors.isolation_forest import IsolationForest
 from detectors.random_forest import RandomForest
 
 # Explainer classes
@@ -27,112 +22,44 @@ from explainers.rf_ocse import RFOCSE
 
 
 class MethodManager():
-    def __init__(self, detectors=None, aggregator=None, explainer=None, hyperparameters=None):
-        self.detectors = []
-        for detector_type in detectors:
-            if detector_type == "IsolationForest":
-                d = IsolationForest(hyperparameters=hyperparameters)
-                self.detectors.append(d)
-            elif detector_type == "RandomForest":
-                d = RandomForest(hyperparameters=hyperparameters)
-                self.detectors.append(d)
-            else:
-                print("Unknown detector type of " + detector_type)
-                continue
-        self.ndetectors = len(self.detectors)
+    def __init__(self, explainer=None, hyperparameters=None, random_state=None):
+        self.random_forest = RandomForest(hyperparameters=hyperparameters, random_state=random_state)
+        self.explainer = self.init_explainer(explainer=explainer, hyperparameters=hyperparameters)
 
-        if aggregator == "LogisticRegression":
-            self.aggregator = LogisticRegression()
-        elif aggregator == "NoAggregator":
-            self.aggregator = NoAggregator()
-        else:
-            print("Unknown aggregator type of " + aggregator)
-            print("using logistic regression aggregator")
-            self.aggregator = LogisticRegression()
-
-        if explainer:
-            self.set_explainer(explainer, hyperparameters)
-
-    def set_explainer(self, explainer, hyperparameters):
+    def init_explainer(self, explainer, hyperparameters):
         if explainer == "AFT":
-            self.explainer = AFT(model=self, hyperparameters=hyperparameters)
+            return AFT(manager=self, hyperparameters=hyperparameters)
         elif explainer == "OCEAN":
-            self.explainer = OCEAN(model=self, hyperparameters=hyperparameters)
+            return OCEAN(manager=self, hyperparameters=hyperparameters)
         elif explainer == "MACE":
-            self.explainer = MACE(model=self, hyperparameters=hyperparameters)
+            return MACE(manager=self, hyperparameters=hyperparameters)
         elif explainer == "RFOCSE":
-            self.explainer = RFOCSE(model=self, hyperparameters=hyperparameters)
+            return RFOCSE(manager=self, hyperparameters=hyperparameters)
         elif explainer == "FACET":
-            self.explainer = FACET(model=self, hyperparameters=hyperparameters)
+            return FACET(model=self, hyperparameters=hyperparameters)
         elif explainer == "FACETTrees":
-            self.explainer = FACETTrees(model=self, hyperparameters=hyperparameters)
+            return FACETTrees(model=self, hyperparameters=hyperparameters)
         elif explainer == "FACETPaths":
-            self.explainer = FACETPaths(model=self, hyperparameters=hyperparameters)
+            return FACETPaths(model=self, hyperparameters=hyperparameters)
         elif explainer == "FACETGrow":
-            self.explainer = FACETGrow(model=self, hyperparameters=hyperparameters)
+            return FACETGrow(model=self, hyperparameters=hyperparameters)
         elif explainer == "FACETBranchBound":
-            self.explainer = FACETBranchBound(model=self, hyperparameters=hyperparameters)
+            return FACETBranchBound(model=self, hyperparameters=hyperparameters)
         elif explainer == "FACETIndex":
-            self.explainer = FACETIndex(model=self, hyperparameters=hyperparameters)
+            return FACETIndex(manger=self, hyperparameters=hyperparameters)
         else:
             print("Unknown explainer type of " + explainer)
-            print("using best candidate explainer")
-            self.explainer = AFT(model=self, hyperparameters=hyperparameters)
+            print("using FACETIndex")
+            return FACETIndex(manger=self, hyperparameters=hyperparameters)
 
     def train(self, x, y=None):
-        self.__train_detectors(x, y)
-        # self.__train_aggregator(x, y)
+        self.random_forest.train(x, y)
 
     def predict(self, x):
-        # make predictions using detectors
-        preds = None
-        for i in range(self.ndetectors):
-            pd = self.detectors[i].predict(x)
-            if preds is None:
-                preds = pd
-            else:
-                preds = np.stack((preds, pd), axis=1)
-
-        # handle case of one detector
-        if len(preds.shape) == 1:
-            preds = preds.reshape(preds.shape[0], 1)
-
-        # aggregate the results
-        final_preds = self.aggregator.aggregate(preds)
-        return final_preds
+        return self.random_forest.predict(x)
 
     def prepare(self, data=None):
         self.explainer.prepare(data)
 
     def explain(self, x, y):
         return self.explainer.explain(x, y)
-
-    def __train_detectors(self, x, y):
-        # split data evenly among detectors and train them
-        if self.ndetectors == 1:
-            self.detectors[0].train(x, y)
-        else:
-            kf = KFold(n_splits=self.ndetectors, shuffle=True)
-            i = 0
-            for train_index, test_index in kf.split(x, y):
-                xd = x[train_index]
-                yd = y[train_index]
-                self.detectors[i].train(xd, yd)
-                i = i + 1
-
-    def __train_aggregator(self, x, y):
-        # make predictions using detectors
-        preds = None
-        for i in range(self.ndetectors):
-            pd = self.detectors[i].predict(x)
-            if preds is None:
-                preds = pd
-            else:
-                preds = np.stack((preds, pd), axis=1)
-
-        # handle case of one detector
-        if len(preds.shape) == 1:
-            preds = preds.reshape(preds.shape[0], 1)
-
-        # perform the aggregator training
-        self.aggregator.train(preds, y)

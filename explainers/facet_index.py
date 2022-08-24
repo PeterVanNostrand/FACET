@@ -1,42 +1,36 @@
 # handle circular imports that result from typehinting
 from __future__ import annotations
-from gettext import install
 
 # core python packages
 import math
-from os import replace
 from xmlrpc.client import Boolean
 
 # scientific and utility packages
 import numpy as np
-import matplotlib.pyplot as plt
 from sklearn import tree
-from tqdm import tqdm
-import pandas as pd
 import bisect
 
 # graph packages
 import networkx as nx
-from networkx.algorithms.approximation import max_clique as get_max_clique
 
 # custom classes
-from utilities.metrics import dist_euclidean, dist_features_changed
+from utilities.metrics import dist_euclidean
 from explainers.explainer import Explainer
 from detectors.random_forest import RandomForest
 from explainers.branching import BranchIndex
 from explainers.bit_vector import BitVectorIndex
-from typing import TYPE_CHECKING, Tuple
+from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from heead import HEEAD
+    from manager import MethodManager
 
 
 class FACETIndex(Explainer):
-    def __init__(self, model, hyperparameters: dict):
-        self.model: HEEAD = model
+    def __init__(self, manger, hyperparameters: dict):
+        self.manger: MethodManager = manger
         self.parse_hyperparameters(hyperparameters)
 
     def prepare(self, data=None):
-        rf_detector: RandomForest = self.model.detectors[0]
+        rf_detector: RandomForest = self.manger.random_forest
         rf_trees = rf_detector.model.estimators_
         self.rf_ntrees = len(rf_trees)
         self.rf_nclasses = rf_detector.model.n_classes_
@@ -68,7 +62,7 @@ class FACETIndex(Explainer):
         '''
         Computes the support for each vertex and each pairs of vertices in the classification output of the training data. That is fraction of all samples which are classificed into vertex Vi or pair of vertices Vi, Vj. These values are stored in self.vertex_support[i] and self.pairwise_support[i][j] respectively
         '''
-        rf_detector: RandomForest = self.model.detectors[0]
+        rf_detector: RandomForest = self.manger.random_forest
         all_leaves = rf_detector.apply(data)  # leaves that each sample ends up in (nsamples in xtrain, ntrees)
 
         # compute the support of each vertex in the predictions of the training data
@@ -111,7 +105,7 @@ class FACETIndex(Explainer):
         Converts the random forest ensemble into a graph representation, then uses a branching technique to find k-sized cliques on this graph which correspond to majority sized hyper-rectangles which are added to the index
         '''
         # 1. build the graphs, one per class
-        rf_detector: RandomForest = self.model.detectors[0]
+        rf_detector: RandomForest = self.manger.random_forest
         rf_trees: list[tree.DecisionTreeClassifier] = rf_detector.model.estimators_
         self.index_paths(self.rf_nclasses)
         self.find_synthesizeable_paths(rf_trees)
@@ -149,7 +143,7 @@ class FACETIndex(Explainer):
                 # create a set of points randomly placed with a uniform distribution along each axis
                 rect_points = np.random.uniform(low=0.0, high=1.0, size=(self.n_rects, training_data.shape[1]))
                 # check to make sure the resulting set has points of both classes, redraw if needed
-                preds = self.model.predict(rect_points)
+                preds = self.manger.predict(rect_points)
                 all_same_class = len(np.unique(preds)) < 2
         elif self.sample_type == "Augment":
             all_same_class = True
@@ -161,7 +155,7 @@ class FACETIndex(Explainer):
                 noise = np.random.normal(loc=0.0, scale=self.standard_dev, size=rect_points.shape)
                 rect_points += noise
                 # check to make sure the resulting set has points of both classes, redraw if needed
-                preds = self.model.predict(rect_points)
+                preds = self.manger.predict(rect_points)
                 all_same_class = len(np.unique(preds)) < 2
         return rect_points
 
@@ -207,7 +201,7 @@ class FACETIndex(Explainer):
         '''
         Checks if the given point falls within a hyper-rectangle included in the index
         '''
-        label = self.model.predict([point])
+        label = self.manger.predict([point])
         covered = False
         i = 0
         while i < len(self.index[label]) and not covered:
@@ -245,7 +239,7 @@ class FACETIndex(Explainer):
             for rect in self.index[class_id]:
                 x = np.zeros(self.rf_nfeatures)
                 xprime = self.fit_to_rectangle(x, rect)
-                pred = int(self.model.predict([xprime]))
+                pred = int(self.manger.predict([xprime]))
                 if pred != class_id:
                     print("Bad Rectangle")
 
@@ -254,8 +248,8 @@ class FACETIndex(Explainer):
         This method uses the training data to enumerate a set of hyper-rectangles of each classes and adds them to an index for later searching during explanation
         '''
         self.initialize_index()
-        preds = self.model.predict(data)
-        rf_detector: RandomForest = self.model.detectors[0]
+        preds = self.manger.predict(data)
+        rf_detector: RandomForest = self.manger.random_forest
         # get the leaves that each sample ends up in
         all_leaves = rf_detector.apply(data)  # shape (nsamples in xtrain, ntrees)
 
@@ -580,7 +574,7 @@ class FACETIndex(Explainer):
         idx_inf = np.argwhere(xprime == np.inf)
         xprime[idx_inf] = np.tile(0, x.shape[1])
         # check that all counterfactuals result in a different class
-        preds = self.model.predict(xprime)
+        preds = self.manger.predict(xprime)
         failed_explanation = (preds == y)
         xprime[failed_explanation] = np.tile(np.inf, x.shape[1])
         # replace infinite values for invalid explanation
@@ -742,26 +736,16 @@ class FACETIndex(Explainer):
 
     def parse_hyperparameters(self, hyperparameters: dict) -> None:
         self.hyperparameters = hyperparameters
-
         params: dict = hyperparameters.get("FACETIndex")
+
         # distance metric for explanation
-        if params.get("facet_expl_distance") is None:
-            print("No facet_expl_distance function set, using Euclidean")
-            self.distance_fn = dist_euclidean
-        elif params.get("facet_expl_distance") == "Euclidean":
-            self.distance_fn = dist_euclidean
-        elif params.get("facet_expl_distance") == "FeaturesChanged":
-            self.distance_fn = dist_features_changed
-        else:
-            print("Unknown facet_expl_distance function {}, using Euclidean distance".format(
-                params.get("facet_expl_distance")))
-            self.distance_fn = dist_euclidean
+        self.distance_fn = dist_euclidean
 
         # threshold offest for picking new values
         offset = params.get("facet_offset")
         if offset is None:
-            print("No facet_offset provided, using 0.01")
-            self.offset = 0.01
+            print("No facet_offset provided, using 0.001")
+            self.offset = 0.001
         else:
             self.offset = offset
 

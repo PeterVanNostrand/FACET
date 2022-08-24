@@ -1,26 +1,37 @@
-from explainers.explainer import Explainer
-from sklearn.ensemble import IsolationForest as skIsolationForest
 import numpy as np
-from utilities.metrics import dist_euclidean
-from utilities.metrics import dist_features_changed
 
+from explainers.explainer import Explainer
+from utilities.metrics import dist_euclidean
+from utilities.tree_tools import TreeContraster
+
+from detectors.random_forest import RandomForest
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from manager import MethodManager
 
 class AFT(Explainer):
-    def __init__(self, model, hyperparameters=None):
-        self.model = model
+    '''
+    An implementation of the Actionable Feature Tweaking method developed in "Interpretable Predictions of Tree-based Ensembles via Actionable Feature Tweaking." The original paper can be found at https://arxiv.org/abs/1706.06691
+    '''
+    def __init__(self, manager, hyperparameters=None):
+        self.manager: MethodManager = manager
+        self.hyperparameters = hyperparameters
+        self.parse_hyperparameters(hyperparameters)
+
+    def parse_hyperparameters(self, hyperparameters: dict) -> None:
         self.hyperparameters = hyperparameters
 
-        # distance metric for explanation
-        if hyperparameters.get("expl_distance") is None:
-            print("No expl_distance function set, using Euclidean")
-            self.distance_fn = dist_euclidean
-        elif hyperparameters.get("expl_distance") == "Euclidean":
-            self.distance_fn = dist_euclidean
-        elif hyperparameters.get("expl_distance") == "FeaturesChanged":
-            self.distance_fn = dist_features_changed
+        params = hyperparameters.get("AFT")
+        self.distance_fn = dist_euclidean
+
+        # threshold offest for picking new values
+        offset = params.get("aft_offset")
+        if offset is None:
+            print("No aft_offset provided, using 0.001")
+            self.offset = 0.001
         else:
-            print("Unknown expl_distance function {}, using Euclidean distance".format(hyperparameters.get("expl_distance")))
-            self.distance_fn = dist_euclidean
+            self.offset = offset
 
     def prepare(self, data=None):
         pass
@@ -43,7 +54,7 @@ class AFT(Explainer):
         # key array dimensions
         nsamples = x.shape[0]
         nfeatures = x.shape[1]
-        ndetectors = self.model.ndetectors
+        ndetectors = 1
 
         if self.hyperparameters is None or self.hyperparameters.get("explainer_k") is None:
             k = 1
@@ -60,14 +71,14 @@ class AFT(Explainer):
         # for each detector
         for i in range(ndetectors):
             # get the candidates for this detector
-            det_candidates = self.model.detectors[i].get_candidate_examples(x, y).reshape(((nsamples * k), nfeatures))
+            det_candidates = self.get_candidate_examples(x, y).reshape(((nsamples * k), nfeatures))
             candidate_examples[i] = det_candidates
 
             # predict and save the class for each candidate using the model
             # temporarilty swapping invalid candiates (rep by [inf, inf, ... , inf]) to zero
             idx_inf = (det_candidates == np.inf).any(axis=1)
             det_candidates[idx_inf] = np.tile(0, (nfeatures,))
-            candidate_preds[i] = self.model.predict(det_candidates)
+            candidate_preds[i] = self.manager.predict(det_candidates)
             det_candidates[idx_inf] = np.tile(np.inf, (nfeatures,))
 
             # if an example doesn't result in a changed class prediciton, set it to inf
@@ -88,9 +99,83 @@ class AFT(Explainer):
         # check that all examples return correct class
         idx_inf = (best_examples == np.inf).any(axis=1)
         best_examples[idx_inf] = np.tile(0, (nfeatures,))
-        preds = self.model.predict(best_examples)
+        preds = self.manager.predict(best_examples)
         failed_explanation = (preds == y)
         best_examples[failed_explanation] = np.tile(np.inf, x.shape[1])
         best_examples[idx_inf] = np.tile(np.inf, x.shape[1])
 
         return best_examples
+
+    def get_candidate_examples(self, x, y):
+        '''
+        A function for getting the best `k` contrastive example candidates for the samples of `x`. The *best* examples are those which result in a change of predicted class and have a minimal change from `x[i]`.
+
+        The offset amount used in contrastive example generation and the distance metric used to select the minimal examples are set by the hyperparameters `rf_difference` and `rf_distance` determined during initialization
+
+        Parameters
+        ----------
+        x               : an array of samples, dimensions (nsamples, nfeatures)
+        y               : an array of labels which correspond to the labels, (nsamples, )
+
+        Returns
+        -------
+        final_examples : an array of contrastive examples with dimensions (nsamples, k, nfeatures). Each of final_examples[i] corresponds to an array of the best k examples which explain x[i]
+        '''
+        rf: RandomForest = self.manager.random_forest
+
+        k = 1
+        final_examples = np.empty(shape=(x.shape[0], k, x.shape[1]))
+
+        trees = rf.model.estimators_
+        all_examples = [[]] * x.shape[0]  # a list to store the array of examples, one for each example
+
+        # for each tree, get an example for each sample in x
+        for t in trees:
+            # get an array of candidate examples for each instance in x
+            helper = TreeContraster(t)
+            tree_examples = helper.construct_examples(x, y, self.offset)
+
+            # merge n_sample arrays from this tree with those from the other trees
+            for i in range(x.shape[0]):
+                if len(all_examples[i]) == 0:
+                    all_examples[i] = tree_examples[i]
+                else:
+                    if(len(tree_examples[i]) > 0):
+                        all_examples[i] = np.vstack([all_examples[i], tree_examples[i]])
+
+        # for each sample pick the top k best candidates that result in a changed class
+        for i in range(x.shape[0]):
+            # get the info for that sample
+            instance = x[i]
+            label = y[i]
+            candidate_examples = all_examples[i]
+
+            # get the class predicted by the forest for each candidate
+            candidate_preds = self.manager.predict(candidate_examples)
+
+            # keep only candidates that result in a changed prediction
+            candidate_examples = candidate_examples[candidate_preds != label]
+
+            # sort the candidates according to the distance function
+            candidate_dists = self.distance_fn(instance, candidate_examples)
+            sort_idxs = np.argsort(candidate_dists)
+            candidate_examples = candidate_examples[sort_idxs]
+            candidate_preds = candidate_preds[sort_idxs]
+
+            # return the top k candidates for x if availible
+            if candidate_examples.shape[0] >= k:
+                top_k_candidates = candidate_examples[:k]
+            # if there are fewer than k candidates, pad with [inf, inf, ... , inf]
+            else:
+                n_missing = k - candidate_examples.shape[0]
+                pad_candidates = np.tile(np.inf, (n_missing, instance.shape[0]))
+                top_k_candidates = np.vstack((candidate_examples, pad_candidates))
+
+            final_examples[i] = top_k_candidates
+
+            if k == 1:
+                final_examples = final_examples.squeeze()
+
+        return final_examples
+
+    

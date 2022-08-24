@@ -9,15 +9,22 @@ from baselines.mace.generateSATExplanations import genExp
 
 
 class MACE(Explainer):
-    def __init__(self, model, hyperparameters=None):
-        self.model = model
+    def __init__(self, manager, hyperparameters=None):
+        self.manager = manager
+        self.parse_hyperparameters(hyperparameters)
+
+    def parse_hyperparameters(self, hyperparameters: dict) -> None:
         self.hyperparameters = hyperparameters
 
-        if hyperparameters.get("mace_maxtime") is None:
+        params = hyperparameters.get("MACE")
+
+        # threshold offest for picking new values
+        maxtime = params.get("mace_maxtime")
+        if maxtime is None:
+            print("No mace_maxtime provided, using 60")
             self.maxtime = 60
-            print("No mace_maxtime set, using 60 seconds")
         else:
-            self.maxtime = hyperparameters.get("mace_maxtime")
+            self.maxtime = maxtime
 
     def prepare(self, data=None):
         pass
@@ -36,7 +43,7 @@ class MACE(Explainer):
 
         # Get the model and prepare data
         df = df.drop(['label'], axis=1)
-        model_trained = self.model.detectors[0].model
+        model_trained = self.manager.detectors[0].model
         df['y'] = model_trained.predict(x)
         iterate_over_data_dict = df.T.to_dict()
 
@@ -93,7 +100,7 @@ class MACE(Explainer):
         # to do so we need to predict, and so temporarily swap the infs for zeros
         idx_no_examples = (xprime == np.inf).any(axis=1)
         xprime[idx_no_examples] = np.tile(0, x.shape[1])
-        y_pred = self.model.predict(xprime)
+        y_pred = self.manager.predict(xprime)
         idx_failed_explanation = (y_pred == y)
 
         xprime[idx_failed_explanation] = np.tile(np.inf, (x.shape[1],))

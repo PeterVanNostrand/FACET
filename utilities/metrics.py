@@ -65,9 +65,9 @@ def dist_features_changed(x, xprime):
     return distance
 
 
-def coverage(examples):
+def percent_valid(examples):
     '''
-    Returns the ratio of samples for which a valid contrastive example could be found
+    Returns the ratio of samples for which a valid contrastive example could be found. Note that explainers are responsible for returning [np.inf, ..., np.inf] for any instances which they could not generate a counterfactual for
     '''
     # if a contrastive example could not be found an array of [inf, inf, ... , inf] is returned
     return 1 - ((examples == np.inf).any(axis=1).sum() / examples.shape[0])

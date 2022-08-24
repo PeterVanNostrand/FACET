@@ -12,26 +12,37 @@ from baselines.rfocse.datasets import DatasetInfo, DatasetInfoBuilder
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from heead import HEEAD
+    from manager import MethodManager
 
 
 class RFOCSE(Explainer):
-    def __init__(self, model, hyperparameters=None):
-        self.model: HEEAD = model
+    '''
+    An wapper of the Random Forest Open Counterfactual Sets Method developed in the paper "Random forest explanability using counterfactual sets". This version has been converted from the released Cython implementation located at https://github.com/rrunix/libfastcrf/ which runs compiled to Python which is interpreted at runtime. This allows for a fair comparison between methods and removes that implementations requirement to run on Linux. The source paper can be found at https://www.sciencedirect.com/science/article/abs/pii/S1566253520303134
+    '''
+
+    def __init__(self, manager, hyperparameters=None):
+        self.manager: MethodManager = manager
         self.parse_hyperparameters(hyperparameters)
 
     def parse_hyperparameters(self, hyperparameters: dict) -> None:
         self.hyperparameters = hyperparameters
-        if hyperparameters.get("rfoce_transform") is None:
+        params: dict = hyperparameters.get("RFOCSE")
+        if params.get("rfoce_transform") is None:
             self.perform_transform = True
             print("No rfoce_transform provided, using True")
         else:
-            self.perform_transform = hyperparameters.get("rfoce_transform")
+            self.perform_transform = params.get("rfoce_transform")
+
+        if params.get("rfoce_offset") is None:
+            self.offset = 0.001
+            print("No rfoce_offset provided, using 0.001")
+        else:
+            self.offset = params.get("rfoce_offset")
 
     def prepare(self, data=None):
         self.data = data
         df = pd.DataFrame(data)
-        y = self.model.predict(data)
+        y = self.manager.predict(data)
         df["y"] = y
         override_dtypes = {}
         col_names = []
@@ -57,10 +68,8 @@ class RFOCSE(Explainer):
         xprime = np.empty(shape=x.shape)
         xprime[:, :] = np.inf
         dataset_info: DatasetInfo = self.dataset_info
-        rf = self.model.detectors[0].model
+        rf = self.manager.random_forest.model
         X_train = self.X
-
-        X_test.round(6).to_csv("x.csv", index=False)
 
         valids = []
         for idx, res in zip(X_test.index, batch_extraction(rf, dataset_info, X_test.values, max_distance=100, log_every=-1, max_iterations=20_000_000,
@@ -70,7 +79,7 @@ class RFOCSE(Explainer):
                 res['feature_bounds'] = cs.feat_conditions
                 res['feature_bounds_compact'] = res.pop('explanation_compact').feat_conditions
                 res['feature_bounds_compact_count'] = res.pop('explanation_compact_count').feat_conditions
-                res['counterfactual_sample'] = cs.sample_counterfactual(X_test.loc[idx], epsilon=0.005)
+                res['counterfactual_sample'] = cs.sample_counterfactual(X_test.loc[idx], epsilon=self.offset)
                 xprime[idx] = res['counterfactual_sample']
                 res['factual_class'] = rf.predict(np.array(X_test.loc[idx]).reshape(1, -1))[0]
                 res['counterfactual_distance'] = res['distance']
@@ -78,14 +87,11 @@ class RFOCSE(Explainer):
                 res['valid_'] = res['factual_class'] != res['counterfactual_class']
                 valids.append(res['valid_'])
 
-        df = pd.DataFrame(xprime)
-        df.round(6).to_csv("xprime.csv", index=False)
-
+        # locate non-counterfactual examples and replace them with [np.inf, ... , np.inf]
         idx_no_examples = (xprime == np.inf).any(axis=1)
         xprime[idx_no_examples] = np.tile(0, x.shape[1])
-        y_pred = self.model.predict(xprime)
+        y_pred = self.manager.predict(xprime)
         idx_failed_explanation = (y_pred == y)
-
         xprime[idx_failed_explanation] = np.tile(np.inf, (x.shape[1],))
         xprime[idx_no_examples] = np.tile(np.inf, (x.shape[1],))
 

@@ -32,10 +32,3 @@ class Detector(ABC):
     @abstractmethod
     def predict(self, x):
         pass
-
-    '''
-    Returns minimally modified versions of x that result in this detector changing its prediction to the class y
-    '''
-    @abstractmethod
-    def get_candidate_examples(self, x, y):
-        pass

@@ -443,7 +443,7 @@ class BranchIndex():
                     self.clique_visited[key] = True
 
     def check_example(self, example: np.ndarray) -> bool:
-        return self.explainer.model.predict([example]) == self.desired_label
+        return self.explainer.manger.predict([example]) == self.desired_label
 
     def solution_possible(self, node: BINode) -> bool:
         # !WARNING: only works with hard voting
