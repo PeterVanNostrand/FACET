@@ -1,4 +1,4 @@
-from baselines.ocean.CounterFactualParameters import *
+from .CounterFactualParameters import *
 
 
 class ClassifierCounterFactualMilp:

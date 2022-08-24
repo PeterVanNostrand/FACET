@@ -1,7 +1,6 @@
-
-from baselines.ocean.TreeMilpManager import *
-from baselines.ocean.ClassifierCounterFactual import *
-from baselines.ocean.RandomAndIsolationForest import *
+from .TreeMilpManager import *
+from .ClassifierCounterFactual import *
+from .RandomAndIsolationForest import *
 from sklearn.ensemble._iforest import _average_path_length
 import random
 
@@ -39,7 +38,6 @@ class RandomForestCounterFactualMilp(ClassifierCounterFactualMilp):
             oneHotEncoding,
             binaryDecisionVariables
         )
-        self.clf = classifier
         self.isolationForest = isolationForest
         self.completeForest = RandomAndIsolationForest(self.clf, isolationForest)
         self.interTreeCutsActivated = interTreeCutsActivated
@@ -552,8 +550,8 @@ class RandomForestCounterFactualMilp(ClassifierCounterFactualMilp):
                     skLearnErrors = True
                     self.maxSkLearnError = max(self.maxSkLearnError, abs(
                         self.x_sol[0][f]-tm.tree.threshold[lastCommonVertex]))
-                    # if self.verbose:
-                    print("sklearn is wrong")
+                    if self.verbose:
+                        print("sklearn is wrong")
                 if nextVertex not in solutionPathList:
                     print("MY MILP IS WRONG")
                     myMilpErrors = True
@@ -602,7 +600,7 @@ class RandomForestCounterFactualMilp(ClassifierCounterFactualMilp):
             self.x_var_sol[f].setAttr(GRB.Attr.LB, solution[f] - eps)
             self.x_var_sol[f].setAttr(GRB.Attr.UB, solution[f] + eps)
 
-        self.model.write("rf_check.lp")
+        # self.model.write("rf_check.lp")
         self.model.setParam(GRB.Param.ImpliedCuts, 2)
         # self.model.setParam(GRB.Param.Method,3)
         self.model.setParam(GRB.Param.Threads, 4)
@@ -612,7 +610,7 @@ class RandomForestCounterFactualMilp(ClassifierCounterFactualMilp):
         self.solutionFeasibility = self.model.status == GRB.OPTIMAL
 
     def solveModel(self):
-        self.model.write("rf.lp")
+        # self.model.write("rf.lp")
         self.model.setParam(GRB.Param.ImpliedCuts, 2)
         # self.model.setParam(GRB.Param.Method,3)
         self.model.setParam(GRB.Param.Threads, 4)
