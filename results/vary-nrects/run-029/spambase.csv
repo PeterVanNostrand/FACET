@@ -1,2 +1,0 @@
-dataset,n_trees,explainer,n_samples,n_samples_explained,n_features,accuracy,precision,recall,f1,avg_nnodes,avg_nleaves,avg_depth,q,jaccard,coverage_ratio,mean_distance,mean_length,init_time,runtime,clique_size,grown_clique_size,ext_min,ext_avg,ext_max,n_rects,cover_xtrain,cover_xtest
-spambase,100,FACETIndex,20,20,57,1.0,1.0,1.0,1.0,14.66,7.83,3.0,-0.03394914043086996,0.15141295236749783,1.0,0.19463833616773812,27.5,18.47599983215332,3.8670003414154053,-1,-1,-1,-1,-1,20000,0.0,0.0

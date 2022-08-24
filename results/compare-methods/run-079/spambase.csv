@@ -1,2 +1,0 @@
-explainer,n_samples,n_samples_explained,n_features,accuracy,precision,recall,f1,avg_nnodes,avg_nleaves,avg_depth,q,jaccard,coverage_ratio,mean_distance,mean_length,init_time,runtime,clique_size,grown_clique_size,ext_min,ext_avg,ext_max
-FACETGrow,10,10,57,0.8,1.0,0.3333333333333333,0.5,14.8,7.9,3.0,0.36296296296296293,0.12668695502028834,1.0,0.1467070086157351,7.1,0.1380014419555664,0.07199954986572266,2.2,9.8,-1,-1,-1

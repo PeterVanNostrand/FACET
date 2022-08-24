@@ -1,4 +1,0 @@
-"rf_difference": diff,
-"rf_distance": "Euclidean",
-"rf_k": 1,
-"rf_ntrees": 20

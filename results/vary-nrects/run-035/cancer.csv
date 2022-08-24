@@ -1,2 +1,0 @@
-dataset,n_trees,explainer,n_samples,n_samples_explained,n_features,accuracy,precision,recall,f1,avg_nnodes,avg_nleaves,avg_depth,q,jaccard,coverage_ratio,mean_distance,mean_length,init_time,runtime,clique_size,grown_clique_size,ext_min,ext_avg,ext_max,n_rects,cover_xtrain,cover_xtest
-cancer,20,FACETIndex,20,20,30,0.95,1.0,0.6666666666666666,0.8,12.8,6.9,3.0,0.509177655149593,0.14327086656034024,1.0,0.25548627764457044,5.55,42.891727685928345,7.702178716659546,-1,-1,-1,-1,-1,20000,0.4977973568281938,0.65

@@ -1,2 +1,0 @@
-explainer,n_samples,n_samples_explained,n_features,accuracy,precision,recall,f1,avg_nnodes,avg_nleaves,avg_depth,q,jaccard,coverage_ratio,mean_distance,mean_length,init_time,runtime,clique_size,grown_clique_size,ext_min,ext_avg,ext_max,rects_searched_0,rects_searched_1,idx_dim_0,idx_dim_1
-OCEAN,20,20,30,0.95,1.0,0.6666666666666666,0.8,20.66,10.83,4.9,0.6693905310656069,0.21320334063628463,1.0,0.17623321993526683,10.7,0.0,14.813481092453003,-1,-1,-1,-1,-1,-1,-1,-1,-1

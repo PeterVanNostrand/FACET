@@ -1,2 +1,0 @@
-dataset,n_trees,explainer,n_samples,n_samples_explained,n_features,accuracy,precision,recall,f1,avg_nnodes,avg_nleaves,avg_depth,q,jaccard,coverage_ratio,mean_distance,mean_length,init_time,runtime,clique_size,grown_clique_size,ext_min,ext_avg,ext_max,n_rects,cover_xtrain,cover_xtest
-vertebral,100,FACETIndex,20,20,6,0.85,0.8571428571428571,0.9230769230769231,0.888888888888889,12.24,6.62,3.0,0.6130132255760892,0.5193367003367003,1.0,0.14597715455598842,3.55,25.439000129699707,2.3219997882843018,-1,-1,-1,-1,-1,20000,0.19433198380566802,0.3

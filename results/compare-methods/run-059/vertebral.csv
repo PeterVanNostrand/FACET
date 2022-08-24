@@ -1,3 +1,0 @@
-explainer,n_samples,n_samples_explained,n_features,accuracy,precision,recall,f1,avg_nnodes,avg_nleaves,avg_depth,q,jaccard,coverage_ratio,mean_distance,mean_length,init_time,runtime,clique_size,grown_clique_size,ext_min,ext_avg,ext_max
-OCEAN,20,20,6,0.9,0.8666666666666667,1.0,0.9285714285714286,11.54,6.27,3.0,0.5916523587483203,0.5011784511784512,1.0,0.09849002261334684,2.6,0.0,4.674921751022339,-1,-1,-1,-1,-1
-FACETIndex,20,20,6,0.9,0.8666666666666667,1.0,0.9285714285714286,11.54,6.27,3.0,0.5916523587483203,0.5011784511784512,1.0,0.14367984469467526,3.5,0.1179962158203125,0.04200005531311035,-1,-1,-1,-1,-1

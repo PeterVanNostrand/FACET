@@ -1,2 +1,0 @@
-explainer,n_samples,n_samples_explained,n_features,accuracy,precision,recall,f1,avg_nnodes,avg_nleaves,avg_depth,q,jaccard,coverage_ratio,mean_distance,mean_length,init_time,runtime,clique_size,grown_clique_size,ext_min,ext_avg,ext_max
-FACETBranchBound,5,5,6,0.8,1.0,0.75,0.8571428571428571,12.8,6.9,3.0,0.3333333333333333,0.5351851851851852,1.0,0.07818993875749271,2.4,0.22402572631835938,0.35600924491882324,-1,-1,136,157.4,188
