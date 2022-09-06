@@ -17,6 +17,13 @@ class Explainer(ABC):
         pass
 
     @abstractmethod
+    def prepare_dataset(self, x, y):
+        '''
+        Function to ready and dataset statistics needed for comparison methods. Method is not to store any samples for use in explanation
+        '''
+        pass
+
+    @abstractmethod
     def prepare(self, data=None):
         '''
         Function to initialize the explainer, called after the model is trained.

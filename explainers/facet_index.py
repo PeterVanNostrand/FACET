@@ -58,6 +58,9 @@ class FACETIndex(Explainer):
                 self.rbvs.append(BitVectorIndex(rects=self.index[class_id],
                                  explainer=self, hyperparameters=self.hyperparameters))
 
+    def prepare_dataset(self, x, y):
+        pass
+
     def compute_supports(self, data: np.ndarray):
         '''
         Computes the support for each vertex and each pairs of vertices in the classification output of the training data. That is fraction of all samples which are classificed into vertex Vi or pair of vertices Vi, Vj. These values are stored in self.vertex_support[i] and self.pairwise_support[i][j] respectively
@@ -590,7 +593,7 @@ class FACETIndex(Explainer):
         sythesizable_paths = [[[] for _ in range(ntrees)] for _ in range(ntrees)]
         for i in range(ntrees):
             for k in range(ntrees):
-                if(i != k):
+                if (i != k):
                     t1_t2_merges = self.get_merges(t1_id=i, t2_id=k)
                     sythesizable_paths[i][k] = t1_t2_merges
 

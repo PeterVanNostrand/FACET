@@ -16,7 +16,7 @@ import time
 import random
 import math
 import json
-from experiments import execute_run
+from experiments import execute_run, vary_ntrees
 
 
 def simple_run(dataset_name):
@@ -67,8 +67,17 @@ def simple_run(dataset_name):
     explainer = "MACE"
     iteration = 0
     preprocessing = "Normalize"
-    results = execute_run(dataset_name=dataset_name, explainer=explainer, params=params, output_path="test-run/",
-                          iteration=iteration, test_size=0.2, n_explain=None, random_state=1, preprocessing=preprocessing)  # "Normalize"
+    results = execute_run(
+        dataset_name=dataset_name,
+        explainer=explainer,
+        params=params,
+        output_path="results/test-run/",
+        iteration=iteration,
+        test_size=0.2,
+        n_explain=3,
+        random_state=1,
+        preprocessing=preprocessing
+    )
     print("explainer: " + explainer)
     print("dataset: " + dataset_name)
     json_text = json.dumps(results, indent=4)
@@ -89,7 +98,8 @@ if __name__ == "__main__":
     # run_ds.remove("spambase")
     # compare_methods(["vertebral"], num_iters=1, explainers=["MACE"], eval_samples=20, seed=RAND_SEED)
     # vary_ntrees(run_ds, explainer="FACETIndex", ntrees=list(range(5, 105, 5)), num_iters=5, seed=SEED)
-    simple_run("magic")
+    # simple_run("magic")
+    vary_ntrees(ds_names=["vertebral"], explainers=["FACETIndex"], ntrees=[10], num_iters=1)
     # bb_ntrees(run_ds, ntrees=[25], depths=[3], num_iters=1, eval_samples=5)
     # hard_vs_soft(run_ds, num_iters=10)
     # bb_ordering(run_ds, orderings=["PriorityQueue", "Stack", "ModifiedPriorityQueue"], num_iters=1,

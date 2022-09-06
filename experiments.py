@@ -1,4 +1,6 @@
 from distutils.command import build
+from genericpath import isfile
+from pydoc import ispath
 from typing_extensions import runtime
 from unittest import result
 from sklearn.model_selection import train_test_split
@@ -104,7 +106,7 @@ def execute_run(dataset_name: str, explainer: str, params: dict, output_path: st
     # prepare the explainer, handles any neccessary preprocessing
     prep_start = time.time()
     manager.explainer.prepare_dataset(x, y)
-    manager.prepare(data=x)
+    manager.prepare(data=xtrain)
     prep_end = time.time()
     prep_time = prep_end-prep_start
 
@@ -152,3 +154,118 @@ def execute_run(dataset_name: str, explainer: str, params: dict, output_path: st
         f.write(json_text)
 
     return results
+
+
+def vary_ntrees(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", "AFT", "MACE"], ntrees=[5, 10, 15], num_iters=5):
+    '''
+    Experiment to observe the effect of the the number of features on explanation
+    '''
+    print("Varying number of trees:")
+    print("\tds_names:", ds_names)
+    print("\texplainers:", explainers)
+    print("\tntrees:", ntrees)
+    print("\tnum_iters:", num_iters)
+
+    experiment_path = "./results/vary-ntrees/"
+    max_depth = 5
+    rf_params = {
+        "rf_maxdepth": max_depth,
+        "rf_ntrees": -1,
+        "rf_hardvoting": False,  # note OCEAN and FACETIndex use soft and hard requirment
+    }
+    facet_params = {
+        "facet_offset": 0.0001,
+        "facet_nrects": 100000,
+        "facet_sample": "Augment",
+        "facet_enumerate": "PointBased",
+        "facet_verbose": False,
+        "facet_sd": 0.3,
+        "facet_search": "BitVector",
+        "rbv_initial_radius": 0.01,
+        "rbv_radius_growth": "Linear",
+        "rbv_num_interval": 4
+    }
+    rfocse_params = {
+        "rfoce_transform": False,
+        "rfoce_offset": 0.0001
+    }
+    aft_params = {
+        "aft_offset": 0.0001
+    }
+    mace_params = {
+        "mace_maxtime": 300,
+        "mace_epsilon": 0.01
+    }
+    ocean_params = {
+        "ocean_norm": 2
+    }
+    params = {
+        "RandomForest": rf_params,
+        "FACETIndex": facet_params,
+        "MACE": mace_params,
+        "RFOCSE": rfocse_params,
+        "AFT": aft_params,
+        "OCEAN": ocean_params,
+    }
+
+    experiment_results = pd.DataFrame(columns=[
+        "dataset",
+        "explainer",
+        "n_trees",
+        "max_depth",
+        "iteration",
+        "accuracy",
+        "precision",
+        "recall",
+        "f1",
+        "per_valid",
+        "avg_dist",
+        "avg_length",
+        "prep_time",
+        "explain_time",
+        "sample_time",
+        "n_explain",
+    ])
+
+    total_runs = len(ds_names) * len(explainers) * len(ntrees) * num_iters
+    progress_bar = tqdm(total=total_runs, desc="Overall Progress", position=0, disable=False)
+
+    for ds in ds_names:
+        for expl in explainers:
+            for ntree in ntrees:
+                for iter in range(num_iters):
+                    # set the number of trees
+                    params["RandomForest"]["rf_ntrees"] = ntree
+                    # FACET uses hardvoting
+                    if expl == "FACET":
+                        params["RandomForest"]["rf_hardvoting"] = True
+                    else:
+                        params["RandomForest"]["rf_hardvoting"] = False
+                    run_result = execute_run(
+                        dataset_name=ds,
+                        explainer=expl,
+                        params=params,
+                        output_path=experiment_path,
+                        iteration=iter,
+                        test_size=0.2,
+                        n_explain=20,
+                        random_state=1,
+                        preprocessing="Normalize"
+                    )
+                    df_item = {
+                        "dataset": ds,
+                        "explainer": expl,
+                        "n_trees": ntree,
+                        "iteration": iter,
+                        "max_depth": max_depth,
+                        **run_result
+                    }
+                    experiment_results = experiment_results.append(df_item, ignore_index=True)
+                    if not os.path.isfile(experiment_path + "results.csv"):
+                        experiment_results.to_csv(experiment_path + "results.csv", index=False)
+                    else:
+                        experiment_results.to_csv(experiment_path + "results.csv", mode="a", header=False, index=False)
+
+                    progress_bar.update()
+    progress_bar.close()
+    print("Finished varying number of trees")

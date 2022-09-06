@@ -39,6 +39,9 @@ class RFOCSE(Explainer):
         else:
             self.offset = params.get("rfoce_offset")
 
+    def prepare_dataset(self, x, y):
+        pass
+
     def prepare(self, data=None):
         self.data = data
         df = pd.DataFrame(data)
@@ -57,7 +60,7 @@ class RFOCSE(Explainer):
         dataset_info, X, y = self.process_pandas_dataset(df[list(override_dtypes.keys()) + ['y']], 'y',
                                                          **self.get_dataset_args(dict(override_feature_types=override_dtypes), {}))
         self.dataset_info: DatasetInfo = dataset_info
-        self.X: pd.DataFrame = X
+        self.Xtrain: pd.DataFrame = X
 
     def explain(self, x: np.ndarray, y):
         if self.perform_transform:
@@ -69,7 +72,7 @@ class RFOCSE(Explainer):
         xprime[:, :] = np.inf
         dataset_info: DatasetInfo = self.dataset_info
         rf = self.manager.random_forest.model
-        X_train = self.X
+        X_train = self.Xtrain
 
         valids = []
         for idx, res in zip(X_test.index, batch_extraction(rf, dataset_info, X_test.values, max_distance=100, log_every=-1, max_iterations=20_000_000,
