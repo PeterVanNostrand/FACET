@@ -20,14 +20,13 @@ from experiments import execute_run
 
 
 def simple_run(dataset_name):
-    # Load the dataset
-    x, y = load_data(dataset_name, preprocessing="Normalize")
-    xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=0.2, shuffle=True, random_state=0)
+    # x, y = load_data(dataset_name, preprocessing=None)
+    # xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=0.2, shuffle=True, random_state=0)
 
     # Euclidean, FeaturesChanged
     rf_params = {
-        "rf_maxdepth": 5,
-        "rf_ntrees": 10,
+        "rf_maxdepth": 2,
+        "rf_ntrees": 3,
         "rf_hardvoting": False,  # note OCEAN and FACETIndex use soft and hard requirment
     }
     facet_params = {
@@ -51,6 +50,7 @@ def simple_run(dataset_name):
     }
     mace_params = {
         "mace_maxtime": 300,
+        "mace_epsilon": 0.01
     }
     ocean_params = {
         "ocean_norm": 2
@@ -64,10 +64,11 @@ def simple_run(dataset_name):
         "OCEAN": ocean_params,
     }
 
-    explainer = "OCEAN"
+    explainer = "MACE"
     iteration = 0
+    preprocessing = "Normalize"
     results = execute_run(dataset_name=dataset_name, explainer=explainer, params=params, output_path="test-run/",
-                          iteration=iteration, test_size=0.2, n_explain=20, random_state=1, preprocessing="Normalize")
+                          iteration=iteration, test_size=0.2, n_explain=None, random_state=1, preprocessing=preprocessing)  # "Normalize"
     print("explainer: " + explainer)
     print("dataset: " + dataset_name)
     json_text = json.dumps(results, indent=4)
@@ -88,7 +89,7 @@ if __name__ == "__main__":
     # run_ds.remove("spambase")
     # compare_methods(["vertebral"], num_iters=1, explainers=["MACE"], eval_samples=20, seed=RAND_SEED)
     # vary_ntrees(run_ds, explainer="FACETIndex", ntrees=list(range(5, 105, 5)), num_iters=5, seed=SEED)
-    simple_run("vertebral")
+    simple_run("magic")
     # bb_ntrees(run_ds, ntrees=[25], depths=[3], num_iters=1, eval_samples=5)
     # hard_vs_soft(run_ds, num_iters=10)
     # bb_ordering(run_ds, orderings=["PriorityQueue", "Stack", "ModifiedPriorityQueue"], num_iters=1,

@@ -91,6 +91,7 @@ def execute_run(dataset_name: str, explainer: str, params: dict, output_path: st
         x_explain = xtest
         y_explain = ytest
         ixd_explain = idx_test
+        n_explain = x_explain.shape[0]
 
     # create the manager which handles create the RF model and explainer
     manager = MethodManager(explainer=explainer, hyperparameters=params, random_state=random_state)
@@ -102,6 +103,7 @@ def execute_run(dataset_name: str, explainer: str, params: dict, output_path: st
 
     # prepare the explainer, handles any neccessary preprocessing
     prep_start = time.time()
+    manager.explainer.prepare_dataset(x, y)
     manager.prepare(data=x)
     prep_end = time.time()
     prep_time = prep_end-prep_start
