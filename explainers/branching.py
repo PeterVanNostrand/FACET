@@ -178,7 +178,7 @@ class BranchBound():
                     # compute lower bound for the node
                     child.partial_example, child.lower_bound = self.lower_bound(child, instance, desired_label)
                     # if the resulting nodes has a better lower bound than the current best, add it to the tree
-                    if(child.lower_bound < self.best_distance):
+                    if (child.lower_bound < self.best_distance):
                         node.children.append(child)
                         self.enqueue(child)
 
@@ -205,16 +205,16 @@ class BranchBound():
                     # compute the best possible distance of a solution which could exist
                     child.partial_example, child.lower_bound = self.lower_bound(child, instance, desired_label)
                     # if the possible solution could be better than the current solution
-                    if(child.lower_bound < self.best_distance):
+                    if (child.lower_bound < self.best_distance):
                         # look ahead and attempt to find a solution along the branch
                         pessimistic_example, upper_bound = self.upper_bound(child, instance, desired_label)
                         # if the lookahead solution actually exists
-                        if(pessimistic_example is not None):
+                        if (pessimistic_example is not None):
                             # if the lookahead solution is good, keep it
                             if upper_bound < self.best_distance:
                                 self.set_best_solution(example=pessimistic_example, distance=upper_bound)
                             # if the child could contain a better solution than the current best, enqueue it
-                            if(child.lower_bound < self.best_distance):
+                            if (child.lower_bound < self.best_distance):
                                 node.children.append(child)
                                 self.enqueue(child)
 
@@ -367,7 +367,7 @@ class BranchBound():
                     return self.best_solution
                 # otherwise continue to the next node
 
-        if(self.best_solution == initial_guess).all():
+        if (self.best_solution == initial_guess).all():
             self.nlucky_guesses += 1
         return self.best_solution
 
@@ -443,7 +443,7 @@ class BranchIndex():
                     self.clique_visited[key] = True
 
     def check_example(self, example: np.ndarray) -> bool:
-        return self.explainer.manger.predict([example]) == self.desired_label
+        return self.explainer.manager.predict([example]) == self.desired_label
 
     def solution_possible(self, node: BINode) -> bool:
         # !WARNING: only works with hard voting

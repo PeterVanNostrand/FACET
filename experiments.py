@@ -45,7 +45,7 @@ def check_create_directory(dir_path="./results"):
     return run_id, run_path
 
 
-def execute_run(dataset_name: str, explainer: str, params: dict, output_path: str, iteration: int, test_size=0.2, n_explain: int = None, random_state: int = None, preprocessing: str = "Normalize"):
+def execute_run(dataset_name: str, explainer: str, params: dict, output_path: str, iteration: int, test_size=0.2, n_explain: int = None, random_state: int = None, preprocessing: str = "Normalize", run_ext=""):
     '''
     dataset_name: the name of a valid dataset to load see datasets.py
     explainer: string name of a valid explainer class
@@ -76,7 +76,7 @@ def execute_run(dataset_name: str, explainer: str, params: dict, output_path: st
     config["output_path"] = output_path
     config["random_state"] = random_state
     config["params"] = params
-    with open(output_path + "{}_{}_{:03d}_config.json".format(dataset_name, explainer.lower(), iteration), "w") as f:
+    with open(output_path + "{}_{}_{}{:03d}_config.json".format(dataset_name, explainer.lower(), run_ext, iteration), "w") as f:
         json_text = json.dumps(config, indent=4)
         f.write(json_text)
 
@@ -126,7 +126,8 @@ def execute_run(dataset_name: str, explainer: str, params: dict, output_path: st
     expl_df = pd.DataFrame(explanations, columns=col_names)
     # also store the index of the explained sample in the dataset
     expl_df.insert(0, "x_idx", ixd_explain)
-    explanation_path = output_path + "{}_{}_{:03d}_explns.csv".format(dataset_name, explainer.lower(), iteration)
+    explanation_path = output_path + \
+        "{}_{}_{}{:03d}_explns.csv".format(dataset_name, explainer.lower(), run_ext, iteration)
     expl_df.to_csv(explanation_path, index=False)
 
     # evalute the quality of the explanations
@@ -149,14 +150,15 @@ def execute_run(dataset_name: str, explainer: str, params: dict, output_path: st
         "n_explain": n_explain,
     }
 
-    with open(output_path + "{}_{}_{:03d}_result.json".format(dataset_name, explainer.lower(), iteration), "w") as f:
+    with open(output_path + "{}_{}_{}{:03d}_result.json".format(dataset_name, explainer.lower(), run_ext, iteration), "w") as f:
         json_text = json.dumps(results, indent=4)
         f.write(json_text)
 
     return results
 
 
-def vary_ntrees(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", "AFT", "MACE"], ntrees=[5, 10, 15], num_iters=5):
+def vary_ntrees(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", "AFT", "MACE"], ntrees=[5, 10, 15],
+                iterations=[0, 1, 2, 3, 4]):
     '''
     Experiment to observe the effect of the the number of features on explanation
     '''
@@ -164,7 +166,7 @@ def vary_ntrees(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", "AFT", "M
     print("\tds_names:", ds_names)
     print("\texplainers:", explainers)
     print("\tntrees:", ntrees)
-    print("\tnum_iters:", num_iters)
+    print("\titerations:", iterations)
 
     experiment_path = "./results/vary-ntrees/"
     max_depth = 5
@@ -174,8 +176,8 @@ def vary_ntrees(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", "AFT", "M
         "rf_hardvoting": False,  # note OCEAN and FACETIndex use soft and hard requirment
     }
     facet_params = {
-        "facet_offset": 0.0001,
-        "facet_nrects": 100000,
+        "facet_offset": 0.001,
+        "facet_nrects": 20000,
         "facet_sample": "Augment",
         "facet_enumerate": "PointBased",
         "facet_verbose": False,
@@ -208,36 +210,17 @@ def vary_ntrees(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", "AFT", "M
         "OCEAN": ocean_params,
     }
 
-    experiment_results = pd.DataFrame(columns=[
-        "dataset",
-        "explainer",
-        "n_trees",
-        "max_depth",
-        "iteration",
-        "accuracy",
-        "precision",
-        "recall",
-        "f1",
-        "per_valid",
-        "avg_dist",
-        "avg_length",
-        "prep_time",
-        "explain_time",
-        "sample_time",
-        "n_explain",
-    ])
-
-    total_runs = len(ds_names) * len(explainers) * len(ntrees) * num_iters
+    total_runs = len(ds_names) * len(explainers) * len(ntrees) * len(iterations)
     progress_bar = tqdm(total=total_runs, desc="Overall Progress", position=0, disable=False)
 
     for ds in ds_names:
         for expl in explainers:
             for ntree in ntrees:
-                for iter in range(num_iters):
+                for iter in iterations:
                     # set the number of trees
                     params["RandomForest"]["rf_ntrees"] = ntree
                     # FACET uses hardvoting
-                    if expl == "FACET":
+                    if expl == "FACETIndex":
                         params["RandomForest"]["rf_hardvoting"] = True
                     else:
                         params["RandomForest"]["rf_hardvoting"] = False
@@ -250,7 +233,8 @@ def vary_ntrees(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", "AFT", "M
                         test_size=0.2,
                         n_explain=20,
                         random_state=1,
-                        preprocessing="Normalize"
+                        preprocessing="Normalize",
+                        run_ext="t{:03d}_".format(ntree)
                     )
                     df_item = {
                         "dataset": ds,
@@ -260,11 +244,12 @@ def vary_ntrees(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", "AFT", "M
                         "max_depth": max_depth,
                         **run_result
                     }
-                    experiment_results = experiment_results.append(df_item, ignore_index=True)
-                    if not os.path.isfile(experiment_path + "results.csv"):
-                        experiment_results.to_csv(experiment_path + "results.csv", index=False)
+                    experiment_results = pd.DataFrame([df_item])
+                    if not os.path.exists(experiment_path + "vary_ntrees.csv"):
+                        experiment_results.to_csv(experiment_path + "vary_ntrees.csv", index=False)
                     else:
-                        experiment_results.to_csv(experiment_path + "results.csv", mode="a", header=False, index=False)
+                        experiment_results.to_csv(experiment_path + "vary_ntrees.csv",
+                                                  index=False, mode="a", header=False,)
 
                     progress_bar.update()
     progress_bar.close()

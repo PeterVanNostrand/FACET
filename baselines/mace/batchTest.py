@@ -19,10 +19,10 @@ except:
     print('[ENV WARNING] activate virtualenv to allow for testing MACE or MINT')
 import baselines.mace.generateMOExplanations as generateMOExplanations
 import baselines.mace.generateFTExplanations as generateFTExplanations
-try:
-    import baselines.mace.generateARExplanations as generateARExplanations
-except:
-    print('[ENV WARNING] deactivate virtualenv to allow for testing Actionable Recourse')
+# try:
+#     import baselines.mace.generateARExplanations as generateARExplanations
+# except:
+#     print('[ENV WARNING] deactivate virtualenv to allow for testing Actionable Recourse')
 
 
 from random import seed
@@ -116,12 +116,13 @@ def generateExplanations(
 
     elif approach_string == 'AR':  # 'actionable_recourse':
 
-        return generateARExplanations.genExp(
-            model_trained,
-            factual_sample,
-            norm_type_string,
-            dataset_obj
-        )
+        # return generateARExplanations.genExp(
+        #     model_trained,
+        #     factual_sample,
+        #     norm_type_string,
+        #     dataset_obj
+        # )
+        pass
 
     else:
 

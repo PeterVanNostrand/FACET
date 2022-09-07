@@ -31,6 +31,9 @@ class OCEAN(Explainer):
     def prepare(self, data=None):
         pass
 
+    def prepare_dataset(self, x, y):
+        pass
+
     def explain(self, x, y):
         counterfactual_classes = ((y - 1) * -1)
         xprime = np.empty(shape=x.shape)

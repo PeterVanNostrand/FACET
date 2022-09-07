@@ -26,11 +26,11 @@ if TYPE_CHECKING:
 
 class FACETIndex(Explainer):
     def __init__(self, manger, hyperparameters: dict):
-        self.manger: MethodManager = manger
+        self.manager: MethodManager = manger
         self.parse_hyperparameters(hyperparameters)
 
     def prepare(self, data=None):
-        rf_detector: RandomForest = self.manger.random_forest
+        rf_detector: RandomForest = self.manager.random_forest
         rf_trees = rf_detector.model.estimators_
         self.rf_ntrees = len(rf_trees)
         self.rf_nclasses = rf_detector.model.n_classes_
@@ -65,7 +65,7 @@ class FACETIndex(Explainer):
         '''
         Computes the support for each vertex and each pairs of vertices in the classification output of the training data. That is fraction of all samples which are classificed into vertex Vi or pair of vertices Vi, Vj. These values are stored in self.vertex_support[i] and self.pairwise_support[i][j] respectively
         '''
-        rf_detector: RandomForest = self.manger.random_forest
+        rf_detector: RandomForest = self.manager.random_forest
         all_leaves = rf_detector.apply(data)  # leaves that each sample ends up in (nsamples in xtrain, ntrees)
 
         # compute the support of each vertex in the predictions of the training data
@@ -108,7 +108,7 @@ class FACETIndex(Explainer):
         Converts the random forest ensemble into a graph representation, then uses a branching technique to find k-sized cliques on this graph which correspond to majority sized hyper-rectangles which are added to the index
         '''
         # 1. build the graphs, one per class
-        rf_detector: RandomForest = self.manger.random_forest
+        rf_detector: RandomForest = self.manager.random_forest
         rf_trees: list[tree.DecisionTreeClassifier] = rf_detector.model.estimators_
         self.index_paths(self.rf_nclasses)
         self.find_synthesizeable_paths(rf_trees)
@@ -143,10 +143,11 @@ class FACETIndex(Explainer):
         elif self.sample_type == "Random":
             all_same_class = True
             while all_same_class:
+                print("all same")
                 # create a set of points randomly placed with a uniform distribution along each axis
                 rect_points = np.random.uniform(low=0.0, high=1.0, size=(self.n_rects, training_data.shape[1]))
                 # check to make sure the resulting set has points of both classes, redraw if needed
-                preds = self.manger.predict(rect_points)
+                preds = self.manager.predict(rect_points)
                 all_same_class = len(np.unique(preds)) < 2
         elif self.sample_type == "Augment":
             all_same_class = True
@@ -158,7 +159,7 @@ class FACETIndex(Explainer):
                 noise = np.random.normal(loc=0.0, scale=self.standard_dev, size=rect_points.shape)
                 rect_points += noise
                 # check to make sure the resulting set has points of both classes, redraw if needed
-                preds = self.manger.predict(rect_points)
+                preds = self.manager.predict(rect_points)
                 all_same_class = len(np.unique(preds)) < 2
         return rect_points
 
@@ -204,7 +205,7 @@ class FACETIndex(Explainer):
         '''
         Checks if the given point falls within a hyper-rectangle included in the index
         '''
-        label = self.manger.predict([point])
+        label = self.manager.predict([point])
         covered = False
         i = 0
         while i < len(self.index[label]) and not covered:
@@ -218,7 +219,7 @@ class FACETIndex(Explainer):
 
         Parameters
         ----------
-        The enumerated paths from build_paths, a ragged list of (ntrees, npaths_i) 
+        The enumerated paths from build_paths, a ragged list of (ntrees, npaths_i)
 
         Returns
         -------
@@ -242,7 +243,7 @@ class FACETIndex(Explainer):
             for rect in self.index[class_id]:
                 x = np.zeros(self.rf_nfeatures)
                 xprime = self.fit_to_rectangle(x, rect)
-                pred = int(self.manger.predict([xprime]))
+                pred = int(self.manager.predict([xprime]))
                 if pred != class_id:
                     print("Bad Rectangle")
 
@@ -251,8 +252,8 @@ class FACETIndex(Explainer):
         This method uses the training data to enumerate a set of hyper-rectangles of each classes and adds them to an index for later searching during explanation
         '''
         self.initialize_index()
-        preds = self.manger.predict(data)
-        rf_detector: RandomForest = self.manger.random_forest
+        preds = self.manager.predict(data)
+        rf_detector: RandomForest = self.manager.random_forest
         # get the leaves that each sample ends up in
         all_leaves = rf_detector.apply(data)  # shape (nsamples in xtrain, ntrees)
 
@@ -507,7 +508,7 @@ class FACETIndex(Explainer):
         explains a given instance by growing a clique around the region of xi starting with trees which predict the counterfactual class
         '''
 
-        xprime = x.copy()  # an array for the constructed contrastive examples
+        xprime = []  # an array for the constructed contrastive examples
 
         # assumimg binary classification [0, 1] set counterfactual class
         counterfactual_classes = ((y - 1) * -1)
@@ -528,56 +529,29 @@ class FACETIndex(Explainer):
                         min_dist = dist
                         closest_rect = rect
                 # generate a counterfactual example which falls within this rectangle
-                xprime[i] = self.fit_to_rectangle(x[i], closest_rect)
+                xprime.append(self.fit_to_rectangle(x[i], closest_rect))
 
         elif self.search_type == "BitVector":
             for i in range(x.shape[0]):  # for each instance
-                # get the nearest hyper-rectangles from the bit vector
-                # #! TEMP testing value for constraints to 0.5
-                # constraints = np.zeros(shape=(self.rf_nfeatures, 2))
-                # constraints[:, 1] = 0.5
-                # nearest_rect = self.rbvs[counterfactual_classes[i]].point_query(
-                #     instance=x[i], constraints=constraints, weights=weights)
-                constraints = None
-                self.k = 1
-                self.max_dist = np.inf
-                if self.k is None or self.k > 1:
-                    nearest_rects = self.rbvs[counterfactual_classes[i]].point_query(
-                        instance=x[i],
-                        constraints=constraints,
-                        weights=weights,
-                        k=self.k,
-                        max_dist=self.max_dis
-                    )
-                    if len(nearest_rects) > 0:
-                        nearest_rect = nearest_rects[0]
-                    else:
-                        nearest_rect = None
-                else:
-                    nearest_rect = self.rbvs[counterfactual_classes[i]].point_query(
-                        instance=x[i],
-                        constraints=constraints,
-                        weights=weights,
-                        k=self.k,
-                        max_dist=self.max_dist
-                    )
-
-                # nearest_rect = self.rbvs[counterfactual_classes[i]].point_query(x[i], constraints, weights)
-                # if a counterfactual region was found
+                nearest_rect = None
+                nearest_rect = self.rbvs[counterfactual_classes[i]].point_query(
+                    instance=x[i],
+                    constraints=None,
+                    weights=None,
+                    k=1,
+                    max_dist=np.inf
+                )
                 if nearest_rect is not None:
-                    # generate a counterfactual example in the nearest point of that hyper-rectangle
-                    xprime[i] = self.fit_to_rectangle(x[i], nearest_rect)
-                    # if not self.is_inside(xprime[i], constraints):
-                    #     print("out of bounds example")
+                    xprime.append(self.fit_to_rectangle(x[i], nearest_rect))
                 else:
-                    # no counterfactual example can be found, set all values to infinite
-                    xprime[i][:] = np.inf
+                    xprime.append([np.inf for _ in range(x.shape[1])])
 
         # swap np.inf (no explanatio found) for zeros to allow for prediction on xprime
+        xprime = np.array(xprime)
         idx_inf = np.argwhere(xprime == np.inf)
         xprime[idx_inf] = np.tile(0, x.shape[1])
         # check that all counterfactuals result in a different class
-        preds = self.manger.predict(xprime)
+        preds = self.manager.predict(xprime)
         failed_explanation = (preds == y)
         xprime[failed_explanation] = np.tile(np.inf, x.shape[1])
         # replace infinite values for invalid explanation

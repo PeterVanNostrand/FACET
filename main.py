@@ -88,7 +88,9 @@ if __name__ == "__main__":
     RAND_SEED = 0
     random.seed(RAND_SEED)
     np.random.seed(RAND_SEED)
-    run_ds = DS_NAMES.copy()
+    all_ds = DS_NAMES.copy()
+    all_explaiers = ["FACETIndex", "OCEAN", "RFOCSE", "AFT", "MACE"]
+    notMACE = ["FACETIndex", "OCEAN", "RFOCSE", "AFT"]
     # index_test(ds_names=["vertebral"], exp_var="facet_nrects", exp_vals=[1000, 5000, 10000],
     #            num_iters=1, eval_samples=20, test_size=0.2, seed=RAND_SEED)
 
@@ -99,7 +101,8 @@ if __name__ == "__main__":
     # compare_methods(["vertebral"], num_iters=1, explainers=["MACE"], eval_samples=20, seed=RAND_SEED)
     # vary_ntrees(run_ds, explainer="FACETIndex", ntrees=list(range(5, 105, 5)), num_iters=5, seed=SEED)
     # simple_run("magic")
-    vary_ntrees(ds_names=["vertebral"], explainers=["FACETIndex"], ntrees=[10], num_iters=1)
+
+    vary_ntrees(ds_names=all_ds, explainers=["FACETIndex"], ntrees=[10, 50, 100], iterations=[0])
     # bb_ntrees(run_ds, ntrees=[25], depths=[3], num_iters=1, eval_samples=5)
     # hard_vs_soft(run_ds, num_iters=10)
     # bb_ordering(run_ds, orderings=["PriorityQueue", "Stack", "ModifiedPriorityQueue"], num_iters=1,
