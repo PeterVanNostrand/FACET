@@ -12,11 +12,6 @@ from explainers import *
 from explainers.best_candidate import AFT
 from explainers.ocean import OCEAN
 from explainers.mace import MACE
-from explainers.facet import FACET
-from explainers.facet_trees import FACETTrees
-from explainers.facet_paths import FACETPaths
-from explainers.facet_grow import FACETGrow
-from explainers.facet_bb import FACETBranchBound
 from explainers.facet_index import FACETIndex
 from explainers.rf_ocse import RFOCSE
 
@@ -36,16 +31,6 @@ class MethodManager():
             return MACE(manager=self, hyperparameters=hyperparameters)
         elif explainer == "RFOCSE":
             return RFOCSE(manager=self, hyperparameters=hyperparameters)
-        elif explainer == "FACET":
-            return FACET(model=self, hyperparameters=hyperparameters)
-        elif explainer == "FACETTrees":
-            return FACETTrees(model=self, hyperparameters=hyperparameters)
-        elif explainer == "FACETPaths":
-            return FACETPaths(model=self, hyperparameters=hyperparameters)
-        elif explainer == "FACETGrow":
-            return FACETGrow(model=self, hyperparameters=hyperparameters)
-        elif explainer == "FACETBranchBound":
-            return FACETBranchBound(model=self, hyperparameters=hyperparameters)
         elif explainer == "FACETIndex":
             return FACETIndex(manger=self, hyperparameters=hyperparameters)
         else:

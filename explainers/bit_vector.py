@@ -8,7 +8,6 @@ from bitarray.util import zeros as bitzeros
 
 from typing import TYPE_CHECKING
 
-from pydantic import NoneIsAllowedError, constr
 if TYPE_CHECKING:  # circular import avoidance
     from explainers.facet_index import FACETIndex
 

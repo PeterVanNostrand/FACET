@@ -17,7 +17,7 @@ import networkx as nx
 from utilities.metrics import dist_euclidean
 from explainers.explainer import Explainer
 from detectors.random_forest import RandomForest
-from explainers.branching import BranchIndex
+# from explainers.branching import BranchIndex
 from explainers.bit_vector import BitVectorIndex
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
