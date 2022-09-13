@@ -1,4 +1,5 @@
 import numpy as np
+from tqdm.auto import tqdm
 
 from explainers.explainer import Explainer
 from utilities.metrics import dist_euclidean
@@ -147,6 +148,7 @@ class AFT(Explainer):
                         all_examples[i] = np.vstack([all_examples[i], tree_examples[i]])
 
         # for each sample pick the top k best candidates that result in a changed class
+        progress = tqdm(total=x.shape[0], desc="AFT", leave=False)
         for i in range(x.shape[0]):
             # get the info for that sample
             instance = x[i]
@@ -175,8 +177,10 @@ class AFT(Explainer):
                 top_k_candidates = np.vstack((candidate_examples, pad_candidates))
 
             final_examples[i] = top_k_candidates
+            progress.update()
 
-            if k == 1:
+        progress.close()
+        if k == 1:
                 final_examples = final_examples.squeeze()
 
         return final_examples

@@ -25,6 +25,7 @@ class MethodManager():
     def __init__(self, explainer=None, hyperparameters=None, random_state=None):
         self.random_forest = RandomForest(hyperparameters=hyperparameters, random_state=random_state)
         self.explainer = self.init_explainer(explainer=explainer, hyperparameters=hyperparameters)
+        self.random_state = random_state
 
     def init_explainer(self, explainer, hyperparameters):
         if explainer == "AFT":

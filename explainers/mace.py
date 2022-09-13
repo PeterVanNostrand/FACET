@@ -1,5 +1,8 @@
 import numpy as np
 import pandas as pd
+from tqdm.auto import tqdm
+import time
+
 from explainers.explainer import Explainer
 
 # from baselines.mace.newLoadData import loadDataset
@@ -42,7 +45,7 @@ class MACE(Explainer):
         else:
             self.epsilon = epsilon
 
-    def prepare(self, data=None):
+    def prepare(self, xtrain=None, ytrain=None):
         pass
 
     def prepare_dataset(self, x, y):
@@ -70,6 +73,7 @@ class MACE(Explainer):
         norm_type_string = "two_norm"
         rf_model = self.manager.random_forest.model
 
+        progress = tqdm(total=x.shape[0], desc="MACE", leave=False)
         for i in range(x.shape[0]):
             factual_sample = {}
             for j in range(x.shape[1]):
@@ -88,6 +92,8 @@ class MACE(Explainer):
             for i in range(len(factual_sample)-1):
                 exp[i] = explanation["cfe_sample"]["x{}".format(i)]
             xprime.append(exp)
+            progress.update()
+        progress.close()
 
         # if MACE finds a solution of the same class, remove it
         xprime = np.array(xprime)

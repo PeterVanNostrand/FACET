@@ -24,7 +24,7 @@ class Explainer(ABC):
         pass
 
     @abstractmethod
-    def prepare(self, data=None):
+    def prepare(self, xtrain=None, ytrain=None):
         '''
         Function to initialize the explainer, called after the model is trained.
         '''

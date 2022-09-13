@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from explainers.explainer import Explainer
 from sklearn.preprocessing import StandardScaler
-
+from tqdm.auto import tqdm
 
 # from fastcrf.rfocse_main import batch_extraction, CounterfactualSetExplanation
 # from fastcrf.datasets import DatasetInfo, DatasetInfoBuilder
@@ -42,7 +42,8 @@ class RFOCSE(Explainer):
     def prepare_dataset(self, x, y):
         pass
 
-    def prepare(self, data=None):
+    def prepare(self, xtrain=None, ytrain=None):
+        data = xtrain
         self.data = data
         df = pd.DataFrame(data)
         y = self.manager.predict(data)
@@ -75,6 +76,7 @@ class RFOCSE(Explainer):
         X_train = self.Xtrain
 
         valids = []
+        progress = tqdm(total=x.shape[0], desc="RFOCSE", leave=False)
         for idx, res in zip(X_test.index, batch_extraction(rf, dataset_info, X_test.values, max_distance=100, log_every=-1, max_iterations=20_000_000,
                                                            export_rules_file=None, dataset=X_train.values)):
             if 'explanation' in res:
@@ -89,6 +91,8 @@ class RFOCSE(Explainer):
                 res['counterfactual_class'] = rf.predict(np.array(res['counterfactual_sample']).reshape(1, -1))[0]
                 res['valid_'] = res['factual_class'] != res['counterfactual_class']
                 valids.append(res['valid_'])
+            progress.update()
+        progress.close()
 
         # locate non-counterfactual examples and replace them with [np.inf, ... , np.inf]
         idx_no_examples = (xprime == np.inf).any(axis=1)

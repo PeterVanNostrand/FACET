@@ -1,5 +1,13 @@
 import numpy as np
+import os
+import cProfile
+import time
+import random
+import math
+import json
+import re
 from numpy.core.fromnumeric import var
+
 from manager import MethodManager
 import matplotlib.pyplot as plt
 from utilities.metrics import percent_valid
@@ -9,14 +17,35 @@ from utilities.tree_tools import compute_jaccard
 from sklearn.model_selection import train_test_split
 from dataset import load_data
 from dataset import DS_NAMES
+from experiments import execute_run
+from vary_nrects import vary_nrects
+from vary_ntrees import vary_ntrees
+from vary_sigma import vary_sigma
 
-# from experiments_old import *
-import cProfile
-import time
-import random
-import math
-import json
-from experiments import execute_run, vary_ntrees
+
+def check_create_directory(dir_path="./results/"):
+    '''
+    Checks the the directory at `dir_path` exists, if it does not it creates all directories in the path
+    '''
+    if not os.path.isdir(dir_path):
+        os.makedirs(dir_path)
+
+    # find the next availible run_id in the specified results directory
+    max_run_id = 0
+    dir_names = os.listdir(dir_path)
+    for name in dir_names:
+        x = re.match("run-(\d{3})", name)
+        if x is not None:
+            found_run_id = int(x.group(1))
+            if found_run_id > max_run_id:
+                max_run_id = found_run_id
+    run_id = max_run_id + 1
+
+    # return the run_id and a path to that folder
+    run_dir = "run-{:03d}/".format(run_id)
+    run_path = os.path.join(os.path.abspath(dir_path), run_dir)
+    os.makedirs(run_path)
+    return run_id, run_path
 
 
 def simple_run(dataset_name):
@@ -24,14 +53,16 @@ def simple_run(dataset_name):
     # xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=0.2, shuffle=True, random_state=0)
 
     # Euclidean, FeaturesChanged
+    run_id, run_path = check_create_directory("./results/simple-run/")
+
     rf_params = {
-        "rf_maxdepth": 2,
-        "rf_ntrees": 3,
+        "rf_ntrees": 10,
+        "rf_maxdepth": 5,
         "rf_hardvoting": False,  # note OCEAN and FACETIndex use soft and hard requirment
     }
     facet_params = {
         "facet_offset": 0.0001,
-        "facet_nrects": 10000,
+        "facet_nrects": 10_000,
         "facet_sample": "Augment",
         "facet_enumerate": "PointBased",
         "facet_verbose": False,
@@ -50,7 +81,7 @@ def simple_run(dataset_name):
     }
     mace_params = {
         "mace_maxtime": 300,
-        "mace_epsilon": 0.01
+        "mace_epsilon": 0.1
     }
     ocean_params = {
         "ocean_norm": 2
@@ -67,28 +98,33 @@ def simple_run(dataset_name):
     explainer = "MACE"
     iteration = 0
     preprocessing = "Normalize"
+
+    print("Run ID: {}".format(run_id))
+    print("explainer: " + explainer)
+    print("dataset: " + dataset_name)
+    print("config:")
+    print(json.dumps(params, indent=4))
+
     results = execute_run(
         dataset_name=dataset_name,
         explainer=explainer,
         params=params,
-        output_path="results/test-run/",
+        output_path=run_path,
         iteration=iteration,
         test_size=0.2,
         n_explain=3,
         random_state=1,
         preprocessing=preprocessing
     )
-    print("explainer: " + explainer)
-    print("dataset: " + dataset_name)
-    json_text = json.dumps(results, indent=4)
-    print(json_text)
+    print("results:")
+    print(json.dumps(results, indent=4))
 
 
 if __name__ == "__main__":
     RAND_SEED = 0
     random.seed(RAND_SEED)
     np.random.seed(RAND_SEED)
-    all_ds = DS_NAMES.copy()
+    all_ds = ["cancer", "glass", "magic", "spambase", "vertebral"]
     all_explaiers = ["FACETIndex", "OCEAN", "RFOCSE", "AFT", "MACE"]
     notMACE = ["FACETIndex", "OCEAN", "RFOCSE", "AFT"]
     # index_test(ds_names=["vertebral"], exp_var="facet_nrects", exp_vals=[1000, 5000, 10000],
@@ -99,14 +135,12 @@ if __name__ == "__main__":
     # index_test()
     # run_ds.remove("spambase")
     # compare_methods(["vertebral"], num_iters=1, explainers=["MACE"], eval_samples=20, seed=RAND_SEED)
-    # vary_ntrees(run_ds, explainer="FACETIndex", ntrees=list(range(5, 105, 5)), num_iters=5, seed=SEED)
-    # simple_run("magic")
+    # vary_ntrees(["vertebral"], explainer="FACETIndex", ntrees=list(range(5, 105, 5)), num_iters=5, seed=SEED)
+    # simple_run("vertebral")
 
-    vary_ntrees(ds_names=all_ds, explainers=["FACETIndex"], ntrees=[10, 50, 100], iterations=[0])
-    # bb_ntrees(run_ds, ntrees=[25], depths=[3], num_iters=1, eval_samples=5)
-    # hard_vs_soft(run_ds, num_iters=10)
-    # bb_ordering(run_ds, orderings=["PriorityQueue", "Stack", "ModifiedPriorityQueue"], num_iters=1,
-    # test_size=0.2, ntrees=15, max_depth=3, eval_samples=5)
-    # 100, 1000, 5000, 10000, 20000, 30000, 40000, 50000
-    # vary_nrects(run_ds, nrects=[20000, 40000, 60000, 80000, 100000, 150000,
-    # 200000, 250000], num_iters=1, eval_samples=20, seed=RAND_SEED)
+    # vary_ntrees(ds_names=all_ds, explainers=["FACETIndex", "OCEAN"], ntrees=[10, 50, 100, 150, 200], iterations=[0])
+    # nrectangles = [1_000, 5_000, 10_000, 20_000, 30_000, 40_000, 50_000, 60_000, 70_000, 80_000, 100_000]
+    # nrectangles = [70_000, 90_000]
+    # vary_nrects(ds_names=all_ds, nrects=nrectangles, iterations=list(range(10)))
+    # vary_nrects(all_ds, nrects=nrectangles, iterations=[1, 2, 3, 4])
+    vary_sigma(ds_names=all_ds, sigmas=[0.001, 0.005, 0.01, 0.05, 0.1, 0.15, 0.2, 0.25], iterations=[0])

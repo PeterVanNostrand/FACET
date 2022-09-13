@@ -3,7 +3,7 @@ from __future__ import annotations
 
 # core python packages
 import math
-from xmlrpc.client import Boolean
+from tqdm.auto import tqdm
 
 # scientific and utility packages
 import numpy as np
@@ -29,7 +29,8 @@ class FACETIndex(Explainer):
         self.manager: MethodManager = manger
         self.parse_hyperparameters(hyperparameters)
 
-    def prepare(self, data=None):
+    def prepare(self, xtrain=None, ytrain=None):
+        data = xtrain
         rf_detector: RandomForest = self.manager.random_forest
         rf_trees = rf_detector.model.estimators_
         self.rf_ntrees = len(rf_trees)
@@ -56,7 +57,7 @@ class FACETIndex(Explainer):
                 if self.verbose:
                     print("class {}".format(class_id))
                 self.rbvs.append(BitVectorIndex(rects=self.index[class_id],
-                                 explainer=self, hyperparameters=self.hyperparameters))
+                                                explainer=self, hyperparameters=self.hyperparameters))
 
     def prepare_dataset(self, x, y):
         pass
@@ -201,7 +202,7 @@ class FACETIndex(Explainer):
         widths = test_rect[:, 1] - test_rect[:, 0]
         return widths
 
-    def inside_index(self, point: np.ndarray) -> Boolean:
+    def inside_index(self, point: np.ndarray) -> bool:
         '''
         Checks if the given point falls within a hyper-rectangle included in the index
         '''
@@ -532,6 +533,7 @@ class FACETIndex(Explainer):
                 xprime.append(self.fit_to_rectangle(x[i], closest_rect))
 
         elif self.search_type == "BitVector":
+            progress = tqdm(total=x.shape[0], desc="FACETIndex", leave=False)
             for i in range(x.shape[0]):  # for each instance
                 nearest_rect = None
                 nearest_rect = self.rbvs[counterfactual_classes[i]].point_query(
@@ -545,6 +547,8 @@ class FACETIndex(Explainer):
                     xprime.append(self.fit_to_rectangle(x[i], nearest_rect))
                 else:
                     xprime.append([np.inf for _ in range(x.shape[1])])
+                progress.update()
+            progress.close()
 
         # swap np.inf (no explanatio found) for zeros to allow for prediction on xprime
         xprime = np.array(xprime)

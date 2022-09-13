@@ -1,5 +1,8 @@
 import numpy as np
 import pandas as pd
+from tqdm.auto import tqdm
+from sklearn.ensemble import IsolationForest
+
 # from baselines.ocean.BuildCounterFactualSeekedSet import buildCounterFactualSeekedFile
 from explainers.explainer import Explainer
 from baselines.ocean.RandomForestCounterFactual import RandomForestCounterFactualMilp
@@ -22,14 +25,35 @@ class OCEAN(Explainer):
 
     def parse_hyperparameters(self, hyperparameters: dict) -> None:
         params: dict = hyperparameters.get("OCEAN")
+        # ocean norm
         if params.get("ocean_norm") is None:
             self.objectiveNorm = 2
             print("No ocean_norm set, using L2")
         else:
             self.objectiveNorm = hyperparameters.get("ocean_norm")
 
-    def prepare(self, data=None):
-        pass
+        # isolation forest
+        if params.get("ocean_ilf") is None:
+            self.use_ilf = False
+            print("No ocean_ilf set, defaulting to False")
+        else:
+            self.use_ilf = params.get("ocean_ilf")
+
+    def prepare(self, xtrain: np.ndarray = None, ytrain: np.ndarray = None):
+        if self.use_ilf:
+            # create the isolation forest model
+            ilf_max_samples = 32
+            ilf_n_estimators = 100
+            self.ilf = IsolationForest(random_state=self.manager.random_state,
+                                       max_samples=ilf_max_samples,
+                                       n_estimators=ilf_n_estimators, contamination=0.1)
+            # train the isolation forest model
+            # for some reason OCEAN trains the isolation forest on only one class
+            idx_match = (ytrain == 1)
+            data = xtrain[idx_match]
+            self.ilf.fit(data)
+        else:
+            self.ilf = None
 
     def prepare_dataset(self, x, y):
         pass
@@ -39,6 +63,7 @@ class OCEAN(Explainer):
         xprime = np.empty(shape=x.shape)
         xprime[:, :] = np.inf
 
+        progress = tqdm(total=x.shape[0], desc="OCEAN", leave=False)
         for i in range(x.shape[0]):
             to_explain = x[i].copy()
             sample = [pd.Series(to_explain, dtype=np.float64, name=str(i))]
@@ -56,7 +81,7 @@ class OCEAN(Explainer):
                 classifier=self.manager.random_forest.model,
                 sample=sample,
                 outputDesired=desired_label,
-                isolationForest=None,
+                isolationForest=self.ilf,
                 constraintsType=TreeConstraintsType.LinearCombinationOfPlanes,
                 objectiveNorm=2,
                 mutuallyExclusivePlanesCutsActivated=True,
@@ -71,6 +96,8 @@ class OCEAN(Explainer):
             randomForestMilp.buildModel()
             randomForestMilp.solveModel()
             xprime[i] = np.array(randomForestMilp.x_sol[0])
+            progress.update()
+        progress.close()
 
         # check that all counterfactuals result in a different class
         preds = self.manager.predict(xprime)
