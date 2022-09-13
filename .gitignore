@@ -5,3 +5,6 @@ fastcrf/*.html
 fastcrf/*.cpp
 fastcrf/*.so
 build/*
+results/*
+mace_temp.log
+figures/*
