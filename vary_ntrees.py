@@ -4,18 +4,11 @@ import os
 from tqdm.auto import tqdm
 
 from experiments import execute_run
-
-tuned_facet_sd = {
-    "cancer": 0.1,
-    "glass": 0.005,
-    "magic": 0.001,
-    "spambase": 0.01,
-    "vertebral": 0.05
-}
+from experiments import TUNED_FACET_SD
 
 
 def vary_ntrees(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", "AFT", "MACE"], ntrees=[5, 10, 15],
-                iterations=[0, 1, 2, 3, 4]):
+                iterations=[0, 1, 2, 3, 4], fmod=None):
     '''
     Experiment to observe the effect of the the number of features on explanation
     '''
@@ -25,8 +18,13 @@ def vary_ntrees(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", "AFT", "M
     print("\tntrees:", ntrees)
     print("\titerations:", iterations)
 
-    csv_path = "./results/vary_ntrees.csv"
-    experiment_path = "./results/vary-ntrees/"
+    if fmod is not None:
+        csv_path = "./results/vary_ntrees_" + fmod + ".csv"
+        experiment_path = "./results/vary-ntrees-" + fmod + "/"
+    else:
+        csv_path = "./results/vary_ntrees.csv"
+        experiment_path = "./results/vary-ntrees/"
+
     max_depth = 5
     rf_params = {
         "rf_maxdepth": max_depth,
@@ -39,11 +37,11 @@ def vary_ntrees(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", "AFT", "M
         "facet_sample": "Augment",
         "facet_enumerate": "PointBased",
         "facet_verbose": False,
-        "facet_sd": 0.3,
+        "facet_sd": -1,
         "facet_search": "BitVector",
         "rbv_initial_radius": 0.01,
         "rbv_radius_growth": "Linear",
-        "rbv_num_interval": 4
+        "rbv_num_interval": 4,
     }
     rfocse_params = {
         "rfoce_transform": False,
@@ -57,7 +55,8 @@ def vary_ntrees(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", "AFT", "M
         "mace_epsilon": 0.001
     }
     ocean_params = {
-        "ocean_norm": 2
+        "ocean_norm": 2,
+        "ocean_ilf": False
     }
     params = {
         "RandomForest": rf_params,
@@ -77,7 +76,7 @@ def vary_ntrees(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", "AFT", "M
                 for ds in ds_names:
                     # set the number of trees
                     params["RandomForest"]["rf_ntrees"] = ntree
-                    params["FACETIndex"]["facet_sd"] = tuned_facet_sd[ds]
+                    params["FACETIndex"]["facet_sd"] = TUNED_FACET_SD[ds]
                     # FACET uses hardvoting
                     if expl == "FACETIndex":
                         params["RandomForest"]["rf_hardvoting"] = True

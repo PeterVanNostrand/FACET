@@ -19,6 +19,15 @@ from dataset import DS_DIMENSIONS
 from utilities.metrics import classification_metrics, percent_valid, average_distance
 
 
+TUNED_FACET_SD = {
+    "cancer": 0.1,
+    "glass": 0.005,
+    "magic": 0.001,
+    "spambase": 0.01,
+    "vertebral": 0.05
+}
+
+
 def check_create_directory(dir_path="./results"):
     '''
     Checks the the directory at `dir_path` exists, if it does not it creates all directories in the path

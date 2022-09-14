@@ -3,9 +3,10 @@ import pandas as pd
 from tqdm.auto import tqdm
 
 from experiments import execute_run
+from experiments import TUNED_FACET_SD
 
 
-def vary_nrects(ds_names, nrects=[5, 10, 15], iterations=[0, 1, 2, 3, 4]):
+def vary_nrects(ds_names, nrects=[5, 10, 15], iterations=[0, 1, 2, 3, 4], fmod=None):
     '''
     Experiment to observe the effect of the the number of features on explanation
     '''
@@ -14,8 +15,13 @@ def vary_nrects(ds_names, nrects=[5, 10, 15], iterations=[0, 1, 2, 3, 4]):
     print("\tnrects:", nrects)
     print("\titerations:", iterations)
 
-    csv_path = "./results/vary_nrects.csv"
-    experiment_path = "./results/vary-nrects/"
+    if fmod is not None:
+        csv_path = "./results/vary_nrects_" + fmod + ".csv"
+        experiment_path = "./results/vary-nrects-" + fmod + "/"
+    else:
+        csv_path = "./results/vary_nrects.csv"
+        experiment_path = "./results/vary-nrects/"
+
     explainer = "FACETIndex"
     ntrees = 100
     max_depth = None
@@ -30,11 +36,11 @@ def vary_nrects(ds_names, nrects=[5, 10, 15], iterations=[0, 1, 2, 3, 4]):
         "facet_sample": "Augment",
         "facet_enumerate": "PointBased",
         "facet_verbose": False,
-        "facet_sd": 0.3,
+        "facet_sd": -1,
         "facet_search": "BitVector",
         "rbv_initial_radius": 0.01,
         "rbv_radius_growth": "Linear",
-        "rbv_num_interval": 4
+        "rbv_num_interval": 4,
     }
     params = {
         "RandomForest": rf_params,
@@ -49,6 +55,7 @@ def vary_nrects(ds_names, nrects=[5, 10, 15], iterations=[0, 1, 2, 3, 4]):
             for ds in ds_names:
                 # set the number of trees
                 params["FACETIndex"]["facet_nrects"] = nr
+                params["FACETIndex"]["facet_sd"] = TUNED_FACET_SD[ds]
                 run_result = execute_run(
                     dataset_name=ds,
                     explainer=explainer,

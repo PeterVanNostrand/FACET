@@ -4,6 +4,7 @@ import random
 import json
 import re
 from numpy.core.fromnumeric import var
+import argparse
 
 from manager import MethodManager
 import matplotlib.pyplot as plt
@@ -46,10 +47,7 @@ def check_create_directory(dir_path="./results/"):
     return run_id, run_path
 
 
-def simple_run(dataset_name):
-    # x, y = load_data(dataset_name, preprocessing=None)
-    # xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=0.2, shuffle=True, random_state=0)
-
+def simple_run(ds_name="vertebral", explainer="FACETIndex", random_state=0):
     # Euclidean, FeaturesChanged
     run_id, run_path = check_create_directory("./results/simple-run/")
 
@@ -102,12 +100,12 @@ def simple_run(dataset_name):
 
     print("Run ID: {}".format(run_id))
     print("explainer: " + explainer)
-    print("dataset: " + dataset_name)
+    print("dataset: " + ds_name)
     print("config:")
     print(json.dumps(params, indent=4))
 
     results = execute_run(
-        dataset_name=dataset_name,
+        dataset_name=ds_name,
         explainer=explainer,
         params=params,
         output_path=run_path,
@@ -122,20 +120,51 @@ def simple_run(dataset_name):
 
 
 if __name__ == "__main__":
-    RAND_SEED = 0
-    random.seed(RAND_SEED)
-    np.random.seed(RAND_SEED)
+
     all_ds = ["cancer", "glass", "magic", "spambase", "vertebral"]
     all_explaiers = ["FACETIndex", "OCEAN", "RFOCSE", "AFT", "MACE"]
-    notMACE = ["FACETIndex", "OCEAN", "RFOCSE", "AFT"]
 
-    simple_run("spambase")
+    parser = argparse.ArgumentParser(description='Run FACET Experiments')
+    parser.add_argument("--expr", choices=["simple", "ntrees", "nrects", "eps", "sigma"], default="simple")
+    parser.add_argument("--ds", type=str, nargs="+", default=["vertebral"])
+    parser.add_argument("--method", type=str, nargs="+", choices=all_explaiers, default=["FACETIndex"])
+    parser.add_argument("--values", type=float, nargs="+", default=None)
+    parser.add_argument("--it", type=int, nargs="+", default=[0])
+    parser.add_argument("--fmod", type=str, default=None)
 
-    # vary_ntrees(ds_names=all_ds, explainers=["FACETIndex", "OCEAN"],
-    #             ntrees=[10, 50, 100, 200, 300, 400, 500], iterations=[1])
-    # nrectangles = [1_000, 5_000, 10_000, 20_000, 30_000, 40_000, 50_000, 60_000, 70_000, 80_000, 100_000]
-    # nrectangles = [70_000, 90_000]
-    # vary_nrects(ds_names=all_ds, nrects=nrectangles, iterations=list(range(10)))
-    # vary_nrects(all_ds, nrects=nrectangles, iterations=[1, 2, 3, 4])
-    # vary_sigma(ds_names=all_ds, sigmas=[0.001, 0.005, 0.01, 0.05, 0.1,
-    #    0.15, 0.2, 0.25], iterations=[5, 6, 7, 8, 9], ntrees=100)
+    args = parser.parse_args()
+
+    print(args)
+
+    # Do a single quick run with one explaienr and one dataset
+    if args.expr == "simple":
+        simple_run(ds_name=args.ds[0], explainer=args.method[0], random_state=args.it[0])
+    # Vary the number of trees and compare explaienrs
+    elif args.expr == "ntrees":
+        if args.values is not None:
+            ntrees = [int(_) for _ in args.values]
+            vary_ntrees(ds_names=args.ds, explainers=args.method, ntrees=ntrees, iterations=args.it, fmod=args.fmod)
+        else:
+            vary_ntrees(ds_names=args.ds, explainers=args.method, iterations=args.it, fmod=args.fmod)
+
+    # Vary the number of hyperrectangles for FACETIndex
+    elif args.expr == "nrects":
+        if args.values is not None:
+            nrects = [int(_) for _ in args.values]
+            vary_nrects(ds_names=args.ds, nrects=nrects, iterations=args.it, fmod=args.fmod)
+        else:
+            vary_nrects(ds_names=args.ds, iterations=args.it, fmod=args.fmod)
+
+    # Vary the epsilon value for MACE
+    elif args.expr == "eps":
+        if args.values is not None:
+            vary_eps(ds_names=args.ds, epsilons=args.values, iterations=args.it, fmod=args.fmod)
+        else:
+            vary_eps(ds_names=args.ds, iterations=args.it, fmod=args.fmod)
+
+    # Vary the standard deviation of HR enumeration for FACETIndex
+    elif args.expr == "sigma":
+        if args.values is not None:
+            vary_sigma(ds_names=args.ds, sigmas=args.values, iterations=args.it, fmod=args.fmod)
+        else:
+            vary_sigma(ds_names=args.ds, iterations=args.it, fmod=args.fmod)

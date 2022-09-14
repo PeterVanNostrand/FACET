@@ -5,7 +5,7 @@ from tqdm.auto import tqdm
 from experiments import execute_run
 
 
-def vary_sigma(ds_names, sigmas=[0.01, 0.05, 0.1, 0.2, 0.3], iterations=[0, 1, 2, 3, 4], ntrees=100):
+def vary_sigma(ds_names, sigmas=[0.01, 0.05, 0.1, 0.2, 0.3], iterations=[0, 1, 2, 3, 4], ntrees=100, fmod=None):
     '''
     Experiment to observe the effect of the standard deviation of data augmentation on explanation qualtiy
     '''
@@ -14,8 +14,13 @@ def vary_sigma(ds_names, sigmas=[0.01, 0.05, 0.1, 0.2, 0.3], iterations=[0, 1, 2
     print("\tsigmas:", sigmas)
     print("\titerations:", iterations)
 
-    csv_path = "./results/vary_sigma_500t.csv"
-    experiment_path = "./results/vary-sigma-500t/"
+    if fmod is not None:
+        csv_path = "./results/vary_sigma_" + fmod + ".csv"
+        experiment_path = "./results/vary-sigma-" + fmod + "/"
+    else:
+        csv_path = "./results/vary_sigma.csv"
+        experiment_path = "./results/vary-sigma/"
+
     explainer = "FACETIndex"
     ntrees = ntrees
     max_depth = None

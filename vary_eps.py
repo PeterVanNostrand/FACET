@@ -5,7 +5,7 @@ from tqdm.auto import tqdm
 from experiments import execute_run
 
 
-def vary_eps(ds_names, epsilons=[1e-5, 1e-6, 1e-7, 1e-8, 1e-9, 1e-10], iterations=[0]):
+def vary_eps(ds_names, epsilons=[1e-5, 1e-6, 1e-7, 1e-8, 1e-9, 1e-10], iterations=[0], fmod=None):
     '''
     Experiment to observe the effect of the the step size on MACE's runtime
     '''
@@ -14,8 +14,13 @@ def vary_eps(ds_names, epsilons=[1e-5, 1e-6, 1e-7, 1e-8, 1e-9, 1e-10], iteration
     print("\tepsilons:", epsilons)
     print("\titerations:", iterations)
 
-    csv_path = "./results/vary_eps_alt.csv"
-    experiment_path = "./results/vary-eps-alt/"
+    if fmod is not None:
+        csv_path = "./results/vary_eps_" + fmod + ".csv"
+        experiment_path = "./results/vary-eps-" + fmod + "/"
+    else:
+        csv_path = "./results/vary_eps.csv"
+        experiment_path = "./results/vary-eps/"
+
     explainer = "MACE"
     ntrees = 10
     max_depth = None
