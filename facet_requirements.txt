@@ -1,1 +1,22 @@
-bitarray
+bitarray "conda install -c conda-forge bitarray"
+tqdm "conda install -c anaconda tqdm"
+pandas "conda install -c anaconda pandas"
+numpy "conda install -c anaconda numpy=1.22.3"
+sklearn "conda install -c anaconda scikit-learn"
+networkx "conda install -c anaconda networkx"
+matplotlib "conda install -c anaconda matplotlib"
+
+ipython "conda install -c anaconda ipython"
+seaborn "conda install -c anaconda seaborn"
+traitlets "conda install -c anaconda traitlets"
+scipy "conda install -c anaconda scipy"
+graphviz "conda install -c anaconda python-graphviz"
+h5py "conda install -c anaconda h5py"
+
+gurobi
+"conda config --add channels https://conda.anaconda.org/gurobi"
+"conda insall gurobi"
+
+pysmt
+"conda install -c conda-forge pysmt"
+"pysmt-install --z3 --confirm-agreement"

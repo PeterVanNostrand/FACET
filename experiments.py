@@ -105,7 +105,7 @@ def execute_run(dataset_name: str, explainer: str, params: dict, output_path: st
     # prepare the explainer, handles any neccessary preprocessing
     prep_start = time.time()
     manager.explainer.prepare_dataset(x, y)
-    manager.prepare(data=xtrain)
+    manager.prepare(xtrain=xtrain, ytrain=ytrain)
     prep_end = time.time()
     prep_time = prep_end-prep_start
 

@@ -44,8 +44,8 @@ class MethodManager():
     def predict(self, x):
         return self.random_forest.predict(x)
 
-    def prepare(self, data=None):
-        self.explainer.prepare(data)
+    def prepare(self, xtrain: np.ndarray = None, ytrain: np.ndarray = None):
+        self.explainer.prepare(xtrain, ytrain)
 
     def explain(self, x, y):
         return self.explainer.explain(x, y)

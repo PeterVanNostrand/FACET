@@ -1,9 +1,6 @@
 import numpy as np
 import os
-import cProfile
-import time
 import random
-import math
 import json
 import re
 from numpy.core.fromnumeric import var
@@ -57,8 +54,8 @@ def simple_run(dataset_name):
     run_id, run_path = check_create_directory("./results/simple-run/")
 
     rf_params = {
-        "rf_ntrees": 10,
-        "rf_maxdepth": None,
+        "rf_ntrees": 50,
+        "rf_maxdepth": 5,
         "rf_hardvoting": False,  # note OCEAN and FACETIndex use soft and hard requirment
     }
     facet_params = {
@@ -85,7 +82,8 @@ def simple_run(dataset_name):
         "mace_epsilon": 1e-7
     }
     ocean_params = {
-        "ocean_norm": 2
+        "ocean_norm": 2,
+        "ocean_ilf": False
     }
     params = {
         "RandomForest": rf_params,
@@ -96,10 +94,11 @@ def simple_run(dataset_name):
         "OCEAN": ocean_params,
     }
 
-    explainer = "MACE"
     iteration = 0
-    preprocessing = "Normalize"
     random_state = 1
+    explainer = "OCEAN"
+    preprocessing = "Normalize"
+    n_explain = 20
 
     print("Run ID: {}".format(run_id))
     print("explainer: " + explainer)
@@ -114,7 +113,7 @@ def simple_run(dataset_name):
         output_path=run_path,
         iteration=iteration,
         test_size=0.2,
-        n_explain=3,
+        n_explain=n_explain,
         random_state=random_state,
         preprocessing=preprocessing
     )
@@ -130,8 +129,10 @@ if __name__ == "__main__":
     all_explaiers = ["FACETIndex", "OCEAN", "RFOCSE", "AFT", "MACE"]
     notMACE = ["FACETIndex", "OCEAN", "RFOCSE", "AFT"]
 
-    vary_ntrees(ds_names=all_ds, explainers=["FACETIndex", "OCEAN"], ntrees=[
-                10, 50, 100, 200, 300, 400, 500], iterations=[1]) 
+    simple_run("spambase")
+
+    # vary_ntrees(ds_names=all_ds, explainers=["FACETIndex", "OCEAN"],
+    #             ntrees=[10, 50, 100, 200, 300, 400, 500], iterations=[1])
     # nrectangles = [1_000, 5_000, 10_000, 20_000, 30_000, 40_000, 50_000, 60_000, 70_000, 80_000, 100_000]
     # nrectangles = [70_000, 90_000]
     # vary_nrects(ds_names=all_ds, nrects=nrectangles, iterations=list(range(10)))
