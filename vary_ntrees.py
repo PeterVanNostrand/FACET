@@ -7,8 +7,8 @@ from experiments import execute_run
 
 tuned_facet_sd = {
     "cancer": 0.1,
-    "glass": 0.1,
-    "magic": 0.005,
+    "glass": 0.005,
+    "magic": 0.001,
     "spambase": 0.01,
     "vertebral": 0.05
 }
@@ -25,8 +25,8 @@ def vary_ntrees(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", "AFT", "M
     print("\tntrees:", ntrees)
     print("\titerations:", iterations)
 
-    csv_path = "./results/vary_ntrees_sigtuned.csv"
-    experiment_path = "./results/vary-ntrees-sigtuned/"
+    csv_path = "./results/vary_ntrees.csv"
+    experiment_path = "./results/vary-ntrees/"
     max_depth = 5
     rf_params = {
         "rf_maxdepth": max_depth,
@@ -91,7 +91,7 @@ def vary_ntrees(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", "AFT", "M
                         iteration=iter,
                         test_size=0.2,
                         n_explain=20,
-                        random_state=1,
+                        random_state=iter,
                         preprocessing="Normalize",
                         run_ext="t{:03d}_".format(ntree)
                     )

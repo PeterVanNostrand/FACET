@@ -21,6 +21,7 @@ from experiments import execute_run
 from vary_nrects import vary_nrects
 from vary_ntrees import vary_ntrees
 from vary_sigma import vary_sigma
+from vary_eps import vary_eps
 
 
 def check_create_directory(dir_path="./results/"):
@@ -57,7 +58,7 @@ def simple_run(dataset_name):
 
     rf_params = {
         "rf_ntrees": 10,
-        "rf_maxdepth": 5,
+        "rf_maxdepth": None,
         "rf_hardvoting": False,  # note OCEAN and FACETIndex use soft and hard requirment
     }
     facet_params = {
@@ -81,7 +82,7 @@ def simple_run(dataset_name):
     }
     mace_params = {
         "mace_maxtime": 300,
-        "mace_epsilon": 0.1
+        "mace_epsilon": 1e-7
     }
     ocean_params = {
         "ocean_norm": 2
@@ -98,6 +99,7 @@ def simple_run(dataset_name):
     explainer = "MACE"
     iteration = 0
     preprocessing = "Normalize"
+    random_state = 1
 
     print("Run ID: {}".format(run_id))
     print("explainer: " + explainer)
@@ -113,7 +115,7 @@ def simple_run(dataset_name):
         iteration=iteration,
         test_size=0.2,
         n_explain=3,
-        random_state=1,
+        random_state=random_state,
         preprocessing=preprocessing
     )
     print("results:")
@@ -127,20 +129,12 @@ if __name__ == "__main__":
     all_ds = ["cancer", "glass", "magic", "spambase", "vertebral"]
     all_explaiers = ["FACETIndex", "OCEAN", "RFOCSE", "AFT", "MACE"]
     notMACE = ["FACETIndex", "OCEAN", "RFOCSE", "AFT"]
-    # index_test(ds_names=["vertebral"], exp_var="facet_nrects", exp_vals=[1000, 5000, 10000],
-    #            num_iters=1, eval_samples=20, test_size=0.2, seed=RAND_SEED)
 
-    # index_test(ds_names=run_ds, exp_var="facet_intersect_order", exp_vals=["Axes", "Size", "Ensemble"],
-    #            num_iters=1, eval_samples=20, test_size=0.2, seed=RAND_SEED)
-    # index_test()
-    # run_ds.remove("spambase")
-    # compare_methods(["vertebral"], num_iters=1, explainers=["MACE"], eval_samples=20, seed=RAND_SEED)
-    # vary_ntrees(["vertebral"], explainer="FACETIndex", ntrees=list(range(5, 105, 5)), num_iters=5, seed=SEED)
-    # simple_run("vertebral")
-
-    # vary_ntrees(ds_names=all_ds, explainers=["FACETIndex", "OCEAN"], ntrees=[10, 50, 100, 150, 200], iterations=[0])
+    vary_ntrees(ds_names=all_ds, explainers=["FACETIndex", "OCEAN"], ntrees=[
+                10, 50, 100, 200, 300, 400, 500], iterations=[1]) 
     # nrectangles = [1_000, 5_000, 10_000, 20_000, 30_000, 40_000, 50_000, 60_000, 70_000, 80_000, 100_000]
     # nrectangles = [70_000, 90_000]
     # vary_nrects(ds_names=all_ds, nrects=nrectangles, iterations=list(range(10)))
     # vary_nrects(all_ds, nrects=nrectangles, iterations=[1, 2, 3, 4])
-    vary_sigma(ds_names=all_ds, sigmas=[0.001, 0.005, 0.01, 0.05, 0.1, 0.15, 0.2, 0.25], iterations=[0])
+    # vary_sigma(ds_names=all_ds, sigmas=[0.001, 0.005, 0.01, 0.05, 0.1,
+    #    0.15, 0.2, 0.25], iterations=[5, 6, 7, 8, 9], ntrees=100)

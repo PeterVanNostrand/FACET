@@ -57,7 +57,7 @@ def vary_nrects(ds_names, nrects=[5, 10, 15], iterations=[0, 1, 2, 3, 4]):
                     iteration=iter,
                     test_size=0.2,
                     n_explain=20,
-                    random_state=1,
+                    random_state=iter,
                     preprocessing="Normalize",
                     run_ext="r{:03d}_".format(nr)
                 )
