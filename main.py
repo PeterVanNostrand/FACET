@@ -92,9 +92,6 @@ def simple_run(ds_name="vertebral", explainer="FACETIndex", random_state=0):
         "OCEAN": ocean_params,
     }
 
-    iteration = 0
-    random_state = 1
-    explainer = "OCEAN"
     preprocessing = "Normalize"
     n_explain = 20
 
@@ -109,7 +106,7 @@ def simple_run(ds_name="vertebral", explainer="FACETIndex", random_state=0):
         explainer=explainer,
         params=params,
         output_path=run_path,
-        iteration=iteration,
+        iteration=random_state,
         test_size=0.2,
         n_explain=n_explain,
         random_state=random_state,
