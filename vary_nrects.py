@@ -24,7 +24,7 @@ def vary_nrects(ds_names, nrects=[5, 10, 15], iterations=[0, 1, 2, 3, 4], fmod=N
 
     explainer = "FACETIndex"
     ntrees = 100
-    max_depth = None
+    max_depth = 5
     rf_params = {
         "rf_maxdepth": max_depth,
         "rf_ntrees": ntrees,
