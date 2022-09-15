@@ -8,3 +8,4 @@ build/*
 results/*
 mace_temp.log
 figures/*
+!figures/*.ipynb
