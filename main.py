@@ -20,6 +20,7 @@ from vary_nrects import vary_nrects
 from vary_ntrees import vary_ntrees
 from vary_sigma import vary_sigma
 from vary_eps import vary_eps
+from vary_enum import vary_enum
 
 
 def check_create_directory(dir_path="./results/"):
@@ -52,8 +53,8 @@ def simple_run(ds_name="vertebral", explainer="FACETIndex", random_state=0):
     run_id, run_path = check_create_directory("./results/simple-run/")
 
     rf_params = {
-        "rf_ntrees": 50,
-        "rf_maxdepth": 5,
+        "rf_ntrees": 100,
+        "rf_maxdepth": None,
         "rf_hardvoting": False,  # note OCEAN and FACETIndex use soft and hard requirment
     }
     facet_params = {
@@ -66,7 +67,8 @@ def simple_run(ds_name="vertebral", explainer="FACETIndex", random_state=0):
         "facet_search": "BitVector",
         "rbv_initial_radius": 0.01,
         "rbv_radius_growth": "Linear",
-        "rbv_num_interval": 4
+        "rbv_num_interval": 4,
+        "facet_intersect_order": "Probability"
     }
     rfocse_params = {
         "rfoce_transform": False,
@@ -122,7 +124,7 @@ if __name__ == "__main__":
     all_explaiers = ["FACETIndex", "OCEAN", "RFOCSE", "AFT", "MACE"]
 
     parser = argparse.ArgumentParser(description='Run FACET Experiments')
-    parser.add_argument("--expr", choices=["simple", "ntrees", "nrects", "eps", "sigma"], default="simple")
+    parser.add_argument("--expr", choices=["simple", "ntrees", "nrects", "eps", "sigma", "enum"], default="simple")
     parser.add_argument("--ds", type=str, nargs="+", default=["vertebral"])
     parser.add_argument("--method", type=str, nargs="+", choices=all_explaiers, default=["FACETIndex"])
     parser.add_argument("--values", type=float, nargs="+", default=None)
@@ -165,3 +167,6 @@ if __name__ == "__main__":
             vary_sigma(ds_names=args.ds, sigmas=args.values, iterations=args.it, fmod=args.fmod)
         else:
             vary_sigma(ds_names=args.ds, iterations=args.it, fmod=args.fmod)
+
+    elif args.expr == "enum":
+        vary_enum(ds_names=args.ds, iterations=args.it, fmod=args.fmod)

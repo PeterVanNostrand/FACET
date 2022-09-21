@@ -19,7 +19,7 @@ from explainers.explainer import Explainer
 from detectors.random_forest import RandomForest
 # from explainers.branching import BranchIndex
 from explainers.bit_vector import BitVectorIndex
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List, Dict, Tuple
 if TYPE_CHECKING:
     from manager import MethodManager
 
@@ -36,23 +36,29 @@ class FACETIndex(Explainer):
         self.rf_ntrees = len(rf_trees)
         self.rf_nclasses = rf_detector.model.n_classes_
         self.rf_nfeatures = len(rf_detector.model.feature_importances_)
+        self.rf_hardvoting = self.manager.random_forest.hard_voting
         # the number of trees which much aggree for a prediction
         self.majority_size = math.floor(self.rf_ntrees / 2) + 1
 
         # walk each path and store their representation in an array
-        self.all_paths = self.build_paths(rf_trees)
+        self.all_paths, self.path_class_probs = self.build_paths(rf_trees)
         # convert each leaf node into its corresponding hyper-rectangle
-        self.leaf_rects = self.leaves_to_rects(self.all_paths)
+        self.leaf_rects = self.leaves_to_rects(self.all_paths, self.path_class_probs)
 
         # build the index of majority size hyper-rectangles
         if self.enumeration_type == "PointBased":
             self.point_enumerate(data)
         elif self.enumeration_type == "GraphBased":
-            self.graph_enumerate(training_data=data)
+            # self.graph_enumerate(training_data=data)
+            print("GRAPH ENUMERATION DISABLED")
+            exit(0)
+
+        # !debug
+        # self.check_indexed_rects()
 
         if self.search_type == "BitVector":
             # create redundant bit vector index
-            self.rbvs: list[BitVectorIndex] = []
+            self.rbvs: List[BitVectorIndex] = []
             for class_id in range(self.rf_nclasses):
                 if self.verbose:
                     print("class {}".format(class_id))
@@ -104,28 +110,28 @@ class FACETIndex(Explainer):
         self.vertex_support = vertex_supports
         self.pairwise_support = pairwise_supports
 
-    def graph_enumerate(self, training_data: np.ndarray) -> None:
-        '''
-        Converts the random forest ensemble into a graph representation, then uses a branching technique to find k-sized cliques on this graph which correspond to majority sized hyper-rectangles which are added to the index
-        '''
-        # 1. build the graphs, one per class
-        rf_detector: RandomForest = self.manager.random_forest
-        rf_trees: list[tree.DecisionTreeClassifier] = rf_detector.model.estimators_
-        self.index_paths(self.rf_nclasses)
-        self.find_synthesizeable_paths(rf_trees)
-        self.build_graphs(rf_trees, self.rf_nclasses)
-        self.compute_supports(data=training_data)
+    # def graph_enumerate(self, training_data: np.ndarray) -> None:
+    #     '''
+    #     Converts the random forest ensemble into a graph representation, then uses a branching technique to find k-sized cliques on this graph which correspond to majority sized hyper-rectangles which are added to the index
+    #     '''
+    #     # 1. build the graphs, one per class
+    #     rf_detector: RandomForest = self.manager.random_forest
+    #     rf_trees: List[tree.DecisionTreeClassifier] = rf_detector.model.estimators_
+    #     self.index_paths(self.rf_nclasses)
+    #     self.find_synthesizeable_paths(rf_trees)
+    #     self.build_graphs(rf_trees, self.rf_nclasses)
+    #     self.compute_supports(data=training_data)
 
-        # 4. explore graph by branching using the support values as priority
-        self.initialize_index()
-        self.solution_cliques = [[] for _ in range(self.rf_nclasses)]
-        for class_id in range(self.rf_nclasses):
-            brancher = BranchIndex(
-                explainer=self, graph=self.graphs[class_id], class_id=class_id, hyperparameters=self.hyperparameters)
-            brancher.n_desired_rects = self.n_rects
-            cliques, rects = brancher.solve()
-            self.index[class_id] = rects
-            self.solution_cliques[class_id] = cliques
+    #     # 4. explore graph by branching using the support values as priority
+    #     self.initialize_index()
+    #     self.solution_cliques = [[] for _ in range(self.rf_nclasses)]
+    #     for class_id in range(self.rf_nclasses):
+    #         brancher = BranchIndex(
+    #             explainer=self, graph=self.graphs[class_id], class_id=class_id, hyperparameters=self.hyperparameters)
+    #         brancher.n_desired_rects = self.n_rects
+    #         cliques, rects = brancher.solve()
+    #         self.index[class_id] = rects
+    #         self.solution_cliques[class_id] = cliques
 
     def point_enumerate(self, data: np.ndarray) -> None:
         '''
@@ -214,7 +220,7 @@ class FACETIndex(Explainer):
             i += 1
         return covered
 
-    def leaves_to_rects(self, all_paths: list[list[np.ndarray]]) -> list[dict]:
+    def leaves_to_rects(self, all_paths: List[List[np.ndarray]], path_class_probs: List[List[np.ndarray]]) -> List[Dict]:
         '''
         For each path in the ensemble, identifies the leaf node of that path and builds the corresponding hyper-rectangle
 
@@ -228,17 +234,18 @@ class FACETIndex(Explainer):
         '''
         leaf_rects = [{} for _ in range(self.rf_ntrees)]
         for tid in range(self.rf_ntrees):
-            for path in all_paths[tid]:
+            for path, class_probs in zip(all_paths[tid], path_class_probs[tid]):
                 # get the scikit node id of the leaf and its class
                 leaf_node_id = int(path[-1, 0])
                 leaf_class = int(path[-1, -1])
                 # build and save the hyper-rectangle that corresponds to this leaf
                 rect = self.leaf_rect(path)
                 # save the class and the hyper-rectangle
-                leaf_rects[tid][leaf_node_id] = (leaf_class, rect)
+                leaf_rects[tid][leaf_node_id] = (leaf_class, rect, class_probs)
         return leaf_rects
 
     def check_indexed_rects(self):
+        print("checking rects...")
         #! DEBUG tool
         for class_id in range(self.rf_nclasses):
             for rect in self.index[class_id]:
@@ -246,7 +253,8 @@ class FACETIndex(Explainer):
                 xprime = self.fit_to_rectangle(x, rect)
                 pred = int(self.manager.predict([xprime]))
                 if pred != class_id:
-                    print("Bad Rectangle")
+                    print("\tBad Rectangle")
+        print("done checking rects!")
 
     def index_rectangles(self, data: np.ndarray):
         '''
@@ -280,7 +288,7 @@ class FACETIndex(Explainer):
         '''
         self.index = [[] for _ in range(self.rf_nclasses)]
 
-    def enumerate_rectangle(self, leaf_ids: list[int], label: int) -> np.ndarray:
+    def enumerate_rectangle(self, leaf_ids: List[int], label: int) -> np.ndarray:
         '''
         Given a set of scikitlearns leaf_ids, one per tree in the ensemble, extracts the paths which correspond to these leaves and constructs a majority size hyper-rectangle from their intersection
 
@@ -293,17 +301,138 @@ class FACETIndex(Explainer):
         rect: a numpy ndarray of shape (ndim, 2) containing a majority size hyper-rectangle
         paths_used: a list of pairs (tree_id, leaf_id) which correspond to the leaves the form the intersection
         '''
-        all_bounds = []
-        paths: list[(int, int)] = []  # list of tree_id, leaf_id included in all_bounds
+        all_bounds: List[np.ndarray] = []  # list of leaf hyper-rectangles w/ dims (nfeatures, 2)
+        paths: List[(int, int)] = []  # list of tree_id, leaf_id included in all_bounds
+        path_probs: List[np.ndarray] = []  # list of class probs for the given leaves, dims (nclasses,)
         for tree_id in range(self.rf_ntrees):
-            leaf_class, leaf_rect = self.leaf_rects[tree_id][leaf_ids[tree_id]]
-            if leaf_class == label:
+            leaf_class, leaf_rect, class_probs = self.leaf_rects[tree_id][leaf_ids[tree_id]]
+            # for hard voting take only the hyper-rectangles which predict the given label
+            # for soft voting the probability of all classes for all leaves contributes to the final classfication
+            # e.g. several leaves predict class 1 with probs [0.49, 0.51], we may need them to make class 0 prediction
+            if not self.rf_hardvoting or (self.rf_hardvoting and leaf_class == label):
                 paths.append((tree_id, leaf_ids[tree_id]))
                 all_bounds.append(leaf_rect)
-        rect, paths_used = self.select_intersection(all_bounds, paths, label)
+                path_probs.append(class_probs)
+        path_probs = np.vstack(path_probs)
+        rect, paths_used = self.select_intersection(all_bounds, paths, path_probs, label)
         return rect, paths_used
 
-    def select_intersection(self, all_bounds: list[np.ndarray], paths: list[(int, int)], label: int) -> np.ndarray:
+    def select_hard_intersection(self, all_bounds: List[np.ndarray], paths: List[Tuple[int]], path_probs: np.ndarray, label: int) -> np.ndarray:
+        '''
+        ensemble is using majority vote take the intersection of the first nmajority hyper-rectangles, we should only receive leaf hyper-rectangles of class `label`
+        '''
+        # initialize the hyper-rectangle as unbounded on both side of all axes
+        rect = np.zeros((self.rf_nfeatures, 2))
+        rect[:, 0] = -np.inf
+        rect[:, 1] = np.inf
+
+        if self.intersect_order == "Axes":
+            # compute how many axes each rectangle bounds, this is equal to the number of noninfinite threshold
+            # values in the hyper-rectangle array. Ranges [0, 2*ndims]
+            n_bounded_axes = [0] * len(all_bounds)
+            for i in range(len(all_bounds)):
+                n_bounded_axes[i] = np.isfinite(all_bounds[i]).sum()
+            order = np.argsort(n_bounded_axes)  # take rects with the fewest bounds first
+        elif self.intersect_order == "Size":
+            mean_rect_widths = [0] * len(all_bounds)
+            for i in range(len(all_bounds)):
+                mean_rect_widths[i] = self.rect_width(all_bounds[i]).mean()
+            order = np.argsort(mean_rect_widths)  # take largest rects first
+        elif self.intersect_order == "Ensemble":
+            order = list(range(len(all_bounds)))  # take rects in order of trees in ensemble
+        elif self.intersect_order == "Probability":  # take rects in order of largest probability
+            order = path_probs[:, label].argsort()[::-1]
+
+        i = 0
+        paths_used = []
+        while i < len(all_bounds) and i < self.majority_size:
+            rect[:, 0] = np.maximum(rect[:, 0], all_bounds[order[i]][:, 0])  # intersection of minimums
+            rect[:, 1] = np.minimum(rect[:, 1], all_bounds[order[i]][:, 1])  # intersection of maximums
+            bisect.insort(paths_used, paths[order[i]])  # remember which leaves we've used, keep sorted asc by tid
+            i += 1
+
+        return rect, paths_used
+
+    def select_soft_intersection(self, all_bounds: List[np.ndarray], paths: List[Tuple[int]], path_probs: np.ndarray, label: int) -> np.ndarray:
+        '''
+        ensemble is using soft voting, take intersection of sufficient hyper-rects to reach a majority probability, we sould receive ntrees leaf hyper-rectangles
+        '''
+
+        # initialize the hyper-rectangle as unbounded on both side of all axes
+        rect = np.zeros((self.rf_nfeatures, 2))
+        rect[:, 0] = -np.inf
+        rect[:, 1] = np.inf
+        paths_used = []
+        accumulated_prob = np.zeros(shape=(self.rf_nclasses,))
+
+        if self.intersect_order == "Probability":
+            # take rects in order of largest probability
+            order = path_probs[:, label].argsort()[::-1]
+            i = 0
+            while i < len(all_bounds) and accumulated_prob[label] < 0.5:
+                rect[:, 0] = np.maximum(rect[:, 0], all_bounds[order[i]][:, 0])  # intersection of minimums
+                rect[:, 1] = np.minimum(rect[:, 1], all_bounds[order[i]][:, 1])  # intersection of maximums
+                bisect.insort(paths_used, paths[order[i]])  # remember which leaves we've used, keep sorted asc by tid
+                accumulated_prob += (1 / self.rf_ntrees) * path_probs[order[i]]
+                i += 1
+
+        else:  # we use an order other than largest probability
+            # separate the leaf hyper-rectangles by whether they match the desired class
+            idx_match_label = path_probs[:, label] > 0.5
+            all_bounds = np.vstack(all_bounds).reshape(self.rf_ntrees, self.rf_nfeatures, 2)
+            paths = np.vstack(paths)
+
+            match_bounds = all_bounds[idx_match_label]
+            match_paths = paths[idx_match_label]
+            match_probs = path_probs[idx_match_label]
+
+            other_bounds = all_bounds[~idx_match_label]
+            other_paths = paths[~idx_match_label]
+            other_probs = path_probs[~idx_match_label]
+
+            if self.intersect_order == "Axes":
+                n_bounded_axes = [0] * len(match_bounds)
+                for i in range(len(match_bounds)):
+                    n_bounded_axes[i] = np.isfinite(match_bounds[i]).sum()
+                match_order = np.argsort(n_bounded_axes)  # take rects with the fewest bounds first
+            elif self.intersect_order == "Size":
+                mean_rect_widths = [0] * len(match_bounds)
+                for i in range(len(match_bounds)):
+                    mean_rect_widths[i] = self.rect_width(match_bounds[i]).mean()
+                match_order = np.argsort(mean_rect_widths)  # take largest rects first
+            elif self.intersect_order == "Ensemble":
+                match_order = list(range(len(match_bounds)))  # take rects in order of trees in ensemble
+
+            # start with intersecting the hyper-rectangles which have the matching class
+            i = 0
+            while i < len(match_bounds) and accumulated_prob[label] < 0.5:
+                rect[:, 0] = np.maximum(rect[:, 0], match_bounds[match_order[i]][:, 0])  # intersection of minimums
+                rect[:, 1] = np.minimum(rect[:, 1], match_bounds[match_order[i]][:, 1])  # intersection of maximums
+                bisect.insort(paths_used,  tuple(match_paths[match_order[i]]))  # remember leaves we used
+                accumulated_prob += (1 / self.rf_ntrees) * match_probs[match_order[i]]
+                i += 1
+
+            # on rare occassion this intersection will not have sufficient probability for the desired class
+            # if needed continue intersecting leaves of the non-desired class until the desired class is the majority
+            nm_order = other_probs[:, label].argsort()[::-1]  # take other leaf with highest desired class prob first
+            i = 0
+            while i < len(other_bounds) and accumulated_prob[label] < 0.5:
+                rect[:, 0] = np.maximum(rect[:, 0], other_bounds[nm_order[i]][:, 0])  # intersection of minimums
+                rect[:, 1] = np.minimum(rect[:, 1], other_bounds[nm_order[i]][:, 1])  # intersection of maximums
+                bisect.insort(paths_used, tuple(other_paths[nm_order[i]]))  # remember leaves we used
+                accumulated_prob += (1 / self.rf_ntrees) * other_probs[nm_order[i]]
+                i += 1
+
+        # # ! debug
+        # x = np.zeros(self.rf_nfeatures)
+        # xprime = self.fit_to_rectangle(x, rect)
+        # pred = int(self.manager.predict([xprime]))
+        # if pred != label:
+        #     print("Bad Rectangle")
+
+        return rect, paths_used
+
+    def select_intersection(self, all_bounds: List[np.ndarray], paths: List[(int, int)], path_probs: np.ndarray, label: int) -> np.ndarray:
         '''
         Given a list of ntrees hyper-rectangles each corresponing to a leaf node, constructs a majority size hyper-rectangle by taking the intersection of nmajority leaf node hyper-rectangles
 
@@ -317,46 +446,18 @@ class FACETIndex(Explainer):
         rect: a numpy ndarray of shape (ndim, 2) containing a majority size hyper-rectangle
         paths_used: a list of pairs (tree_id, leaf_id) which correspond to the leaves the form the intersection
         '''
-        # compute how many axes each rectangle bounds, this is equal to the number of noninfinite threshold
-        # values in the hyper-rectangle array. Ranges [0, 2*ndims]
-        n_bounded_axes = [0] * len(all_bounds)
-        mean_rect_widths = [0] * len(all_bounds)
-        for i in range(len(all_bounds)):
-            n_bounded_axes[i] = np.isfinite(all_bounds[i]).sum()
-            mean_rect_widths[i] = self.rect_width(all_bounds[i]).mean()
 
-        if self.intersect_order == "Axes":
-            order_axes = np.argsort(n_bounded_axes)  # take rects with the fewest bounds first
-            order = order_axes
-        elif self.intersect_order == "Size":
-            order_size = np.argsort(mean_rect_widths)  # take largest rects first
-            order = order_size
-        elif self.intersect_order == "Ensemble":
-            order_forest = list(range(len(all_bounds)))  # take rects in order of trees in ensemble
-            order = order_forest
-
-        # initialize the hyper-rectangle as unbounded on both side of all axes
-        rect = np.zeros((self.rf_nfeatures, 2))
-        rect[:, 0] = -np.inf
-        rect[:, 1] = np.inf
-
-        # Simple solution: take the intersection of the first nmajority hyper-rectangles
-        i = 0
-        paths_used = []
-        while i < len(all_bounds) and i < self.majority_size:
-            rect[:, 0] = np.maximum(rect[:, 0], all_bounds[order[i]][:, 0])  # intersection of minimums
-            rect[:, 1] = np.minimum(rect[:, 1], all_bounds[order[i]][:, 1])  # intersection of maximums
-            bisect.insort(paths_used, paths[order[i]])  # remember which leaves we've used, keep sorted asc by tree_id
-            i += 1
-
-        # ! debug
+        # # ! debug
         # x = np.zeros(self.rf_nfeatures)
         # xprime = self.fit_to_rectangle(x, rect)
-        # pred = int(self.model.predict([xprime]))
+        # pred = int(self.manager.predict([xprime]))
         # if pred != label:
         #     print("Bad Rectangle")
 
-        return rect, paths_used
+        if self.rf_hardvoting:
+            return self.select_hard_intersection(all_bounds, paths, path_probs, label)
+        else:
+            return self.select_soft_intersection(all_bounds, paths, path_probs, label)
 
     def leaf_rect(self, path: np.ndarray) -> np.ndarray:
         '''
@@ -385,7 +486,7 @@ class FACETIndex(Explainer):
                 feature_bounds[feature][0] = max(threshold, feature_bounds[feature][0])
         return feature_bounds
 
-    def build_paths(self, trees: list[tree.DecisionTreeClassifier]) -> list[list[np.ndarray]]:
+    def build_paths(self, trees: List[tree.DecisionTreeClassifier]) -> List[List[np.ndarray]]:
         '''
         Walks each tree and extracts each path from root to leaf into a data structure. Each tree is represented as a list of paths, with each path stored into an array
 
@@ -395,12 +496,13 @@ class FACETIndex(Explainer):
         '''
         ntrees = len(trees)
         all_paths = [[] for _ in range(ntrees)]
+        path_class_probs = [[] for _ in range(ntrees)]
         for i in range(ntrees):
-            all_paths[i] = self.__in_order_path(t=trees[i], built_paths=[])
+            all_paths[i], path_class_probs[i] = self.__in_order_path(t=trees[i], built_paths=[], leaf_probs=[])
 
-        return all_paths
+        return all_paths, path_class_probs
 
-    def __in_order_path(self, t, built_paths=[], node_id=0, path=[]):
+    def __in_order_path(self, t, built_paths: List[np.ndarray] = [], leaf_probs: List[np.ndarray] = [], node_id=0, path: List = []):
         '''
         An algorithm for pre-order binary tree traversal. This walks through the entire tree enumerating each paths the root node to a leaf.
 
@@ -433,24 +535,29 @@ class FACETIndex(Explainer):
             # process left child, conditioned (<=)
             left_path = path.copy()
             left_path.append([node_id, feature, 0, threshold])
-            self.__in_order_path(t=t, built_paths=built_paths, node_id=t.tree_.children_left[node_id], path=left_path)
+            self.__in_order_path(t, built_paths, leaf_probs, node_id=t.tree_.children_left[node_id], path=left_path)
 
             # process right node, conditioned (>)
             right_path = path.copy()
             right_path.append([node_id, feature, 1, threshold])
-            self.__in_order_path(t=t, built_paths=built_paths, node_id=t.tree_.children_right[node_id], path=right_path)
+            self.__in_order_path(t, built_paths, leaf_probs, node_id=t.tree_.children_right[node_id], path=right_path)
 
-            return built_paths
+            return built_paths, leaf_probs
 
         else:  # this is a leaf node
-            class_id = np.argmax(t.tree_.value[node_id])
+            samps_per_class: np.ndarray = t.tree_.value[node_id]
+            class_id = np.argmax(samps_per_class)
             path = path.copy()
             path.append([node_id, -1, -1, class_id])
 
             # store the completed path and exit
             finished_path = np.array(path)
             built_paths.append(finished_path)
-            return built_paths
+
+            # get the class probabilities for this leaf
+            class_probs: np.ndarray = (samps_per_class / samps_per_class.sum()).squeeze()
+            leaf_probs.append(class_probs)
+            return built_paths, leaf_probs
 
     def is_inside(self, x: np.ndarray, rect: np.ndarray) -> bool:
         '''
@@ -770,6 +877,7 @@ class FACETIndex(Explainer):
             self.standard_dev = params.get("facet_sd")
 
         if params.get("facet_intersect_order") is None:
-            self.intersect_order = "Size"
+            print("No facet_intersect_order, using Probability")
+            self.intersect_order = "Probability"
         else:
             self.intersect_order = params.get("facet_intersect_order")
