@@ -6,8 +6,6 @@ import re
 from numpy.core.fromnumeric import var
 import argparse
 
-from sympy import arg
-
 from manager import MethodManager
 import matplotlib.pyplot as plt
 from utilities.metrics import percent_valid
