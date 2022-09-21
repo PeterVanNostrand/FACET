@@ -2,10 +2,10 @@ import os
 import pandas as pd
 from tqdm.auto import tqdm
 
-from experiments import execute_run
+from experiments import execute_run, RF_DEFAULT_PARAMS, FACET_DEFAULT_PARAMS
 
 
-def vary_sigma(ds_names, sigmas=[0.01, 0.05, 0.1, 0.2, 0.3], iterations=[0, 1, 2, 3, 4], ntrees=100, fmod=None):
+def vary_sigma(ds_names, sigmas=[0.01, 0.05, 0.1, 0.2, 0.3], iterations=[0, 1, 2, 3, 4], fmod=None):
     '''
     Experiment to observe the effect of the standard deviation of data augmentation on explanation qualtiy
     '''
@@ -22,29 +22,15 @@ def vary_sigma(ds_names, sigmas=[0.01, 0.05, 0.1, 0.2, 0.3], iterations=[0, 1, 2
         experiment_path = "./results/vary-sigma/"
 
     explainer = "FACETIndex"
-    ntrees = ntrees
+    ntrees = 100
     max_depth = None
-    rf_params = {
-        "rf_maxdepth": max_depth,
-        "rf_ntrees": ntrees,
-        "rf_hardvoting": True
-    }
-    facet_params = {
-        "facet_offset": 0.001,
-        "facet_nrects": 20_000,
-        "facet_sample": "Augment",
-        "facet_enumerate": "PointBased",
-        "facet_verbose": False,
-        "facet_sd": -1,
-        "facet_search": "BitVector",
-        "rbv_initial_radius": 0.01,
-        "rbv_radius_growth": "Linear",
-        "rbv_num_interval": 4
-    }
     params = {
-        "RandomForest": rf_params,
-        "FACETIndex": facet_params,
+        "RandomForest": RF_DEFAULT_PARAMS,
+        "FACETIndex": FACET_DEFAULT_PARAMS,
     }
+    params["FACETIndex"]["facet_sd"] = -1
+    params["RandomForest"]["rf_ntrees"] = ntrees
+    params["RandomForest"]["rf_maxdepth"] = max_depth
 
     total_runs = len(ds_names) * len(sigmas) * len(iterations)
     progress_bar = tqdm(total=total_runs, desc="Overall Progress", position=0, disable=False)

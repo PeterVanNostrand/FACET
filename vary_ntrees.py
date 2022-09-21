@@ -4,10 +4,10 @@ import os
 from tqdm.auto import tqdm
 
 from experiments import execute_run
-from experiments import TUNED_FACET_SD
+from experiments import TUNED_FACET_SD, FACET_DEFAULT_PARAMS, OCEAN_DEFAULT_PARAMS, RF_DEFAULT_PARAMS
 
 
-def vary_ntrees(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", "AFT", "MACE"], ntrees=[5, 10, 15],
+def vary_ntrees(ds_names, explainers=["FACETIndex", "OCEAN"], ntrees=[5, 10, 15],
                 iterations=[0, 1, 2, 3, 4], fmod=None):
     '''
     Experiment to observe the effect of the the number of features on explanation
@@ -26,46 +26,13 @@ def vary_ntrees(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", "AFT", "M
         experiment_path = "./results/vary-ntrees/"
 
     max_depth = 5
-    rf_params = {
-        "rf_maxdepth": max_depth,
-        "rf_ntrees": -1,
-        "rf_hardvoting": False,  # note OCEAN and FACETIndex use soft and hard requirment
-    }
-    facet_params = {
-        "facet_offset": 0.001,
-        "facet_nrects": 20000,
-        "facet_sample": "Augment",
-        "facet_enumerate": "PointBased",
-        "facet_verbose": False,
-        "facet_sd": -1,
-        "facet_search": "BitVector",
-        "rbv_initial_radius": 0.01,
-        "rbv_radius_growth": "Linear",
-        "rbv_num_interval": 4,
-    }
-    rfocse_params = {
-        "rfoce_transform": False,
-        "rfoce_offset": 0.0001
-    }
-    aft_params = {
-        "aft_offset": 0.0001
-    }
-    mace_params = {
-        "mace_maxtime": 300,
-        "mace_epsilon": 0.001
-    }
-    ocean_params = {
-        "ocean_norm": 2,
-        "ocean_ilf": False
-    }
     params = {
-        "RandomForest": rf_params,
-        "FACETIndex": facet_params,
-        "MACE": mace_params,
-        "RFOCSE": rfocse_params,
-        "AFT": aft_params,
-        "OCEAN": ocean_params,
+        "RandomForest": RF_DEFAULT_PARAMS,
+        "FACETIndex": FACET_DEFAULT_PARAMS,
+        "OCEAN": OCEAN_DEFAULT_PARAMS,
     }
+    params["RandomForest"]["rf_ntrees"] = -1
+    params["RandomForest"]["rf_maxdepth"] = max_depth
 
     total_runs = len(ds_names) * len(explainers) * len(ntrees) * len(iterations)
     progress_bar = tqdm(total=total_runs, desc="Overall Progress", position=0, disable=False)

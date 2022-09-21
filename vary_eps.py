@@ -2,7 +2,7 @@ import os
 import pandas as pd
 from tqdm.auto import tqdm
 
-from experiments import execute_run
+from experiments import execute_run, RF_DEFAULT_PARAMS, MACE_DEFAULT_PARAMS
 
 
 def vary_eps(ds_names, epsilons=[1e-5, 1e-6, 1e-7, 1e-8, 1e-9, 1e-10], iterations=[0], fmod=None):
@@ -24,19 +24,13 @@ def vary_eps(ds_names, epsilons=[1e-5, 1e-6, 1e-7, 1e-8, 1e-9, 1e-10], iteration
     explainer = "MACE"
     ntrees = 10
     max_depth = None
-    rf_params = {
-        "rf_maxdepth": max_depth,
-        "rf_ntrees": ntrees,
-        "rf_hardvoting": True
-    }
-    mace_params = {
-        "mace_maxtime": 300,
-        "mace_epsilon": 1e-7
-    }
     params = {
-        "RandomForest": rf_params,
-        "MACE": mace_params,
+        "RandomForest": RF_DEFAULT_PARAMS,
+        "MACE": MACE_DEFAULT_PARAMS,
     }
+    params["MACE"]["mace_epsilon"] = -1
+    params["RandomForest"]["rf_ntrees"] = ntrees
+    params["RandomForest"]["rf_maxdepth"] = max_depth
 
     total_runs = len(ds_names) * len(epsilons) * len(iterations)
     progress_bar = tqdm(total=total_runs, desc="Overall Progress", position=0, disable=False)

@@ -2,8 +2,7 @@ import os
 import pandas as pd
 from tqdm.auto import tqdm
 
-from experiments import execute_run
-from experiments import TUNED_FACET_SD
+from experiments import execute_run, FACET_DEFAULT_PARAMS, RF_DEFAULT_PARAMS, TUNED_FACET_SD
 
 
 def vary_enum(ds_names, iterations=[0, 1, 2, 3, 4], fmod=None):
@@ -29,27 +28,14 @@ def vary_enum(ds_names, iterations=[0, 1, 2, 3, 4], fmod=None):
     explainer = "FACETIndex"
     ntrees = 100
     max_depth = None
-    rf_params = {
-        "rf_maxdepth": max_depth,
-        "rf_ntrees": ntrees,
-        "rf_hardvoting": True
-    }
-    facet_params = {
-        "facet_offset": 0.001,
-        "facet_nrects": 20_000,
-        "facet_sample": "Augment",
-        "facet_enumerate": "PointBased",
-        "facet_verbose": False,
-        "facet_sd": -1,
-        "facet_search": "BitVector",
-        "rbv_initial_radius": 0.01,
-        "rbv_radius_growth": "Linear",
-        "rbv_num_interval": 4,
-    }
     params = {
-        "RandomForest": rf_params,
-        "FACETIndex": facet_params,
+        "RandomForest": RF_DEFAULT_PARAMS,
+        "FACETIndex": FACET_DEFAULT_PARAMS,
     }
+    params["RandomForest"]["rf_hardvoting"] = None
+    params["FACETIndex"]["facet_intersect_order"] = None
+    params["RandomForest"]["rf_ntrees"] = ntrees
+    params["RandomForest"]["rf_maxdepth"] = max_depth
 
     total_runs = len(ds_names) * len(hard_votings) * len(enumerations) * len(iterations)
     progress_bar = tqdm(total=total_runs, desc="Overall Progress", position=0, disable=False)

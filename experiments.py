@@ -27,6 +27,55 @@ TUNED_FACET_SD = {
     "vertebral": 0.05
 }
 
+MACE_DEFAULT_PARAMS = {
+    "mace_maxtime": 1,
+    "mace_epsilon": 1e-7,
+    "mace_verbose": False
+}
+
+OCEAN_DEFAULT_PARAMS = {
+    "ocean_norm": 2,
+    "ocean_ilf": False
+}
+
+FACET_DEFAULT_PARAMS = {
+    "facet_offset": 0.0001,
+    "facet_nrects": 20_000,
+    "facet_enumerate": "PointBased",
+    "facet_sample": "Augment",
+    "facet_sd": 0.01,
+    "facet_intersect_order": "Probability",
+    "facet_verbose": False,
+    "facet_search": "BitVector",
+    "rbv_initial_radius": 0.01,
+    "rbv_radius_growth": "Linear",
+    "rbv_num_interval": 4,
+}
+
+RFOCSE_DEFAULT_PARAMS = {
+    "rfoce_transform": False,
+    "rfoce_offset": 0.0001
+}
+
+AFT_DEFAULT_PARAMS = {
+    "aft_offset": 0.0001
+}
+
+RF_DEFAULT_PARAMS = {
+    "rf_ntrees": 10,
+    "rf_maxdepth": 5,
+    "rf_hardvoting": False,
+}
+
+DEFAULT_PARAMS = {
+    "RandomForest": RF_DEFAULT_PARAMS,
+    "FACETIndex": FACET_DEFAULT_PARAMS,
+    "MACE": MACE_DEFAULT_PARAMS,
+    "RFOCSE": RFOCSE_DEFAULT_PARAMS,
+    "AFT": AFT_DEFAULT_PARAMS,
+    "OCEAN": OCEAN_DEFAULT_PARAMS,
+}
+
 
 def check_create_directory(dir_path="./results"):
     '''

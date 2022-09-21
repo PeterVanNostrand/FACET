@@ -4,6 +4,7 @@ from tqdm.auto import tqdm
 import time
 
 from explainers.explainer import Explainer
+import multiprocessing as mp
 
 # from baselines.mace.newLoadData import loadDataset
 # from baselines.mace.newBatchTest import generateExplanationsWithMaxTime
@@ -45,6 +46,12 @@ class MACE(Explainer):
         else:
             self.epsilon = epsilon
 
+        verbose = params.get("mace_verbose")
+        if verbose is None:
+            self.verbose = False
+        else:
+            self.verbose = verbose
+
     def prepare(self, xtrain=None, ytrain=None):
         pass
 
@@ -80,28 +87,130 @@ class MACE(Explainer):
                 factual_sample["x{}".format(j)] = x[i][j]
             factual_sample['y'] = bool(y[i])
 
-            explanation = generateExplanations(
-                approach_string=approach_string,
-                explanation_file_name=explanation_file_name,
-                model_trained=rf_model,
-                dataset_obj=self.dataset_obj,
-                factual_sample=factual_sample,
-                norm_type_string=norm_type_string
+            explanation = doMACEExplanationWithMaxTime(
+                self.maxtime,
+                approach_string,
+                explanation_file_name,
+                rf_model,
+                self.dataset_obj,
+                factual_sample,
+                norm_type_string,
+                self.verbose
             )
+            # explanation = generateExplanations(
+            #     approach_string=approach_string,
+            #     explanation_file_name=explanation_file_name,
+            #     model_trained=rf_model,
+            #     dataset_obj=self.dataset_obj,
+            #     factual_sample=factual_sample,
+            #     norm_type_string=norm_type_string
+            # )
             exp = [np.inf for _ in range(x.shape[1])]
-            for i in range(len(factual_sample)-1):
-                exp[i] = explanation["cfe_sample"]["x{}".format(i)]
+            if explanation is not None:
+                for i in range(len(factual_sample)-1):
+                    exp[i] = explanation["cfe_sample"]["x{}".format(i)]
             xprime.append(exp)
             progress.update()
         progress.close()
 
-        # if MACE finds a solution of the same class, remove it
+        # temporarily replace any explanations which timed out with zeros for prediction
         xprime = np.array(xprime)
+        idx_inf = (xprime == np.inf).any(axis=1)
+        xprime[idx_inf] = np.tile(0, (x.shape[1],))
+        # if MACE finds a solution of the same class, remove it
         y_pred = self.manager.predict(xprime)
         idx_failed_explanation = (y_pred == y)
+        # replace bad explanations and timed out explanations with [inf inf ... inf]
         xprime[idx_failed_explanation] = np.tile(np.inf, (x.shape[1],))
+        xprime[idx_inf] = np.tile(np.inf, (x.shape[1],))
 
         return xprime
+
+
+def doMACEExplanationWithMaxTime(maxTime,
+                                 approach_string,
+                                 explanation_file_name,
+                                 model_trained,
+                                 dataset_obj,
+                                 factual_sample,
+                                 norm_type_string,
+                                 verbose=False):
+    ctx = mp.get_context('spawn')
+    q = ctx.Queue()
+    p = ctx.Process(target=doMACEExplanationWithQueueCatch, args=(
+        q,
+        approach_string,
+        explanation_file_name,
+        model_trained,
+        dataset_obj,
+        factual_sample,
+        norm_type_string)
+    )
+    p.start()
+    p.join(maxTime)
+    if p.is_alive():
+        p.terminate()
+        if verbose:
+            print("killing after", maxTime, "second")
+        return None
+    else:
+        return q.get()
+
+
+def doMACEExplanationWithQueueCatch(queue,
+                                    approach_string,
+                                    explanation_file_name,
+                                    model_trained,
+                                    dataset_obj,
+                                    factual_sample,
+                                    norm_type_string
+                                    ):
+    try:
+        doMACEExplanationWithQueue(queue,
+                                   approach_string,
+                                   explanation_file_name,
+                                   model_trained,
+                                   dataset_obj,
+                                   factual_sample,
+                                   norm_type_string
+                                   )
+    except:
+        print("solver returned error for", approach_string)
+        queue.put(None)
+
+
+def doMACEExplanationWithQueue(queue,
+                               approach_string,
+                               explanation_file_name,
+                               model_trained,
+                               dataset_obj,
+                               factual_sample,
+                               norm_type_string
+                               ):
+    queue.put(doMACEExplanation(
+        approach_string,
+        explanation_file_name,
+        model_trained,
+        dataset_obj,
+        factual_sample,
+        norm_type_string
+    ))
+
+
+def doMACEExplanation(approach_string,
+                      explanation_file_name,
+                      model_trained,
+                      dataset_obj,
+                      factual_sample,
+                      norm_type_string):
+    return generateExplanations(
+        approach_string=approach_string,
+        explanation_file_name=explanation_file_name,
+        model_trained=model_trained,
+        dataset_obj=dataset_obj,
+        factual_sample=factual_sample,
+        norm_type_string=norm_type_string
+    )
 
 
 def getEpsilonInString(approach_string):

@@ -15,7 +15,7 @@ from utilities.tree_tools import compute_jaccard
 from sklearn.model_selection import train_test_split
 from dataset import load_data
 from dataset import DS_NAMES
-from experiments import execute_run
+from experiments import execute_run, DEFAULT_PARAMS
 from vary_nrects import vary_nrects
 from vary_ntrees import vary_ntrees
 from vary_sigma import vary_sigma
@@ -52,47 +52,11 @@ def simple_run(ds_name="vertebral", explainer="FACETIndex", random_state=0):
     # Euclidean, FeaturesChanged
     run_id, run_path = check_create_directory("./results/simple-run/")
 
-    rf_params = {
-        "rf_ntrees": 100,
-        "rf_maxdepth": None,
-        "rf_hardvoting": False,  # note OCEAN and FACETIndex use soft and hard requirment
-    }
-    facet_params = {
-        "facet_offset": 0.0001,
-        "facet_nrects": 10_000,
-        "facet_sample": "Augment",
-        "facet_enumerate": "PointBased",
-        "facet_verbose": False,
-        "facet_sd": 0.3,
-        "facet_search": "BitVector",
-        "rbv_initial_radius": 0.01,
-        "rbv_radius_growth": "Linear",
-        "rbv_num_interval": 4,
-        "facet_intersect_order": "Probability"
-    }
-    rfocse_params = {
-        "rfoce_transform": False,
-        "rfoce_offset": 0.0001
-    }
-    aft_params = {
-        "aft_offset": 0.0001
-    }
-    mace_params = {
-        "mace_maxtime": 300,
-        "mace_epsilon": 1e-7
-    }
-    ocean_params = {
-        "ocean_norm": 2,
-        "ocean_ilf": False
-    }
-    params = {
-        "RandomForest": rf_params,
-        "FACETIndex": facet_params,
-        "MACE": mace_params,
-        "RFOCSE": rfocse_params,
-        "AFT": aft_params,
-        "OCEAN": ocean_params,
-    }
+    ntrees = 100
+    max_depth = 5
+    params = DEFAULT_PARAMS
+    params["RandomForest"]["rf_ntrees"] = ntrees
+    params["RandomForest"]["rf_maxdepth"] = max_depth
 
     preprocessing = "Normalize"
     n_explain = 20
