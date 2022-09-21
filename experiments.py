@@ -28,7 +28,7 @@ TUNED_FACET_SD = {
 }
 
 MACE_DEFAULT_PARAMS = {
-    "mace_maxtime": 1,
+    "mace_maxtime": 300,
     "mace_epsilon": 1e-7,
     "mace_verbose": False
 }

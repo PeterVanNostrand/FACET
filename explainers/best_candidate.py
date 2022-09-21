@@ -34,7 +34,7 @@ class AFT(Explainer):
         else:
             self.offset = offset
 
-    def prepare(self, data=None):
+    def prepare(self, xtrain=None, ytrain=None):
         pass
 
     def prepare_dataset(self, x, y):
