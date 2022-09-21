@@ -6,6 +6,8 @@ import re
 from numpy.core.fromnumeric import var
 import argparse
 
+from sympy import arg
+
 from manager import MethodManager
 import matplotlib.pyplot as plt
 from utilities.metrics import percent_valid
@@ -21,6 +23,7 @@ from vary_ntrees import vary_ntrees
 from vary_sigma import vary_sigma
 from vary_eps import vary_eps
 from vary_enum import vary_enum
+from compare_methods import compare_methods
 
 
 def check_create_directory(dir_path="./results/"):
@@ -88,7 +91,8 @@ if __name__ == "__main__":
     all_explaiers = ["FACETIndex", "OCEAN", "RFOCSE", "AFT", "MACE"]
 
     parser = argparse.ArgumentParser(description='Run FACET Experiments')
-    parser.add_argument("--expr", choices=["simple", "ntrees", "nrects", "eps", "sigma", "enum"], default="simple")
+    parser.add_argument("--expr", choices=["simple", "ntrees", "nrects",
+                        "eps", "sigma", "enum", "compare"], default="simple")
     parser.add_argument("--ds", type=str, nargs="+", default=["vertebral"])
     parser.add_argument("--method", type=str, nargs="+", choices=all_explaiers, default=["FACETIndex"])
     parser.add_argument("--values", type=float, nargs="+", default=None)
@@ -134,3 +138,6 @@ if __name__ == "__main__":
 
     elif args.expr == "enum":
         vary_enum(ds_names=args.ds, iterations=args.it, fmod=args.fmod)
+
+    elif args.expr == "compare":
+        compare_methods(ds_names=args.ds, explainers=args.method, iterations=args.it, fmod=args.fmod)

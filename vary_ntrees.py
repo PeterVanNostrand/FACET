@@ -44,11 +44,7 @@ def vary_ntrees(ds_names, explainers=["FACETIndex", "OCEAN"], ntrees=[5, 10, 15]
                     # set the number of trees
                     params["RandomForest"]["rf_ntrees"] = ntree
                     params["FACETIndex"]["facet_sd"] = TUNED_FACET_SD[ds]
-                    # FACET uses hardvoting
-                    if expl == "FACETIndex":
-                        params["RandomForest"]["rf_hardvoting"] = True
-                    else:
-                        params["RandomForest"]["rf_hardvoting"] = False
+
                     run_result = execute_run(
                         dataset_name=ds,
                         explainer=expl,
