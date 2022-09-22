@@ -600,7 +600,7 @@ class RandomForestCounterFactualMilp(ClassifierCounterFactualMilp):
             self.x_var_sol[f].setAttr(GRB.Attr.LB, solution[f] - eps)
             self.x_var_sol[f].setAttr(GRB.Attr.UB, solution[f] + eps)
 
-        self.model.write("rf_check.lp")
+        # self.model.write("rf_check.lp")
         self.model.setParam(GRB.Param.ImpliedCuts, 2)
         # self.model.setParam(GRB.Param.Method,3)
         self.model.setParam(GRB.Param.Threads, 4)
@@ -610,7 +610,7 @@ class RandomForestCounterFactualMilp(ClassifierCounterFactualMilp):
         self.solutionFeasibility = self.model.status == GRB.OPTIMAL
 
     def solveModel(self):
-        self.model.write("rf.lp")
+        # self.model.write("rf.lp")
         self.model.setParam(GRB.Param.ImpliedCuts, 2)
         # self.model.setParam(GRB.Param.Method,3)
         self.model.setParam(GRB.Param.Threads, 4)

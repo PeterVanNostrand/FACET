@@ -7,7 +7,6 @@ from numpy.core.fromnumeric import var
 import argparse
 
 from manager import MethodManager
-import matplotlib.pyplot as plt
 from utilities.metrics import percent_valid
 from utilities.metrics import classification_metrics
 from utilities.metrics import average_distance
@@ -58,6 +57,7 @@ def simple_run(ds_name="vertebral", explainer="FACETIndex", random_state=0):
     params = DEFAULT_PARAMS
     params["RandomForest"]["rf_ntrees"] = ntrees
     params["RandomForest"]["rf_maxdepth"] = max_depth
+    params["OCEAN"]["ocean_ilf"] = False
 
     preprocessing = "Normalize"
     n_explain = 20

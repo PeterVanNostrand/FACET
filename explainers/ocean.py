@@ -1,3 +1,4 @@
+from multiprocessing import managers
 import numpy as np
 import pandas as pd
 from tqdm.auto import tqdm
@@ -40,20 +41,22 @@ class OCEAN(Explainer):
             self.use_ilf = params.get("ocean_ilf")
 
     def prepare(self, xtrain: np.ndarray = None, ytrain: np.ndarray = None):
+        rf_nclasses = self.manager.random_forest.model.n_classes_
         if self.use_ilf:
-            # create the isolation forest model
-            ilf_max_samples = 32
-            ilf_n_estimators = 100
-            self.ilf = IsolationForest(random_state=self.manager.random_state,
-                                       max_samples=ilf_max_samples,
-                                       n_estimators=ilf_n_estimators, contamination=0.1)
-            # train the isolation forest model
-            # for some reason OCEAN trains the isolation forest on only one class
-            idx_match = (ytrain == 1)
-            data = xtrain[idx_match]
-            self.ilf.fit(data)
+            self.ilfs = []
+            for i in range(rf_nclasses):
+                # create the isolation forest model
+                ilf_max_samples = 32
+                ilf_n_estimators = 100
+                ilf = IsolationForest(random_state=self.manager.random_state,
+                                      max_samples=ilf_max_samples,
+                                      n_estimators=ilf_n_estimators, contamination=0.1)
+                idx_match = (ytrain == 1)
+                data = xtrain[idx_match]
+                ilf.fit(data)
+                self.ilfs.append(ilf)
         else:
-            self.ilf = None
+            self.ilfs = [None for _ in range(rf_nclasses)]
 
     def prepare_dataset(self, x, y):
         pass
@@ -69,7 +72,7 @@ class OCEAN(Explainer):
             sample = [pd.Series(to_explain, dtype=np.float64, name=str(i))]
             desired_label = counterfactual_classes[i]
             feat_index = []
-            for j in range(x.shape[1]):
+            for j in range(1, x.shape[1]+1):
                 feat_index.append("F{}".format(j))
             sample[0].index = feat_index
 
@@ -81,7 +84,7 @@ class OCEAN(Explainer):
                 classifier=self.manager.random_forest.model,
                 sample=sample,
                 outputDesired=desired_label,
-                isolationForest=self.ilf,
+                isolationForest=self.ilfs[desired_label],
                 constraintsType=TreeConstraintsType.LinearCombinationOfPlanes,
                 objectiveNorm=2,
                 mutuallyExclusivePlanesCutsActivated=True,

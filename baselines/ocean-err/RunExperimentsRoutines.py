@@ -126,7 +126,7 @@ def trainModelAndSolveCounterFactuals(
             cuiMilp.solveModel()
         else:
             # Compute counterfactual
-            randomForestMilp = RandomForestCounterFactualMilp(  # !DEBUG HERE
+            randomForestMilp = RandomForestCounterFactualMilp(
                 clf,
                 x0,
                 y0_desired,
@@ -309,16 +309,16 @@ ourDatasetsWithCounterfactualsDict = {
 
 cuiDatasetsWithCounterfactualsDict = {
     './datasets/Adult_processedMACE.csv': './datasets/counterfactuals/OneHot_Adult_processedMACE.csv',
-    # './datasets/COMPAS-ProPublica_processedMACE.csv':'./datasets/counterfactuals/OneHot_COMPAS-ProPublica_processedMACE.csv',
-    # './datasets/Credit-Card-Default_processedMACE.csv':'./datasets/counterfactuals/OneHot_Credit-Card-Default_processedMACE.csv',
-    # './datasets/FICO.csv':'./datasets/counterfactuals/OneHot_FICO.csv',
-    # './datasets/German-Credit.csv':'./datasets/counterfactuals/OneHot_German-Credit.csv',
-    # './datasets/Phishing.csv':'./datasets/counterfactuals/OneHot_Phishing.csv',
-    # './datasets/Spambase.csv':'./datasets/counterfactuals/OneHot_Spambase.csv',
-    # './datasets/Students-Performance-MAT.csv':'./datasets/counterfactuals/OneHot_Students-Performance-MAT.csv',
-    # './datasets/Students-Performance-POR.csv':'./datasets/counterfactuals/OneHot_Students-Performance-POR.csv',
-    # './datasets/Adult.csv':'./datasets/counterfactuals/OneHot_Adult.csv',
-    # './datasets/OnlineNewsPopularity.csv':'./datasets/counterfactuals/OneHot_OnlineNewsPopularity.csv',
-    # './datasets/Credit-Card-Default.csv':'./datasets/counterfactuals/OneHot_Credit-Card-Default.csv',
-    # './datasets/COMPAS-ProPublica.csv':'./datasets/counterfactuals/OneHot_COMPAS-ProPublica.csv',
+    './datasets/COMPAS-ProPublica_processedMACE.csv': './datasets/counterfactuals/OneHot_COMPAS-ProPublica_processedMACE.csv',
+    './datasets/Credit-Card-Default_processedMACE.csv': './datasets/counterfactuals/OneHot_Credit-Card-Default_processedMACE.csv',
+    './datasets/FICO.csv': './datasets/counterfactuals/OneHot_FICO.csv',
+    './datasets/German-Credit.csv': './datasets/counterfactuals/OneHot_German-Credit.csv',
+    './datasets/Phishing.csv': './datasets/counterfactuals/OneHot_Phishing.csv',
+    './datasets/Spambase.csv': './datasets/counterfactuals/OneHot_Spambase.csv',
+    './datasets/Students-Performance-MAT.csv': './datasets/counterfactuals/OneHot_Students-Performance-MAT.csv',
+    './datasets/Students-Performance-POR.csv': './datasets/counterfactuals/OneHot_Students-Performance-POR.csv',
+    './datasets/Adult.csv': './datasets/counterfactuals/OneHot_Adult.csv',
+    './datasets/OnlineNewsPopularity.csv': './datasets/counterfactuals/OneHot_OnlineNewsPopularity.csv',
+    './datasets/Credit-Card-Default.csv': './datasets/counterfactuals/OneHot_Credit-Card-Default.csv',
+    './datasets/COMPAS-ProPublica.csv': './datasets/counterfactuals/OneHot_COMPAS-ProPublica.csv',
 }

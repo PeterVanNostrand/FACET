@@ -3,10 +3,10 @@ import os
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import IsolationForest
 
-from dataProcessing import *
-from DecisionTreeCounterFactual import *
-from RandomForestCounterFactual import *
-from CuiRandomForestCounterFactual import *
+from .dataProcessing import *
+from .DecisionTreeCounterFactual import *
+from .RandomForestCounterFactual import *
+from .CuiRandomForestCounterFactual import *
 
 
 def checkFeasibilityOfCounterFactuals(clf, ilf, reader, indices, desiredOutcome):
@@ -15,18 +15,18 @@ def checkFeasibilityOfCounterFactuals(clf, ilf, reader, indices, desiredOutcome)
     for index in indices:
         print("Start cheking", count, "out of", len(indices))
         count += 1
-        x0 = [reader.data.loc[index,reader.data.columns != 'Class']]
+        x0 = [reader.data.loc[index, reader.data.columns != 'Class']]
         randomForestMilp = RandomForestCounterFactualMilp(
             clf,
             x0,
             desiredOutcome,
-            isolationForest=ilf, 
+            isolationForest=ilf,
             constraintsType=TreeConstraintsType.LinearCombinationOfPlanes,
-            objectiveNorm=1, mutuallyExclusivePlanesCutsActivated=True, 
+            objectiveNorm=1, mutuallyExclusivePlanesCutsActivated=True,
             strictCounterFactual=True, verbose=False,
             binaryDecisionVariables=BinaryDecisionVariables.PathFlow_y,
             featuresActionnability=reader.featuresActionnability,
-            featuresType=reader.featuresType, 
+            featuresType=reader.featuresType,
             featuresPossibleValues=reader.featuresPossibleValues
         )
         randomForestMilp.buildModel()
@@ -41,14 +41,15 @@ def checkFeasibilityOfCounterFactuals(clf, ilf, reader, indices, desiredOutcome)
 
 def buildCounterFactualSeekedFile(datasetFile, desiredOutcome, nbCounterFactuals, checkFeasibility=False):
     print("Start treating", datasetFile)
-    
+
     reader = DatasetReader(datasetFile)
-    
+
     # Clf
-    clf = RandomForestClassifier(max_leaf_nodes=50, random_state=1,n_estimators=100)
+    clf = RandomForestClassifier(max_leaf_nodes=50, random_state=1, n_estimators=100)
     # clf = RandomForestClassifier(random_state=1)
     clf.fit(reader.X_train, reader.y_train)
-    print("Random forest with", clf.n_estimators, "estimators with max depth", clf.max_depth, "and max leaf nodes", clf.max_leaf_nodes)
+    print("Random forest with", clf.n_estimators, "estimators with max depth",
+          clf.max_depth, "and max leaf nodes", clf.max_leaf_nodes)
     nodes = [est.tree_.node_count for est in clf.estimators_]
     print(sum(nodes)/len(nodes), "nodes on average")
 
@@ -78,19 +79,18 @@ def buildCounterFactualSeekedFile(datasetFile, desiredOutcome, nbCounterFactuals
     # Feasibility
     dataWitoutDesiredResults.drop(['clf_result'], axis=1, inplace=True)
     if checkFeasibility:
-        checkFeasibilityOfCounterFactuals(clf,ilf,reader,dataWitoutDesiredResults.index,desiredOutcome)
+        checkFeasibilityOfCounterFactuals(clf, ilf, reader, dataWitoutDesiredResults.index, desiredOutcome)
 
     # Results in oneHotEncodedFormat
     data.drop(['Class'], axis=1, inplace=True)
     data['DesiredOutcome'] = desiredOutcome
-    data = data.loc[dataWitoutDesiredResults.index,:]
+    data = data.loc[dataWitoutDesiredResults.index, :]
 
     # Results in initial format
     result = pd.read_csv(datasetFile)
     result.drop(['Class'], axis=1, inplace=True)
     result['DesiredOutcome'] = desiredOutcome
-    result = result.loc[dataWitoutDesiredResults.index,:]
-
+    result = result.loc[dataWitoutDesiredResults.index, :]
 
     # output
     words = datasetFile.split('/')
@@ -106,13 +106,14 @@ def buildCounterFactualSeekedFile(datasetFile, desiredOutcome, nbCounterFactuals
     outputFile = path + "OneHot_" + words[-1]
     data.to_csv(outputFile, index=False)
 
-#----------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------
 # Test
 # buildCounterFactualSeekedFile('./datasets/test.csv', 1, 1, True)
 
+
 datasetsWithDesiredOutcome = {
     # './datasets/test.csv':1,
-    './datasets/Adult_processedMACE.csv':1,
+    './datasets/Adult_processedMACE.csv': 1,
     # './datasets/Adult.csv':1,
     # './datasets/COMPAS-ProPublica_processedMACE.csv':1,
     # './datasets/COMPAS-ProPublica.csv':1,

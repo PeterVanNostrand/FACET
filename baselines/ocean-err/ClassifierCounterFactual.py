@@ -65,7 +65,7 @@ class ClassifierCounterFactualMilp:
             self.oneHotEncoding = dict()
 
         self.binaryDecisionVariables = binaryDecisionVariables
-        env = gp.Env()
+        env = gp.Env(empty=True)
         if not self.verbose:
             env.setParam('OutputFlag', 0)
             env.start()

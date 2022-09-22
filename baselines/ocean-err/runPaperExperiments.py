@@ -1,17 +1,22 @@
 # Build from datasets the set of counterfactuals that will be used in the numerical experiments
 
-from RunExperimentsRoutines import *
-from BuildCounterFactualSeekedSet import *
+from .RunExperimentsRoutines import *
+from .BuildCounterFactualSeekedSet import *
+
+# datasetsWithDesiredOutcome = {
+#     './datasets/Adult_processedMACE.csv': 1,
+#     './datasets/COMPAS-ProPublica_processedMACE.csv': 1,
+#     './datasets/Credit-Card-Default_processedMACE.csv': 1,
+#     './datasets/German-Credit.csv': 1,
+#     './datasets/Phishing.csv': 1,
+#     './datasets/Spambase.csv': 1,
+#     './datasets/Students-Performance-MAT.csv': 1,
+#     './datasets/OnlineNewsPopularity.csv': 1
+# }
 
 datasetsWithDesiredOutcome = {
-    # './datasets/Adult_processedMACE.csv':1,
-    # './datasets/COMPAS-ProPublica_processedMACE.csv':1,
-    # './datasets/Credit-Card-Default_processedMACE.csv':1,
-    # './datasets/German-Credit.csv':1,
-    # './datasets/Phishing.csv':1,
-    './datasets/Spambase.csv': 1,
-    # './datasets/Students-Performance-MAT.csv':1,
-    # './datasets/OnlineNewsPopularity.csv':1
+    # './datasets/Spambase.csv': 1,
+    './datasets/vertebral.csv': 1,
 }
 
 for dataset in datasetsWithDesiredOutcome:
@@ -19,32 +24,51 @@ for dataset in datasetsWithDesiredOutcome:
 
 # Compute and store in results/Figure1.csv the numerical experiments needed to build figure 1
 
+# ourDatasetsWithCounterfactualsDict = {
+#     './datasets/Adult_processedMACE.csv': './counterfactuals/OneHot_Adult_processedMACE.csv',
+#     './datasets/COMPAS-ProPublica_processedMACE.csv': './counterfactuals/OneHot_COMPAS-ProPublica_processedMACE.csv',
+#     './datasets/German-Credit.csv': './counterfactuals/OneHot_German-Credit.csv',
+#     './datasets/Phishing.csv': './counterfactuals/OneHot_Phishing.csv',
+#     './datasets/Spambase.csv': './counterfactuals/OneHot_Spambase.csv',
+#     './datasets/Students-Performance-MAT.csv': './counterfactuals/OneHot_Students-Performance-MAT.csv',
+#     './datasets/Credit-Card-Default_processedMACE.csv': './counterfactuals/OneHot_Credit-Card-Default_processedMACE.csv',
+#     './datasets/OnlineNewsPopularity.csv': './counterfactuals/OneHot_OnlineNewsPopularity.csv',
+# }
+
 ourDatasetsWithCounterfactualsDict = {
-    # './datasets/Adult_processedMACE.csv':'./counterfactuals/OneHot_Adult_processedMACE.csv',
-    # './datasets/COMPAS-ProPublica_processedMACE.csv':'./counterfactuals/OneHot_COMPAS-ProPublica_processedMACE.csv',
-    # './datasets/German-Credit.csv':'./counterfactuals/OneHot_German-Credit.csv',
-    # './datasets/Phishing.csv':'./counterfactuals/OneHot_Phishing.csv',
-    './datasets/Spambase.csv': './datasets/counterfactuals/OneHot_Spambase.csv',
-    # './datasets/Students-Performance-MAT.csv':'./counterfactuals/OneHot_Students-Performance-MAT.csv',
-    # './datasets/Credit-Card-Default_processedMACE.csv':'./counterfactuals/OneHot_Credit-Card-Default_processedMACE.csv',
-    # './datasets/OnlineNewsPopularity.csv':'./counterfactuals/OneHot_OnlineNewsPopularity.csv',
+    # './datasets/Spambase.csv': './datasets/counterfactuals/OneHot_Spambase.csv',
+    './datasets/vertebral.csv': './datasets/counterfactuals/OneHot_vertebral_processedMACE.csv',
+
 }
 
 
 runNumericalExperiments(ourDatasetsWithCounterfactualsDict,
                         rf_max_depthList=[5],
-                        rf_n_estimatorsList=[100],
+                        rf_n_estimatorsList=[10],
                         ilfActivatedList=[False],
                         ilf_max_samplesList=[32],
                         ilf_n_estimatorsList=[100],
                         random_stateList=[1],
                         useCuiList=[False],
-                        # objectiveNormList=[0, 1, 2],
                         objectiveNormList=[2],
                         binaryDecisionVariablesList=[BinaryDecisionVariables.PathFlow_y],
                         randomCostsActivated=False,
                         numericalResultsFileName="results/Figure1.csv"
                         )
+
+# runNumericalExperiments(ourDatasetsWithCounterfactualsDict,
+#                         rf_max_depthList=[5],
+#                         rf_n_estimatorsList=[100],
+#                         ilfActivatedList=[False],
+#                         ilf_max_samplesList=[32],
+#                         ilf_n_estimatorsList=[100],
+#                         random_stateList=[1],
+#                         useCuiList=[False],
+#                         objectiveNormList=[0, 1, 2],
+#                         binaryDecisionVariablesList=[BinaryDecisionVariables.PathFlow_y],
+#                         randomCostsActivated=False,
+#                         numericalResultsFileName="results/Figure1.csv"
+#                         )
 
 # # Compute the numerical results necessary to plot the result of OCEAN for Figure 2 and store them in results/Figure2_OCEAN.csv"
 

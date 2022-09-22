@@ -25,7 +25,7 @@ class DecisionTreeCounterFactualMilp(ClassifierCounterFactualMilp):
         self.initObjective()
 
     def solveModel(self):
-        self.model.write("tree.lp")
+        # self.model.write("tree.lp")
         self.model.optimize()
 
         self.x_sol = [[]]

@@ -1,5 +1,4 @@
 from unittest.mock import DEFAULT
-import matplotlib.pyplot as plt
 import pandas as pd
 import os
 from tqdm.auto import tqdm

@@ -9,3 +9,4 @@ results/*
 mace_temp.log
 figures/*
 !figures/*.ipynb
+./baselines/ocean-err/*

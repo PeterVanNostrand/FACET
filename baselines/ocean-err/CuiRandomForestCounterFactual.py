@@ -340,7 +340,7 @@ class CuiRandomForestCounterFactualMilp(ClassifierCounterFactualMilp):
         self.buildObjective()
 
     def solveModel(self):
-        self.model.write("cui.lp")
+        # self.model.write("cui.lp")
         self.model.setParam(GRB.Param.ImpliedCuts, 2)
         self.model.setParam(GRB.Param.Threads, 4)
         self.model.setParam(GRB.Param.TimeLimit, 900)
