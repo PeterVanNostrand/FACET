@@ -35,7 +35,7 @@ MACE_DEFAULT_PARAMS = {
 
 OCEAN_DEFAULT_PARAMS = {
     "ocean_norm": 2,
-    "ocean_ilf": False
+    "ocean_ilf": True
 }
 
 FACET_DEFAULT_PARAMS = {
@@ -44,7 +44,7 @@ FACET_DEFAULT_PARAMS = {
     "facet_enumerate": "PointBased",
     "facet_sample": "Augment",
     "facet_sd": 0.01,
-    "facet_intersect_order": "Probability",
+    "facet_intersect_order": "Axes",
     "facet_verbose": False,
     "facet_search": "BitVector",
     "rbv_initial_radius": 0.01,
