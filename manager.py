@@ -9,11 +9,11 @@ from detectors.random_forest import RandomForest
 
 # Explainer classes
 from explainers import *
-# from explainers.best_candidate import AFT
+from explainers.best_candidate import AFT
 from explainers.ocean import OCEAN
-# from explainers.mace import MACE
-# from explainers.facet_index import FACETIndex
-# from explainers.rf_ocse import RFOCSE
+from explainers.mace import MACE
+from explainers.facet_index import FACETIndex
+from explainers.rf_ocse import RFOCSE
 
 
 class MethodManager():
