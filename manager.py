@@ -24,23 +24,19 @@ class MethodManager():
 
     def init_explainer(self, explainer, hyperparameters):
         if explainer == "AFT":
-            # return AFT(manager=self, hyperparameters=hyperparameters)
-            pass
+            return AFT(manager=self, hyperparameters=hyperparameters)
         elif explainer == "OCEAN":
             return OCEAN(manager=self, hyperparameters=hyperparameters)
         elif explainer == "MACE":
-            # return MACE(manager=self, hyperparameters=hyperparameters)
-            pass
+            return MACE(manager=self, hyperparameters=hyperparameters)
         elif explainer == "RFOCSE":
-            # return RFOCSE(manager=self, hyperparameters=hyperparameters)
-            pass
+            return RFOCSE(manager=self, hyperparameters=hyperparameters)
         elif explainer == "FACETIndex":
-            # return FACETIndex(manger=self, hyperparameters=hyperparameters)
-            pass
+            return FACETIndex(manger=self, hyperparameters=hyperparameters)
         else:
             print("Unknown explainer type of " + explainer)
             print("using FACETIndex")
-            # return FACETIndex(manger=self, hyperparameters=hyperparameters)
+            return FACETIndex(manger=self, hyperparameters=hyperparameters)
             pass
 
     def train(self, x, y=None):
