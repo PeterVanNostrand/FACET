@@ -22,15 +22,11 @@ def vary_eps(ds_names, epsilons=[1e-5, 1e-6, 1e-7, 1e-8, 1e-9, 1e-10], iteration
         experiment_path = "./results/vary-eps/"
 
     explainer = "MACE"
-    ntrees = 10
-    max_depth = None
     params = {
         "RandomForest": RF_DEFAULT_PARAMS,
         "MACE": MACE_DEFAULT_PARAMS,
     }
     params["MACE"]["mace_epsilon"] = -1
-    params["RandomForest"]["rf_ntrees"] = ntrees
-    params["RandomForest"]["rf_maxdepth"] = max_depth
 
     total_runs = len(ds_names) * len(epsilons) * len(iterations)
     progress_bar = tqdm(total=total_runs, desc="Overall Progress", position=0, disable=False)
@@ -55,11 +51,10 @@ def vary_eps(ds_names, epsilons=[1e-5, 1e-6, 1e-7, 1e-8, 1e-9, 1e-10], iteration
                 df_item = {
                     "dataset": ds,
                     "explainer": explainer,
-                    "n_trees": ntrees,
-                    "max_depth": max_depth,
+                    "n_trees": params["RandomForest"]["rf_ntrees"],
+                    "max_depth": params["RandomForest"]["rf_maxdepth"],
                     "mace_epsilon": eps,
                     "iteration": iter,
-                    "max_depth": max_depth,
                     **run_result
                 }
                 experiment_results = pd.DataFrame([df_item])

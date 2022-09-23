@@ -28,7 +28,7 @@ TUNED_FACET_SD = {
 }
 
 MACE_DEFAULT_PARAMS = {
-    "mace_maxtime": 300,
+    "mace_maxtime": 900,
     "mace_epsilon": 1e-7,
     "mace_verbose": False
 }
@@ -62,8 +62,8 @@ AFT_DEFAULT_PARAMS = {
 }
 
 RF_DEFAULT_PARAMS = {
-    "rf_ntrees": 10,
-    "rf_maxdepth": 5,
+    "rf_ntrees": 100,
+    "rf_maxdepth": None,
     "rf_hardvoting": False,
 }
 

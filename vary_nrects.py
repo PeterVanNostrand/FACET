@@ -23,15 +23,11 @@ def vary_nrects(ds_names, nrects=[5, 10, 15], iterations=[0, 1, 2, 3, 4], fmod=N
         experiment_path = "./results/vary-nrects/"
 
     explainer = "FACETIndex"
-    ntrees = 100
-    max_depth = None
     params = {
         "RandomForest": RF_DEFAULT_PARAMS,
         "FACETIndex": FACET_DEFAULT_PARAMS,
     }
     params["FACETIndex"]["facet_nrects"] = -1
-    params["RandomForest"]["rf_ntrees"] = ntrees
-    params["RandomForest"]["rf_maxdepth"] = max_depth
 
     total_runs = len(ds_names) * len(nrects) * len(iterations)
     progress_bar = tqdm(total=total_runs, desc="Overall Progress", position=0, disable=False)
@@ -57,11 +53,10 @@ def vary_nrects(ds_names, nrects=[5, 10, 15], iterations=[0, 1, 2, 3, 4], fmod=N
                 df_item = {
                     "dataset": ds,
                     "explainer": explainer,
-                    "n_trees": ntrees,
-                    "max_depth": max_depth,
+                    "n_trees": params["RandomForest"]["rf_ntrees"],
+                    "max_depth": params["RandomForest"]["rf_maxdepth"],
                     "n_rects": nr,
                     "iteration": iter,
-                    "max_depth": max_depth,
                     **run_result
                 }
                 experiment_results = pd.DataFrame([df_item])

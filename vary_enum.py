@@ -26,16 +26,12 @@ def vary_enum(ds_names, iterations=[0, 1, 2, 3, 4], fmod=None):
         experiment_path = "./results/vary-enum/"
 
     explainer = "FACETIndex"
-    ntrees = 100
-    max_depth = None
     params = {
         "RandomForest": RF_DEFAULT_PARAMS,
         "FACETIndex": FACET_DEFAULT_PARAMS,
     }
     params["RandomForest"]["rf_hardvoting"] = None
     params["FACETIndex"]["facet_intersect_order"] = None
-    params["RandomForest"]["rf_ntrees"] = ntrees
-    params["RandomForest"]["rf_maxdepth"] = max_depth
 
     total_runs = len(ds_names) * len(hard_votings) * len(enumerations) * len(iterations)
     progress_bar = tqdm(total=total_runs, desc="Overall Progress", position=0, disable=False)

@@ -22,15 +22,11 @@ def vary_sigma(ds_names, sigmas=[0.01, 0.05, 0.1, 0.2, 0.3], iterations=[0, 1, 2
         experiment_path = "./results/vary-sigma/"
 
     explainer = "FACETIndex"
-    ntrees = 100
-    max_depth = None
     params = {
         "RandomForest": RF_DEFAULT_PARAMS,
         "FACETIndex": FACET_DEFAULT_PARAMS,
     }
     params["FACETIndex"]["facet_sd"] = -1
-    params["RandomForest"]["rf_ntrees"] = ntrees
-    params["RandomForest"]["rf_maxdepth"] = max_depth
 
     total_runs = len(ds_names) * len(sigmas) * len(iterations)
     progress_bar = tqdm(total=total_runs, desc="Overall Progress", position=0, disable=False)
@@ -55,11 +51,10 @@ def vary_sigma(ds_names, sigmas=[0.01, 0.05, 0.1, 0.2, 0.3], iterations=[0, 1, 2
                 df_item = {
                     "dataset": ds,
                     "explainer": explainer,
-                    "n_trees": ntrees,
-                    "max_depth": max_depth,
+                    "n_trees": params["RandomForest"]["rf_ntrees"],
+                    "max_depth": params["RandomForest"]["rf_maxdepth"],
                     "facet_sd": sig,
                     "iteration": iter,
-                    "max_depth": max_depth,
                     **run_result
                 }
                 experiment_results = pd.DataFrame([df_item])
