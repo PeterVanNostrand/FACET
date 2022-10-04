@@ -25,6 +25,7 @@ if TYPE_CHECKING:
 
 
 class FACETIndex(Explainer):
+    # TODO Implement per axis minimum robustness paramater, and minimum robustness along all axes
     def __init__(self, manger, hyperparameters: dict):
         self.manager: MethodManager = manger
         self.parse_hyperparameters(hyperparameters)

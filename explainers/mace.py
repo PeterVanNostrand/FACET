@@ -30,7 +30,7 @@ class MACE(Explainer):
 
         params = hyperparameters.get("MACE")
 
-        # threshold offest for picking new values
+        # maximum time to attempt to explain a sample
         maxtime = params.get("mace_maxtime")
         if maxtime is None:
             print("No mace_maxtime provided, using 60")

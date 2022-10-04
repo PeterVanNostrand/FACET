@@ -3,11 +3,15 @@ import pandas as pd
 from explainers.explainer import Explainer
 from sklearn.preprocessing import StandardScaler
 from tqdm.auto import tqdm
+import multiprocessing as mp
+
 
 # from fastcrf.rfocse_main import batch_extraction, CounterfactualSetExplanation
 # from fastcrf.datasets import DatasetInfo, DatasetInfoBuilder
 
-from baselines.rfocse.rfocse_main import batch_extraction, CounterfactualSetExplanation
+from baselines.rfocse.rfocse_main import batch_extraction, CounterfactualSetExplanation, extract_single_counterfactual_set
+from baselines.rfocse.extraction_problem import make_problem
+from baselines.rfocse.converter import convert_rf_format
 from baselines.rfocse.datasets import DatasetInfo, DatasetInfoBuilder
 
 from typing import TYPE_CHECKING
@@ -39,6 +43,14 @@ class RFOCSE(Explainer):
         else:
             self.offset = params.get("rfoce_offset")
 
+        # maximum time to attempt to explain a sample
+        maxtime = params.get("rfoce_maxtime")
+        if maxtime is None:
+            print("No rfoce_maxtime provided, using 60")
+            self.maxtime = 60
+        else:
+            self.maxtime = maxtime
+
     def prepare_dataset(self, x, y):
         pass
 
@@ -64,6 +76,52 @@ class RFOCSE(Explainer):
         self.Xtrain: pd.DataFrame = X
 
     def explain(self, x: np.ndarray, y):
+        if self.perform_transform:
+            x = self.float_transformer.transform(x)
+        # an array for the constructed contrastive examples
+        X_test = pd.DataFrame(x)
+        X_test.columns = self.col_names[:-1]
+        xprime = np.empty(shape=x.shape)
+        xprime[:, :] = np.inf
+        dataset_info: DatasetInfo = self.dataset_info
+        sklearn_rf = self.manager.random_forest.model
+        X_train = self.Xtrain
+
+        progress = tqdm(total=x.shape[0], desc="RFOCSE", leave=False)
+
+        # Make the RFOCSE problem
+        search_closest = True
+        log_every = -1
+        max_iterations = 20_000_000
+        dataset = X_train.values
+        parsed_rf = convert_rf_format(sklearn_rf, dataset_info)
+        problem = make_problem(parsed_rf, dataset_info, search_closest, log_every, max_iterations)
+
+        # explain each instance
+        for idx, observation in zip(X_test.index, X_test.values):
+            explanation = doRFOCSEExplanationWithMaxTime(self.maxtime,
+                                                         problem,
+                                                         sklearn_rf,
+                                                         parsed_rf,
+                                                         dataset_info,
+                                                         observation,
+                                                         dataset,
+                                                         self.offset,
+                                                         verbose=True)
+            if explanation is not None:
+                xprime[idx] = explanation
+
+        # locate non-counterfactual examples and replace them with [np.inf, ... , np.inf]
+        idx_no_examples = (xprime == np.inf).any(axis=1)
+        xprime[idx_no_examples] = np.tile(0, x.shape[1])
+        y_pred = self.manager.predict(xprime)
+        idx_failed_explanation = (y_pred == y)
+        xprime[idx_failed_explanation] = np.tile(np.inf, (x.shape[1],))
+        xprime[idx_no_examples] = np.tile(np.inf, (x.shape[1],))
+
+        return xprime
+
+    def explain_batch(self, x: np.ndarray, y):
         if self.perform_transform:
             x = self.float_transformer.transform(x)
         # an array for the constructed contrastive examples
@@ -208,3 +266,92 @@ class RFOCSE(Explainer):
                 kwargs[key] = initial_args[key]
 
         return kwargs
+
+
+def doRFOCSEExplanationWithMaxTime(maxTime,
+                                   problem,
+                                   sklearn_rf,
+                                   parsed_rf,
+                                   dataset_info,
+                                   observation,
+                                   dataset,
+                                   offset,
+                                   verbose=False):
+    ctx = mp.get_context('spawn')
+    q = ctx.Queue()
+    p = ctx.Process(target=doRFOCSEExplanationWithQueueCatch, args=(q,
+                                                                    problem,
+                                                                    sklearn_rf,
+                                                                    parsed_rf,
+                                                                    dataset_info,
+                                                                    observation,
+                                                                    dataset,
+                                                                    offset
+                                                                    )
+                    )
+    p.start()
+    p.join(maxTime)
+    if p.is_alive():
+        p.terminate()
+        if verbose:
+            print("killing after", maxTime, "second")
+        return None
+    else:
+        return q.get()
+
+
+def doRFOCSEExplanationWithQueueCatch(queue,
+                                      problem,
+                                      sklearn_rf,
+                                      parsed_rf,
+                                      dataset_info,
+                                      observation,
+                                      dataset,
+                                      offset
+                                      ):
+    try:
+        doRFOCSEExplanationWithQueue(queue,
+                                     problem,
+                                     sklearn_rf,
+                                     parsed_rf,
+                                     dataset_info,
+                                     observation,
+                                     dataset,
+                                     offset
+                                     )
+    except:
+        print("RFOCSE error")
+        queue.put(None)
+
+
+def doRFOCSEExplanationWithQueue(queue,
+                                 problem,
+                                 sklearn_rf,
+                                 parsed_rf,
+                                 dataset_info,
+                                 observation,
+                                 dataset,
+                                 offset
+                                 ):
+    queue.put(doRFOCSEExplanation(problem,
+                                  sklearn_rf,
+                                  parsed_rf,
+                                  dataset_info,
+                                  observation,
+                                  dataset,
+                                  offset))
+
+
+def doRFOCSEExplanation(problem,
+                        sklearn_rf,
+                        parsed_rf,
+                        dataset_info,
+                        observation,
+                        dataset,
+                        offset):
+    res = extract_single_counterfactual_set(problem, sklearn_rf, parsed_rf, dataset_info, observation, dataset)
+    if 'explanation' in res:
+        cs = res.pop('explanation')
+        return cs.sample_counterfactual(observation, offset)
+    else:
+        return None

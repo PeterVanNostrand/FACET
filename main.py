@@ -52,7 +52,7 @@ def simple_run(ds_name="vertebral", explainer="FACETIndex", random_state=0):
     # Euclidean, FeaturesChanged
     run_id, run_path = check_create_directory("./results/simple-run/")
 
-    ntrees = 100
+    ntrees = 10
     max_depth = 5
     params = DEFAULT_PARAMS
     params["RandomForest"]["rf_ntrees"] = ntrees

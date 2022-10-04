@@ -54,7 +54,8 @@ FACET_DEFAULT_PARAMS = {
 
 RFOCSE_DEFAULT_PARAMS = {
     "rfoce_transform": False,
-    "rfoce_offset": 0.0001
+    "rfoce_offset": 0.0001,
+    "rfoce_maxtime": 300
 }
 
 AFT_DEFAULT_PARAMS = {
