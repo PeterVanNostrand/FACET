@@ -5,7 +5,7 @@ from tqdm.auto import tqdm
 from experiments import execute_run, FACET_DEFAULT_PARAMS, RF_DEFAULT_PARAMS, TUNED_FACET_SD
 
 
-def vary_enum(ds_names, iterations=[0, 1, 2, 3, 4], fmod=None):
+def vary_enum(ds_names, iterations=[0, 1, 2, 3, 4], fmod=None, ntrees=10, max_depth=5):
     '''
     Experiment to observe the effect of the the number of features on explanation
     '''
@@ -30,6 +30,8 @@ def vary_enum(ds_names, iterations=[0, 1, 2, 3, 4], fmod=None):
         "RandomForest": RF_DEFAULT_PARAMS,
         "FACETIndex": FACET_DEFAULT_PARAMS,
     }
+    params["RandomForest"]["rf_ntrees"] = ntrees
+    params["RandomForest"]["rf_maxdepth"] = max_depth
     params["RandomForest"]["rf_hardvoting"] = None
     params["FACETIndex"]["facet_intersect_order"] = None
 

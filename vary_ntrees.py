@@ -7,7 +7,7 @@ from experiments import TUNED_FACET_SD, FACET_DEFAULT_PARAMS, OCEAN_DEFAULT_PARA
 
 
 def vary_ntrees(ds_names, explainers=["FACETIndex", "OCEAN"], ntrees=[5, 10, 15],
-                iterations=[0, 1, 2, 3, 4], fmod=None):
+                iterations=[0, 1, 2, 3, 4], fmod=None, max_depth=5):
     '''
     Experiment to observe the effect of the the number of features on explanation
     '''
@@ -24,7 +24,6 @@ def vary_ntrees(ds_names, explainers=["FACETIndex", "OCEAN"], ntrees=[5, 10, 15]
         csv_path = "./results/vary_ntrees.csv"
         experiment_path = "./results/vary-ntrees/"
 
-    max_depth = 5
     params = {
         "RandomForest": RF_DEFAULT_PARAMS,
         "FACETIndex": FACET_DEFAULT_PARAMS,

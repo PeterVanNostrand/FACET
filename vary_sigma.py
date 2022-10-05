@@ -5,7 +5,7 @@ from tqdm.auto import tqdm
 from experiments import execute_run, RF_DEFAULT_PARAMS, FACET_DEFAULT_PARAMS
 
 
-def vary_sigma(ds_names, sigmas=[0.01, 0.05, 0.1, 0.2, 0.3], iterations=[0, 1, 2, 3, 4], fmod=None):
+def vary_sigma(ds_names, sigmas=[0.01, 0.05, 0.1, 0.2, 0.3], iterations=[0, 1, 2, 3, 4], fmod=None, ntrees=10, max_depth=5):
     '''
     Experiment to observe the effect of the standard deviation of data augmentation on explanation qualtiy
     '''
@@ -27,6 +27,8 @@ def vary_sigma(ds_names, sigmas=[0.01, 0.05, 0.1, 0.2, 0.3], iterations=[0, 1, 2
         "FACETIndex": FACET_DEFAULT_PARAMS,
     }
     params["FACETIndex"]["facet_sd"] = -1
+    params["RandomForest"]["rf_ntrees"] = ntrees
+    params["RandomForest"]["rf_maxdepth"] = max_depth
 
     total_runs = len(ds_names) * len(sigmas) * len(iterations)
     progress_bar = tqdm(total=total_runs, desc="Overall Progress", position=0, disable=False)

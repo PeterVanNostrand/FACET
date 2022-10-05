@@ -6,7 +6,7 @@ from experiments import execute_run
 from experiments import TUNED_FACET_SD, FACET_DEFAULT_PARAMS, RF_DEFAULT_PARAMS, TUNED_FACET_RADII
 
 
-def vary_nrects(ds_names, nrects=[5, 10, 15], iterations=[0, 1, 2, 3, 4], fmod=None):
+def vary_nrects(ds_names, nrects=[5, 10, 15], iterations=[0, 1, 2, 3, 4], fmod=None, ntrees=10, max_depth=5):
     '''
     Experiment to observe the effect of the the number of features on explanation
     '''
@@ -28,6 +28,8 @@ def vary_nrects(ds_names, nrects=[5, 10, 15], iterations=[0, 1, 2, 3, 4], fmod=N
         "FACETIndex": FACET_DEFAULT_PARAMS,
     }
     params["FACETIndex"]["facet_nrects"] = -1
+    params["RandomForest"]["rf_ntrees"] = ntrees
+    params["RandomForest"]["rf_maxdepth"] = max_depth
 
     total_runs = len(ds_names) * len(nrects) * len(iterations)
     progress_bar = tqdm(total=total_runs, desc="Overall Progress", position=0, disable=False)

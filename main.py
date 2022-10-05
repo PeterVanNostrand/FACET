@@ -48,12 +48,10 @@ def check_create_directory(dir_path="./results/"):
     return run_id, run_path
 
 
-def simple_run(ds_name="vertebral", explainer="FACETIndex", random_state=0):
+def simple_run(ds_name="vertebral", explainer="FACETIndex", random_state=0, ntrees=10, max_depth=5):
     # Euclidean, FeaturesChanged
     run_id, run_path = check_create_directory("./results/simple-run/")
 
-    ntrees = 10
-    max_depth = 5
     params = DEFAULT_PARAMS
     params["RandomForest"]["rf_ntrees"] = ntrees
     params["RandomForest"]["rf_maxdepth"] = max_depth
@@ -100,46 +98,58 @@ if __name__ == "__main__":
     parser.add_argument("--maxdepth", type=int, default=5)
     parser.add_argument("--it", type=int, nargs="+", default=[0])
     parser.add_argument("--fmod", type=str, default=None)
-
     args = parser.parse_args()
+
+    # Set maxdepth to -1 to allow trees to grow uncapped
+    if args.maxdepth == -1:
+        args.maxdepth = None
 
     print(args)
 
     # Do a single quick run with one explaienr and one dataset
     if args.expr == "simple":
-        simple_run(ds_name=args.ds[0], explainer=args.method[0], random_state=args.it[0])
+        simple_run(ds_name=args.ds[0], explainer=args.method[0],
+                   random_state=args.it[0], ntrees=args.ntrees, max_depth=args.maxdepth)
     # Vary the number of trees and compare explaienrs
     elif args.expr == "ntrees":
         if args.values is not None:
             ntrees = [int(_) for _ in args.values]
-            vary_ntrees(ds_names=args.ds, explainers=args.method, ntrees=ntrees, iterations=args.it, fmod=args.fmod)
+            vary_ntrees(ds_names=args.ds, explainers=args.method, ntrees=ntrees,
+                        iterations=args.it, fmod=args.fmod, max_depth=args.maxdepth)
         else:
-            vary_ntrees(ds_names=args.ds, explainers=args.method, iterations=args.it, fmod=args.fmod)
+            vary_ntrees(ds_names=args.ds, explainers=args.method,
+                        iterations=args.it, fmod=args.fmod, max_depth=args.maxdepth)
 
     # Vary the number of hyperrectangles for FACETIndex
     elif args.expr == "nrects":
         if args.values is not None:
             nrects = [int(_) for _ in args.values]
-            vary_nrects(ds_names=args.ds, nrects=nrects, iterations=args.it, fmod=args.fmod)
+            vary_nrects(ds_names=args.ds, nrects=nrects, iterations=args.it,
+                        fmod=args.fmod, ntrees=args.ntrees, max_depth=args.maxdepth)
         else:
-            vary_nrects(ds_names=args.ds, iterations=args.it, fmod=args.fmod)
+            vary_nrects(ds_names=args.ds, iterations=args.it, fmod=args.fmod,
+                        ntrees=args.ntrees, max_depth=args.maxdepth)
 
     # Vary the epsilon value for MACE
     elif args.expr == "eps":
         if args.values is not None:
-            vary_eps(ds_names=args.ds, epsilons=args.values, iterations=args.it, fmod=args.fmod)
+            vary_eps(ds_names=args.ds, epsilons=args.values, iterations=args.it,
+                     fmod=args.fmod, ntrees=args.ntrees, max_depth=args.maxdepth)
         else:
-            vary_eps(ds_names=args.ds, iterations=args.it, fmod=args.fmod)
+            vary_eps(ds_names=args.ds, iterations=args.it, fmod=args.fmod, ntrees=args.ntrees, max_depth=args.maxdepth)
 
     # Vary the standard deviation of HR enumeration for FACETIndex
     elif args.expr == "sigma":
         if args.values is not None:
-            vary_sigma(ds_names=args.ds, sigmas=args.values, iterations=args.it, fmod=args.fmod)
+            vary_sigma(ds_names=args.ds, sigmas=args.values, iterations=args.it,
+                       fmod=args.fmod, ntrees=args.ntrees, max_depth=args.maxdepth)
         else:
-            vary_sigma(ds_names=args.ds, iterations=args.it, fmod=args.fmod)
+            vary_sigma(ds_names=args.ds, iterations=args.it, fmod=args.fmod,
+                       ntrees=args.ntrees, max_depth=args.maxdepth)
 
     elif args.expr == "enum":
-        vary_enum(ds_names=args.ds, iterations=args.it, fmod=args.fmod)
+        vary_enum(ds_names=args.ds, iterations=args.it, fmod=args.fmod, ntrees=args.ntrees, max_depth=args.maxdepth)
 
     elif args.expr == "compare":
-        compare_methods(ds_names=args.ds, explainers=args.method, iterations=args.it, fmod=args.fmod)
+        compare_methods(ds_names=args.ds, explainers=args.method, iterations=args.it,
+                        fmod=args.fmod, ntrees=args.ntrees, max_depth=args.maxdepth)

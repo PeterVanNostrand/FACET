@@ -5,7 +5,7 @@ from tqdm.auto import tqdm
 from experiments import execute_run, RF_DEFAULT_PARAMS, MACE_DEFAULT_PARAMS
 
 
-def vary_eps(ds_names, epsilons=[1e-5, 1e-6, 1e-7, 1e-8, 1e-9, 1e-10], iterations=[0], fmod=None):
+def vary_eps(ds_names, epsilons=[1e-5, 1e-6, 1e-7, 1e-8, 1e-9, 1e-10], iterations=[0], fmod=None, ntrees=10, max_depth=5):
     '''
     Experiment to observe the effect of the the step size on MACE's runtime
     '''
@@ -27,6 +27,8 @@ def vary_eps(ds_names, epsilons=[1e-5, 1e-6, 1e-7, 1e-8, 1e-9, 1e-10], iteration
         "MACE": MACE_DEFAULT_PARAMS,
     }
     params["MACE"]["mace_epsilon"] = -1
+    params["RandomForest"]["rf_ntrees"] = ntrees
+    params["RandomForest"]["rf_maxdepth"] = max_depth
 
     total_runs = len(ds_names) * len(epsilons) * len(iterations)
     progress_bar = tqdm(total=total_runs, desc="Overall Progress", position=0, disable=False)
