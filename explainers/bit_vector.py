@@ -137,10 +137,7 @@ class BitVectorIndex():
                 if search_complete and (not solution_found or closest_dist > max_dist):
                     closest_rect = None  # return Null
 
-            if self.radius_growth == "Linear":
-                search_radius += self.initial_radius
-            elif self.radius_growth == "Exponential":
-                search_radius *= 2
+            search_radius = self.grow_radius(search_radius)
         # Experiment logging
         nrects_searched = searched_bits.count()
         self.search_log.append(nrects_searched)
@@ -148,6 +145,12 @@ class BitVectorIndex():
             print(nrects_searched)
 
         return closest_rect
+
+    def grow_radius(self, radius: float) -> float:
+        if self.radius_growth == "Linear":
+            return radius + self.radius_step
+        elif self.radius_growth == "Exponential":
+            return radius * self.radius_step
 
     def k_point_query(self, instance: np.ndarray, constraints: np.ndarray = None, weights: np.ndarray = None, k: int = 1, max_dist: float = np.inf) -> np.ndarray:
         '''
@@ -241,10 +244,7 @@ class BitVectorIndex():
             # if the closest k rects fall within the search radius sufficent solutions were found, search complete
             if k is not None:
                 solution_found = (len(rect_dists) >= k) and (rect_dists[k-1][0] <= search_radius)
-            if self.radius_growth == "Linear":
-                search_radius += self.initial_radius
-            elif self.radius_growth == "Exponential":
-                search_radius *= 2
+            search_radius = self.grow_radius(search_radius)
 
         # return the top-k closest rects, or all rects within dmax if k is None
         # return an empty list if no rects were found
@@ -400,6 +400,13 @@ class BitVectorIndex():
             self.initial_radius = 0.05
         else:
             self.initial_radius = params.get("rbv_initial_radius")
+
+        # radius step size
+        if params.get("rbv_radius_step") is None:
+            print("No rbv_radius_step provided, using 0.01")
+            self.radius_step = 0.01
+        else:
+            self.radius_step = params.get("rbv_radius_step")
 
         # Radius Growth Method
         if params.get("rbv_radius_growth") is None:

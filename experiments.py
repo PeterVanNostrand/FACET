@@ -29,14 +29,22 @@ TUNED_FACET_SD = {
 
 # generated as the average minimum point to point distance
 # see initial_radius_heuristic
-FACET_TUNED_RADII = {
+AVG_NN_DIST = {
     "cancer": 0.3290,
     "glass": 0.1516,
     "magic": 0.07162,
     "spambase": 0.1061,
     "vertebral": 0.0992
 }
-
+# avgerage dataset distance to nearest point of the oppisite class
+AVG_CF_NN_DIST = {
+    "cancer": 0.5850,
+    "glass": 0.2710,
+    "magic": 0.1153,
+    "spambase": 0.2594,
+    "vertebral": 0.1640
+}
+TUNED_FACET_RADII = AVG_CF_NN_DIST
 
 MACE_DEFAULT_PARAMS = {
     "mace_maxtime": 900,
@@ -59,6 +67,7 @@ FACET_DEFAULT_PARAMS = {
     "facet_verbose": False,
     "facet_search": "BitVector",
     "rbv_initial_radius": 0.01,
+    "rbv_radius_step": 0.01,
     "rbv_radius_growth": "Linear",
     "rbv_num_interval": 4,
 }

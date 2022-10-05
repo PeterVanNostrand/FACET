@@ -3,7 +3,7 @@ import pandas as pd
 from tqdm.auto import tqdm
 
 from experiments import execute_run
-from experiments import TUNED_FACET_SD, FACET_DEFAULT_PARAMS, RF_DEFAULT_PARAMS
+from experiments import TUNED_FACET_SD, FACET_DEFAULT_PARAMS, RF_DEFAULT_PARAMS, TUNED_FACET_RADII
 
 
 def vary_nrects(ds_names, nrects=[5, 10, 15], iterations=[0, 1, 2, 3, 4], fmod=None):
@@ -38,6 +38,7 @@ def vary_nrects(ds_names, nrects=[5, 10, 15], iterations=[0, 1, 2, 3, 4], fmod=N
                 # set the number of trees
                 params["FACETIndex"]["facet_nrects"] = nr
                 params["FACETIndex"]["facet_sd"] = TUNED_FACET_SD[ds]
+                params["FACETIndex"]["rbv_initial_radius"] = TUNED_FACET_RADII[ds]
                 run_result = execute_run(
                     dataset_name=ds,
                     explainer=explainer,
