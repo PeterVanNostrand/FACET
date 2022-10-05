@@ -57,7 +57,6 @@ def simple_run(ds_name="vertebral", explainer="FACETIndex", random_state=0):
     params = DEFAULT_PARAMS
     params["RandomForest"]["rf_ntrees"] = ntrees
     params["RandomForest"]["rf_maxdepth"] = max_depth
-    params["OCEAN"]["ocean_ilf"] = False
 
     preprocessing = "Normalize"
     n_explain = 20

@@ -406,7 +406,7 @@ class FACETIndex(Explainer):
 
             # start with intersecting the hyper-rectangles which have the matching class
             i = 0
-            while i < len(match_bounds) and accumulated_prob[label] < 0.5:
+            while i < len(match_bounds) and accumulated_prob[label] <= 0.5:
                 rect[:, 0] = np.maximum(rect[:, 0], match_bounds[match_order[i]][:, 0])  # intersection of minimums
                 rect[:, 1] = np.minimum(rect[:, 1], match_bounds[match_order[i]][:, 1])  # intersection of maximums
                 bisect.insort(paths_used,  tuple(match_paths[match_order[i]]))  # remember leaves we used
@@ -417,7 +417,7 @@ class FACETIndex(Explainer):
             # if needed continue intersecting leaves of the non-desired class until the desired class is the majority
             nm_order = other_probs[:, label].argsort()[::-1]  # take other leaf with highest desired class prob first
             i = 0
-            while i < len(other_bounds) and accumulated_prob[label] < 0.5:
+            while i < len(other_bounds) and accumulated_prob[label] <= 0.5:
                 rect[:, 0] = np.maximum(rect[:, 0], other_bounds[nm_order[i]][:, 0])  # intersection of minimums
                 rect[:, 1] = np.minimum(rect[:, 1], other_bounds[nm_order[i]][:, 1])  # intersection of maximums
                 bisect.insort(paths_used, tuple(other_paths[nm_order[i]]))  # remember leaves we used
@@ -652,9 +652,11 @@ class FACETIndex(Explainer):
                     max_dist=np.inf
                 )
                 if nearest_rect is not None:
-                    xprime.append(self.fit_to_rectangle(x[i], nearest_rect))
+                    explanation = self.fit_to_rectangle(x[i], nearest_rect)
+                    a = 2
                 else:
-                    xprime.append([np.inf for _ in range(x.shape[1])])
+                    explanation = [np.inf for _ in range(x.shape[1])]
+                xprime.append(explanation)
                 progress.update()
             progress.close()
 
