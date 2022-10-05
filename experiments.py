@@ -27,6 +27,17 @@ TUNED_FACET_SD = {
     "vertebral": 0.05
 }
 
+# generated as the average minimum point to point distance
+# see initial_radius_heuristic
+FACET_TUNED_RADII = {
+    "cancer": 0.3290,
+    "glass": 0.1516,
+    "magic": 0.07162,
+    "spambase": 0.1061,
+    "vertebral": 0.0992
+}
+
+
 MACE_DEFAULT_PARAMS = {
     "mace_maxtime": 900,
     "mace_epsilon": 1e-7,

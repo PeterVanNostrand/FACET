@@ -13,8 +13,8 @@ def cal_mean_min_dist(X_train):
 
 for ds in DS_NAMES:
     x, y = load_data(ds, preprocessing="Normalize")
-    time_start = time()
+    time_start = time.time()
     avg_dist = cal_mean_min_dist(x)
-    time_end = time()
-    runtime = time_start - time_end
+    time_end = time.time()
+    runtime = time_end - time_start
     print("ds: {}, shape: {}, dist: {}, runtime: {}".format(ds, x.shape, avg_dist, runtime))
