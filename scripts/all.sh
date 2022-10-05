@@ -27,4 +27,4 @@ python main.py --expr enum --ds cancer glass magic spambase vertebral --method F
 python main.py --expr compare --ds cancer glass magic spambase vertebral --method FACETIndex OCEAN AFT MACE RFOCSE --it 0 1 2 3 4 5 6 7 8 9 --fmod softaxilf
 
 # Expr 3: Vary Ntrees, set MaxDepth=5
-python main.py --expr compare --ds cancer glass magic spambase vertebral --method FACETIndex OCEAN --values 10 50 100 200 300 400 500 --it 0 1 2 3 4 5 6 7 8 9 --fmod softaxilf
+python main.py --expr ntrees --ds cancer glass magic spambase vertebral --method FACETIndex OCEAN --values 10 50 100 200 300 400 500 --it 0 1 2 3 4 5 6 7 8 9 --fmod softaxilf

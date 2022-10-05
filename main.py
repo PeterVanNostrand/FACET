@@ -96,6 +96,8 @@ if __name__ == "__main__":
     parser.add_argument("--ds", type=str, nargs="+", default=["vertebral"])
     parser.add_argument("--method", type=str, nargs="+", choices=all_explaiers, default=["FACETIndex"])
     parser.add_argument("--values", type=float, nargs="+", default=None)
+    parser.add_argument("--ntrees", type=int, default=10)
+    parser.add_argument("--maxdepth", type=int, default=5)
     parser.add_argument("--it", type=int, nargs="+", default=[0])
     parser.add_argument("--fmod", type=str, default=None)
 
