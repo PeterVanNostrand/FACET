@@ -603,7 +603,7 @@ class FACETIndex(Explainer):
 
         return xprime
 
-    def explain(self, x: np.ndarray, y: np.ndarray, constraints: np.ndarray = None, weights: np.ndarray = None) -> np.ndarray:
+    def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf) -> np.ndarray:
         '''
         Parameters
         ----------
@@ -646,10 +646,10 @@ class FACETIndex(Explainer):
                 nearest_rect = None
                 nearest_rect = self.rbvs[counterfactual_classes[i]].point_query(
                     instance=x[i],
-                    constraints=None,
-                    weights=None,
-                    k=1,
-                    max_dist=np.inf
+                    constraints=constraints,
+                    weights=weights,
+                    k=k,
+                    max_dist=max_dist
                 )
                 if nearest_rect is not None:
                     explanation = self.fit_to_rectangle(x[i], nearest_rect)
