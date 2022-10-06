@@ -616,14 +616,10 @@ class FACETIndex(Explainer):
 
         explains a given instance by growing a clique around the region of xi starting with trees which predict the counterfactual class
         '''
-
         xprime = []  # an array for the constructed contrastive examples
 
         # assumimg binary classification [0, 1] set counterfactual class
         counterfactual_classes = ((y - 1) * -1)
-
-        # weights = np.array([0.1, 0.5, 0.1, 0.1, 0.1, 0.1])
-        weights = None
 
         if self.search_type == "Linear":
             # perform a linear scan of all the hyper-rectangles
@@ -644,18 +640,22 @@ class FACETIndex(Explainer):
             progress = tqdm(total=x.shape[0], desc="FACETIndex", leave=False)
             for i in range(x.shape[0]):  # for each instance
                 nearest_rect = None
-                nearest_rect = self.rbvs[counterfactual_classes[i]].point_query(
+                result = self.rbvs[counterfactual_classes[i]].point_query(
                     instance=x[i],
                     constraints=constraints,
                     weights=weights,
                     k=k,
                     max_dist=max_dist
                 )
-                if nearest_rect is not None:
+                if k == 1 and result is not None:
+                    nearest_rect = result
                     explanation = self.fit_to_rectangle(x[i], nearest_rect)
-                    a = 2
+                elif k > 1 and len(result) > 0:
+                    nearest_rect = result[0]
+                    explanation = self.fit_to_rectangle(x[i], nearest_rect)
                 else:
                     explanation = [np.inf for _ in range(x.shape[1])]
+
                 xprime.append(explanation)
                 progress.update()
             progress.close()
