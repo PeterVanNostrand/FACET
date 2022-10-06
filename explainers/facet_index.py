@@ -370,7 +370,7 @@ class FACETIndex(Explainer):
             # take rects in order of largest probability
             order = path_probs[:, label].argsort()[::-1]
             i = 0
-            while i < len(all_bounds) and accumulated_prob[label] < 0.5:
+            while i < len(all_bounds) and accumulated_prob[label] <= 0.5:
                 rect[:, 0] = np.maximum(rect[:, 0], all_bounds[order[i]][:, 0])  # intersection of minimums
                 rect[:, 1] = np.minimum(rect[:, 1], all_bounds[order[i]][:, 1])  # intersection of maximums
                 bisect.insort(paths_used, paths[order[i]])  # remember which leaves we've used, keep sorted asc by tid
