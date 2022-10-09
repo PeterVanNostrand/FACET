@@ -48,5 +48,5 @@ class MethodManager():
     def prepare(self, xtrain: np.ndarray = None, ytrain: np.ndarray = None):
         self.explainer.prepare(xtrain, ytrain)
 
-    def explain(self, x, y):
-        return self.explainer.explain(x, y)
+    def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf) -> np.ndarray:
+        return self.explainer.explain(x, y, k, constraints, weights, max_dist)
