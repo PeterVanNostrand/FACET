@@ -56,15 +56,17 @@ class FACETIndex(Explainer):
 
         # !debug
         # self.check_indexed_rects()
-
         if self.search_type == "BitVector":
-            # create redundant bit vector index
-            self.rbvs: List[BitVectorIndex] = []
-            for class_id in range(self.rf_nclasses):
-                if self.verbose:
-                    print("class {}".format(class_id))
-                self.rbvs.append(BitVectorIndex(rects=self.index[class_id],
-                                                explainer=self, hyperparameters=self.hyperparameters))
+            self.build_bitvectorindex()
+
+    def build_bitvectorindex(self):
+        # create redundant bit vector index
+        self.rbvs: List[BitVectorIndex] = []
+        for class_id in range(self.rf_nclasses):
+            if self.verbose:
+                print("class {}".format(class_id))
+            self.rbvs.append(BitVectorIndex(rects=self.index[class_id],
+                                            explainer=self, hyperparameters=self.hyperparameters))
 
     def prepare_dataset(self, x, y):
         pass

@@ -22,6 +22,8 @@ from vary_eps import vary_eps
 from vary_enum import vary_enum
 from compare_methods import compare_methods
 from vary_k import vary_k
+from vary_rinit import vary_rinit
+from vary_m import vary_m
 
 
 def check_create_directory(dir_path="./results/"):
@@ -91,7 +93,7 @@ if __name__ == "__main__":
     # sigma - FACET index evaluation (how much do we move our augmented data in region enumeration)
     # compare - 7.3 compare methods on fixed ensemble
     parser.add_argument("--expr", choices=["simple", "ntrees", "nrects",
-                        "eps", "sigma", "enum", "compare", "k"], default="simple")
+                        "eps", "sigma", "enum", "compare", "k", "rinit", "m"], default="simple")
     parser.add_argument("--ds", type=str, nargs="+", default=["vertebral"])
     parser.add_argument("--method", type=str, nargs="+", choices=all_explaiers, default=["FACETIndex"])
     parser.add_argument("--values", type=float, nargs="+", default=None)
@@ -158,4 +160,13 @@ if __name__ == "__main__":
     elif args.expr == "k":
         ks = [int(_) for _ in args.values]
         vary_k(ds_names=args.ds, ks=ks, iterations=args.it,
+               fmod=args.fmod, ntrees=args.ntrees, max_depth=args.maxdepth)
+
+    elif args.expr == "rinit":
+        vary_rinit(ds_names=args.ds, rs=args.values, iterations=args.it,
+                   fmod=args.fmod, ntrees=args.ntrees, max_depth=args.maxdepth)
+
+    elif args.expr == "m":
+        ms = [int(_) for _ in args.values]
+        vary_m(ds_names=args.ds, ms=ms, iterations=args.it,
                fmod=args.fmod, ntrees=args.ntrees, max_depth=args.maxdepth)
