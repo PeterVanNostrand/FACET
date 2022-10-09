@@ -35,7 +35,7 @@ def compare_methods(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", "AFT"
             for ds in ds_names:
                 # set the number of trees
                 params["FACETIndex"]["facet_sd"] = TUNED_FACET_SD[ds]
-                params["FACETIndex"]["rbv_initial_radius"] = TUNED_FACET_RADII[ds]
+                # params["FACETIndex"]["rbv_initial_radius"] = TUNED_FACET_RADII[ds]
                 run_result = execute_run(
                     dataset_name=ds,
                     explainer=expl,

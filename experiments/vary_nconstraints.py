@@ -9,7 +9,7 @@ from tqdm.auto import tqdm
 import json
 
 from sklearn.model_selection import train_test_split
-from .experiments import execute_run, RF_DEFAULT_PARAMS, FACET_DEFAULT_PARAMS
+from .experiments import execute_run, RF_DEFAULT_PARAMS, FACET_DEFAULT_PARAMS, TUNED_FACET_SD
 from utilities.metrics import classification_metrics, percent_valid, average_distance
 from manager import MethodManager
 from dataset import load_data
@@ -44,6 +44,7 @@ def vary_nconstraints(ds_names, nconstraints=[2, 4, 6, 8, 10], iterations=[0, 1,
 
     for iter in iterations:
         for ds in ds_names:
+            params["FACETIndex"]["facet_sd"] = TUNED_FACET_SD[ds]
             # configure run info
             test_size = 0.2
             n_explain = 20

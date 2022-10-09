@@ -9,7 +9,7 @@ from tqdm.auto import tqdm
 import json
 
 from sklearn.model_selection import train_test_split
-from .experiments import execute_run, RF_DEFAULT_PARAMS, FACET_DEFAULT_PARAMS
+from .experiments import execute_run, RF_DEFAULT_PARAMS, FACET_DEFAULT_PARAMS, TUNED_FACET_SD
 from utilities.metrics import classification_metrics, percent_valid, average_distance
 from manager import MethodManager
 from dataset import load_data
@@ -38,6 +38,7 @@ def vary_k(ds_names, ks=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=None,
     }
     params["RandomForest"]["rf_ntrees"] = ntrees
     params["RandomForest"]["rf_maxdepth"] = max_depth
+    params["FACETIndex"]["facet_sd"] = TUNED_FACET_SD[ds]
 
     total_runs = len(ds_names) * len(ks) * len(iterations)
     progress_bar = tqdm(total=total_runs, desc="Overall Progress", position=0, disable=False)
