@@ -59,7 +59,7 @@ OCEAN_DEFAULT_PARAMS = {
 
 FACET_DEFAULT_PARAMS = {
     "facet_offset": 0.0001,
-    "facet_nrects": 50_000,
+    "facet_nrects": 20_000,
     "facet_enumerate": "PointBased",
     "facet_sample": "Augment",
     "facet_sd": 0.01,
