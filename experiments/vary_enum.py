@@ -2,7 +2,7 @@ import os
 import pandas as pd
 from tqdm.auto import tqdm
 
-from experiments import execute_run, FACET_DEFAULT_PARAMS, RF_DEFAULT_PARAMS, TUNED_FACET_SD
+from .experiments import execute_run, FACET_DEFAULT_PARAMS, RF_DEFAULT_PARAMS, TUNED_FACET_SD
 
 
 def vary_enum(ds_names, iterations=[0, 1, 2, 3, 4], fmod=None, ntrees=10, max_depth=5):

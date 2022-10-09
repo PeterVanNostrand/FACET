@@ -9,27 +9,27 @@ from tqdm.auto import tqdm
 import json
 
 from sklearn.model_selection import train_test_split
-from experiments import execute_run, RF_DEFAULT_PARAMS, FACET_DEFAULT_PARAMS
+from .experiments import execute_run, RF_DEFAULT_PARAMS, FACET_DEFAULT_PARAMS
 from utilities.metrics import classification_metrics, percent_valid, average_distance
 from manager import MethodManager
 from dataset import load_data
 
 
-def vary_k(ds_names, ks=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=None, ntrees=10, max_depth=5):
+def vary_nconstraints(ds_names, nconstraints=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=None, ntrees=10, max_depth=5):
     '''
     Experiment to observe the affect of k, the number of explanations requested
     '''
-    print("Varying k:")
+    print("Varying nconstraints:")
     print("\tds_names:", ds_names)
-    print("\tks:", ks)
+    print("\tnconstraints:", nconstraints)
     print("\titerations:", iterations)
 
     if fmod is not None:
-        csv_path = "./results/vary_k_" + fmod + ".csv"
-        experiment_path = "./results/vary-k-" + fmod + "/"
+        csv_path = "./results/vary_nconstraints_" + fmod + ".csv"
+        experiment_path = "./results/vary-nconstraints-" + fmod + "/"
     else:
-        csv_path = "./results/vary_k.csv"
-        experiment_path = "./results/vary-k/"
+        csv_path = "./results/vary_nconstraints.csv"
+        experiment_path = "./results/vary-nconstraints/"
 
     explainer = "FACETIndex"
     params = {
@@ -39,7 +39,7 @@ def vary_k(ds_names, ks=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=None,
     params["RandomForest"]["rf_ntrees"] = ntrees
     params["RandomForest"]["rf_maxdepth"] = max_depth
 
-    total_runs = len(ds_names) * len(ks) * len(iterations)
+    total_runs = len(ds_names) * len(nconstraints) * len(iterations)
     progress_bar = tqdm(total=total_runs, desc="Overall Progress", position=0, disable=False)
 
     for iter in iterations:
@@ -89,8 +89,8 @@ def vary_k(ds_names, ks=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=None,
 
             explain_preds = manager.predict(x_explain)
 
-            for k in ks:
-                run_ext = "k{:03d}_".format(k)
+            for nconstr in nconstraints:
+                run_ext = "c{:03d}_".format(nconstr)
                 # store this runs configuration
                 config = {}
                 config["explainer"] = explainer
@@ -106,10 +106,26 @@ def vary_k(ds_names, ks=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=None,
                     json_text = json.dumps(config, indent=4)
                     f.write(json_text)
 
-                # explain the samples using RF predictions (not ground truth)
+                # randomly select a constraints set
+                # split the number of constraints evenly between lower and upper
+                constraints = np.zeros(shape=(x.shape[1], 2))
+                constraints[:, 0] = 0.0
+                constraints[:, 1] = 1.0
+                nlower_bounds = int(np.floor(nconstr / 2))
+                nupper_bounds = nconstr - nlower_bounds
+                # randomly select lower bounds 0.01-0.49 and upper bounds 0.51-0.99
+                lower_bounds = np.random.uniform(low=0.01, high=0.49, size=nlower_bounds)
+                upper_bounds = np.random.uniform(low=0.49, high=0.99, size=nupper_bounds)
+                # randomly select the features to constrain
+                lower_selections = np.random.choice(list(range(x.shape[1])), nlower_bounds, replace=False)
+                upper_selections = np.random.choice(list(range(x.shape[1])), nupper_bounds, replace=False)
+                # and apply the bounds to those features
+                constraints[lower_selections, 0] = lower_bounds
+                constraints[upper_selections, 1] = upper_bounds
 
+                # explain the samples using RF predictions (not ground truth)
                 explain_start = time.time()
-                explanations: np.ndarray = manager.explain(x_explain, explain_preds, k=k)
+                explanations: np.ndarray = manager.explain(x_explain, explain_preds, constraints=constraints)
                 explain_end = time.time()
                 explain_time = explain_end - explain_start
                 sample_time = explain_time / n_explain
@@ -154,7 +170,7 @@ def vary_k(ds_names, ks=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=None,
                     "explainer": explainer,
                     "n_trees": params["RandomForest"]["rf_ntrees"],
                     "max_depth": params["RandomForest"]["rf_maxdepth"],
-                    "facet_k": k,
+                    "nconstr": nconstr,
                     "iteration": iter,
                     **run_result
                 }
@@ -166,4 +182,4 @@ def vary_k(ds_names, ks=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=None,
 
                 progress_bar.update()
     progress_bar.close()
-    print("Finished varying k")
+    print("Finished varying nconstraints")

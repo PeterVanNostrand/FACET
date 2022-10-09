@@ -14,16 +14,17 @@ from utilities.tree_tools import compute_jaccard
 from sklearn.model_selection import train_test_split
 from dataset import load_data
 from dataset import DS_NAMES
-from experiments import execute_run, DEFAULT_PARAMS
-from vary_nrects import vary_nrects
-from vary_ntrees import vary_ntrees
-from vary_sigma import vary_sigma
-from vary_eps import vary_eps
-from vary_enum import vary_enum
-from compare_methods import compare_methods
-from vary_k import vary_k
-from vary_rinit import vary_rinit
-from vary_m import vary_m
+from experiments.experiments import execute_run, DEFAULT_PARAMS
+from experiments.vary_nrects import vary_nrects
+from experiments.vary_ntrees import vary_ntrees
+from experiments.vary_sigma import vary_sigma
+from experiments.vary_eps import vary_eps
+from experiments.vary_enum import vary_enum
+from experiments.compare_methods import compare_methods
+from experiments.vary_k import vary_k
+from experiments.vary_rinit import vary_rinit
+from experiments.vary_m import vary_m
+from experiments.vary_nconstraints import vary_nconstraints
 
 
 def check_create_directory(dir_path="./results/"):
@@ -93,7 +94,7 @@ if __name__ == "__main__":
     # sigma - FACET index evaluation (how much do we move our augmented data in region enumeration)
     # compare - 7.3 compare methods on fixed ensemble
     parser.add_argument("--expr", choices=["simple", "ntrees", "nrects",
-                        "eps", "sigma", "enum", "compare", "k", "rinit", "m"], default="simple")
+                        "eps", "sigma", "enum", "compare", "k", "rinit", "m", "nconstraints"], default="simple")
     parser.add_argument("--ds", type=str, nargs="+", default=["vertebral"])
     parser.add_argument("--method", type=str, nargs="+", choices=all_explaiers, default=["FACETIndex"])
     parser.add_argument("--values", type=float, nargs="+", default=None)
@@ -166,7 +167,14 @@ if __name__ == "__main__":
         vary_rinit(ds_names=args.ds, rs=args.values, iterations=args.it,
                    fmod=args.fmod, ntrees=args.ntrees, max_depth=args.maxdepth)
 
+    # vary the number of example the user request
     elif args.expr == "m":
         ms = [int(_) for _ in args.values]
         vary_m(ds_names=args.ds, ms=ms, iterations=args.it,
                fmod=args.fmod, ntrees=args.ntrees, max_depth=args.maxdepth)
+
+    # vary the number of constraints the user applies. restrict nconstraints <= 2*nfeatures
+    elif args.expr == "nconstraints":
+        nconstraints = [int(_) for _ in args.values]
+        vary_nconstraints(ds_names=args.ds, nconstraints=nconstraints, iterations=args.it,
+                          fmod=args.fmod, ntrees=args.ntrees, max_depth=args.maxdepth)

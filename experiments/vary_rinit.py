@@ -9,27 +9,27 @@ from tqdm.auto import tqdm
 import json
 
 from sklearn.model_selection import train_test_split
-from experiments import execute_run, RF_DEFAULT_PARAMS, FACET_DEFAULT_PARAMS
+from .experiments import execute_run, RF_DEFAULT_PARAMS, FACET_DEFAULT_PARAMS
 from utilities.metrics import classification_metrics, percent_valid, average_distance
 from manager import MethodManager
 from dataset import load_data
 
 
-def vary_m(ds_names, ms=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=None, ntrees=10, max_depth=5):
+def vary_rinit(ds_names, rs=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=None, ntrees=10, max_depth=5):
     '''
     Experiment to observe the affect of k, the number of explanations requested
     '''
-    print("Varying m:")
+    print("Varying rinit:")
     print("\tds_names:", ds_names)
-    print("\tms:", ms)
+    print("\trs:", rs)
     print("\titerations:", iterations)
 
     if fmod is not None:
-        csv_path = "./results/vary_m" + fmod + ".csv"
-        experiment_path = "./results/vary-m-" + fmod + "/"
+        csv_path = "./results/vary_rinit_" + fmod + ".csv"
+        experiment_path = "./results/vary-rinit-" + fmod + "/"
     else:
-        csv_path = "./results/vary_m.csv"
-        experiment_path = "./results/vary-m/"
+        csv_path = "./results/vary_rinit.csv"
+        experiment_path = "./results/vary-rinit/"
 
     explainer = "FACETIndex"
     params = {
@@ -38,9 +38,8 @@ def vary_m(ds_names, ms=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=None,
     }
     params["RandomForest"]["rf_ntrees"] = ntrees
     params["RandomForest"]["rf_maxdepth"] = max_depth
-    params["FACETIndex"]["rbv_num_interval"] = ms[0]
 
-    total_runs = len(ds_names) * len(ms) * len(iterations)
+    total_runs = len(ds_names) * len(rs) * len(iterations)
     progress_bar = tqdm(total=total_runs, desc="Overall Progress", position=0, disable=False)
 
     for iter in iterations:
@@ -90,17 +89,14 @@ def vary_m(ds_names, ms=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=None,
 
             explain_preds = manager.predict(x_explain)
 
-            for m in ms:
-                # update the bit vector initial radius and rebuild the indices
-                params["FACETIndex"]["rbv_num_interval"] = m
-                manager.explainer.hyperparameters["FACETIndex"]["rbv_num_interval"] = m
-
-                index_start = time.time()
-                manager.explainer.build_bitvectorindex()
-                index_end = time.time()
-                index_time = index_end - index_start
-
-                run_ext = "m{:03d}_".format(m)
+            for r in rs:
+                # update the bit vector initial radius
+                params["FACETIndex"]["rbv_initial_radius"] = r
+                params["FACETIndex"]["rbv_radius_step"] = r
+                for rbv in manager.explainer.rbvs:
+                    rbv.initial_radius = r
+                    rbv.radius_step = 0.001
+                run_ext = "r{:.4f}_".format(r)
                 # store this runs configuration
                 config = {}
                 config["explainer"] = explainer
@@ -164,9 +160,9 @@ def vary_m(ds_names, ms=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=None,
                     "explainer": explainer,
                     "n_trees": params["RandomForest"]["rf_ntrees"],
                     "max_depth": params["RandomForest"]["rf_maxdepth"],
-                    "facet_m": m,
+                    "facet_rinit": r,
+                    "facet_rstep": r,
                     "iteration": iter,
-                    "index_time": index_time,
                     **run_result
                 }
                 experiment_results = pd.DataFrame([df_item])
@@ -177,4 +173,4 @@ def vary_m(ds_names, ms=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=None,
 
                 progress_bar.update()
     progress_bar.close()
-    print("Finished varying m")
+    print("Finished varying rinit")

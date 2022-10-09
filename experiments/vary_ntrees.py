@@ -2,8 +2,8 @@ import pandas as pd
 import os
 from tqdm.auto import tqdm
 
-from experiments import execute_run
-from experiments import TUNED_FACET_SD, FACET_DEFAULT_PARAMS, OCEAN_DEFAULT_PARAMS, RF_DEFAULT_PARAMS, MACE_DEFAULT_PARAMS
+from .experiments import execute_run
+from .experiments import TUNED_FACET_SD, FACET_DEFAULT_PARAMS, OCEAN_DEFAULT_PARAMS, RF_DEFAULT_PARAMS, MACE_DEFAULT_PARAMS
 
 
 def vary_ntrees(ds_names, explainers=["FACETIndex", "OCEAN"], ntrees=[5, 10, 15],

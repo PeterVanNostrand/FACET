@@ -1,44 +1,49 @@
-from unittest.mock import DEFAULT
-import pandas as pd
 import os
+import pandas as pd
 from tqdm.auto import tqdm
 
-from experiments import execute_run
-from experiments import TUNED_FACET_SD, DEFAULT_PARAMS, TUNED_FACET_RADII
+from .experiments import execute_run
+from .experiments import TUNED_FACET_SD, FACET_DEFAULT_PARAMS, RF_DEFAULT_PARAMS, TUNED_FACET_RADII
 
 
-def compare_methods(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", "AFT", "MACE"], iterations=[0, 1, 2, 3, 4], fmod=None, ntrees=10, max_depth=5):
+def vary_nrects(ds_names, nrects=[5, 10, 15], iterations=[0, 1, 2, 3, 4], fmod=None, ntrees=10, max_depth=5):
     '''
-    Experiment to compare the performance of different explainers on the same ensemble
+    Experiment to observe the effect of the the number of features on explanation
     '''
-    print("Comparing methods:")
+    print("Varying number of hyperrectangles:")
     print("\tds_names:", ds_names)
-    print("\texplainers:", explainers)
+    print("\tnrects:", nrects)
     print("\titerations:", iterations)
 
     if fmod is not None:
-        csv_path = "./results/compare_methods_" + fmod + ".csv"
-        experiment_path = "./results/compare-methods-" + fmod + "/"
+        csv_path = "./results/vary_nrects_" + fmod + ".csv"
+        experiment_path = "./results/vary-nrects-" + fmod + "/"
     else:
-        csv_path = "./results/compare_methods.csv"
-        experiment_path = "./results/compare-methods/"
+        csv_path = "./results/vary_nrects.csv"
+        experiment_path = "./results/vary-nrects/"
 
-    params = DEFAULT_PARAMS
+    explainer = "FACETIndex"
+    params = {
+        "RandomForest": RF_DEFAULT_PARAMS,
+        "FACETIndex": FACET_DEFAULT_PARAMS,
+    }
+    params["FACETIndex"]["facet_nrects"] = -1
     params["RandomForest"]["rf_ntrees"] = ntrees
     params["RandomForest"]["rf_maxdepth"] = max_depth
 
-    total_runs = len(ds_names) * len(explainers) * len(iterations)
+    total_runs = len(ds_names) * len(nrects) * len(iterations)
     progress_bar = tqdm(total=total_runs, desc="Overall Progress", position=0, disable=False)
 
     for iter in iterations:
-        for expl in explainers:
+        for nr in nrects:
             for ds in ds_names:
                 # set the number of trees
+                params["FACETIndex"]["facet_nrects"] = nr
                 params["FACETIndex"]["facet_sd"] = TUNED_FACET_SD[ds]
                 params["FACETIndex"]["rbv_initial_radius"] = TUNED_FACET_RADII[ds]
                 run_result = execute_run(
                     dataset_name=ds,
-                    explainer=expl,
+                    explainer=explainer,
                     params=params,
                     output_path=experiment_path,
                     iteration=iter,
@@ -46,13 +51,14 @@ def compare_methods(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", "AFT"
                     n_explain=20,
                     random_state=iter,
                     preprocessing="Normalize",
-                    run_ext=""
+                    run_ext="r{:03d}_".format(nr)
                 )
                 df_item = {
                     "dataset": ds,
-                    "explainer": expl,
-                    "n_trees": ntrees,
-                    "max_depth": max_depth,
+                    "explainer": explainer,
+                    "n_trees": params["RandomForest"]["rf_ntrees"],
+                    "max_depth": params["RandomForest"]["rf_maxdepth"],
+                    "n_rects": nr,
                     "iteration": iter,
                     **run_result
                 }
@@ -64,4 +70,4 @@ def compare_methods(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", "AFT"
 
                 progress_bar.update()
     progress_bar.close()
-    print("Finished comparing methods!")
+    print("Finished varying number of rectangle")

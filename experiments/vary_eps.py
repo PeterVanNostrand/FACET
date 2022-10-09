@@ -2,45 +2,42 @@ import os
 import pandas as pd
 from tqdm.auto import tqdm
 
-from experiments import execute_run
-from experiments import TUNED_FACET_SD, FACET_DEFAULT_PARAMS, RF_DEFAULT_PARAMS, TUNED_FACET_RADII
+from .experiments import execute_run, RF_DEFAULT_PARAMS, MACE_DEFAULT_PARAMS
 
 
-def vary_nrects(ds_names, nrects=[5, 10, 15], iterations=[0, 1, 2, 3, 4], fmod=None, ntrees=10, max_depth=5):
+def vary_eps(ds_names, epsilons=[1e-5, 1e-6, 1e-7, 1e-8, 1e-9, 1e-10], iterations=[0], fmod=None, ntrees=10, max_depth=5):
     '''
-    Experiment to observe the effect of the the number of features on explanation
+    Experiment to observe the effect of the the step size on MACE's runtime
     '''
-    print("Varying number of hyperrectangles:")
+    print("Varying sigma:")
     print("\tds_names:", ds_names)
-    print("\tnrects:", nrects)
+    print("\tepsilons:", epsilons)
     print("\titerations:", iterations)
 
     if fmod is not None:
-        csv_path = "./results/vary_nrects_" + fmod + ".csv"
-        experiment_path = "./results/vary-nrects-" + fmod + "/"
+        csv_path = "./results/vary_eps_" + fmod + ".csv"
+        experiment_path = "./results/vary-eps-" + fmod + "/"
     else:
-        csv_path = "./results/vary_nrects.csv"
-        experiment_path = "./results/vary-nrects/"
+        csv_path = "./results/vary_eps.csv"
+        experiment_path = "./results/vary-eps/"
 
-    explainer = "FACETIndex"
+    explainer = "MACE"
     params = {
         "RandomForest": RF_DEFAULT_PARAMS,
-        "FACETIndex": FACET_DEFAULT_PARAMS,
+        "MACE": MACE_DEFAULT_PARAMS,
     }
-    params["FACETIndex"]["facet_nrects"] = -1
+    params["MACE"]["mace_epsilon"] = -1
     params["RandomForest"]["rf_ntrees"] = ntrees
     params["RandomForest"]["rf_maxdepth"] = max_depth
 
-    total_runs = len(ds_names) * len(nrects) * len(iterations)
+    total_runs = len(ds_names) * len(epsilons) * len(iterations)
     progress_bar = tqdm(total=total_runs, desc="Overall Progress", position=0, disable=False)
 
     for iter in iterations:
-        for nr in nrects:
+        for eps in epsilons:
             for ds in ds_names:
                 # set the number of trees
-                params["FACETIndex"]["facet_nrects"] = nr
-                params["FACETIndex"]["facet_sd"] = TUNED_FACET_SD[ds]
-                params["FACETIndex"]["rbv_initial_radius"] = TUNED_FACET_RADII[ds]
+                params["MACE"]["mace_epsilon"] = eps
                 run_result = execute_run(
                     dataset_name=ds,
                     explainer=explainer,
@@ -51,14 +48,14 @@ def vary_nrects(ds_names, nrects=[5, 10, 15], iterations=[0, 1, 2, 3, 4], fmod=N
                     n_explain=20,
                     random_state=iter,
                     preprocessing="Normalize",
-                    run_ext="r{:03d}_".format(nr)
+                    run_ext="eps{:.0e}_".format(eps)
                 )
                 df_item = {
                     "dataset": ds,
                     "explainer": explainer,
                     "n_trees": params["RandomForest"]["rf_ntrees"],
                     "max_depth": params["RandomForest"]["rf_maxdepth"],
-                    "n_rects": nr,
+                    "mace_epsilon": eps,
                     "iteration": iter,
                     **run_result
                 }
@@ -70,4 +67,4 @@ def vary_nrects(ds_names, nrects=[5, 10, 15], iterations=[0, 1, 2, 3, 4], fmod=N
 
                 progress_bar.update()
     progress_bar.close()
-    print("Finished varying number of rectangle")
+    print("Finished varying epsilon")

@@ -1,46 +1,44 @@
-import os
+from unittest.mock import DEFAULT
 import pandas as pd
+import os
 from tqdm.auto import tqdm
 
-from experiments import execute_run, RF_DEFAULT_PARAMS, FACET_DEFAULT_PARAMS
+from .experiments import execute_run
+from .experiments import TUNED_FACET_SD, DEFAULT_PARAMS, TUNED_FACET_RADII
 
 
-def vary_sigma(ds_names, sigmas=[0.01, 0.05, 0.1, 0.2, 0.3], iterations=[0, 1, 2, 3, 4], fmod=None, ntrees=10, max_depth=5):
+def compare_methods(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", "AFT", "MACE"], iterations=[0, 1, 2, 3, 4], fmod=None, ntrees=10, max_depth=5):
     '''
-    Experiment to observe the effect of the standard deviation of data augmentation on explanation qualtiy
+    Experiment to compare the performance of different explainers on the same ensemble
     '''
-    print("Varying sigma:")
+    print("Comparing methods:")
     print("\tds_names:", ds_names)
-    print("\tsigmas:", sigmas)
+    print("\texplainers:", explainers)
     print("\titerations:", iterations)
 
     if fmod is not None:
-        csv_path = "./results/vary_sigma_" + fmod + ".csv"
-        experiment_path = "./results/vary-sigma-" + fmod + "/"
+        csv_path = "./results/compare_methods_" + fmod + ".csv"
+        experiment_path = "./results/compare-methods-" + fmod + "/"
     else:
-        csv_path = "./results/vary_sigma.csv"
-        experiment_path = "./results/vary-sigma/"
+        csv_path = "./results/compare_methods.csv"
+        experiment_path = "./results/compare-methods/"
 
-    explainer = "FACETIndex"
-    params = {
-        "RandomForest": RF_DEFAULT_PARAMS,
-        "FACETIndex": FACET_DEFAULT_PARAMS,
-    }
-    params["FACETIndex"]["facet_sd"] = -1
+    params = DEFAULT_PARAMS
     params["RandomForest"]["rf_ntrees"] = ntrees
     params["RandomForest"]["rf_maxdepth"] = max_depth
 
-    total_runs = len(ds_names) * len(sigmas) * len(iterations)
+    total_runs = len(ds_names) * len(explainers) * len(iterations)
     progress_bar = tqdm(total=total_runs, desc="Overall Progress", position=0, disable=False)
 
     for iter in iterations:
-        for sig in sigmas:
+        for expl in explainers:
             for ds in ds_names:
                 # set the number of trees
-                params["FACETIndex"]["facet_sd"] = sig
+                params["FACETIndex"]["facet_sd"] = TUNED_FACET_SD[ds]
+                params["FACETIndex"]["rbv_initial_radius"] = TUNED_FACET_RADII[ds]
                 run_result = execute_run(
                     dataset_name=ds,
-                    explainer=explainer,
+                    explainer=expl,
                     params=params,
                     output_path=experiment_path,
                     iteration=iter,
@@ -48,14 +46,13 @@ def vary_sigma(ds_names, sigmas=[0.01, 0.05, 0.1, 0.2, 0.3], iterations=[0, 1, 2
                     n_explain=20,
                     random_state=iter,
                     preprocessing="Normalize",
-                    run_ext="sig{:.4f}_".format(sig)
+                    run_ext=""
                 )
                 df_item = {
                     "dataset": ds,
-                    "explainer": explainer,
-                    "n_trees": params["RandomForest"]["rf_ntrees"],
-                    "max_depth": params["RandomForest"]["rf_maxdepth"],
-                    "facet_sd": sig,
+                    "explainer": expl,
+                    "n_trees": ntrees,
+                    "max_depth": max_depth,
                     "iteration": iter,
                     **run_result
                 }
@@ -67,4 +64,4 @@ def vary_sigma(ds_names, sigmas=[0.01, 0.05, 0.1, 0.2, 0.3], iterations=[0, 1, 2
 
                 progress_bar.update()
     progress_bar.close()
-    print("Finished varying sigma")
+    print("Finished comparing methods!")

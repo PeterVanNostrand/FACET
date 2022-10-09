@@ -2,42 +2,42 @@ import os
 import pandas as pd
 from tqdm.auto import tqdm
 
-from experiments import execute_run, RF_DEFAULT_PARAMS, MACE_DEFAULT_PARAMS
+from .experiments import execute_run, RF_DEFAULT_PARAMS, FACET_DEFAULT_PARAMS
 
 
-def vary_eps(ds_names, epsilons=[1e-5, 1e-6, 1e-7, 1e-8, 1e-9, 1e-10], iterations=[0], fmod=None, ntrees=10, max_depth=5):
+def vary_sigma(ds_names, sigmas=[0.01, 0.05, 0.1, 0.2, 0.3], iterations=[0, 1, 2, 3, 4], fmod=None, ntrees=10, max_depth=5):
     '''
-    Experiment to observe the effect of the the step size on MACE's runtime
+    Experiment to observe the effect of the standard deviation of data augmentation on explanation qualtiy
     '''
     print("Varying sigma:")
     print("\tds_names:", ds_names)
-    print("\tepsilons:", epsilons)
+    print("\tsigmas:", sigmas)
     print("\titerations:", iterations)
 
     if fmod is not None:
-        csv_path = "./results/vary_eps_" + fmod + ".csv"
-        experiment_path = "./results/vary-eps-" + fmod + "/"
+        csv_path = "./results/vary_sigma_" + fmod + ".csv"
+        experiment_path = "./results/vary-sigma-" + fmod + "/"
     else:
-        csv_path = "./results/vary_eps.csv"
-        experiment_path = "./results/vary-eps/"
+        csv_path = "./results/vary_sigma.csv"
+        experiment_path = "./results/vary-sigma/"
 
-    explainer = "MACE"
+    explainer = "FACETIndex"
     params = {
         "RandomForest": RF_DEFAULT_PARAMS,
-        "MACE": MACE_DEFAULT_PARAMS,
+        "FACETIndex": FACET_DEFAULT_PARAMS,
     }
-    params["MACE"]["mace_epsilon"] = -1
+    params["FACETIndex"]["facet_sd"] = -1
     params["RandomForest"]["rf_ntrees"] = ntrees
     params["RandomForest"]["rf_maxdepth"] = max_depth
 
-    total_runs = len(ds_names) * len(epsilons) * len(iterations)
+    total_runs = len(ds_names) * len(sigmas) * len(iterations)
     progress_bar = tqdm(total=total_runs, desc="Overall Progress", position=0, disable=False)
 
     for iter in iterations:
-        for eps in epsilons:
+        for sig in sigmas:
             for ds in ds_names:
                 # set the number of trees
-                params["MACE"]["mace_epsilon"] = eps
+                params["FACETIndex"]["facet_sd"] = sig
                 run_result = execute_run(
                     dataset_name=ds,
                     explainer=explainer,
@@ -48,14 +48,14 @@ def vary_eps(ds_names, epsilons=[1e-5, 1e-6, 1e-7, 1e-8, 1e-9, 1e-10], iteration
                     n_explain=20,
                     random_state=iter,
                     preprocessing="Normalize",
-                    run_ext="eps{:.0e}_".format(eps)
+                    run_ext="sig{:.4f}_".format(sig)
                 )
                 df_item = {
                     "dataset": ds,
                     "explainer": explainer,
                     "n_trees": params["RandomForest"]["rf_ntrees"],
                     "max_depth": params["RandomForest"]["rf_maxdepth"],
-                    "mace_epsilon": eps,
+                    "facet_sd": sig,
                     "iteration": iter,
                     **run_result
                 }
@@ -67,4 +67,4 @@ def vary_eps(ds_names, epsilons=[1e-5, 1e-6, 1e-7, 1e-8, 1e-9, 1e-10], iteration
 
                 progress_bar.update()
     progress_bar.close()
-    print("Finished varying epsilon")
+    print("Finished varying sigma")
