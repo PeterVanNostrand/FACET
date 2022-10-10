@@ -43,11 +43,18 @@ class RFOCSE(Explainer):
         else:
             self.offset = params.get("rfoce_offset")
 
+        verbose = params.get("rfocse_verbose")
+        if verbose is None:
+            self.verbose = False
+        else:
+            self.verbose = verbose
+
         # maximum time to attempt to explain a sample
         maxtime = params.get("rfoce_maxtime")
         if maxtime is None:
-            print("No rfoce_maxtime provided, using 60")
-            self.maxtime = 60
+            if self.verbose:
+                print("No rfoce_maxtime provided, using None")
+            self.maxtime = None
         else:
             self.maxtime = maxtime
 
@@ -107,7 +114,7 @@ class RFOCSE(Explainer):
                                                          observation,
                                                          dataset,
                                                          self.offset,
-                                                         verbose=True)
+                                                         verbose=self.verbose)
             if explanation is not None:
                 xprime[idx] = explanation
 

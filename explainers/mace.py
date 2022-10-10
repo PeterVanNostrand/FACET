@@ -30,27 +30,28 @@ class MACE(Explainer):
 
         params = hyperparameters.get("MACE")
 
-        # maximum time to attempt to explain a sample
-        maxtime = params.get("mace_maxtime")
-        if maxtime is None:
-            print("No mace_maxtime provided, using 60")
-            self.maxtime = 60
-        else:
-            self.maxtime = maxtime
-
-        # epsilon
-        epsilon = params.get("mace_epsilon")
-        if maxtime is None:
-            print("No mace_epsilon provided, using 60")
-            self.epsilon = 1e-3
-        else:
-            self.epsilon = epsilon
-
         verbose = params.get("mace_verbose")
         if verbose is None:
             self.verbose = False
         else:
             self.verbose = verbose
+
+        # maximum time to attempt to explain a sample
+        maxtime = params.get("mace_maxtime")
+        if maxtime is None:
+            if self.verbose:
+                print("No mace_maxtime provided, using None")
+            self.maxtime = None
+        else:
+            self.maxtime = maxtime
+
+        # epsilon
+        epsilon = params.get("mace_epsilon")
+        if epsilon is None:
+            print("No mace_epsilon provided, using 1e-7")
+            self.epsilon = 1e-7
+        else:
+            self.epsilon = epsilon
 
     def prepare(self, xtrain=None, ytrain=None):
         pass

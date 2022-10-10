@@ -47,7 +47,7 @@ AVG_CF_NN_DIST = {
 TUNED_FACET_RADII = AVG_CF_NN_DIST
 
 MACE_DEFAULT_PARAMS = {
-    "mace_maxtime": 900,
+    "mace_maxtime": None,
     "mace_epsilon": 1e-7,
     "mace_verbose": False
 }
