@@ -44,7 +44,16 @@ AVG_CF_NN_DIST = {
     "spambase": 0.2594,
     "vertebral": 0.1640
 }
-TUNED_FACET_RADII = AVG_CF_NN_DIST
+# TUNED_FACET_RADII = AVG_NN_DIST
+
+FACET_TUNED_M = {
+    "cancer": 4,
+    "glass": 7,
+    "magic": 14,
+    "spambase": 4,
+    "vertebral": 16
+}
+
 
 MACE_DEFAULT_PARAMS = {
     "mace_maxtime": None,
@@ -66,10 +75,11 @@ FACET_DEFAULT_PARAMS = {
     "facet_intersect_order": "Axes",
     "facet_verbose": False,
     "facet_search": "BitVector",
+    # "facet_search": "Linear",
     "rbv_initial_radius": 0.01,
     "rbv_radius_step": 0.01,
     "rbv_radius_growth": "Linear",
-    "rbv_num_interval": 4,
+    "rbv_num_interval": 8,
 }
 
 RFOCSE_DEFAULT_PARAMS = {
