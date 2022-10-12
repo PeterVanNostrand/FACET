@@ -664,7 +664,7 @@ class FACETIndex(Explainer):
 
         # swap np.inf (no explanatio found) for zeros to allow for prediction on xprime
         xprime = np.array(xprime)
-        idx_inf = np.argwhere(xprime == np.inf)
+        idx_inf = (xprime == np.inf).any(axis=1)
         xprime[idx_inf] = np.tile(0, x.shape[1])
         # check that all counterfactuals result in a different class
         preds = self.manager.predict(xprime)
