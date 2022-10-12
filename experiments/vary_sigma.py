@@ -2,7 +2,7 @@ import os
 import pandas as pd
 from tqdm.auto import tqdm
 
-from .experiments import execute_run, RF_DEFAULT_PARAMS, FACET_DEFAULT_PARAMS
+from .experiments import execute_run, RF_DEFAULT_PARAMS, FACET_DEFAULT_PARAMS, FACET_TUNED_M
 
 
 def vary_sigma(ds_names, sigmas=[0.01, 0.05, 0.1, 0.2, 0.3], iterations=[0, 1, 2, 3, 4], fmod=None, ntrees=10, max_depth=5):
@@ -38,6 +38,7 @@ def vary_sigma(ds_names, sigmas=[0.01, 0.05, 0.1, 0.2, 0.3], iterations=[0, 1, 2
             for ds in ds_names:
                 # set the number of trees
                 params["FACETIndex"]["facet_sd"] = sig
+                params["FACETIndex"]["rbv_num_interval"] = FACET_TUNED_M[ds]
                 run_result = execute_run(
                     dataset_name=ds,
                     explainer=explainer,

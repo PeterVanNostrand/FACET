@@ -4,7 +4,7 @@ import os
 from tqdm.auto import tqdm
 
 from .experiments import execute_run
-from .experiments import TUNED_FACET_SD, DEFAULT_PARAMS, TUNED_FACET_RADII
+from .experiments import TUNED_FACET_SD, DEFAULT_PARAMS, FACET_TUNED_M
 
 
 def compare_methods(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", "AFT", "MACE"], iterations=[0, 1, 2, 3, 4], fmod=None, ntrees=10, max_depth=5):
@@ -35,7 +35,7 @@ def compare_methods(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", "AFT"
             for ds in ds_names:
                 # set the number of trees
                 params["FACETIndex"]["facet_sd"] = TUNED_FACET_SD[ds]
-                # params["FACETIndex"]["rbv_initial_radius"] = TUNED_FACET_RADII[ds]
+                params["FACETIndex"]["rbv_num_interval"] = FACET_TUNED_M[ds]
                 run_result = execute_run(
                     dataset_name=ds,
                     explainer=expl,
