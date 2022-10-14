@@ -9,14 +9,14 @@ FACET (Fast Actionable Counterfactuals for Ensembles of Trees) generate a novel 
 The code in this repository was developed using Python 3.8.13, [requirements.txt](./requirements.txt) contains a list of required packages and is formatted for use with [Anaconda](https://www.anaconda.com/). To run experiments with OCEAN, a state-of-the-art method we compare to, you will need a license for the Gurobi optimizer. Free academic license are available [here](https://www.gurobi.com/academia/academic-program-and-licenses/). Setup can be done as follow
 
 ```bash
-    # create the anaconda environment
-    conda config --add channels https://conda.anaconda.org/gurobi
-    conda create --name facet --file requirements.txt
-    conda activate facet
-    # install solver needed for SOTA comparison method MACE
-    pysmt-install --z3 --confirm-agreement
-    # activate gurobi for SOTA comparison method OCEAN
-    grbgetkey <your_acadmic_license_key>
+# create the anaconda environment
+conda config --add channels https://conda.anaconda.org/gurobi
+conda create --name facet --file requirements.txt
+conda activate facet
+# install solver needed for SOTA comparison method MACE
+pysmt-install --z3 --confirm-agreement
+# activate gurobi for SOTA comparison method OCEAN
+grbgetkey <your_acadmic_license_key>
 ```
 
 ## Generating Explanation
