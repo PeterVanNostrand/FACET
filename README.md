@@ -1,4 +1,4 @@
-# FACET
+# FACET: Robust Counterfactual Explanation Analytics
 
 This repository contains prototype code for the paper *FACET: Robust Counterfactual Explanation Analytics*, currently under review at SIGMOD 2023.
 
