@@ -1,30 +1,30 @@
-import numpy as np
+import argparse
+import json
 import os
 import random
-import json
 import re
-from numpy.core.fromnumeric import var
-import argparse
 
-from manager import MethodManager
-from utilities.metrics import percent_valid
-from utilities.metrics import classification_metrics
-from utilities.metrics import average_distance
-from utilities.tree_tools import compute_jaccard
+import numpy as np
+from numpy.core.fromnumeric import var
 from sklearn.model_selection import train_test_split
-from dataset import load_data
-from dataset import DS_NAMES
-from experiments.experiments import execute_run, DEFAULT_PARAMS
-from experiments.vary_nrects import vary_nrects
-from experiments.vary_ntrees import vary_ntrees
-from experiments.vary_sigma import vary_sigma
-from experiments.vary_eps import vary_eps
-from experiments.vary_enum import vary_enum
+
+from dataset import DS_NAMES, load_data
 from experiments.compare_methods import compare_methods
+from experiments.experiments import (DEFAULT_PARAMS, FACET_TUNED_M,
+                                     TUNED_FACET_SD, execute_run)
+from experiments.vary_enum import vary_enum
+from experiments.vary_eps import vary_eps
 from experiments.vary_k import vary_k
-from experiments.vary_rinit import vary_rinit
 from experiments.vary_m import vary_m
 from experiments.vary_nconstraints import vary_nconstraints
+from experiments.vary_nrects import vary_nrects
+from experiments.vary_ntrees import vary_ntrees
+from experiments.vary_rinit import vary_rinit
+from experiments.vary_sigma import vary_sigma
+from manager import MethodManager
+from utilities.metrics import (average_distance, classification_metrics,
+                               percent_valid)
+from utilities.tree_tools import compute_jaccard
 
 
 def check_create_directory(dir_path="./results/"):
@@ -59,6 +59,9 @@ def simple_run(ds_name="vertebral", explainer="FACETIndex", random_state=0, ntre
     params = DEFAULT_PARAMS
     params["RandomForest"]["rf_ntrees"] = ntrees
     params["RandomForest"]["rf_maxdepth"] = max_depth
+    params["RandomForest"]["rf_maxdepth"] = max_depth
+    params["FACETIndex"]["facet_sd"] = TUNED_FACET_SD[ds_name]
+    params["FACETIndex"]["rbv_num_interval"] = FACET_TUNED_M[ds_name]
 
     preprocessing = "Normalize"
     n_explain = 20
