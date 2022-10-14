@@ -1,23 +1,21 @@
-from distutils.command import build
-from genericpath import isfile
+import json
+import os
+import random
+import re
+import time
 from pydoc import ispath
 from unittest import result
-from sklearn.model_selection import train_test_split
-import os
-import re
 
-import random
-import pandas as pd
 import numpy as np
-import time
+import pandas as pd
+from genericpath import isfile
+from sklearn.model_selection import train_test_split
 from tqdm.auto import tqdm
-import json
 
+from dataset import DS_DIMENSIONS, load_data
 from manager import MethodManager
-from dataset import load_data
-from dataset import DS_DIMENSIONS
-from utilities.metrics import classification_metrics, percent_valid, average_distance
-
+from utilities.metrics import (average_distance, classification_metrics,
+                               percent_valid)
 
 TUNED_FACET_SD = {
     "cancer": 0.1,
@@ -47,10 +45,10 @@ AVG_CF_NN_DIST = {
 # TUNED_FACET_RADII = AVG_NN_DIST
 
 FACET_TUNED_M = {
-    "cancer": 4,
-    "glass": 7,
-    "magic": 14,
-    "spambase": 4,
+    "cancer": 16,
+    "glass": 16,
+    "magic": 16,
+    "spambase": 16,
     "vertebral": 16
 }
 
@@ -79,7 +77,7 @@ FACET_DEFAULT_PARAMS = {
     "rbv_initial_radius": 0.01,
     "rbv_radius_step": 0.01,
     "rbv_radius_growth": "Linear",
-    "rbv_num_interval": 8,
+    "rbv_num_interval": 16,
 }
 
 RFOCSE_DEFAULT_PARAMS = {

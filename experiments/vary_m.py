@@ -1,18 +1,20 @@
-import os
-import pandas as pd
-from tqdm.auto import tqdm
-import random
-import pandas as pd
-import numpy as np
-import time
-from tqdm.auto import tqdm
 import json
+import os
+import random
+import time
 
+import numpy as np
+import pandas as pd
 from sklearn.model_selection import train_test_split
-from .experiments import execute_run, RF_DEFAULT_PARAMS, FACET_DEFAULT_PARAMS, TUNED_FACET_SD
-from utilities.metrics import classification_metrics, percent_valid, average_distance
-from manager import MethodManager
+from tqdm.auto import tqdm
+
 from dataset import load_data
+from manager import MethodManager
+from utilities.metrics import (average_distance, classification_metrics,
+                               percent_valid)
+
+from .experiments import (FACET_DEFAULT_PARAMS, FACET_TUNED_M,
+                          RF_DEFAULT_PARAMS, TUNED_FACET_SD, execute_run)
 
 
 def vary_m(ds_names, ms=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=None, ntrees=10, max_depth=5):
@@ -46,6 +48,7 @@ def vary_m(ds_names, ms=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=None,
     for iter in iterations:
         for ds in ds_names:
             params["FACETIndex"]["facet_sd"] = TUNED_FACET_SD[ds]
+            params["FACETIndex"]["rbv_num_interval"] = FACET_TUNED_M[ds]
             # configure run info
             test_size = 0.2
             n_explain = 20
