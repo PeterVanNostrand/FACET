@@ -12,4 +12,3 @@ scipy==1.7.3
 seaborn==0.11.2
 tqdm==4.64.0
 traitlets==5.1.1
-

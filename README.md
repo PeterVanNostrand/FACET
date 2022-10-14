@@ -1,22 +1,44 @@
 # FACET
 
-This repository contains prototype code for the project *Fast Actionable Counterfactual Examples for Ensembles of Trees* which generates simple human understandable explanations of the decisions made by a random forest model. Explanations are generated as counterfactual examples, for example given a sample `x` which is classified `y=f(x)=A` the sample `x'` would be minimally modified version of `x` such that `y'!=y` so `y'=B`.
+This repository contains prototype code for the paper *FACET: Robust Counterfactual Explanation Analytics*, currently under review at SIGMOD 2023.
+
+FACET (Fast Actionable Counterfactuals for Ensembles of Trees) generate a novel type of explanation which we call *counterfactual regions* for decisions made by ensembles of trees. For an instance `x` a counterfactual region `R` defines a portions of the feature space where all points `x in R` are guaranteed to be counterfactual to `x`, e.g. if `y=f(x)=A` then `y=f(x')=B`. We design FACET to be highly performant and support a wide variety of user parameters such that explanations can be interactively personalized to meet real users needs.
 
 ## Requirements
 
-The code in this repository was developed using Python 3.8.8 and uses the following python packages. Versions listed are used for consistency, however later versions will likely work
+The code in this repository was developed using Python 3.8.13, [requirements.txt](./requirements.txt) contains a list of required packages and is formatted for use with [Anaconda](https://www.anaconda.com/). To run experiments with OCEAN, a state-of-the-art method we compare to, you will need a license for the Gurobi optimizer. Free academic license are available [here](https://www.gurobi.com/academia/academic-program-and-licenses/). Setup can be done as follow
 
-| Package      | Version |
-| ------------ | ------- |
-| H5PY         | 2.10.0  |
-| Matplotlib   | 3.3.4   |
-| Networkx     | 2.6.2   |
-| Numpy        | 1.20.1  |
-| Pandas       | 1.2.4   |
-| Scikit-learn | 0.24.1  |
-| Scipy        | 1.6.2   |
+```bash
+    # create the anaconda environment
+    conda config --add channels https://conda.anaconda.org/gurobi
+    conda create --name facet --file requirements.txt
+    conda activate facet
+    # install solver needed for SOTA comparison method MACE
+    pysmt-install --z3 --confirm-agreement
+    # activate gurobi for SOTA comparison method OCEAN
+    grbgetkey <your_acadmic_license_key>
+```
 
+## Generating Explanation
+
+For convenience [main.py](./main.py) takes a variety of command line arguments
+
+| flag         | purpose                                              | allowed values                                                   |
+| ------------ | ---------------------------------------------------- | ---------------------------------------------------------------- |
+| --expr       | the experiment to run                                | simple, ntrees, nrects, compare, k, m, nconstraints              |
+| --values     | the experimental values to test                      | space separated list of values e.g. `10 50 100` or `0.1 0.2 0.3` |
+| --ds         | the dataset to explain                               | cancer, glass, magic, spambase, vertebral                        |
+| --ntrees     | the ensemble size to test                            | integer value, overridden in for --expr ntrees                   |
+| ----maxdepth | the max depth of ensemble trees                      | integer value, `-1` for no max depth                             |
+| --it         | the iteration to run, used as random seed            | space separated integer values                                   |
+| --fmod       | a filename modifier append to append to results file | string value                                                     |
+
+Executing `python main.py` with no flags will perform a simple explanation of 20 instances on the vertebral dataset using FACET and an ensemble with `T=10, Dmax=5`. Parameters not involved in any given experiment are set to the default values provided in [experiments.py](./experiments/experiments.py)
+
+All results are output to `./results/<expr_name>.csv`. Generated explanations, all parameters used in each iteration, and a summary of results can be found at `./results/<expr_name>.csv`. Code for generating all figures from the paper are available in Jupyter Notebooks at `./figures/<expr_name>.ipynb` and should be pointed to a matching results csv file of your choice.
 ## Data Sources
+
+All datasets are pulled as is from the [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/index.php) and are included in this repository.
 
 | Dataset Name                                  | Abbreviated Name | # Points | # Dimensions | nClass                   | Source                                                                                  | Features      |
 | --------------------------------------------- | ---------------- | -------- | ------------ | ------------------------ | --------------------------------------------------------------------------------------- | ------------- |
@@ -25,26 +47,3 @@ The code in this repository was developed using Python 3.8.8 and uses the follow
 | MAGIC Gamma Telescope Data Set                | `magic`          | 19020    | 10           | 2                        | [UCI](https://archive.ics.uci.edu/ml/datasets/MAGIC+Gamma+Telescope)                    | real          |
 | Spambase                                      | `spambase`       | 4600     | 57           | 2                        | [UCI](https://archive.ics.uci.edu/ml/datasets/Spambase)                                 | real, integer |
 | Vertebral Column Data Set                     | `vertebral`      | 310      | 6            | 2                        | [UCI](https://archive.ics.uci.edu/ml/datasets/vertebral+column)                         | real          |
-
-## Anomaly Detection Data Sources
-
-| Dataset Name                                | Abbreviated Name | # Points | # Dimensions | # Outliers  | Source                                                                     | Features |
-| ------------------------------------------- | ---------------- | -------- | ------------ | ----------- | -------------------------------------------------------------------------- | -------- |
-| Annthyroid                                  | `annthyroid`     | 7200     | 6            | 534 (7.42%) | [StonyBrook ODDS](http://odds.cs.stonybrook.edu/annthyroid-dataset/)       | real     |
-| Cardiotocogrpahy Dataset                    | `cardio`         | 1831     | 21           | 176 (9.6%)  | [StonyBrook ODDS](http://odds.cs.stonybrook.edu/cardiotocogrpahy-dataset/) | real     |
-| HTTP (KDDCUP99)                             | `http`           | 567479   | 3            | 2211 (0.4%) | [StonyBrook ODDS](http://odds.cs.stonybrook.edu/http-kddcup99-dataset/)    | real     |
-| Mulcross                                    | `mulcross`       | 262144   | 4            | 26214 (10%) | [OpenML](https://www.openml.org/d/40897)                                   | real     |
-| Musk                                        | `musk`           | 3062     | 166          | 97 (3.2%)   | [StonyBrook ODDS](http://odds.cs.stonybrook.edu/musk-dataset/)             | integer  |
-| Pendigits                                   | `pendigits`      | 6870     | 16           | 156 (2.27%) | [StonyBrook ODDS](http://odds.cs.stonybrook.edu/pendigits-dataset/)        | integer  |
-| Satimage-2                                  | `satimage`       | 5803     | 36           | 71 (1.2%)   | [StonyBrook ODDS](http://odds.cs.stonybrook.edu/satimage-2-dataset/)       | real     |
-| Shuttle                                     | `shuttle`        | 49097    | 9            | 3511 (7%)   | [StonyBrook ODDS](http://odds.cs.stonybrook.edu/shuttle-dataset/)          | integer  |
-| Thyroid Disease Dataset                     | `thyroid`        | 3772     | 6            | 93 (2.5%)   | [StonyBrook ODDS](http://odds.cs.stonybrook.edu/thyroid-disease-dataset/)  | real     |
-| Wisconsin-Breast Cancer Diagnostics Dataset | `wbc`            | 278      | 30           | 21 (5.6%)   | [StonyBrook ODDS](http://odds.cs.stonybrook.edu/wbc/)                      | real     |
-
-## Data Sources Not in Use
-
-| Dataset Name | Abbreviated Name | # Points | # Dimensions | # Outliers | Source                                                                          | Notes                                                                                     |
-| ------------ | ---------------- | -------- | ------------ | ---------- | ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| Pima         | `pima`           | 768      | 8            | 268 (35%)  | [StonyBrook ODDS](http://odds.cs.stonybrook.edu/pima-indians-diabetes-dataset/) | [Pulled by dataset owner?](https://archive.ics.uci.edu/ml/datasets/Pima+Indians+Diabetes) |
-| PageBlock    |                  |          |              |            |                                                                                 | Have to find                                                                              |
-| SpamBase     |                  |          |              |            |                                                                                 | Have to find                                                                              |
