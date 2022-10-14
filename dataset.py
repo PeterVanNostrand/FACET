@@ -35,7 +35,8 @@ def load_data(dataset_name, preprocessing: str = "Normalize"):
     Parameters
     ----------
     dataset_name : the abbreviated name of the dataset to load, see README for all datset options
-    preprocessing: if None do nothing, if Normalize normalize all features [0,1], if Scale Standardize features by removing the mean and scaling to unit variance
+    preprocessing: if None do nothing, if Normalize normalize all features [0,1], if Scale Standardize
+        features by removing the mean and scaling to unit variance
 
     Returns
     -------
@@ -69,7 +70,6 @@ def load_data(dataset_name, preprocessing: str = "Normalize"):
 
 def util_load_cancer():
     data = pd.read_csv(DS_PATHS["cancer"]).to_numpy()
-    ids = data[:, 0:1]
     labels = data[:, 1:2].squeeze()  # lables of M=Malignant, B=Benign
 
     # label malignant as 1, benign as 0
@@ -81,7 +81,6 @@ def util_load_cancer():
 
 def util_load_glass():
     data = pd.read_csv(DS_PATHS["glass"]).to_numpy()
-    ids = data[:, 0:1]
     labels = data[:, -1:].squeeze()
 
     # glass has 6 classes which correspond to six types of glass
@@ -125,7 +124,6 @@ def util_load_magic():
 def util_load_spambase():
     path = DS_PATHS["spambase"]
     data = pd.read_csv(path).to_numpy()
-    ncols = data.shape[1]
     x = data[:, :-1]
     y = data[:, -1:].squeeze().astype('int')
     return x, y
@@ -140,24 +138,3 @@ def util_load_vertebral():
     y[labels == "AB"] = 1
     x = data[:, :-1].astype(float)
     return x, y
-
-
-def validate_labels(ds_names):
-    '''
-    Utility function for checking that all datset's labels are imported correctly. All datasetset should use 0 to represent normal, and 1 for anomalies and contain no other values in the returned y array
-
-    Parameters
-    ----------
-    ds_names : a list of dataset names to evaluate e.g. ds_names = ["thyroid", "musk"] see README for abbreviated names
-
-    Returns
-    -------
-    failed_ds : a list of dataset names which return labels other than 0 or 1
-    '''
-    failed_ds = []
-    for ds in ds_names:
-        x, y = load_data(ds)
-        if not np.logical_or(y == 0, y == 1).all():
-            failed_ds.append(ds)
-
-    return failed_ds

@@ -1,18 +1,14 @@
 # from typing_extensions import ParamSpec
 import numpy as np
 
-from sklearn.model_selection import train_test_split
-from sklearn.model_selection import KFold
-
 # Detector classes
 from detectors.random_forest import RandomForest
-
 # Explainer classes
-from explainers import *
+# from explainers import *
 from explainers.best_candidate import AFT
-from explainers.ocean import OCEAN
-from explainers.mace import MACE
 from explainers.facet_index import FACETIndex
+from explainers.mace import MACE
+from explainers.ocean import OCEAN
 from explainers.rf_ocse import RFOCSE
 
 
@@ -48,5 +44,6 @@ class MethodManager():
     def prepare(self, xtrain: np.ndarray = None, ytrain: np.ndarray = None):
         self.explainer.prepare(xtrain, ytrain)
 
-    def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf) -> np.ndarray:
+    def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None,
+                weights: np.ndarray = None, max_dist: float = np.inf) -> np.ndarray:
         return self.explainer.explain(x, y, k, constraints, weights, max_dist)
