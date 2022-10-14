@@ -6,7 +6,7 @@ FACET (Fast Actionable Counterfactuals for Ensembles of Trees) generate a novel 
 
 ## Requirements
 
-The code in this repository was developed using Python 3.8.13, [requirements.txt](./requirements.txt) contains a list of required packages and is formatted for use with [Anaconda](https://www.anaconda.com/). To run experiments with OCEAN, a state-of-the-art method we compare to, you will need a license for the Gurobi optimizer. Free academic license are available [here](https://www.gurobi.com/academia/academic-program-and-licenses/). Setup can be done as follow
+The code in this repository was developed using Python 3.8.13, [requirements.txt](./requirements.txt) contains a list of required packages and is formatted for use with [Anaconda](https://www.anaconda.com/). To run experiments with OCEAN, a state-of-the-art method we compare to, you will need a license for the Gurobi optimizer. Free academic licenses are available [here](https://www.gurobi.com/academia/academic-program-and-licenses/). Setup can be done as follow
 
 ```bash
 # create the anaconda environment
@@ -28,6 +28,7 @@ For convenience [main.py](./main.py) takes a variety of command line arguments
 | --expr       | the experiment to run                                | simple, ntrees, nrects, compare, k, m, nconstraints              |
 | --values     | the experimental values to test                      | space separated list of values e.g. `10 50 100` or `0.1 0.2 0.3` |
 | --ds         | the dataset to explain                               | cancer, glass, magic, spambase, vertebral                        |
+| --method     | the XAI method to use                                | FACETIndex, OCEAN, RFOCSE, AFT, MACE                             |
 | --ntrees     | the ensemble size to test                            | integer value, overridden in for --expr ntrees                   |
 | ----maxdepth | the max depth of ensemble trees                      | integer value, `-1` for no max depth                             |
 | --it         | the iteration to run, used as random seed            | space separated integer values                                   |

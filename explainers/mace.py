@@ -1,21 +1,14 @@
+import multiprocessing as mp
+from typing import TYPE_CHECKING
+
 import numpy as np
 import pandas as pd
 from tqdm.auto import tqdm
-import time
 
-from explainers.explainer import Explainer
-import multiprocessing as mp
-
-# from baselines.mace.newLoadData import loadDataset
-# from baselines.mace.newBatchTest import generateExplanationsWithMaxTime
-# from baselines.mace.newBatchTest import generateExplanations
-from baselines.mace.generateSATExplanations import genExp
-from baselines.mace.loadData import loadDataset
-from baselines.mace.loadData import Dataset
-from sklearn.model_selection import train_test_split
 from baselines.mace.batchTest import generateExplanations
+from baselines.mace.loadData import Dataset, loadDataset
+from explainers.explainer import Explainer
 
-from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from manager import MethodManager
 
