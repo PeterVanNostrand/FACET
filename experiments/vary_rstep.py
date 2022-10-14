@@ -17,21 +17,21 @@ from .experiments import (FACET_DEFAULT_PARAMS, FACET_TUNED_M,
                           RF_DEFAULT_PARAMS, TUNED_FACET_SD, execute_run)
 
 
-def vary_rinit(ds_names, rs=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=None, ntrees=10, max_depth=5):
+def vary_rstep(ds_names, rs=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=None, ntrees=10, max_depth=5):
     '''
     Experiment to observe the affect of k, the number of explanations requested
     '''
-    print("Varying rinit:")
+    print("Varying rstep:")
     print("\tds_names:", ds_names)
     print("\trs:", rs)
     print("\titerations:", iterations)
 
     if fmod is not None:
-        csv_path = "./results/vary_rinit_" + fmod + ".csv"
-        experiment_path = "./results/vary-rinit-" + fmod + "/"
+        csv_path = "./results/vary_rstep_" + fmod + ".csv"
+        experiment_path = "./results/vary-rstep-" + fmod + "/"
     else:
-        csv_path = "./results/vary_rinit.csv"
-        experiment_path = "./results/vary-rinit/"
+        csv_path = "./results/vary_rstep.csv"
+        experiment_path = "./results/vary-rstep/"
 
     explainer = "FACETIndex"
     params = {
@@ -94,11 +94,11 @@ def vary_rinit(ds_names, rs=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=N
             explain_preds = manager.predict(x_explain)
 
             for r in rs:
-                # update the bit vector initial radius
-                params["FACETIndex"]["rbv_initial_radius"] = r
+                # update the bit vector radius step
+                params["FACETIndex"]["rbv_radius_step"] = r
                 for rbv in manager.explainer.rbvs:
-                    rbv.initial_radius = r
-                run_ext = "ri{:.4f}_".format(r)
+                    rbv.radius_step = r
+                run_ext = "rs{:.4f}_".format(r)
                 # store this runs configuration
                 config = {}
                 config["explainer"] = explainer
@@ -175,4 +175,4 @@ def vary_rinit(ds_names, rs=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=N
 
                 progress_bar.update()
     progress_bar.close()
-    print("Finished varying rinit")
+    print("Finished varying rstep")

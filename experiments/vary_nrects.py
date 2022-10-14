@@ -1,9 +1,10 @@
 import os
+
 import pandas as pd
 from tqdm.auto import tqdm
 
-from .experiments import execute_run
-from .experiments import TUNED_FACET_SD, FACET_DEFAULT_PARAMS, RF_DEFAULT_PARAMS, FACET_TUNED_M
+from .experiments import (FACET_DEFAULT_PARAMS, FACET_TUNED_M,
+                          RF_DEFAULT_PARAMS, TUNED_FACET_SD, execute_run)
 
 
 def vary_nrects(ds_names, nrects=[5, 10, 15], iterations=[0, 1, 2, 3, 4], fmod=None, ntrees=10, max_depth=5):

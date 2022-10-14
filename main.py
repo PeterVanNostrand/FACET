@@ -20,6 +20,7 @@ from experiments.vary_nconstraints import vary_nconstraints
 from experiments.vary_nrects import vary_nrects
 from experiments.vary_ntrees import vary_ntrees
 from experiments.vary_rinit import vary_rinit
+from experiments.vary_rstep import vary_rstep
 from experiments.vary_sigma import vary_sigma
 from manager import MethodManager
 from utilities.metrics import (average_distance, classification_metrics,
@@ -97,7 +98,7 @@ if __name__ == "__main__":
     # sigma - FACET index evaluation (how much do we move our augmented data in region enumeration)
     # compare - 7.3 compare methods on fixed ensemble
     parser.add_argument("--expr", choices=["simple", "ntrees", "nrects",
-                        "eps", "sigma", "enum", "compare", "k", "rinit", "m", "nconstraints"], default="simple")
+                        "eps", "sigma", "enum", "compare", "k", "rinit", "rstep", "m", "nconstraints"], default="simple")
     parser.add_argument("--ds", type=str, nargs="+", default=["vertebral"])
     parser.add_argument("--method", type=str, nargs="+", choices=all_explaiers, default=["FACETIndex"])
     parser.add_argument("--values", type=float, nargs="+", default=None)
@@ -168,6 +169,10 @@ if __name__ == "__main__":
 
     elif args.expr == "rinit":
         vary_rinit(ds_names=args.ds, rs=args.values, iterations=args.it,
+                   fmod=args.fmod, ntrees=args.ntrees, max_depth=args.maxdepth)
+
+    elif args.expr == "rstep":
+        vary_rstep(ds_names=args.ds, rs=args.values, iterations=args.it,
                    fmod=args.fmod, ntrees=args.ntrees, max_depth=args.maxdepth)
 
     # vary the number of example the user request
