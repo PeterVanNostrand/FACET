@@ -9,7 +9,7 @@ import multiprocessing as mp
 # from fastcrf.rfocse_main import batch_extraction, CounterfactualSetExplanation
 # from fastcrf.datasets import DatasetInfo, DatasetInfoBuilder
 
-from baselines.rfocse.rfocse_main import batch_extraction, CounterfactualSetExplanation, extract_single_counterfactual_set
+from baselines.rfocse.rfocse_main import batch_extraction, extract_single_counterfactual_set
 from baselines.rfocse.extraction_problem import make_problem
 from baselines.rfocse.converter import convert_rf_format
 from baselines.rfocse.datasets import DatasetInfo, DatasetInfoBuilder
@@ -93,8 +93,6 @@ class RFOCSE(Explainer):
         dataset_info: DatasetInfo = self.dataset_info
         sklearn_rf = self.manager.random_forest.model
         X_train = self.Xtrain
-
-        progress = tqdm(total=x.shape[0], desc="RFOCSE", leave=False)
 
         # Make the RFOCSE problem
         search_closest = True

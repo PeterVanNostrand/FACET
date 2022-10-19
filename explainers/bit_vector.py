@@ -1,12 +1,12 @@
 # handle circular imports that result from typehinting
 from __future__ import annotations
+
 import bisect
+from typing import TYPE_CHECKING
 
 import numpy as np
 from bitarray import bitarray
 from bitarray.util import zeros as bitzeros
-
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:  # circular import avoidance
     from explainers.facet_index import FACETIndex
@@ -43,13 +43,20 @@ class BitVectorIndex():
         self.rbv = self.build_bit_vectors(self.rects)
         self.search_log = []  # for experiments store the # of rects search for each sample explained
 
-    def point_query(self, instance: np.ndarray, constraints: np.ndarray = None, weights: np.ndarray = None, k: int = 1, max_dist: float = np.inf):
+    def point_query(self, instance: np.ndarray,
+                    constraints: np.ndarray = None,
+                    weights: np.ndarray = None,
+                    k: int = 1,
+                    max_dist: float = np.inf,
+                    min_robust: float = None,
+                    min_widths: np.ndarray = None
+                    ):
         if k == 1:
-            return self.single_point_query(instance, constraints, weights, max_dist)
+            return self.single_point_query(instance, constraints, weights, max_dist, min_robust, min_widths)
         else:
-            return self.k_point_query(instance, constraints, weights, k, max_dist)
+            return self.k_point_query(instance, constraints, weights, k, max_dist, min_robust, min_widths)
 
-    def single_point_query(self, instance: np.ndarray, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf) -> np.ndarray:
+    def single_point_query(self, instance: np.ndarray, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf, min_robust: float = None, min_widths: np.ndarray = None) -> np.ndarray:
         '''
         Uses the bit vector index to find hyper-rectangles which are close to the given point
 
@@ -69,6 +76,11 @@ class BitVectorIndex():
         closest_dist = np.inf
         solution_found = False
         search_complete = False  # we have searched the entire constraint range
+
+        if min_robust is not None and min_widths is None:
+            min_widths = np.tile(min_robust, instance.shape[0])
+        elif min_robust is not None and min_widths is not None:
+            min_widths = np.maximum(min_robust, min_widths)
 
         # bit vector for the rects we have already checked the distance to
         searched_bits = bitzeros(self.nrects)
@@ -124,12 +136,15 @@ class BitVectorIndex():
                             if constraints is not None:  # take only part of rect which falls in constraints
                                 rect[:, LOWER] = np.maximum(rect[:, LOWER], constraints[:, LOWER])  # raise lower bounds
                                 rect[:, UPPER] = np.minimum(rect[:, UPPER], constraints[:, UPPER])  # lower upper bounds
-                            test_instance = self.explainer.fit_to_rectangle(instance, rect)
-                            dist = self.explainer.distance_fn(instance, test_instance, weights)
-                            # valid solutions must fall within the search radius
-                            if dist < closest_dist:
-                                closest_rect = rect
-                                closest_dist = dist
+                            # check that the found rectangle is larger than the robustness requiremetns
+                            if min_widths is None or ((rect[:, UPPER] - rect[:, LOWER]) >= min_widths).all():
+                                # check the distance to the found rectangle
+                                test_instance = self.explainer.fit_to_rectangle(instance, rect)
+                                dist = self.explainer.distance_fn(instance, test_instance, weights)
+                                # if its closer than the best solution so far, save it
+                                if dist < closest_dist:
+                                    closest_rect = rect
+                                    closest_dist = dist
 
                 # if the best solution falls within the search radius, exit
                 solution_found = (closest_dist <= search_radius)
@@ -152,7 +167,7 @@ class BitVectorIndex():
         elif self.radius_growth == "Exponential":
             return radius * self.radius_step
 
-    def k_point_query(self, instance: np.ndarray, constraints: np.ndarray = None, weights: np.ndarray = None, k: int = 1, max_dist: float = np.inf) -> np.ndarray:
+    def k_point_query(self, instance: np.ndarray, constraints: np.ndarray = None, weights: np.ndarray = None, k: int = 1, max_dist: float = np.inf, min_robust: float = None, min_widths: np.ndarray = None) -> np.ndarray:
         '''
         Uses the bit vector index to find hyper-rectangles which are closest to the given point
 

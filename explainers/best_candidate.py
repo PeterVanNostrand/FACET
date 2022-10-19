@@ -1,20 +1,22 @@
+from typing import TYPE_CHECKING
+
 import numpy as np
 from tqdm.auto import tqdm
 
+from detectors.random_forest import RandomForest
 from explainers.explainer import Explainer
 from utilities.metrics import dist_euclidean
 from utilities.tree_tools import TreeContraster
 
-from detectors.random_forest import RandomForest
-
-from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from manager import MethodManager
+
 
 class AFT(Explainer):
     '''
     An implementation of the Actionable Feature Tweaking method developed in "Interpretable Predictions of Tree-based Ensembles via Actionable Feature Tweaking." The original paper can be found at https://arxiv.org/abs/1706.06691
     '''
+
     def __init__(self, manager, hyperparameters=None):
         self.manager: MethodManager = manager
         self.hyperparameters = hyperparameters
@@ -144,7 +146,7 @@ class AFT(Explainer):
                 if len(all_examples[i]) == 0:
                     all_examples[i] = tree_examples[i]
                 else:
-                    if(len(tree_examples[i]) > 0):
+                    if (len(tree_examples[i]) > 0):
                         all_examples[i] = np.vstack([all_examples[i], tree_examples[i]])
 
         # for each sample pick the top k best candidates that result in a changed class
@@ -181,8 +183,6 @@ class AFT(Explainer):
 
         progress.close()
         if k == 1:
-                final_examples = final_examples.squeeze()
+            final_examples = final_examples.squeeze()
 
         return final_examples
-
-    

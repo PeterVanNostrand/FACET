@@ -1,25 +1,25 @@
 # handle circular imports that result from typehinting
 from __future__ import annotations
 
+import bisect
 # core python packages
 import math
-from tqdm.auto import tqdm
-
-# scientific and utility packages
-import numpy as np
-from sklearn import tree
-import bisect
+from typing import TYPE_CHECKING, Dict, List, Tuple
 
 # graph packages
 import networkx as nx
+# scientific and utility packages
+import numpy as np
+from sklearn import tree
+from tqdm.auto import tqdm
 
-# custom classes
-from utilities.metrics import dist_euclidean
-from explainers.explainer import Explainer
 from detectors.random_forest import RandomForest
 # from explainers.branching import BranchIndex
 from explainers.bit_vector import BitVectorIndex
-from typing import TYPE_CHECKING, List, Dict, Tuple
+from explainers.explainer import Explainer
+# custom classes
+from utilities.metrics import dist_euclidean
+
 if TYPE_CHECKING:
     from manager import MethodManager
 
@@ -49,13 +49,7 @@ class FACETIndex(Explainer):
         # build the index of majority size hyper-rectangles
         if self.enumeration_type == "PointBased":
             self.point_enumerate(data)
-        elif self.enumeration_type == "GraphBased":
-            # self.graph_enumerate(training_data=data)
-            print("GRAPH ENUMERATION DISABLED")
-            exit(0)
 
-        # !debug
-        # self.check_indexed_rects()
         if self.search_type == "BitVector":
             self.build_bitvectorindex()
 
@@ -96,7 +90,7 @@ class FACETIndex(Explainer):
                 contains_vi = all_leaves[:, vi_tree_id] == vi_leaf_id
                 vertex_supports[class_id][vertex_i] = contains_vi.sum()
                 # compute its pairwise support with other vertices
-                for vertex_j in range(vertex_i+1, nvertices):
+                for vertex_j in range(vertex_i + 1, nvertices):
                     # get the id of the tree and leaf which correspond to this vertex
                     vj_tree_id, leaf_id_j = self.idx_to_treepath[class_id][vertex_j]
                     # find all instances where the given tree classified to the given leaf
@@ -112,29 +106,6 @@ class FACETIndex(Explainer):
 
         self.vertex_support = vertex_supports
         self.pairwise_support = pairwise_supports
-
-    # def graph_enumerate(self, training_data: np.ndarray) -> None:
-    #     '''
-    #     Converts the random forest ensemble into a graph representation, then uses a branching technique to find k-sized cliques on this graph which correspond to majority sized hyper-rectangles which are added to the index
-    #     '''
-    #     # 1. build the graphs, one per class
-    #     rf_detector: RandomForest = self.manager.random_forest
-    #     rf_trees: List[tree.DecisionTreeClassifier] = rf_detector.model.estimators_
-    #     self.index_paths(self.rf_nclasses)
-    #     self.find_synthesizeable_paths(rf_trees)
-    #     self.build_graphs(rf_trees, self.rf_nclasses)
-    #     self.compute_supports(data=training_data)
-
-    #     # 4. explore graph by branching using the support values as priority
-    #     self.initialize_index()
-    #     self.solution_cliques = [[] for _ in range(self.rf_nclasses)]
-    #     for class_id in range(self.rf_nclasses):
-    #         brancher = BranchIndex(
-    #             explainer=self, graph=self.graphs[class_id], class_id=class_id, hyperparameters=self.hyperparameters)
-    #         brancher.n_desired_rects = self.n_rects
-    #         cliques, rects = brancher.solve()
-    #         self.index[class_id] = rects
-    #         self.solution_cliques[class_id] = cliques
 
     def point_enumerate(self, data: np.ndarray) -> None:
         '''
@@ -247,18 +218,6 @@ class FACETIndex(Explainer):
                 leaf_rects[tid][leaf_node_id] = (leaf_class, rect, class_probs)
         return leaf_rects
 
-    def check_indexed_rects(self):
-        print("checking rects...")
-        #! DEBUG tool
-        for class_id in range(self.rf_nclasses):
-            for rect in self.index[class_id]:
-                x = np.zeros(self.rf_nfeatures)
-                xprime = self.fit_to_rectangle(x, rect)
-                pred = int(self.manager.predict([xprime]))
-                if pred != class_id:
-                    print("\tBad Rectangle")
-        print("done checking rects!")
-
     def index_rectangles(self, data: np.ndarray):
         '''
         This method uses the training data to enumerate a set of hyper-rectangles of each classes and adds them to an index for later searching during explanation
@@ -274,7 +233,7 @@ class FACETIndex(Explainer):
         for instance, label, leaf_ids in zip(data, preds, all_leaves):
             rect, paths_used = self.enumerate_rectangle(leaf_ids, label)
             key = hash(tuple(paths_used))  # hash the path list to get a unique key corresponding to this HR
-            if not key in visited_rects[label]:  # if we haven't visited this hyper-rectangle before
+            if key not in visited_rects[label]:  # if we haven't visited this hyper-rectangle before
                 # if True:
                 self.add_to_index(label, rect)  # add it to the index
                 visited_rects[label][key] = True  # remember that we've indexed it
@@ -411,7 +370,7 @@ class FACETIndex(Explainer):
             while i < len(match_bounds) and accumulated_prob[label] <= 0.5:
                 rect[:, 0] = np.maximum(rect[:, 0], match_bounds[match_order[i]][:, 0])  # intersection of minimums
                 rect[:, 1] = np.minimum(rect[:, 1], match_bounds[match_order[i]][:, 1])  # intersection of maximums
-                bisect.insort(paths_used,  tuple(match_paths[match_order[i]]))  # remember leaves we used
+                bisect.insort(paths_used, tuple(match_paths[match_order[i]]))  # remember leaves we used
                 accumulated_prob += (1 / self.rf_ntrees) * match_probs[match_order[i]]
                 i += 1
 
@@ -425,13 +384,6 @@ class FACETIndex(Explainer):
                 bisect.insort(paths_used, tuple(other_paths[nm_order[i]]))  # remember leaves we used
                 accumulated_prob += (1 / self.rf_ntrees) * other_probs[nm_order[i]]
                 i += 1
-
-        # # ! debug
-        # x = np.zeros(self.rf_nfeatures)
-        # xprime = self.fit_to_rectangle(x, rect)
-        # pred = int(self.manager.predict([xprime]))
-        # if pred != label:
-        #     print("Bad Rectangle")
 
         return rect, paths_used
 
@@ -449,13 +401,6 @@ class FACETIndex(Explainer):
         rect: a numpy ndarray of shape (ndim, 2) containing a majority size hyper-rectangle
         paths_used: a list of pairs (tree_id, leaf_id) which correspond to the leaves the form the intersection
         '''
-
-        # # ! debug
-        # x = np.zeros(self.rf_nfeatures)
-        # xprime = self.fit_to_rectangle(x, rect)
-        # pred = int(self.manager.predict([xprime]))
-        # if pred != label:
-        #     print("Bad Rectangle")
 
         if self.rf_hardvoting:
             return self.select_hard_intersection(all_bounds, paths, path_probs, label)
@@ -599,39 +544,53 @@ class FACETIndex(Explainer):
         # for oversteped bounds use the average between min and max
         xprime[idx_overstep] = rect[idx_overstep, 0] + (rect[idx_overstep, 1] - rect[idx_overstep, 0]) / 2
 
-        #! debug
+        # !debug
         # if not self.is_inside(xprime, rect):
         #     print("Bad Counterfactual")
 
         return xprime
+        self.ex
 
-    def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf) -> np.ndarray:
+    def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf, min_robust: float = None, min_widths: np.ndarray = None) -> np.ndarray:
         '''
         Parameters
         ----------
-        x               : an array of samples, dimensions (nsamples, nfeatures)
-        y               : an array of predicted labels which correspond to the labels, (nsamples, )
+        `x`               : an array of samples each of dimensions (nsamples, nfeatures)
+        `y`               : an array of predicted labels which correspond to the labels, (nsamples,)
+        `k`               : the number of explanations requested
+        `contraints`      : an array of shape (nfeatures, 2) where constraints[i][0/1] represents the
+                            smallest/largest allowed value for feature i
+        `weights`         : an array of shape (nfeatures,) corresonding to the ease of changing a feature
+                            weights[i]=1 indicates normal cost and weights[i]>1 an easier cost
+        `max_dist`        : the maximum distance from `x` to search for an explanation
+        `min_robust`      : the minimum radial robustness an explanation must meet, applied to all features
+        `min_widths`      : array of shape (features,) where min_widths[i] is the min required robustness of xprime[i]
 
         Returns
         -------
-        xprime : an array of contrastive examples with dimensions (nsamples, nfeatures)
-
-        explains a given instance by growing a clique around the region of xi starting with trees which predict the counterfactual class
+        `xprime` : a list of of counterfactual example arrays each with dimensions (nsamples, nfeatures)
         '''
         xprime = []  # an array for the constructed contrastive examples
 
         # assumimg binary classification [0, 1] set counterfactual class
         counterfactual_classes = ((y - 1) * -1)
+        # !debug
+        # min_robust = 1e-9
+        # min_widths = np.array([1e-10, 1e-10, 1e-10, 1e-10, 1e-10, 1e-10])
+        # constraints = np.zeros(shape=(6, 2))
+        # constraints[:, 0] = -1.0
+        # constraints[:, 1] = 1.0
 
         if self.search_type == "Linear":
-            # perform a linear scan of all the hyper-rectangles
+            # performs, a linear scan of all the hyper-rectangles
+            # does not support k, weights, constraints, max_dist, min_robust, min_widths
             for i in range(x.shape[0]):
                 closest_rect = None
                 min_dist = np.inf
                 # find the indexed rectangle of the the counterfactual class that is cloest
                 for rect in self.index[counterfactual_classes[i]]:
                     test_instance = self.fit_to_rectangle(x[i], rect)
-                    dist = self.distance_fn(x[i], test_instance, weights)
+                    dist = self.distance_fn(x[i], test_instance)
                     if dist < min_dist:
                         min_dist = dist
                         closest_rect = rect
@@ -647,11 +606,18 @@ class FACETIndex(Explainer):
                     constraints=constraints,
                     weights=weights,
                     k=k,
-                    max_dist=max_dist
+                    max_dist=max_dist,
+                    min_robust=min_robust,
+                    min_widths=min_widths
                 )
                 if k == 1 and result is not None:
                     nearest_rect = result
                     explanation = self.fit_to_rectangle(x[i], nearest_rect)
+                    check_class = self.manager.predict([explanation])[0]
+                    if check_class != counterfactual_classes[i]:
+                        print("failed explanation")
+                        print("idx: {}, desired: {}, observed: {}".format(i, counterfactual_classes[i], check_class))
+                        print(x[i])
                 elif k > 1 and len(result) > 0:
                     nearest_rect = result[0]
                     explanation = self.fit_to_rectangle(x[i], nearest_rect)
