@@ -1,14 +1,8 @@
 import argparse
 import json
 import os
-import random
 import re
 
-import numpy as np
-from numpy.core.fromnumeric import var
-from sklearn.model_selection import train_test_split
-
-from dataset import DS_NAMES, load_data
 from experiments.compare_methods import compare_methods
 from experiments.experiments import (DEFAULT_PARAMS, FACET_TUNED_M,
                                      TUNED_FACET_SD, execute_run)
@@ -22,10 +16,6 @@ from experiments.vary_ntrees import vary_ntrees
 from experiments.vary_rinit import vary_rinit
 from experiments.vary_rstep import vary_rstep
 from experiments.vary_sigma import vary_sigma
-from manager import MethodManager
-from utilities.metrics import (average_distance, classification_metrics,
-                               percent_valid)
-from utilities.tree_tools import compute_jaccard
 
 
 def check_create_directory(dir_path="./results/"):
@@ -98,7 +88,8 @@ if __name__ == "__main__":
     # sigma - FACET index evaluation (how much do we move our augmented data in region enumeration)
     # compare - 7.3 compare methods on fixed ensemble
     parser.add_argument("--expr", choices=["simple", "ntrees", "nrects",
-                        "eps", "sigma", "enum", "compare", "k", "rinit", "rstep", "m", "nconstraints"], default="simple")
+                        "eps", "sigma", "enum", "compare", "k", "rinit", "rstep",
+                                           "m", "nconstraints"], default="simple")
     parser.add_argument("--ds", type=str, nargs="+", default=["vertebral"])
     parser.add_argument("--method", type=str, nargs="+", choices=all_explaiers, default=["FACETIndex"])
     parser.add_argument("--values", type=float, nargs="+", default=None)

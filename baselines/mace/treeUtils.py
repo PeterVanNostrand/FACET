@@ -1,7 +1,7 @@
-import os
-import graphviz
-import numpy as np
-from sklearn.tree import _tree, export_graphviz
+# import os
+# import graphviz
+# import numpy as np
+# from sklearn.tree import _tree, export_graphviz
 
 
 # Source:
@@ -23,7 +23,8 @@ def simplifyDecisionTree(tree, debug_flag):
     while parent_idx > -1:
 
         if debug_flag > 1:
-            print('\t[INFO] Merging children at index {} (left) and {} (right) into index {} (parent)...'.format(left_child_idx, right_child_idx, parent_idx), end='')
+            print('\t[INFO] Merging children at index {} (left) and {} (right) into index {} (parent)...'.format(
+                left_child_idx, right_child_idx, parent_idx), end='')
 
         tree_.feature[parent_idx] = -2
         tree_.threshold[parent_idx] = -2
@@ -106,14 +107,14 @@ def isValidParentIdx(tree_, parent_idx, left_child_idx, right_child_idx):
         tree_.children_right[parent_idx] == right_child_idx
 
 
-def saveTreeVisualization(model, model_class, sub_model_name, X_test, feature_names, save_folder_name):
-    save_path = f'{save_folder_name}/{model_class}_{sub_model_name}_{X_test.shape[1]}_features'
-    dot_data = export_graphviz(model, out_file=None,
-        feature_names=feature_names,
-        class_names=['0','1'],
-        filled=True,
-        rounded=True,
-        special_characters=True)
-    graph = graphviz.Source(dot_data)
-    graph.render(save_path)
-    os.remove(save_path) # two files are outputted, one is extra
+# def saveTreeVisualization(model, model_class, sub_model_name, X_test, feature_names, save_folder_name):
+#     save_path = f'{save_folder_name}/{model_class}_{sub_model_name}_{X_test.shape[1]}_features'
+#     dot_data = export_graphviz(model, out_file=None,
+#         feature_names=feature_names,
+#         class_names=['0','1'],
+#         filled=True,
+#         rounded=True,
+#         special_characters=True)
+#     graph = graphviz.Source(dot_data)
+#     graph.render(save_path)
+#     os.remove(save_path) # two files are outputted, one is extra
