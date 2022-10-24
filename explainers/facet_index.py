@@ -528,8 +528,9 @@ class FACETIndex(Explainer):
         '''
         xprime = x.copy()
         # determine which values need to adjusted to be smaller, and which need to be larger
-        low_values = xprime < rect[:, 0]
-        high_values = xprime > rect[:, 1]
+        EPSILON = 1e-8  # use epsilon to account for floating point impercision for rare values
+        low_values = xprime <= (rect[:, 0] + EPSILON)
+        high_values = xprime >= (rect[:, 1] - EPSILON)
 
         # check that the offset will not overstep the min or max value, this occurs when the range between
         # a min and max value is less than the offset size

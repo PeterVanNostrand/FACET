@@ -87,6 +87,7 @@ class BitVectorIndex():
 
         # bit vector for the rects we have already checked the distance to
         searched_bits = bitzeros(self.nrects)
+        n_searched_rects = 0
         search_radius = self.initial_radius
         while not solution_found and not search_complete:
             # convert the query hypersphere into a hyperrectangle
@@ -122,13 +123,15 @@ class BitVectorIndex():
                 matching_bits = self.rect_query(query_rect)
                 # exclude rectangles which we have already checked the distance to
                 new_match_bits = (matching_bits & ~searched_bits)
+                n_new_rects = new_match_bits.count()
+                n_searched_rects += n_new_rects
 
                 # if we have new matches, check their distance
-                if new_match_bits.any():
+                if n_new_rects > 0:
                     # record the new matches as searched
                     searched_bits |= new_match_bits
                     # check if if we've searched every hyper-rectangle
-                    search_complete = search_complete or (searched_bits.count() == self.nrects)
+                    search_complete = search_complete or (n_searched_rects == self.nrects)
                     # expand the packed bitarry to an array of booleans
                     new_match_slice = np.array(new_match_bits.tolist(), dtype=bool)
                     # get the matching rectangles
@@ -204,6 +207,7 @@ class BitVectorIndex():
         # bit vector for the rects we have already checked the distance to
         rect_ids = np.array(range(self.nrects))  # id each rect by its location in the enumerated list
         searched_bits = bitzeros(self.nrects)  # keep track of which rects we've already checked
+        n_searched_rects = 0
         if k is None and max_dist < np.inf:
             search_radius = max_dist
         else:
@@ -245,13 +249,15 @@ class BitVectorIndex():
                 matching_bits = self.rect_query(query_rect)
                 # exclude rectangles which we have already checked the distance to
                 new_match_bits = (matching_bits & ~searched_bits)
+                n_new_rects = new_match_bits.count()
+                n_searched_rects += n_new_rects
 
                 # if we have new matches, check their distance
-                if new_match_bits.any():
+                if n_new_rects > 0:
                     # record the new matches as searched
                     searched_bits |= new_match_bits
                     # check if if we've searched every hyper-rectangle
-                    search_complete = search_complete or (searched_bits.count() == self.nrects)
+                    search_complete = search_complete or (n_searched_rects == self.nrects)
                     # expand the packed bitarry to an array of booleans
                     new_match_slice = np.array(new_match_bits.tolist(), dtype=bool)
                     # get the matching rectangles
