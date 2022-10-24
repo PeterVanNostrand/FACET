@@ -2,7 +2,7 @@
 
 This repository contains prototype code for the paper *FACET: Robust Counterfactual Explanation Analytics*, currently under review at SIGMOD 2023.
 
-FACET (Fast Actionable Counterfactuals for Ensembles of Trees) generate a novel type of explanation which we call *counterfactual regions* for decisions made by ensembles of trees. For an instance `x` a counterfactual region `R` defines a portions of the feature space where all points `x in R` are guaranteed to be counterfactual to `x`, e.g. if `y=f(x)=A` then `y=f(x')=B`. We design FACET to be highly performant and support a wide variety of user parameters such that explanations can be interactively personalized to meet real users needs.
+FACET (Fast Actionable Counterfactuals for Ensembles of Trees) generates a novel type of explanation which we call *counterfactual regions* for decisions made by ensembles of trees. For an instance `x` a counterfactual region `R` defines a portions of the feature space where all points `x' in R` are guaranteed to be counterfactual to `x`, e.g. if `y=f(x)=A` then `y=f(x')=B`. We design FACET to be highly performant and support a wide variety of user parameters such that explanations can be interactively personalized to meet real users needs.
 
 ## Requirements
 
@@ -41,10 +41,10 @@ All results are output to `./results/<expr_name>.csv`. Generated explanations, a
 
 All datasets are pulled as is from the [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/index.php) and are included in this repository.
 
-| Dataset Name                                  | Abbreviated Name | # Points | # Dimensions | nClass                   | Source                                                                                  | Features      |
-| --------------------------------------------- | ---------------- | -------- | ------------ | ------------------------ | --------------------------------------------------------------------------------------- | ------------- |
-| Breast Cancer Wisconsin (Diagnostic) Data Set | `cancer`         | 699      | 9            | 2                        | [UCI](https://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Wisconsin+%28Diagnostic%29) | real          |
-| Glass Identification Data Set                 | `glass`          | 214      | 9            | 6 (2 float vs non-float) | [UCI](https://archive.ics.uci.edu/ml/datasets/Glass+Identification)                     | real          |
-| MAGIC Gamma Telescope Data Set                | `magic`          | 19020    | 10           | 2                        | [UCI](https://archive.ics.uci.edu/ml/datasets/MAGIC+Gamma+Telescope)                    | real          |
-| Spambase                                      | `spambase`       | 4600     | 57           | 2                        | [UCI](https://archive.ics.uci.edu/ml/datasets/Spambase)                                 | real, integer |
-| Vertebral Column Data Set                     | `vertebral`      | 310      | 6            | 2                        | [UCI](https://archive.ics.uci.edu/ml/datasets/vertebral+column)                         | real          |
+| Dataset Name                                  | Abbreviated Name | # Points | # Dimensions | nClass                   | Source                                                                                  |
+| --------------------------------------------- | ---------------- | -------- | ------------ | ------------------------ | --------------------------------------------------------------------------------------- |
+| Breast Cancer Wisconsin (Diagnostic) Data Set | `cancer`         | 699      | 9            | 2                        | [UCI](https://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Wisconsin+%28Diagnostic%29) |
+| Glass Identification Data Set                 | `glass`          | 214      | 9            | 6 (2 float vs non-float) | [UCI](https://archive.ics.uci.edu/ml/datasets/Glass+Identification)                     |
+| MAGIC Gamma Telescope Data Set                | `magic`          | 19020    | 10           | 2                        | [UCI](https://archive.ics.uci.edu/ml/datasets/MAGIC+Gamma+Telescope)                    |
+| Spambase                                      | `spambase`       | 4600     | 57           | 2                        | [UCI](https://archive.ics.uci.edu/ml/datasets/Spambase)                                 |
+| Vertebral Column Data Set                     | `vertebral`      | 310      | 6            | 2                        | [UCI](https://archive.ics.uci.edu/ml/datasets/vertebral+column)                         |
