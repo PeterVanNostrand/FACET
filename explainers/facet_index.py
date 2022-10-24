@@ -545,12 +545,7 @@ class FACETIndex(Explainer):
         # for oversteped bounds use the average between min and max
         xprime[idx_overstep] = rect[idx_overstep, 0] + (rect[idx_overstep, 1] - rect[idx_overstep, 0]) / 2
 
-        # !debug
-        # if not self.is_inside(xprime, rect):
-        #     print("Bad Counterfactual")
-
         return xprime
-        self.ex
 
     def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf, min_robust: float = None, min_widths: np.ndarray = None) -> np.ndarray:
         '''
@@ -575,12 +570,6 @@ class FACETIndex(Explainer):
 
         # assumimg binary classification [0, 1] set counterfactual class
         counterfactual_classes = ((y - 1) * -1)
-        # !debug
-        # min_robust = 1e-9
-        # min_widths = np.array([1e-10, 1e-10, 1e-10, 1e-10, 1e-10, 1e-10])
-        # constraints = np.zeros(shape=(6, 2))
-        # constraints[:, 0] = -1.0
-        # constraints[:, 1] = 1.0
 
         if self.search_type == "Linear":
             # performs, a linear scan of all the hyper-rectangles
