@@ -3,16 +3,12 @@ import os
 import random
 import re
 import time
-from pydoc import ispath
-from unittest import result
 
 import numpy as np
 import pandas as pd
-from genericpath import isfile
 from sklearn.model_selection import train_test_split
-from tqdm.auto import tqdm
 
-from dataset import DS_DIMENSIONS, load_data
+from dataset import load_data
 from manager import MethodManager
 from utilities.metrics import (average_distance, classification_metrics,
                                percent_valid)

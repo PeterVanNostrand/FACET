@@ -1,4 +1,5 @@
 # from typing_extensions import ParamSpec
+import random
 import numpy as np
 
 # Detector classes
@@ -14,8 +15,10 @@ from explainers.rf_ocse import RFOCSE
 
 class MethodManager():
     def __init__(self, explainer=None, hyperparameters=None, random_state=None):
+        self.params = hyperparameters
         self.random_forest = RandomForest(hyperparameters=hyperparameters, random_state=random_state)
-        self.explainer = self.init_explainer(explainer=explainer, hyperparameters=hyperparameters)
+        if explainer is not None:
+            self.explainer = self.init_explainer(explainer=explainer, hyperparameters=hyperparameters)
         self.random_state = random_state
 
     def init_explainer(self, explainer, hyperparameters):
@@ -33,7 +36,11 @@ class MethodManager():
             print("Unknown explainer type of " + explainer)
             print("using FACETIndex")
             return FACETIndex(manger=self, hyperparameters=hyperparameters)
-            pass
+
+    def set_explainer(self, explainer=None, random_state=None):
+        random.seed(random_state)
+        np.random.seed(random_state)
+        self.explainer = self.init_explainer(explainer=explainer, hyperparameters=self.params)
 
     def train(self, x, y=None):
         self.random_forest.train(x, y)
@@ -45,5 +52,5 @@ class MethodManager():
         self.explainer.prepare(xtrain, ytrain)
 
     def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None,
-                weights: np.ndarray = None, max_dist: float = np.inf) -> np.ndarray:
-        return self.explainer.explain(x, y, k, constraints, weights, max_dist)
+                weights: np.ndarray = None, max_dist: float = np.inf, max_robust=False) -> np.ndarray:
+        return self.explainer.explain(x=x, y=y, k=k, constraints=constraints, weights=weights, max_dist=max_dist, max_robust=max_robust)

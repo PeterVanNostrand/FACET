@@ -547,7 +547,16 @@ class FACETIndex(Explainer):
 
         return xprime
 
-    def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf, min_robust: float = None, min_widths: np.ndarray = None) -> np.ndarray:
+    def rect_center(self, rect: np.ndarray) -> np.ndarray:
+        '''
+        Returns the center point of the given rectangle, assuming bounds of +-inf are 1.0 and 0.0 respectively
+        '''
+        lower_bounds = np.maximum(rect[:, 0], -10.0)
+        upper_bounds = np.minimum(rect[:, 1], 10.0)
+        center = (upper_bounds + lower_bounds) / 2
+        return center
+
+    def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf, min_robust: float = None, min_widths: np.ndarray = None, max_robust: bool = False) -> np.ndarray:
         '''
         Parameters
         ----------
@@ -561,6 +570,7 @@ class FACETIndex(Explainer):
         `max_dist`        : the maximum distance from `x` to search for an explanation
         `min_robust`      : the minimum radial robustness an explanation must meet, applied to all features
         `min_widths`      : array of shape (features,) where min_widths[i] is the min required robustness of xprime[i]
+        `max_robust`      : When true chose a point in the nearest rect that maximizes robustness rather than min dist
 
         Returns
         -------
@@ -575,7 +585,7 @@ class FACETIndex(Explainer):
             # performs, a linear scan of all the hyper-rectangles
             # does not support k, weights, constraints, max_dist, min_robust, min_widths
             for i in range(x.shape[0]):
-                closest_rect = None
+                nearest_rect = None
                 min_dist = np.inf
                 # find the indexed rectangle of the the counterfactual class that is cloest
                 for rect in self.index[counterfactual_classes[i]]:
@@ -583,9 +593,13 @@ class FACETIndex(Explainer):
                     dist = self.distance_fn(x[i], test_instance)
                     if dist < min_dist:
                         min_dist = dist
-                        closest_rect = rect
+                        nearest_rect = rect
                 # generate a counterfactual example which falls within this rectangle
-                xprime.append(self.fit_to_rectangle(x[i], closest_rect))
+                if max_robust:
+                    explanation = self.rect_center(nearest_rect)
+                else:
+                    explanation = self.fit_to_rectangle(x[i], nearest_rect)
+                xprime.append(explanation)
 
         elif self.search_type == "BitVector":
             progress = tqdm(total=x.shape[0], desc="FACETIndex", leave=False)
@@ -602,7 +616,10 @@ class FACETIndex(Explainer):
                 )
                 if k == 1 and result is not None:
                     nearest_rect = result
-                    explanation = self.fit_to_rectangle(x[i], nearest_rect)
+                    if max_robust:
+                        explanation = self.rect_center(nearest_rect)
+                    else:
+                        explanation = self.fit_to_rectangle(x[i], nearest_rect)
                     check_class = self.manager.predict([explanation])[0]
                     if check_class != counterfactual_classes[i]:
                         print("failed explanation")
@@ -610,7 +627,10 @@ class FACETIndex(Explainer):
                         print(x[i])
                 elif k > 1 and len(result) > 0:
                     nearest_rect = result[0]
-                    explanation = self.fit_to_rectangle(x[i], nearest_rect)
+                    if max_robust:
+                        explanation = self.rect_center(nearest_rect)
+                    else:
+                        explanation = self.fit_to_rectangle(x[i], nearest_rect)
                 else:
                     explanation = [np.inf for _ in range(x.shape[1])]
 

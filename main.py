@@ -16,6 +16,8 @@ from experiments.vary_ntrees import vary_ntrees
 from experiments.vary_rinit import vary_rinit
 from experiments.vary_rstep import vary_rstep
 from experiments.vary_sigma import vary_sigma
+from experiments.perturbations import perturb_explanations
+from experiments.widths import compute_widths
 
 
 def check_create_directory(dir_path="./results/"):
@@ -89,7 +91,7 @@ if __name__ == "__main__":
     # compare - 7.3 compare methods on fixed ensemble
     parser.add_argument("--expr", choices=["simple", "ntrees", "nrects",
                         "eps", "sigma", "enum", "compare", "k", "rinit", "rstep",
-                                           "m", "nconstraints"], default="simple")
+                                           "m", "nconstraints", "perturb", "widths"], default="simple")
     parser.add_argument("--ds", type=str, nargs="+", default=["vertebral"])
     parser.add_argument("--method", type=str, nargs="+", choices=all_explaiers, default=["FACETIndex"])
     parser.add_argument("--values", type=float, nargs="+", default=None)
@@ -177,3 +179,10 @@ if __name__ == "__main__":
         nconstraints = [int(_) for _ in args.values]
         vary_nconstraints(ds_names=args.ds, nconstraints=nconstraints, iterations=args.it,
                           fmod=args.fmod, ntrees=args.ntrees, max_depth=args.maxdepth)
+
+    elif args.expr == "perturb":
+        perturb_explanations(ds_names=args.ds, explainers=args.method, pert_sizes=args.values,
+                             iterations=args.it, fmod=args.fmod, ntrees=args.ntrees, max_depth=args.maxdepth)
+
+    elif args.expr == "widths":
+        compute_widths(ds_names=args.ds, iteration=args.it[0], ntrees=args.ntrees, max_depth=args.maxdepth)
