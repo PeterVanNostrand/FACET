@@ -66,7 +66,7 @@ class MACE(Explainer):
                                            load_from_cache=False, debug_flag=False, my_df=df.copy())
         self.dataset_obj = dataset_obj
 
-    def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf) -> np.ndarray:
+    def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf, max_robust: bool = False) -> np.ndarray:
         xprime = []
 
         approach_string = "MACE_eps_{}".format(self.epsilon)
