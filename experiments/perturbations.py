@@ -28,7 +28,6 @@ def perturb_explanations(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", 
         experiment_path = "./results/perturbations-" + fmod + "/"
     else:
         experiment_path = "./results/perturbations/"
-    csv_path = experiment_path + "perturbations.csv"
     config_path = experiment_path + "perturbations_config.json"
 
     if not os.path.isdir(experiment_path):
@@ -139,6 +138,7 @@ def perturb_explanations(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", 
                     }
                     results = results.append(row, ignore_index=True)
                     run_result = pd.DataFrame(row, index=[0])
+                    csv_path = experiment_path + "{}_{}_perturbations.csv".format(expl.lower(), ds)
                     if not os.path.exists(csv_path):
                         run_result.to_csv(csv_path, index=False)
                     else:
