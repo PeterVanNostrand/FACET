@@ -11,3 +11,4 @@ figures/*
 !figures/*.ipynb
 ./baselines/ocean-err/*
 rf.lp
+scripts/*
