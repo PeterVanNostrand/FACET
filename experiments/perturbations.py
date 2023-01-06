@@ -118,8 +118,14 @@ def perturb_explanations(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", 
                 for expl in explainers:
                     # perturb the sample and record
                     perturbed_explanations = all_explanations[expl] + scaled_perturbations
-                    perturbed_preds = manager.predict(perturbed_explanations)
-                    per_valid = (perturbed_preds != y_explain).sum() / nperts
+
+                    # temporarily swap out failed explanations for prediction
+                    if (perturbed_explanations == np.inf).any():
+                        per_valid = -1
+                    else:
+                        # compute the percent valid perturbed explanations
+                        perturbed_preds = manager.predict(perturbed_explanations)
+                        per_valid = (perturbed_preds != y_explain).sum() / nperts
 
                     # store results so far
                     row = {
