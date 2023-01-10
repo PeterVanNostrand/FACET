@@ -214,8 +214,9 @@ def execute_run(dataset_name: str, explainer: str, params: dict, output_path: st
 
     # evalute the quality of the explanations
     per_valid = percent_valid(explanations)
-    avg_dist = average_distance(x_explain, explanations, distance_metric="Euclidean")
-    avg_length = average_distance(x_explain, explanations, distance_metric="FeaturesChanged")
+    avg_dist = average_distance(x_explain, explanations, distance_metric="Euclidean")  # L2 Norm Euclidean
+    avg_manhattan = average_distance(x_explain, explanations, distance_metric="Manhattan")  # L1 Norm Manhattan
+    avg_length = average_distance(x_explain, explanations, distance_metric="FeaturesChanged")  # L0 Norm Sparsity
 
     # store and return the top level results
     results = {
@@ -224,6 +225,8 @@ def execute_run(dataset_name: str, explainer: str, params: dict, output_path: st
         "recall": recall,
         "f1": f1,
         "per_valid": per_valid,
+        "avg_dist": avg_dist,
+        "avg_manhattan": avg_manhattan,
         "avg_dist": avg_dist,
         "avg_length": avg_length,
         "prep_time": prep_time,

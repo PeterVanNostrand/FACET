@@ -36,6 +36,36 @@ def dist_euclidean(x, xprime, weights=None):
     distance = np.sqrt(sos_diff)
     return distance
 
+
+def dist_manhattan(x, xprime, weights=None):
+    '''
+    Computes the weighted manhattan distance between `x` and `xprime` sqrt(sum(w*(x_i - xprime_i)**2))
+
+    Parameters
+    ----------
+    x      : a array of dimension d
+    xprime : an array of dimension d+1
+    weights: an array of shape (dimension,)
+
+    Returns
+    -------
+    distance : an array of dimension d+1 containing the Euclidean distance between x and each example in xprime
+    '''
+    diff = np.abs(x - xprime)
+
+    if weights is not None:  # scale the difference by the weights, zero weighted features are unchangeable feature
+        diff[np.where(np.logical_and(diff != 0, weights == 0))] = np.inf  # changing unchangeable feature i->dist[i]=inf
+        np.divide(diff, weights, out=diff, where=(weights != 0))  # handle div by 0, values are set to 0 or inf
+
+    if len(xprime.shape) == 3:
+        distance = np.sum(diff, axis=2)
+    elif len(xprime.shape) == 2:
+        distance = np.sum(diff, axis=1)
+    else:
+        distance = np.sum(diff)
+
+    return distance
+
 # def weighted_dist(x, xprime, weights):
 #     diff = (x - xprime)
 #     squared_diff = np.square(diff)
@@ -116,6 +146,8 @@ def average_distance(x, xprime, distance_metric="Euclidean"):
     # select the distance function which corresonds to the provided distance metric
     if distance_metric == "Euclidean":
         distance_fn = dist_euclidean
+    elif distance_metric == "Manhattan":
+        distance_fn = dist_manhattan
     elif distance_metric == "FeaturesChanged":
         distance_fn = dist_features_changed
     else:
