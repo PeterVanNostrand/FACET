@@ -50,7 +50,7 @@ FACET_TUNED_M = {
 
 
 MACE_DEFAULT_PARAMS = {
-    "mace_maxtime": None,
+    "mace_maxtime": 300,
     "mace_epsilon": 1e-7,
     "mace_verbose": False
 }
