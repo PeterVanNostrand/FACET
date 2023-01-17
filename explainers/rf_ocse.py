@@ -82,7 +82,7 @@ class RFOCSE(Explainer):
         self.dataset_info: DatasetInfo = dataset_info
         self.Xtrain: pd.DataFrame = X
 
-    def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf, max_robust: bool = False) -> np.ndarray:
+    def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf, opt_robust: bool = False, min_robust: float = None) -> np.ndarray:
         if self.perform_transform:
             x = self.float_transformer.transform(x)
         # an array for the constructed contrastive examples

@@ -18,6 +18,7 @@ from experiments.vary_rstep import vary_rstep
 from experiments.vary_sigma import vary_sigma
 from experiments.perturbations import perturb_explanations
 from experiments.widths import compute_widths
+from experiments.vary_robustness import vary_robustness
 
 
 def check_create_directory(dir_path="./results/"):
@@ -91,7 +92,7 @@ if __name__ == "__main__":
     # compare - 7.3 compare methods on fixed ensemble
     parser.add_argument("--expr", choices=["simple", "ntrees", "nrects",
                         "eps", "sigma", "enum", "compare", "k", "rinit", "rstep",
-                                           "m", "nconstraints", "perturb", "widths"], default="simple")
+                                           "m", "nconstraints", "perturb", "widths", "robust"], default="simple")
     parser.add_argument("--ds", type=str, nargs="+", default=["vertebral"])
     parser.add_argument("--method", type=str, nargs="+", choices=all_explaiers, default=["FACETIndex"])
     parser.add_argument("--values", type=float, nargs="+", default=None)
@@ -186,3 +187,12 @@ if __name__ == "__main__":
 
     elif args.expr == "widths":
         compute_widths(ds_names=args.ds, iteration=args.it[0], ntrees=args.ntrees, max_depth=args.maxdepth)
+
+    elif args.expr == "robust":
+        if args.values is not None:
+            vary_robustness(ds_names=args.ds, min_robust=args.values, iterations=args.it,
+                            fmod=args.fmod, ntrees=args.ntrees, max_depth=args.maxdepth)
+        else:
+            print("using default values")
+            vary_robustness(ds_names=args.ds, iterations=args.it, fmod=args.fmod,
+                            ntrees=args.ntrees, max_depth=args.maxdepth)

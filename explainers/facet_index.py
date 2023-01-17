@@ -556,7 +556,7 @@ class FACETIndex(Explainer):
         center = (upper_bounds + lower_bounds) / 2
         return center
 
-    def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf, min_robust: float = None, min_widths: np.ndarray = None, max_robust: bool = False) -> np.ndarray:
+    def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf, min_robust: float = None, min_widths: np.ndarray = None, opt_robust: bool = False) -> np.ndarray:
         '''
         Parameters
         ----------
@@ -570,7 +570,7 @@ class FACETIndex(Explainer):
         `max_dist`        : the maximum distance from `x` to search for an explanation
         `min_robust`      : the minimum radial robustness an explanation must meet, applied to all features
         `min_widths`      : array of shape (features,) where min_widths[i] is the min required robustness of xprime[i]
-        `max_robust`      : When true chose a point in the nearest rect that maximizes robustness rather than min dist
+        `opt_robust`      : When true chose a point in the nearest rect that maximizes robustness rather than min dist
 
         Returns
         -------
@@ -595,7 +595,7 @@ class FACETIndex(Explainer):
                         min_dist = dist
                         nearest_rect = rect
                 # generate a counterfactual example which falls within this rectangle
-                if max_robust:
+                if opt_robust:
                     explanation = self.rect_center(nearest_rect)
                 else:
                     explanation = self.fit_to_rectangle(x[i], nearest_rect)
@@ -616,7 +616,7 @@ class FACETIndex(Explainer):
                 )
                 if k == 1 and result is not None:
                     nearest_rect = result
-                    if max_robust:
+                    if opt_robust:
                         explanation = self.rect_center(nearest_rect)
                     else:
                         explanation = self.fit_to_rectangle(x[i], nearest_rect)
@@ -627,7 +627,7 @@ class FACETIndex(Explainer):
                         print(x[i])
                 elif k > 1 and len(result) > 0:
                     nearest_rect = result[0]
-                    if max_robust:
+                    if opt_robust:
                         explanation = self.rect_center(nearest_rect)
                     else:
                         explanation = self.fit_to_rectangle(x[i], nearest_rect)

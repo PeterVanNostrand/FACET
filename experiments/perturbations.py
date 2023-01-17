@@ -106,7 +106,7 @@ def perturb_explanations(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", 
 
                 # explain the samples using RF predictions (not ground truth)
                 explain_preds = manager.predict(x_explain)
-                all_explanations[expl] = manager.explain(x_explain, explain_preds, max_robust=True)
+                all_explanations[expl] = manager.explain(x_explain, explain_preds, opt_robust=True)
 
             # generate a set of permuation vectors
             unscaled_perturbations = np.random.rand(nperts, x.shape[1])  # random direction vectors

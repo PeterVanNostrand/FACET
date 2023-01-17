@@ -63,7 +63,7 @@ class OCEAN(Explainer):
     def prepare_dataset(self, x, y):
         pass
 
-    def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf, max_robust=False) -> np.ndarray:
+    def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf, opt_robust: bool = False, min_robust: float = None) -> np.ndarray:
         counterfactual_classes = ((y - 1) * -1)
         xprime = np.empty(shape=x.shape)
         xprime[:, :] = np.inf

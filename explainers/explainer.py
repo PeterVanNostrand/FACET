@@ -33,7 +33,7 @@ class Explainer(ABC):
         pass
 
     @abstractmethod
-    def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf) -> np.ndarray:
+    def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf, min_robust: float = None, opt_robust: bool = False) -> np.ndarray:
         '''
         Function to perform explanation synthesis for the given samples using the provided detectors and aggregator
         '''
