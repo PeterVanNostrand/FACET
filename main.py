@@ -87,9 +87,6 @@ if __name__ == "__main__":
     all_explaiers = ["FACETIndex", "OCEAN", "RFOCSE", "AFT", "MACE"]
 
     parser = argparse.ArgumentParser(description='Run FACET Experiments')
-    # epsilon - MACE experiment for step size in their exploration
-    # sigma - FACET index evaluation (how much do we move our augmented data in region enumeration)
-    # compare - 7.3 compare methods on fixed ensemble
     parser.add_argument("--expr", choices=["simple", "ntrees", "nrects",
                         "eps", "sigma", "enum", "compare", "k", "rinit", "rstep",
                                            "m", "nconstraints", "perturb", "widths", "robust"], default="simple")

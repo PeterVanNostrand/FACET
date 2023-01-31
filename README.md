@@ -1,6 +1,6 @@
 # FACET: Robust Counterfactual Explanation Analytics
 
-This repository contains prototype code for the paper *FACET: Robust Counterfactual Explanation Analytics*, currently under review at SIGMOD 2023.
+This repository contains prototype code for the paper *FACET: Robust Counterfactual Explanation Analytics*, currently under review at VLDB 2023.
 
 FACET (Fast Actionable Counterfactuals for Ensembles of Trees) generates a novel type of explanation which we call *counterfactual regions* for decisions made by ensembles of trees. For an instance `x` a counterfactual region `R` defines a portions of the feature space where all points `x' in R` are guaranteed to be counterfactual to `x`, e.g. if `y=f(x)=A` then `y=f(x')=B`. We design FACET to be highly performant and support a wide variety of user parameters such that explanations can be interactively personalized to meet real users needs.
 
@@ -23,16 +23,16 @@ grbgetkey <your_acadmic_license_key>
 
 For convenience [main.py](./main.py) takes a variety of command line arguments
 
-| flag         | purpose                                              | allowed values                                                   |
-| ------------ | ---------------------------------------------------- | ---------------------------------------------------------------- |
-| --expr       | the experiment to run                                | simple, ntrees, nrects, compare, k, m, nconstraints              |
-| --values     | the experimental values to test                      | space separated list of values e.g. `10 50 100` or `0.1 0.2 0.3` |
-| --ds         | the dataset to explain                               | cancer, glass, magic, spambase, vertebral                        |
-| --method     | the XAI method to use                                | FACETIndex, OCEAN, RFOCSE, AFT, MACE                             |
-| --ntrees     | the ensemble size to test                            | integer value, overridden in for --expr ntrees                   |
-| ----maxdepth | the max depth of ensemble trees                      | integer value, `-1` for no max depth                             |
-| --it         | the iteration to run, used as random seed            | space separated integer values                                   |
-| --fmod       | a filename modifier append to append to results file | string value                                                     |
+| flag         | purpose                                              | allowed values                                                       |
+| ------------ | ---------------------------------------------------- | -------------------------------------------------------------------- |
+| --expr       | the experiment to run                                | simple, ntrees, nrects, compare, k, m, nconstraints, perturb, robust |
+| --values     | the experimental values to test                      | space separated list of values e.g. `10 50 100` or `0.1 0.2 0.3`     |
+| --ds         | the dataset to explain                               | cancer, glass, magic, spambase, vertebral                            |
+| --method     | the XAI method to use                                | FACETIndex, OCEAN, RFOCSE, AFT, MACE                                 |
+| --ntrees     | the ensemble size to test                            | integer value, overridden in for --expr ntrees                       |
+| ----maxdepth | the max depth of ensemble trees                      | integer value, `-1` for no max depth                                 |
+| --it         | the iteration to run, used as random seed            | space separated integer values                                       |
+| --fmod       | a filename modifier append to append to results file | string value                                                         |
 
 Executing `python main.py` with no flags will perform a simple explanation of 20 instances on the vertebral dataset using FACET and an ensemble with `T=10, Dmax=5`. Parameters not involved in any given experiment are set to the default values provided in [experiments.py](./experiments/experiments.py)
 
