@@ -1,6 +1,6 @@
 # FACET: Robust Counterfactual Explanation Analytics
 
-This repository contains prototype code for the paper *FACET: Robust Counterfactual Explanation Analytics*, currently under review at VLDB 2023.
+This repository contains prototype code for the paper *FACET: Robust Counterfactual Explanation Analytics*, currently under review at SIGMOD 2024.
 
 FACET (Fast Actionable Counterfactuals for Ensembles of Trees) generates a novel type of explanation which we call *counterfactual regions* for decisions made by ensembles of trees. For an instance `x` a counterfactual region `R` defines a portions of the feature space where all points `x' in R` are guaranteed to be counterfactual to `x`, e.g. if `y=f(x)=A` then `y=f(x')=B`. We design FACET to be highly performant and support a wide variety of user parameters such that explanations can be interactively personalized to meet real users needs.
 
