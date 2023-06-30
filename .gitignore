@@ -10,3 +10,6 @@ mace_temp.log
 ./baselines/ocean-err/*
 rf.lp
 scripts/*
+visualization/*
+results/*
+!results/final
