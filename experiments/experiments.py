@@ -14,11 +14,12 @@ from utilities.metrics import (average_distance, classification_metrics,
                                percent_valid)
 
 TUNED_FACET_SD = {
+    "adult": 0.01,  # TODO TUNE!
     "cancer": 0.1,
     "glass": 0.005,
     "magic": 0.001,
     "spambase": 0.01,
-    "vertebral": 0.05
+    "vertebral": 0.05,
 }
 
 # generated as the average minimum point to point distance
@@ -41,11 +42,12 @@ AVG_CF_NN_DIST = {
 # TUNED_FACET_RADII = AVG_NN_DIST
 
 FACET_TUNED_M = {
+    "adult": 16,  # TODO TUNE!
     "cancer": 16,
     "glass": 16,
     "magic": 16,
     "spambase": 16,
-    "vertebral": 16
+    "vertebral": 16,
 }
 
 
