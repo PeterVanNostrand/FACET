@@ -14,6 +14,10 @@ if TYPE_CHECKING:
 
 
 class MACE(Explainer):
+    '''
+    A wrapper for the Model Agnostic Counterfactual Explanations method developed in "Model-Agnostic Counterfactual Explanations for Consequential Decisions." Code was pulled from https://github.com/amirhk/mace. The original paper can be found at https://proceedings.mlr.press/v108/karimi20a/karimi20a.pdf
+    '''
+
     def __init__(self, manager, hyperparameters=None):
         self.manager: MethodManager = manager
         self.parse_hyperparameters(hyperparameters)

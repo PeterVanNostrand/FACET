@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 class OCEAN(Explainer):
     '''
-    A wrapper for the Optimal Counterfactual ExplANations method developed in "ptimal Counterfactual Explanations in Tree Ensembles." Code was pulled from https://github.com/vidalt/OCEAN. The original paper can be found at https://arxiv.org/pdf/2106.06631.pdf
+    A wrapper for the Optimal Counterfactual ExplANations method developed in "Optimal Counterfactual Explanations in Tree Ensembles." Code was pulled from https://github.com/vidalt/OCEAN. The original paper can be found at https://arxiv.org/pdf/2106.06631.pdf
     '''
 
     def __init__(self, manager, hyperparameters=None):
