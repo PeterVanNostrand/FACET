@@ -6,17 +6,70 @@ import pandas as pd
 from tqdm.auto import tqdm
 
 from baselines.mace.batchTest import generateExplanations
-from baselines.mace.loadData import Dataset, loadDataset
+from baselines.mace.loadData import Dataset, DatasetAttribute, loadDataset
+from baselines.ocean.CounterFactualParameters import FeatureActionability, FeatureType
 from explainers.explainer import Explainer
 
 if TYPE_CHECKING:
     from manager import MethodManager
+
+MACE_TYPE_FROM_FACET_TYPE = {
+    FeatureType.Numeric: "numeric-real",
+    FeatureType.Binary: "binary",
+    FeatureType.Discrete: "numeric-int",
+    FeatureType.Categorical: "categorical",
+    FeatureType.CategoricalNonOneHot: "ordinal",  # ! WARNING NOT MACE SUPPORTED
+}
+
+MACE_ACTION_FROM_FACET_ACTION = {
+    FeatureActionability.Free: "any",
+    FeatureActionability.Fixed: "none",
+    FeatureActionability.Increasing: "same-or-increase",
+    FeatureActionability.Predict: "none",
+}
+
+MACE_MUTABILITY_FROM_FACET_ACTION = {
+    FeatureActionability.Free: True,
+    FeatureActionability.Fixed: False,
+    FeatureActionability.Increasing: True,
+    FeatureActionability.Predict: False,
+}
+# prepare the MACE dataset info object
+# non_hot_df = data.iloc[2:].astype(np.float64)
+# attributes_non_hot = get_mace_non_hot(data=non_hot_df, col_names=col_names, col_types=col_types, col_actions=col_actionabiltiy)
+
+
+def get_mace_non_hot(data, col_names, col_types, col_actions):
+    '''
+    Takes FACET/OCEAN encoded feature types and converts them to MACE DatasetAttributes
+    '''
+    attributes_non_hot = {}
+
+    for i in range(len(col_names)):
+        if col_types[i] in (FeatureType.Numeric, FeatureType.Binary, FeatureType.Discrete, FeatureType.CategoricalNonOneHot):
+            col_name = col_names[i]
+
+            attributes_non_hot[col_name] = DatasetAttribute(
+                attr_name_long=col_name,
+                attr_name_kurz=f"x{i}" if col_actions[i] != FeatureActionability.Predict else "y",
+                attr_type=MACE_TYPE_FROM_FACET_TYPE[col_types[i]],
+                node_type="input" if col_actions[i] != FeatureActionability.Predict else "output",
+                actionability=MACE_ACTION_FROM_FACET_ACTION[col_actions[i]],
+                mutability=MACE_MUTABILITY_FROM_FACET_ACTION[col_actions[i]],
+                parent_name_long=-1,
+                parent_name_kurz=-1,
+                lower_bound=data[col_name].min(),
+                upper_bound=data[col_name].max()
+            )
+
+    return attributes_non_hot
 
 
 class MACE(Explainer):
     '''
     A wrapper for the Model Agnostic Counterfactual Explanations method developed in "Model-Agnostic Counterfactual Explanations for Consequential Decisions." Code was pulled from https://github.com/amirhk/mace. The original paper can be found at https://proceedings.mlr.press/v108/karimi20a/karimi20a.pdf
     '''
+    # TODO: Apply attribute typing and one-hot encoding (convert from FACET/OCEAN schema)
 
     def __init__(self, manager, hyperparameters=None):
         self.manager: MethodManager = manager
@@ -53,7 +106,7 @@ class MACE(Explainer):
     def prepare(self, xtrain=None, ytrain=None):
         pass
 
-    def prepare_dataset(self, x, y):
+    def prepare_dataset(self, x: np.ndarray, y: np.ndarray, ds_info) -> None:
         df = pd.DataFrame(x)
         col_names = []
         for i in range(x.shape[1]):

@@ -31,7 +31,7 @@ class CuiRandomForestCounterFactualMilp(ClassifierCounterFactualMilp):
         if featuresActionnability:
             self.featuresActionnability = featuresActionnability
         else:
-            self.featuresActionnability = [FeatureActionnability.Free for f in range(self.nFeatures)]
+            self.featuresActionnability = [FeatureActionability.Free for f in range(self.nFeatures)]
 
     def buildLevels(self):
         self.planes = dict()
@@ -314,7 +314,7 @@ class CuiRandomForestCounterFactualMilp(ClassifierCounterFactualMilp):
     def addActionnabilityConstraints(self):
         self.actionnabilityConstraints = dict()
         for f in range(self.nFeatures):
-            if self.featuresActionnability[f] == FeatureActionnability.Increasing:
+            if self.featuresActionnability[f] == FeatureActionability.Increasing:
                 if self.featuresType[f] not in [FeatureType.Numeric, FeatureType.Discrete]:
                     print("Increasing actionnability is avaialable only for numeric and discrete features")
                 else:
@@ -323,7 +323,7 @@ class CuiRandomForestCounterFactualMilp(ClassifierCounterFactualMilp):
                         if self.cellUpperBound[f][cell] >= self.x0[0][f]:
                             expr += self.cellVar[f][cell]
                     self.model.addConstr(expr == 1, "actionnability_f"+str(f))
-            elif self.featuresActionnability[f] == FeatureActionnability.Fixed:
+            elif self.featuresActionnability[f] == FeatureActionability.Fixed:
                 for cell in range(self.numberOfCellsOfFeature[f]):
                     if self.cellLowerBound[f][cell] < self.x0[0][f] and self.cellUpperBound[f][cell] >= self.x0[0][f]:
                         self.model.addConstr(self.cellVar[f][cell] == 1, "actionnability_f"+str(f))

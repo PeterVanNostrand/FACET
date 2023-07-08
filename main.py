@@ -54,8 +54,8 @@ def simple_run(ds_name="vertebral", explainer="FACETIndex", random_state=0, ntre
     params["RandomForest"]["rf_ntrees"] = ntrees
     params["RandomForest"]["rf_maxdepth"] = max_depth
     params["RandomForest"]["rf_maxdepth"] = max_depth
-    params["FACETIndex"]["facet_sd"] = TUNED_FACET_SD[ds_name]
-    params["FACETIndex"]["rbv_num_interval"] = FACET_TUNED_M[ds_name]
+    params["FACETIndex"]["facet_sd"] = TUNED_FACET_SD[ds_name] if ds_name in TUNED_FACET_SD else 0.01
+    params["FACETIndex"]["rbv_num_interval"] = FACET_TUNED_M[ds_name] if ds_name in FACET_TUNED_M else 16
 
     preprocessing = "Normalize"
     n_explain = 20

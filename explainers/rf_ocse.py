@@ -17,6 +17,7 @@ from baselines.rfocse.datasets import DatasetInfo, DatasetInfoBuilder
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from manager import MethodManager
+    from dataset import DataInfo
 
 
 class RFOCSE(Explainer):
@@ -58,8 +59,8 @@ class RFOCSE(Explainer):
         else:
             self.maxtime = maxtime
 
-    def prepare_dataset(self, x, y):
-        pass
+    def prepare_dataset(self, x: np.ndarray, y: np.ndarray, ds_info) -> None:
+        self.ds_info: DataInfo = ds_info
 
     def prepare(self, xtrain=None, ytrain=None):
         data = xtrain

@@ -6,7 +6,7 @@ from sklearn.ensemble import IsolationForest
 from tqdm.auto import tqdm
 
 from baselines.ocean.CounterFactualParameters import (BinaryDecisionVariables,
-                                                      FeatureActionnability,
+                                                      FeatureActionability,
                                                       FeatureType,
                                                       TreeConstraintsType)
 from baselines.ocean.RandomForestCounterFactual import RandomForestCounterFactualMilp
@@ -15,6 +15,7 @@ from explainers.explainer import Explainer
 
 if TYPE_CHECKING:
     from manager import MethodManager
+    from dataset import DataInfo
 
 
 class OCEAN(Explainer):
@@ -60,8 +61,8 @@ class OCEAN(Explainer):
         else:
             self.ilfs = [None for _ in range(rf_nclasses)]
 
-    def prepare_dataset(self, x, y):
-        pass
+    def prepare_dataset(self, x: np.ndarray, y: np.ndarray, ds_info) -> None:
+        self.ds_info: DataInfo = ds_info
 
     def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf, opt_robust: bool = False, min_robust: float = None) -> np.ndarray:
         counterfactual_classes = ((y - 1) * -1)
@@ -80,7 +81,7 @@ class OCEAN(Explainer):
 
             feat_types = [FeatureType.Numeric for _ in range(x.shape[1])]
             possible_vals = [[] for _ in range(x.shape[1])]
-            feat_actionability = [FeatureActionnability.Free for _ in range(x.shape[1])]
+            feat_actionability = [FeatureActionability.Free for _ in range(x.shape[1])]
 
             randomForestMilp = RandomForestCounterFactualMilp(
                 classifier=self.manager.random_forest.model,
@@ -92,10 +93,11 @@ class OCEAN(Explainer):
                 mutuallyExclusivePlanesCutsActivated=True,
                 strictCounterFactual=True,
                 verbose=False,
-                binaryDecisionVariables=BinaryDecisionVariables.PathFlow_y,
-                featuresActionnability=feat_actionability,
                 featuresType=feat_types,
                 featuresPossibleValues=possible_vals,
+                featuresActionnability=feat_actionability,
+                oneHotEncoding=False,
+                binaryDecisionVariables=BinaryDecisionVariables.PathFlow_y,
                 randomCostsActivated=False
             )
             randomForestMilp.buildModel()

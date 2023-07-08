@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
-
 import numpy as np
+from typing import TYPE_CHECKING
 
 
 class Explainer(ABC):
@@ -10,7 +10,7 @@ class Explainer(ABC):
     '''
 
     @abstractmethod
-    def __init__(self, manager, hyperparameters=None):
+    def __init__(self, manager, hyperparameters: dict = None) -> None:
         '''
         Function to instantiate the explanation method being used.
         Hyparameters should be a dictionary which contains the neccesary configuration values for the method.
@@ -19,14 +19,14 @@ class Explainer(ABC):
         pass
 
     @abstractmethod
-    def prepare_dataset(self, x, y):
+    def prepare_dataset(self, x: np.ndarray, y: np.ndarray, ds_info) -> None:
         '''
         Function to ready and dataset statistics needed for comparison methods. Method is not to store any samples for use in explanation
         '''
         pass
 
     @abstractmethod
-    def prepare(self, xtrain=None, ytrain=None):
+    def prepare(self, xtrain: np.ndarray = None, ytrain: np.ndarray = None) -> None:
         '''
         Function to initialize the explainer, called after the model is trained.
         '''

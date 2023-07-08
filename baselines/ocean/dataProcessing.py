@@ -92,9 +92,9 @@ class DatasetReader:
                               'Class' and columnFeatures[column] == FeatureType.Categorical]
 
         for column in categoricalColumns:
-            if columnActionnability[column] == FeatureActionnability.Increasing:
+            if columnActionnability[column] == FeatureActionability.Increasing:
                 print("warning, categorical feature ", column, "cannot be with increasing feasability, changed to free")
-                columnActionnability[column] = FeatureActionnability.Free
+                columnActionnability[column] = FeatureActionability.Free
             featureOneHot = pd.get_dummies(self.data[column], prefix=column)
             oneHotEncoding[column] = []
             for newCol in featureOneHot:
@@ -235,7 +235,7 @@ class DatasetReader_oldDatasetsWithoutActionnability:
         # Get the datatypes and remove the corresponding row
         self.featuresType = [getFeatureType_oldDatasetsWithoutActionnability(
             data[column][0]) for column in data.columns if column != 'Class']
-        self.featuresActionnability = [FeatureActionnability.Free for column in data.columns if column != 'Class']
+        self.featuresActionnability = [FeatureActionability.Free for column in data.columns if column != 'Class']
         # Rescale data
         self.data = min_max_scaling_with_type_oldDatasetsWithoutActionnability(data)
         # Features possibles values

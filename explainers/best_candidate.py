@@ -9,6 +9,7 @@ from utilities.metrics import dist_euclidean
 from utilities.tree_tools import TreeContraster
 
 if TYPE_CHECKING:
+    from dataset import DataInfo
     from manager import MethodManager
 
 
@@ -39,7 +40,7 @@ class AFT(Explainer):
     def prepare(self, xtrain=None, ytrain=None):
         pass
 
-    def prepare_dataset(self, x, y):
+    def prepare_dataset(self, x: np.ndarray, y: np.ndarray, ds_info) -> None:
         pass
 
     def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf, opt_robust: bool = False, min_robust: float = None) -> np.ndarray:

@@ -57,7 +57,7 @@ class ClassifierCounterFactualMilp:
         if featuresActionnability:
             self.featuresActionnability = featuresActionnability
         else:
-            self.featuresActionnability = [FeatureActionnability.Free for f in range(self.nFeatures)]
+            self.featuresActionnability = [FeatureActionability.Free for f in range(self.nFeatures)]
 
         if oneHotEncoding:
             self.oneHotEncoding = oneHotEncoding
@@ -105,7 +105,7 @@ class ClassifierCounterFactualMilp:
     def addActionnabilityConstraints(self):
         self.actionnabilityConstraints = dict()
         for f in range(self.nFeatures):
-            if self.featuresActionnability[f] == FeatureActionnability.Increasing:
+            if self.featuresActionnability[f] == FeatureActionability.Increasing:
                 if self.featuresType[f] not in [FeatureType.Numeric, FeatureType.Discrete]:
                     print("Increasing actionnability is avaialable only for numeric and discrete features")
                 else:
@@ -113,7 +113,7 @@ class ClassifierCounterFactualMilp:
                         self.x_var_sol[f] >= self.x0[0][f],
                         "ActionnabilityIncreasing_f" + str(f)
                     )
-            elif self.featuresActionnability[f] == FeatureActionnability.Fixed:
+            elif self.featuresActionnability[f] == FeatureActionability.Fixed:
                 self.actionnabilityConstraints[f] = self.model.addConstr(
                     self.x_var_sol[f] == self.x0[0][f],
                     "ActionnabilityFixed_f" + str(f)

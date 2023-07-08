@@ -1,15 +1,17 @@
 # Build from datasets the set of counterfactuals that will be used in the numerical experiments
 
-from RunExperimentsRoutines import *
-from BuildCounterFactualSeekedSet import *
+from baselines.ocean.RunExperimentsRoutines import *
+from baselines.ocean.BuildCounterFactualSeekedSet import *
+
+print("In module products __package__, __name__ ==", __package__, __name__)
 
 datasetsWithDesiredOutcome = {
-    # './datasets/Adult_processedMACE.csv':1,
+    './baselines/ocean/datasets/Adult_processedMACE.csv': 1,
     # './datasets/COMPAS-ProPublica_processedMACE.csv':1,
     # './datasets/Credit-Card-Default_processedMACE.csv':1,
     # './datasets/German-Credit.csv':1,
     # './datasets/Phishing.csv':1,
-    './datasets/Spambase.csv': 1,
+    # './datasets/Spambase.csv': 1,
     # './datasets/Students-Performance-MAT.csv':1,
     # './datasets/OnlineNewsPopularity.csv':1
 }
@@ -20,11 +22,11 @@ for dataset in datasetsWithDesiredOutcome:
 # Compute and store in results/Figure1.csv the numerical experiments needed to build figure 1
 
 ourDatasetsWithCounterfactualsDict = {
-    # './datasets/Adult_processedMACE.csv':'./counterfactuals/OneHot_Adult_processedMACE.csv',
+    './baselines/ocean/datasets/Adult_processedMACE.csv': './baselines/ocean/datasets/counterfactuals/OneHot_Adult_processedMACE.csv',
     # './datasets/COMPAS-ProPublica_processedMACE.csv':'./counterfactuals/OneHot_COMPAS-ProPublica_processedMACE.csv',
     # './datasets/German-Credit.csv':'./counterfactuals/OneHot_German-Credit.csv',
     # './datasets/Phishing.csv':'./counterfactuals/OneHot_Phishing.csv',
-    './datasets/Spambase.csv': './datasets/counterfactuals/OneHot_Spambase.csv',
+    # './datasets/Spambase.csv': './datasets/counterfactuals/OneHot_Spambase.csv',
     # './datasets/Students-Performance-MAT.csv':'./counterfactuals/OneHot_Students-Performance-MAT.csv',
     # './datasets/Credit-Card-Default_processedMACE.csv':'./counterfactuals/OneHot_Credit-Card-Default_processedMACE.csv',
     # './datasets/OnlineNewsPopularity.csv':'./counterfactuals/OneHot_OnlineNewsPopularity.csv',

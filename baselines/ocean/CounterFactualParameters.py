@@ -6,14 +6,18 @@ import numpy as np
 eps = 1e-5
 
 # TreeConstraintsType = Enum("TreeConstraintsType", "BigM ExtendedFormulation")
+
+
 class TreeConstraintsType(Enum):
     BigM = 1
     ExtendedFormulation = 2
     LinearCombinationOfPlanes = 3
 
+
 class BinaryDecisionVariables(Enum):
     LeftRight_lambda = 1
     PathFlow_y = 2
+
 
 class FeatureType(Enum):
     Numeric = 1
@@ -22,11 +26,13 @@ class FeatureType(Enum):
     Categorical = 4
     CategoricalNonOneHot = 5
 
-class FeatureActionnability(Enum):
+
+class FeatureActionability(Enum):
     Free = 1
     Fixed = 2
     Increasing = 3
     Predict = 4
+
 
 def getFeatureType(name):
     if name == 'N':
@@ -41,6 +47,7 @@ def getFeatureType(name):
         print("Unknown feature type", name)
         return None
 
+
 def getFeatureType_oldDatasetsWithoutActionnability(name):
     if name == 'C':
         return FeatureType.Numeric
@@ -51,31 +58,33 @@ def getFeatureType_oldDatasetsWithoutActionnability(name):
     else:
         print("Unknown feature type", name)
         return None
-        
+
+
 def isFeatureTypeScalable(featureType):
     if featureType == FeatureType.Categorical:
         return False
     return True
 
+
 def getFeatureActionnability(name):
     if name == "FREE":
-        return FeatureActionnability.Free
+        return FeatureActionability.Free
     elif name == "FIXED":
-        return FeatureActionnability.Fixed
+        return FeatureActionability.Fixed
     elif name == "INC":
-        return FeatureActionnability.Increasing
+        return FeatureActionability.Increasing
     elif name == "PREDICT":
-        return FeatureActionnability.Predict
+        return FeatureActionability.Predict
     elif name == "PROBLEM":
         print("Problematic feature treated as free")
-        return FeatureActionnability.Free
+        return FeatureActionability.Free
     else:
         print("Unknown actionnability", name)
         return None
+
 
 class ObjectiveType(Enum):
     L0 = 0
     L1 = 1
     L2 = 2
     # Mahalanobis1 = 11
-

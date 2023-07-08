@@ -1,5 +1,9 @@
 # Important note: This file is given to reproduce the Benchmark of OCEAN paper. It is not part of the OCEAN package and will not be updated with new versions of OCEAN.
 
+from CuiRandomForestCounterFactual import *
+from RandomForestCounterFactual import *
+import time
+import maceUpdatedForOceanBenchmark.newLoadData
 import pickle
 import pandas as pd
 import numpy as np
@@ -14,43 +18,42 @@ import multiprocessing as mp
 import os
 import sys
 sys.path.append("/home/axel/Documents/code/counterfactuals/ocean/ocean")
-import maceUpdatedForOceanBenchmark.newLoadData
 
-import time
-
-from RandomForestCounterFactual import *
-from CuiRandomForestCounterFactual import *
 
 class MaceDatasetReader:
-    def __init__(self, maceFolder, rangeFeasibilityForDiscreteFeatures = False):
+    def __init__(self, maceFolder, rangeFeasibilityForDiscreteFeatures=False):
         maceDatasetSerializedFilename = maceFolder + "/_dataset_obj"
         maceSerializedClf = maceFolder + "/_model_trained"
         maceSerializedFactuals = maceFolder + "/_minimum_distances"
-        
+
         self.initialized = True
         if not os.path.isfile(maceSerializedFactuals):
             self.initialized = False
             return
 
         # Initialize from Mace Dataset
-        self.maceDataset : newLoadData.Dataset = pickle.load(open(maceDatasetSerializedFilename, "rb"))
+        self.maceDataset: newLoadData.Dataset = pickle.load(open(maceDatasetSerializedFilename, "rb"))
         self.featuresActionnability = []
         featureTypeOfMaceFeature = {
-            'numeric-int' : FeatureType.Discrete, 
-            'numeric-real' : FeatureType.Numeric, 
-            'binary' : FeatureType.Binary,
-            'categorical' : FeatureType.CategoricalNonOneHot, 
-            'ordinal' : FeatureType.Discrete,
+            'numeric-int': FeatureType.Discrete,
+            'numeric-real': FeatureType.Numeric,
+            'binary': FeatureType.Binary,
+            'categorical': FeatureType.CategoricalNonOneHot,
+            'ordinal': FeatureType.Discrete,
         }
-        self.featuresType = [featureTypeOfMaceFeature[column.attr_type] for kurzname, column in self.maceDataset.attributes_kurz.items() if kurzname != 'y']
-        featureActionnabilityOfMaceActionnability = { 
-            'none' : FeatureActionnability.Fixed,
-            'any' : FeatureActionnability.Free,
-            'same-or-increase' : FeatureActionnability.Increasing
+        self.featuresType = [featureTypeOfMaceFeature[column.attr_type]
+                             for kurzname, column in self.maceDataset.attributes_kurz.items() if kurzname != 'y']
+        featureActionnabilityOfMaceActionnability = {
+            'none': FeatureActionability.Fixed,
+            'any': FeatureActionability.Free,
+            'same-or-increase': FeatureActionability.Increasing
         }
-        self.featuresActionnability = [featureActionnabilityOfMaceActionnability[column.actionability] for kurzname, column in self.maceDataset.attributes_kurz.items() if kurzname != 'y']
-        self.lowerBoundsList = [column.lower_bound for kurzname, column in self.maceDataset.attributes_kurz.items() if kurzname != 'y']
-        self.upperBoundsList = [column.upper_bound for kurzname, column in self.maceDataset.attributes_kurz.items() if kurzname != 'y']
+        self.featuresActionnability = [featureActionnabilityOfMaceActionnability[column.actionability]
+                                       for kurzname, column in self.maceDataset.attributes_kurz.items() if kurzname != 'y']
+        self.lowerBoundsList = [column.lower_bound for kurzname,
+                                column in self.maceDataset.attributes_kurz.items() if kurzname != 'y']
+        self.upperBoundsList = [column.upper_bound for kurzname,
+                                column in self.maceDataset.attributes_kurz.items() if kurzname != 'y']
 
         self.featuresPossibleValues = []
         for kurzname, attr in self.maceDataset.attributes_kurz.items():
@@ -59,17 +62,20 @@ class MaceDatasetReader:
                     self.featuresPossibleValues.append(self.maceDataset.data_frame_kurz[kurzname].unique())
                 elif featureTypeOfMaceFeature[attr.attr_type] == FeatureType.Discrete:
                     if rangeFeasibilityForDiscreteFeatures:
-                        self.featuresPossibleValues.append([(i - attr.lower_bound)/(attr.upper_bound - attr.lower_bound)  for i in range(int(attr.lower_bound), int(attr.upper_bound+1))])
+                        self.featuresPossibleValues.append(
+                            [(i - attr.lower_bound)/(attr.upper_bound - attr.lower_bound) for i in range(int(attr.lower_bound), int(attr.upper_bound+1))])
                     else:
-                        
-                        self.featuresPossibleValues.append(sorted((self.maceDataset.data_frame_kurz[kurzname].unique() - attr.lower_bound) /(attr.upper_bound - attr.lower_bound)))
+
+                        self.featuresPossibleValues.append(
+                            sorted((self.maceDataset.data_frame_kurz[kurzname].unique() - attr.lower_bound) / (attr.upper_bound - attr.lower_bound)))
                 elif featureTypeOfMaceFeature[attr.attr_type] == FeatureType.CategoricalNonOneHot:
-                    self.featuresPossibleValues.append(sorted((self.maceDataset.data_frame_kurz[kurzname].unique() - attr.lower_bound) /(attr.upper_bound - attr.lower_bound)))    
+                    self.featuresPossibleValues.append(
+                        sorted((self.maceDataset.data_frame_kurz[kurzname].unique() - attr.lower_bound) / (attr.upper_bound - attr.lower_bound)))
                 else:
                     self.featuresPossibleValues.append([])
 
         # initialize clfRead from Mace clf, and scale clf
-        self.clfRead : RandomForestClassifier = pickle.load(open(maceSerializedClf, "rb"))
+        self.clfRead: RandomForestClassifier = pickle.load(open(maceSerializedClf, "rb"))
         assert self.clfRead.n_features_ == len(self.featuresType)
         assert type(self.clfRead) == RandomForestClassifier
 
@@ -80,7 +86,8 @@ class MaceDatasetReader:
             for v in range(tree.capacity):
                 f = tree.feature[v]
                 if f >= 0:
-                    tree.threshold[v] = (tree.threshold[v] - self.lowerBoundsList[f])/(self.upperBoundsList[f]-self.lowerBoundsList[f])
+                    tree.threshold[v] = (tree.threshold[v] - self.lowerBoundsList[f]) / \
+                        (self.upperBoundsList[f]-self.lowerBoundsList[f])
                     assert 0 <= tree.threshold[v] <= 1
 
         # Load and scale factuals
@@ -94,7 +101,8 @@ class MaceDatasetReader:
         for sampleName in self.maceFactuals:
             if facSampleName not in self.maceFactuals[sampleName]:
                 facSampleName = 'factual_sample'
-            self.factualSamples.append([column for kurzname, column in self.maceFactuals[sampleName][facSampleName].items() if kurzname != 'y'])
+            self.factualSamples.append(
+                [column for kurzname, column in self.maceFactuals[sampleName][facSampleName].items() if kurzname != 'y'])
 
             scaledSample = []
             for kurzname, column in self.maceFactuals[sampleName][facSampleName].items():
@@ -105,9 +113,11 @@ class MaceDatasetReader:
 
             self.scaledFactualSamples.append(scaledSample)
             self.desiredOutputs.append(int(not self.maceFactuals[sampleName][facSampleName]['y']))
-            self.maceSolutionsValue.append(self.maceFactuals[sampleName]['cfe_distance'] * len(self.featuresPossibleValues))
+            self.maceSolutionsValue.append(self.maceFactuals[sampleName]
+                                           ['cfe_distance'] * len(self.featuresPossibleValues))
 
         pass
+
 
 def runExperimentsOnAllMaceSubfolders(maceFolder, objectiveNorm=1, runMilp=True):
     list_subfolders_with_paths = [f.path for f in os.scandir(maceFolder) if f.is_dir()]
@@ -116,6 +126,7 @@ def runExperimentsOnAllMaceSubfolders(maceFolder, objectiveNorm=1, runMilp=True)
             runExperimentsOnMaceOutput(subfolder, objectiveNorm, runMilp=runMilp)
         else:
             runExperimentsOnMaceOutput(subfolder, objectiveNorm, runMilp=False)
+
 
 def runExperimentsOnMaceOutput(maceFolder, objectiveNorm, runMilp=True):
     reader = MaceDatasetReader(maceFolder, rangeFeasibilityForDiscreteFeatures=False)
@@ -145,7 +156,7 @@ def runExperimentsOnMaceOutput(maceFolder, objectiveNorm, runMilp=True):
         sol = []
         scaledSol = []
         if sample['cfe_distance'] != float('inf'):
-            facSampleName = 'fac_sample' 
+            facSampleName = 'fac_sample'
             for name in ['fac_sample', 'factual_sample']:
                 if name in sample:
                     facSampleName = name
@@ -163,12 +174,12 @@ def runExperimentsOnMaceOutput(maceFolder, objectiveNorm, runMilp=True):
                         if abs(facSample[fName] - cfeSample[fName]) > 1e-5:
                             cfeDist += 1.0
                     elif reader.featuresType[f] == FeatureType.Binary:
-                        if abs(int(round(cfeSample[fName]))- cfeSample[fName]) > 1e-3:
+                        if abs(int(round(cfeSample[fName])) - cfeSample[fName]) > 1e-3:
                             print('non integer binary')
                         if abs(facSample[fName] - cfeSample[fName]) > 1e-3:
-                            cfeDist += 1.0                        
+                            cfeDist += 1.0
                     elif reader.featuresType[f] == FeatureType.Discrete:
-                        if abs(int(round(cfeSample[fName]))- cfeSample[fName]) > 1e-3:
+                        if abs(int(round(cfeSample[fName])) - cfeSample[fName]) > 1e-3:
                             print('non integer discrete')
                         cfeSampleValue = round(cfeSample[fName])
                         cfeSampleDist = abs(facSample[fName] - cfeSampleValue)
@@ -178,7 +189,8 @@ def runExperimentsOnMaceOutput(maceFolder, objectiveNorm, runMilp=True):
                     else:
                         cfeDist += abs(facSample[fName] - cfeSample[fName])/(attr.upper_bound - attr.lower_bound)
                     f += 1
-            result.write(',' + str(reader.desiredOutputs[count]) + ',' + str(reader.clfRead.predict([sol])) +','+str(cfeDist))
+            result.write(',' + str(reader.desiredOutputs[count]) + ',' +
+                         str(reader.clfRead.predict([sol])) + ','+str(cfeDist))
         else:
             result.write(',inf,inf,inf')
 
@@ -197,12 +209,12 @@ def runExperimentsOnMaceOutput(maceFolder, objectiveNorm, runMilp=True):
             cuiMilp.buildModel()
             cuiMilp.solveModel()
             result.write(',' + str(cuiMilp.model.Runtime))
-            result.write(',' + str(cuiMilp.objValue))                
+            result.write(',' + str(cuiMilp.objValue))
             randomForestMilp = RandomForestCounterFactualMilp(
                 reader.clfScaled,
                 [reader.scaledFactualSamples[count]],
                 reader.desiredOutputs[count],
-                isolationForest=False, 
+                isolationForest=False,
                 constraintsType=TreeConstraintsType.LinearCombinationOfPlanes,
                 objectiveNorm=objectiveNorm,
                 mutuallyExclusivePlanesCutsActivated=True,
@@ -211,7 +223,7 @@ def runExperimentsOnMaceOutput(maceFolder, objectiveNorm, runMilp=True):
                 randomCostsActivated=False,
                 verbose=False,
                 featuresActionnability=reader.featuresActionnability,
-                featuresType=reader.featuresType, 
+                featuresType=reader.featuresType,
                 featuresPossibleValues=reader.featuresPossibleValues,
             )
             randomForestMilp.buildModel()

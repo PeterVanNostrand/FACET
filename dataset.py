@@ -1,13 +1,22 @@
+from dataclasses import dataclass
+import random
 import numpy as np
 import pandas as pd
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from typing import List
+from typing import List, Tuple
 from enum import Enum
 
 from baselines.mace.fair_utils_data import get_one_hot_encoding as mace_get_one_hot
 from baselines.mace.fair_adult_data import load_adult_data_new
 from baselines.mace.loadData import loadDataset
 from baselines.mace.loadData import DatasetAttribute
+from baselines.ocean.CounterFactualParameters import FeatureActionability
+from baselines.ocean.CounterFactualParameters import FeatureType
+from baselines.ocean.CounterFactualParameters import BinaryDecisionVariables, TreeConstraintsType
+from baselines.ocean.RandomForestCounterFactual import RandomForestCounterFactualMilp
+from manager import MethodManager
+from utilities.metrics import classification_metrics
 
 # a list of the abbreviated name for all classification datasets
 DS_NAMES = [
@@ -27,8 +36,8 @@ DS_PATHS = {
     "spambase": "data/spambase/spambase.data",
     "vertebral": "data/vertebral/column_2C.dat",
     "adult": "data/adult/Adult_processedMACE.csv",
-    "compas": "COMPAS-ProPublica_processedMACE",
-    "credit": "Credit-Card-Default_processedMACE",
+    "compas": "data/compas/COMPAS-ProPublica_processedMACE.csv",
+    "credit": "data/credit/Credit-Card-Default_processedMACE.csv",
 }
 
 DS_DIMENSIONS = {
@@ -40,19 +49,24 @@ DS_DIMENSIONS = {
 }
 
 
-class FeatureType(Enum):
-    Numeric = 1
-    Binary = 2
-    Discrete = 3
-    Categorical = 4
-    CategoricalNonOneHot = 5
+@dataclass
+class DataInfo:
+    col_names: List[str]
+    col_types: List[FeatureType]
+    col_actions: List[FeatureActionability]
+    possible_vals: List
+    one_hot_schema: dict
 
+    def __post_init__(self):
+        self.ncols = len(self.col_names)
 
-class FeatureActionnability(Enum):
-    Free = 1
-    Fixed = 2
-    Increasing = 3
-    Predict = 4
+# TODO: Note I'm currently ignoring feature actionability
+# TODO: 1. integrate DataInfo and FeatureType into experiments.py workflow
+# TODO: 2. convert existing datasets to match the DataInfo schema
+# TODO: 3. Get MACE running for this data
+# TODO: 4. Implement feature typing and actionability to FACET
+# TODO: 5. Get RFOCSE working
+# TODO: 6. Get AFT working
 
 
 def load_data(dataset_name, preprocessing: str = "Normalize"):
@@ -72,8 +86,8 @@ def load_data(dataset_name, preprocessing: str = "Normalize"):
     '''
     if False:
         pass
-    elif dataset_name == "adult":
-        x, y = util_load_adult()
+    elif dataset_name in ["adult", "compas", "credit"]:
+        x, y, ds_info = load_facet_data(dataset_name)
     elif dataset_name == "cancer":
         x, y = util_load_cancer()
     elif dataset_name == "glass":
@@ -87,6 +101,8 @@ def load_data(dataset_name, preprocessing: str = "Normalize"):
     else:
         print("ERROR NO SUCH DATASET")
         exit(0)
+
+    test_ocean_one_hot(x, y, ds_info)
 
     if preprocessing == "Normalize":
         # normalize x to [0, 1]
@@ -116,116 +132,100 @@ def type_to_enum(col_types) -> List[FeatureType]:
     return enum_types
 
 
-def action_to_enum(col_actionability) -> List[FeatureActionnability]:
+def action_to_enum(col_actionability) -> List[FeatureActionability]:
+    '''
+    Converts string values for action types to the corresponding FeatureActionability enum value
+    '''
     action_enums = []
     for action_str in col_actionability:
         if action_str == "FREE":
-            action_enums.append(FeatureActionnability.Free)
+            action_enums.append(FeatureActionability.Free)
         elif action_str == "FIXED":
-            action_enums.append(FeatureActionnability.Fixed)
+            action_enums.append(FeatureActionability.Fixed)
         elif action_str == "INC":
-            action_enums.append(FeatureActionnability.Increasing)
+            action_enums.append(FeatureActionability.Increasing)
         elif action_str == "PREDICT":
-            action_enums.append(FeatureActionnability.Predict)
+            action_enums.append(FeatureActionability.Predict)
         elif action_str == "PROBLEM":
             print("problematic feature treated as free")
-            action_enums.append(FeatureActionnability.Free)
+            action_enums.append(FeatureActionability.Free)
         else:
             print("unknown actionnability: {}".format(action_str))
             return None
     return action_enums
 
 
-# MACE VALUES
-'''
-VALID_ATTRIBUTE_DATA_TYPES = {
-    'numeric-int',
-    'numeric-real',
-    'binary',
-    'categorical',
-    'sub-categorical',
-    'ordinal',
-    'sub-ordinal'}
-VALID_ATTRIBUTE_NODE_TYPES = {
-    'meta',
-    'input',
-    'output'}
-VALID_ACTIONABILITY_TYPES = {
-    'none',
-    'any',
-    'same-or-increase',
-    'same-or-decrease'}
-VALID_MUTABILITY_TYPES = {
-    True,
-    False}
-'''
-
-MACE_TYPE_FROM_FACET_TYPE = {
-    FeatureType.Numeric: "numeric-real",
-    FeatureType.Binary: "binary",
-    FeatureType.Discrete: "numeric-int",
-    FeatureType.Categorical: "categorical",
-    FeatureType.CategoricalNonOneHot: "ordinal",  # ! WARNING NOT MACE SUPPORTED
-}
-
-MACE_ACTION_FROM_FACET_ACTION = {
-    FeatureActionnability.Free: "any",
-    FeatureActionnability.Fixed: "none",
-    FeatureActionnability.Increasing: "same-or-increase",
-    FeatureActionnability.Predict: "none",
-}
-
-MACE_MUTABILITY_FROM_FACET_ACTION = {
-    FeatureActionnability.Free: True,
-    FeatureActionnability.Fixed: False,
-    FeatureActionnability.Increasing: True,
-    FeatureActionnability.Predict: False,
-}
-
-'''
-        attributes_non_hot[col_name] = DatasetAttribute(
-            attr_name_long=col_name,
-            attr_name_kurz='y',
-            attr_type='binary',
-            node_type='output',
-            actionability='none',
-            mutability=False,
-            parent_name_long=-1,
-            parent_name_kurz=-1,
-            lower_bound=data_frame_non_hot[col_name].min(),
-            upper_bound=data_frame_non_hot[col_name].max())
-'''
+def normalize_data(x: np.ndarray, col_types: List[FeatureType]):
+    # normalize numeric and discrete data
+    for i in range(len(col_types)):
+        if col_types[i] in [FeatureType.Numeric, FeatureType.Discrete]:
+            max_value = np.max(x[:, i])
+            min_value = np.min(x[:, i])
+            x[:, i] = (x[:, i] - min_value) / (max_value - min_value)
+    return x
 
 
-def get_mace_non_hot(data, col_names, col_types, col_actions):
+def one_hot_encode(input: np.ndarray, col_names: List[str], col_types: List[FeatureType]) -> DataInfo:
     '''
-    Takes FACET/OCEAN encoded feature types and converts them to MACE DatasetAttributes
+    One-hot encode the given data. Categorical features are removed and replaced with one column for each categorical value
+
+    `input`: a numpy array of data containing categorical features
+    `col_names`: a list of the names of each feature in `input`
+    `col_types`: a list of the type of each feature in `input` only FeatureType.Categorical will be one-hot encoded 
     '''
-    attributes_non_hot = {}
+    x = []
+    one_hot_mappings = {}
+    one_hot_names = []
+    one_hot_types = []
+    one_hot_schema = dict()  # dict to trace one-hot from source col to column index
 
-    for i in range(len(col_names)):
-        if col_types[i] in (FeatureType.Numeric, FeatureType.Binary, FeatureType.Discrete, FeatureType.CategoricalNonOneHot):
-            col_name = col_names[i]
+    # one-hot encode the input categorical features
+    for i in range(len(col_types)):
+        # non-categorical features don't need one-hot encoding, embed them directly
+        if col_types[i] in [FeatureType.Numeric, FeatureType.Binary, FeatureType.Discrete, FeatureType.CategoricalNonOneHot]:
+            x.append(input[:, i])
+            one_hot_names.append(col_names[i])
+            one_hot_types.append(col_types[i])
+        # if its a categorical feature, one-hot encode it
+        elif col_types[i] == FeatureType.Categorical:
+            one_hot_schema[col_names[i]] = []
+            one_hot_i, dict_i = mace_get_one_hot(input[:, i])
+            dict_i_inv = {val: key for key, val in dict_i.items()}
+            # add a new column for each unique value
+            for j in range(one_hot_i.shape[1]):
+                x.append(one_hot_i[:, j])
+                col_name = "{}_{}".format(col_names[i], j)
+                one_hot_mappings[col_name] = dict_i_inv[j]
+                one_hot_names.append(col_name)
+                one_hot_types.append(FeatureType.Binary)
+                one_hot_schema[col_names[i]].append(len(x) - 1)
+    x = np.array(x).T
 
-            attributes_non_hot[col_name] = DatasetAttribute(
-                attr_name_long=col_name,
-                attr_name_kurz=f"x{i}" if col_actions[i] != FeatureActionnability.Predict else "y",
-                attr_type=MACE_TYPE_FROM_FACET_TYPE[col_types[i]],
-                node_type="input" if col_actions[i] != FeatureActionnability.Predict else "output",
-                actionability=MACE_ACTION_FROM_FACET_ACTION[col_actions[i]],
-                mutability=MACE_MUTABILITY_FROM_FACET_ACTION[col_actions[i]],
-                parent_name_long=-1,
-                parent_name_kurz=-1,
-                lower_bound=data[col_name].min(),
-                upper_bound=data[col_name].max()
-            )
+    # get the allowed values for each feature
+    one_hot_possible_vals = get_possible_vals(x, one_hot_types)
 
-    return attributes_non_hot
+    # allowing alteration on all features
+    one_hot_actions = [FeatureActionability.Free for _ in range(len(one_hot_names))]
+
+    # create the data info object
+    ds_info = DataInfo(one_hot_names, one_hot_types, one_hot_actions, one_hot_possible_vals, one_hot_schema)
+    return x, ds_info
 
 
-def util_load_adult():
+def get_possible_vals(x, col_types):
+    '''
+    Determine the range of allowed values for each column. Currently only applying a range to Discreete values as  this is reqruired by OCEAN
+    '''
+    possible_vals = [[] for _ in range(len(col_types))]
+    for i in range(len(col_types)):
+        if col_types[i] == FeatureType.Discrete:
+            possible_vals[i] = [np.min(x[:, i]), np.max(x[:, i])]
+    return possible_vals
+
+
+def load_facet_data(ds_name: str) -> Tuple[np.ndarray, np.ndarray, DataInfo]:
     # load the csv
-    path: str = DS_PATHS["adult"]
+    path: str = DS_PATHS[ds_name]
     data: pd.array = pd.read_csv(path)
 
     # get all columns names and types
@@ -234,7 +234,7 @@ def util_load_adult():
     col_actionabiltiy = action_to_enum(list(data.iloc[1]))
 
     # separate the target column from the data
-    target_col: int = col_actionabiltiy.index(FeatureActionnability.Predict)
+    target_col: int = col_actionabiltiy.index(FeatureActionability.Predict)
     target_col_name: str = col_names[target_col]
     target = data[target_col_name].iloc[2:].to_numpy(dtype=np.float64)
 
@@ -246,55 +246,105 @@ def util_load_adult():
     input_col_action = col_actionabiltiy.copy()
     input_col_action.pop(target_col)
     input = data[input_col_names].iloc[2:].to_numpy(dtype=np.float64)
+    input = normalize_data(input, input_col_types)
 
-    # get the unique possible values for categorial and discrete values
-    for column in self.data:
-        if column != 'Class':
-            if self.featuresType[c] in [FeatureType.Discrete, FeatureType.Categorical]:
-                self.featuresPossibleValues.append(self.data[column].unique())
-            else:
-                self.featuresPossibleValues.append([])
+    x, ds_info = one_hot_encode(input, input_col_names, input_col_types)
+    y = target.astype(int)
 
-    X = []
-    one_hot_mappings = {}
-    one_hot_names = []
+    return x, y, ds_info
 
-    # one-hot encode the input categorical features
-    for i in range(len(input_col_types)):
-        # non-categorical features don't need one-hot encoding, embed them directly
-        if input_col_types[i] in [FeatureType.Numeric, FeatureType.Binary, FeatureType.Discrete, FeatureType.CategoricalNonOneHot]:
-            X.append(input[:, i])
-            one_hot_names.append(input_col_names[i].lower())
-        # if its a categorical feature, one-hot encode it
-        elif input_col_types[i] == FeatureType.Categorical:
-            one_hot_i, dict_i = mace_get_one_hot(input[:, i])
-            dict_i_inv = {val: key for key, val in dict_i.items()}
-            # add a new column for each unique value
-            for j in range(one_hot_i.shape[1]):
-                X.append(one_hot_i[:, j])
-                col_name = "{}_cat_{}".format(input_col_names[i], j)
-                one_hot_mappings[col_name] = dict_i_inv[j]
-                one_hot_names.append(col_name)
 
-    mace_ds = loadDataset(dataset_name="adult", return_one_hot=False,
-                          load_from_cache=False, debug_flag=True, my_df=data)
-    mace_attrs = mace_ds.attributes_long
+def test_ocean_one_hot(x: np.ndarray, y: np.ndarray, ds_info: DataInfo) -> None:
+    random_state = 0
+    random.seed(random_state)
+    np.random.seed(random_state)
 
-    # TODO: should I ignore feature actionability and ranges? will need to at least handle for categorical one-hots
-    # TODO: 1. Determine how OCEAN handles min/max allowable values for discrete (integer) features and replicate this
-    # TODO: 2. Get OCEAN running from our parsed data
-    # TODO: 3. Get MACE running from our parsed data
-    # TODO: 4. Implement feature typing and actionability to FACET
-    # TODO: 5. Get RFOCSE working
-    # TODO: 6. Get AFT working
+    # split the training and testing data
+    n_explain = 10
+    xtrain, xtest, ytrain, ytest = train_test_split(
+        x, y, test_size=0.2, shuffle=True, random_state=random_state)
+    if n_explain is not None:
+        x_explain = xtest[:n_explain]
+        y_explain = ytest[:n_explain]
+    else:
+        x_explain = xtest
+        y_explain = ytest
+        n_explain = x_explain.shape[0]
 
-    # prepare the MACE dataset info object
-    non_hot_df = data.iloc[2:].astype(np.float64)
-    attributes_non_hot = get_mace_non_hot(data=non_hot_df, col_names=col_names,
-                                          col_types=col_types, col_actions=col_actionabiltiy)
+    # train the ensemble
+    explainer = "OCEAN"
+    from experiments.experiments import DEFAULT_PARAMS
+    params = DEFAULT_PARAMS
+    manager = MethodManager(explainer=explainer, hyperparameters=params, random_state=random_state)
+    manager.train(xtrain, ytrain)
 
-    a = 2
-    return None, None
+    # get the samples to explain
+    preds = manager.predict(x_explain)
+    accuracy, precision, recall, f1 = classification_metrics(preds, y_explain, verbose=False)
+    counterfactual_classes = ((preds - 1) * -1)
+
+    # prepare an array to hold the explanations
+    xprime = np.empty(shape=x_explain.shape)
+    xprime[:, :] = np.inf
+
+    # explain samples one at a time
+    for i in range(x_explain.shape[0]):
+        # shape data for OCEAN to oad
+        to_explain = x_explain[i].copy()
+        sample = [pd.Series(to_explain, dtype=np.float64, name=str(i))]
+        desired_label = counterfactual_classes[i]
+        sample[0].index = ds_info.col_names
+
+        # give ocean info on the feature type, values, and actionability
+        # !WARNING: Ignoring feature actionability constraints from data files
+        feat_types = ds_info.col_types
+        feat_actionability = ds_info.col_types
+
+        # explain the sample
+        randomForestMilp = RandomForestCounterFactualMilp(
+            classifier=manager.random_forest.model,
+            sample=sample,
+            outputDesired=desired_label,
+            isolationForest=None,
+            constraintsType=TreeConstraintsType.LinearCombinationOfPlanes,
+            objectiveNorm=2,
+            mutuallyExclusivePlanesCutsActivated=True,
+            strictCounterFactual=True,
+            verbose=False,
+            featuresType=feat_types,
+            featuresPossibleValues=ds_info.possible_vals,
+            featuresActionnability=feat_actionability,
+            oneHotEncoding=ds_info.one_hot_schema,
+            binaryDecisionVariables=BinaryDecisionVariables.PathFlow_y,
+            randomCostsActivated=False
+        )
+        randomForestMilp.buildModel()
+        randomForestMilp.solveModel()
+        xprime[i] = np.array(randomForestMilp.x_sol[0])
+
+    # check that all counterfactuals result in a different class
+    preds = manager.predict(xprime)
+    failed_explanation = (preds != counterfactual_classes)
+    xprime[failed_explanation] = np.tile(np.inf, x_explain.shape[1])
+
+
+def check_one_hot_validity(x: np.ndarray, one_hot_schema: dict, verbose: bool = False) -> bool:
+    '''
+    Given an array `x` with one hot encoded features. Check that each one hot feature has exactly one column set
+
+    `x`: a numpy array of shape `(n_instances, n_features)`
+    `one_hot_schema`: a dictionary which maps `{"feature_name": [i, j, ... , k]}` where `feature_name` is the name of the feature which was one hot encoded and `[i, j, ... , k]` are the column indices for the resulting one hot columns
+    '''
+    all_valid = True
+    for i in range(x.shape[0]):
+        for cat_column_name, sub_col_idxs in one_hot_schema.items():
+            n_set_colums = sum(x[i][sub_col_idxs])
+            if (n_set_colums != 1):
+                all_valid = False
+                if verbose:
+                    print("failed one-hot encoding\t\t{}\t{}\t{}".format(i,
+                          cat_column_name, sum(x[i][sub_col_idxs])))
+    return all_valid
 
 
 def util_load_cancer():

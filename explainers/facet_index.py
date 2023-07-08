@@ -22,6 +22,7 @@ from utilities.metrics import dist_euclidean
 
 if TYPE_CHECKING:
     from manager import MethodManager
+    from dataset import DataInfo
 
 
 class FACETIndex(Explainer):
@@ -62,7 +63,7 @@ class FACETIndex(Explainer):
             self.rbvs.append(BitVectorIndex(rects=self.index[class_id],
                                             explainer=self, hyperparameters=self.hyperparameters))
 
-    def prepare_dataset(self, x, y):
+    def prepare_dataset(self, x: np.ndarray, y: np.ndarray, ds_info: DataInfo) -> None:
         pass
 
     def compute_supports(self, data: np.ndarray):

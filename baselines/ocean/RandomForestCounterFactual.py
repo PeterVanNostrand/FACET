@@ -161,7 +161,7 @@ class RandomForestCounterFactualMilp(ClassifierCounterFactualMilp):
                 previousThres = thres
             linearCombination += self.rightMutuallyExclusivePlanesVar[f][previousThres] * (1.0 - previousThres)
             self.linearCombinationOfPlanesConstr[f] = self.model.addConstr(
-                self.x_var_sol[f] == linearCombination, "x_as_linear_combination_of_planes_f")
+                self.x_var_sol[f] == linearCombination, "x_as_linear_combination_of_planes_f{}".format(f))  # PMV: added f to str
 
     def addInterTreeCuts(self):
         self.interTreeCuts = dict()

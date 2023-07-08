@@ -172,11 +172,11 @@ def execute_run(dataset_name: str, explainer: str, params: dict, output_path: st
     if n_explain is not None:
         x_explain = xtest[:n_explain]
         y_explain = ytest[:n_explain]
-        ixd_explain = idx_test[:n_explain]
+        idx_explain = idx_test[:n_explain]
     else:
         x_explain = xtest
         y_explain = ytest
-        ixd_explain = idx_test
+        idx_explain = idx_test
         n_explain = x_explain.shape[0]
 
     # create the manager which handles create the RF model and explainer
@@ -209,7 +209,7 @@ def execute_run(dataset_name: str, explainer: str, params: dict, output_path: st
         col_names.append("x{}".format(i))
     expl_df = pd.DataFrame(explanations, columns=col_names)
     # also store the index of the explained sample in the dataset
-    expl_df.insert(0, "x_idx", ixd_explain)
+    expl_df.insert(0, "x_idx", idx_explain)
     explanation_path = output_path + \
         "{}_{}_{}{:03d}_explns.csv".format(dataset_name, explainer.lower(), run_ext, iteration)
     expl_df.to_csv(explanation_path, index=False)

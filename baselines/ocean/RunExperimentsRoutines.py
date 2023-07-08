@@ -1,12 +1,11 @@
-import os
 
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.ensemble import IsolationForest
-
-from .dataProcessing import *
-from .DecisionTreeCounterFactual import *
-from .RandomForestCounterFactual import *
 from .CuiRandomForestCounterFactual import *
+from .RandomForestCounterFactual import *
+from .DecisionTreeCounterFactual import *
+from .dataProcessing import *
+from sklearn.ensemble import IsolationForest
+from sklearn.ensemble import RandomForestClassifier
+import os
 
 
 def writeLegend(numericalResultsFileName):
@@ -58,7 +57,7 @@ def trainModelAndSolveCounterFactuals(
     random_state=0,
     useCui=False,
     constraintsType=TreeConstraintsType.LinearCombinationOfPlanes,
-    actionnabilityActivated=True,
+    actionnabilityActivated=False,
     objectiveNorm=1,
     mutuallyExclusivePlanesCutsActivated=True,
     strictCounterFactual=True,
@@ -271,9 +270,14 @@ def runNumericalExperiments(
                                                             print("binaryDecisionVariables", binaryDecisionVariables)
                                                             print("numericalResultsFileName", numericalResultsFileName)
                                                             count += 1
+
+                                                            trainingSetFile_abs = os.path.abspath(trainingSetFile)
+                                                            counterfactualsFile_abs = os.path.abspath(
+                                                                counterfactualsFile)
+
                                                             trainModelAndSolveCounterFactuals(
-                                                                trainingSetFile,
-                                                                counterfactualsFile,
+                                                                trainingSetFile_abs,
+                                                                counterfactualsFile_abs,
                                                                 rf_max_depth=rf_max_depth,
                                                                 rf_n_estimators=rf_n_estimators,
                                                                 ilfActivated=ilfActivated,
@@ -308,7 +312,7 @@ ourDatasetsWithCounterfactualsDict = {
 }
 
 cuiDatasetsWithCounterfactualsDict = {
-    './datasets/Adult_processedMACE.csv': './datasets/counterfactuals/OneHot_Adult_processedMACE.csv',
+    './baselines/ocean/datasets/Adult_processedMACE.csv': './datasets/counterfactuals/OneHot_Adult_processedMACE.csv',
     # './datasets/COMPAS-ProPublica_processedMACE.csv':'./datasets/counterfactuals/OneHot_COMPAS-ProPublica_processedMACE.csv',
     # './datasets/Credit-Card-Default_processedMACE.csv':'./datasets/counterfactuals/OneHot_Credit-Card-Default_processedMACE.csv',
     # './datasets/FICO.csv':'./datasets/counterfactuals/OneHot_FICO.csv',
