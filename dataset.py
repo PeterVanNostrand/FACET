@@ -5,12 +5,8 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from typing import List, Tuple
-from enum import Enum
 
 from baselines.mace.fair_utils_data import get_one_hot_encoding as mace_get_one_hot
-from baselines.mace.fair_adult_data import load_adult_data_new
-from baselines.mace.loadData import loadDataset
-from baselines.mace.loadData import DatasetAttribute
 from baselines.ocean.CounterFactualParameters import FeatureActionability
 from baselines.ocean.CounterFactualParameters import FeatureType
 from baselines.ocean.CounterFactualParameters import BinaryDecisionVariables, TreeConstraintsType
@@ -171,7 +167,7 @@ def one_hot_encode(input: np.ndarray, col_names: List[str], col_types: List[Feat
 
     `input`: a numpy array of data containing categorical features
     `col_names`: a list of the names of each feature in `input`
-    `col_types`: a list of the type of each feature in `input` only FeatureType.Categorical will be one-hot encoded 
+    `col_types`: a list of the type of each feature in `input` only FeatureType.Categorical will be one-hot encoded
     '''
     x = []
     one_hot_mappings = {}

@@ -32,7 +32,7 @@ def check_create_directory(dir_path="./results/"):
     max_run_id = 0
     dir_names = os.listdir(dir_path)
     for name in dir_names:
-        x = re.match("run-(\d{3})", name)
+        x = re.match("run-(\d{3})", name)  # noqa: W605 (ignore linting from flake)
         if x is not None:
             found_run_id = int(x.group(1))
             if found_run_id > max_run_id:

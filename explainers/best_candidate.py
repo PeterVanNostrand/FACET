@@ -9,7 +9,6 @@ from utilities.metrics import dist_euclidean
 from utilities.tree_tools import TreeContraster
 
 if TYPE_CHECKING:
-    from dataset import DataInfo
     from manager import MethodManager
 
 

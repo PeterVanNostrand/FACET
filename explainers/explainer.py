@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 import numpy as np
-from typing import TYPE_CHECKING
 
 
 class Explainer(ABC):
