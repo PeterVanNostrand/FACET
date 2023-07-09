@@ -1,17 +1,11 @@
 from dataclasses import dataclass
-import random
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import train_test_split
 from typing import List, Tuple
 
 from baselines.mace.fair_utils_data import get_one_hot_encoding as mace_get_one_hot
 from baselines.ocean.CounterFactualParameters import FeatureActionability
 from baselines.ocean.CounterFactualParameters import FeatureType
-from baselines.ocean.CounterFactualParameters import BinaryDecisionVariables, TreeConstraintsType
-from baselines.ocean.RandomForestCounterFactual import RandomForestCounterFactualMilp
-from manager import MethodManager
-from utilities.metrics import classification_metrics
 
 # a list of the abbreviated name for all classification datasets
 DS_NAMES = [
@@ -258,80 +252,6 @@ def load_facet_data(ds_name: str) -> Tuple[np.ndarray, np.ndarray, DataInfo]:
     y = target.astype(int)
 
     return x, y, ds_info
-
-
-def test_ocean_one_hot(x: np.ndarray, y: np.ndarray, ds_info: DataInfo) -> None:
-    random_state = 0
-    random.seed(random_state)
-    np.random.seed(random_state)
-
-    # split the training and testing data
-    n_explain = 10
-    xtrain, xtest, ytrain, ytest = train_test_split(
-        x, y, test_size=0.2, shuffle=True, random_state=random_state)
-    if n_explain is not None:
-        x_explain = xtest[:n_explain]
-        y_explain = ytest[:n_explain]
-    else:
-        x_explain = xtest
-        y_explain = ytest
-        n_explain = x_explain.shape[0]
-
-    # train the ensemble
-    explainer = "OCEAN"
-    from experiments.experiments import DEFAULT_PARAMS
-    params = DEFAULT_PARAMS
-    manager = MethodManager(explainer=explainer, hyperparameters=params, random_state=random_state)
-    manager.train(xtrain, ytrain)
-
-    # get the samples to explain
-    preds = manager.predict(x_explain)
-    accuracy, precision, recall, f1 = classification_metrics(preds, y_explain, verbose=False)
-    counterfactual_classes = ((preds - 1) * -1)
-
-    # prepare an array to hold the explanations
-    xprime = np.empty(shape=x_explain.shape)
-    xprime[:, :] = np.inf
-
-    # explain samples one at a time
-    for i in range(x_explain.shape[0]):
-        # shape data for OCEAN to oad
-        to_explain = x_explain[i].copy()
-        sample = [pd.Series(to_explain, dtype=np.float64, name=str(i))]
-        desired_label = counterfactual_classes[i]
-        sample[0].index = ds_info.col_names
-
-        # give ocean info on the feature type, values, and actionability
-        # !WARNING: Ignoring feature actionability constraints from data files
-        feat_types = ds_info.col_types
-        feat_actionability = ds_info.col_types
-
-        # explain the sample
-        randomForestMilp = RandomForestCounterFactualMilp(
-            classifier=manager.random_forest.model,
-            sample=sample,
-            outputDesired=desired_label,
-            isolationForest=None,
-            constraintsType=TreeConstraintsType.LinearCombinationOfPlanes,
-            objectiveNorm=2,
-            mutuallyExclusivePlanesCutsActivated=True,
-            strictCounterFactual=True,
-            verbose=False,
-            featuresType=feat_types,
-            featuresPossibleValues=ds_info.possible_vals,
-            featuresActionnability=feat_actionability,
-            oneHotEncoding=ds_info.one_hot_schema,
-            binaryDecisionVariables=BinaryDecisionVariables.PathFlow_y,
-            randomCostsActivated=False
-        )
-        randomForestMilp.buildModel()
-        randomForestMilp.solveModel()
-        xprime[i] = np.array(randomForestMilp.x_sol[0])
-
-    # check that all counterfactuals result in a different class
-    preds = manager.predict(xprime)
-    failed_explanation = (preds != counterfactual_classes)
-    xprime[failed_explanation] = np.tile(np.inf, x_explain.shape[1])
 
 
 def check_one_hot_validity(x: np.ndarray, one_hot_schema: dict, verbose: bool = False) -> bool:
