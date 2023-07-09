@@ -21,6 +21,12 @@ from experiments.widths import compute_widths
 from experiments.vary_robustness import vary_robustness
 
 
+# TODO: Currently ignoring feature actionability
+# TODO: 3. Get MACE running for this data
+# TODO: 4. Implement feature typing and actionability to FACET
+# TODO: 5. Get RFOCSE working
+# TODO: 6. Get AFT working
+
 def check_create_directory(dir_path="./results/"):
     '''
     Checks the the directory at `dir_path` exists, if it does not it creates all directories in the path

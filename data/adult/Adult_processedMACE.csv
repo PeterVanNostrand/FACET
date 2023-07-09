@@ -1,5 +1,5 @@
 Sex,Age,NativeCountry,WorkClass,EducationNumber,MaritalStatus,Occupation,Relationship,CapitalGain,CapitalLoss,HoursPerWeek,Class
-B,N,B,C,N,C,C,C,N,N,D,B
+B,D,B,C,D,C,C,C,N,N,D,B
 FIXED,INC,FREE,FREE,FREE,FREE,FREE,FREE,FREE,FREE,FREE,PREDICT
 0,39,0,6,13,5,1,1,2174,0,40,0
 0,50,0,5,13,3,4,0,0,0,13,0

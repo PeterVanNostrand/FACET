@@ -165,7 +165,7 @@ def execute_run(dataset_name: str, explainer: str, params: dict, output_path: st
         f.write(json_text)
 
     # load and split the datset using random state for repeatability. Select samples to explain
-    x, y = load_data(dataset_name, preprocessing=preprocessing)
+    x, y, ds_info = load_data(dataset_name, preprocessing=preprocessing)
     indices = np.arange(start=0, stop=x.shape[0])
     xtrain, xtest, ytrain, ytest, idx_train, idx_test = train_test_split(
         x, y, indices, test_size=test_size, shuffle=True, random_state=random_state)
@@ -189,7 +189,7 @@ def execute_run(dataset_name: str, explainer: str, params: dict, output_path: st
 
     # prepare the explainer, handles any neccessary preprocessing
     prep_start = time.time()
-    manager.explainer.prepare_dataset(x, y)
+    manager.explainer.prepare_dataset(x, y, ds_info)
     manager.prepare(xtrain=xtrain, ytrain=ytrain)
     prep_end = time.time()
     prep_time = prep_end-prep_start

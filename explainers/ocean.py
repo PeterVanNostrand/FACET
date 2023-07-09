@@ -5,10 +5,7 @@ import pandas as pd
 from sklearn.ensemble import IsolationForest
 from tqdm.auto import tqdm
 
-from baselines.ocean.CounterFactualParameters import (BinaryDecisionVariables,
-                                                      FeatureActionability,
-                                                      FeatureType,
-                                                      TreeConstraintsType)
+from baselines.ocean.CounterFactualParameters import (BinaryDecisionVariables, TreeConstraintsType)
 from baselines.ocean.RandomForestCounterFactual import RandomForestCounterFactualMilp
 # from baselines.ocean.BuildCounterFactualSeekedSet import buildCounterFactualSeekedFile
 from explainers.explainer import Explainer
@@ -79,10 +76,6 @@ class OCEAN(Explainer):
                 feat_index.append("F{}".format(j))
             sample[0].index = feat_index
 
-            feat_types = [FeatureType.Numeric for _ in range(x.shape[1])]
-            possible_vals = [[] for _ in range(x.shape[1])]
-            feat_actionability = [FeatureActionability.Free for _ in range(x.shape[1])]
-
             randomForestMilp = RandomForestCounterFactualMilp(
                 classifier=self.manager.random_forest.model,
                 sample=sample,
@@ -93,13 +86,14 @@ class OCEAN(Explainer):
                 mutuallyExclusivePlanesCutsActivated=True,
                 strictCounterFactual=True,
                 verbose=False,
-                featuresType=feat_types,
-                featuresPossibleValues=possible_vals,
-                featuresActionnability=feat_actionability,
-                oneHotEncoding=False,
+                featuresType=self.ds_info.col_types,
+                featuresPossibleValues=self.ds_info.possible_vals,
+                featuresActionnability=self.ds_info.col_actions,
+                oneHotEncoding=self.ds_info.one_hot_schema,
                 binaryDecisionVariables=BinaryDecisionVariables.PathFlow_y,
                 randomCostsActivated=False
             )
+
             randomForestMilp.buildModel()
             randomForestMilp.solveModel()
             xprime[i] = np.array(randomForestMilp.x_sol[0])

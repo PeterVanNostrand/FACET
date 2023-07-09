@@ -3,7 +3,6 @@ import random
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
 from typing import List, Tuple
 
 from baselines.mace.fair_utils_data import get_one_hot_encoding as mace_get_one_hot
@@ -56,18 +55,23 @@ class DataInfo:
     def __post_init__(self):
         self.ncols = len(self.col_names)
 
-# TODO: Note I'm currently ignoring feature actionability
-# TODO: 1. integrate DataInfo and FeatureType into experiments.py workflow
-# TODO: 2. convert existing datasets to match the DataInfo schema
-# TODO: 3. Get MACE running for this data
-# TODO: 4. Implement feature typing and actionability to FACET
-# TODO: 5. Get RFOCSE working
-# TODO: 6. Get AFT working
+    @classmethod
+    def generic(cls, ncols):
+        '''
+        Creates a generic DataInfo object with all numeric, fully actionable and unbounded features. Not for use with non-numeric or one-hot encoded features
+        '''
+        col_names = ["x{}".format(_) for _ in range(ncols)]
+        col_types = [FeatureType.Numeric for _ in range(ncols)]
+        col_actionability = [FeatureActionability.Free for _ in range(ncols)]
+        possible_values = [[] for _ in range(ncols)]
+        one_hot_schema = {}
+
+        return cls(col_names, col_types, col_actionability, possible_values, one_hot_schema)
 
 
 def load_data(dataset_name, preprocessing: str = "Normalize"):
     '''
-    Returns one of many possible anomaly detetion datasets based on the given `dataset_name`
+    Returns one of many possible anomaly detetion datasets based on the given `dataset_name`. Note that all features are currently treated as actionable regardless of source file designation
 
     Parameters
     ----------
@@ -79,39 +83,36 @@ def load_data(dataset_name, preprocessing: str = "Normalize"):
     -------
     x : the dataset samples with shape (nsamples, nfeatures)
     y : the dataset labels with shape (nsamples,) containing 0 to represent a normal label and 1 for an anomaly label
+    ds_info: a DataInfo object containing information about the feature types, one-hot encoding, actionability, etc
     '''
     if False:
         pass
     elif dataset_name in ["adult", "compas", "credit"]:
         x, y, ds_info = load_facet_data(dataset_name)
     elif dataset_name == "cancer":
-        x, y = util_load_cancer()
+        x, y, ds_info = util_load_cancer()
     elif dataset_name == "glass":
-        x, y = util_load_glass()
+        x, y, ds_info = util_load_glass()
     elif dataset_name == "magic":
-        x, y = util_load_magic()
+        x, y, ds_info = util_load_magic()
     elif dataset_name == "spambase":
-        x, y = util_load_spambase()
+        x, y, ds_info = util_load_spambase()
     elif dataset_name == "vertebral":
-        x, y = util_load_vertebral()
+        x, y, ds_info = util_load_vertebral()
     else:
         print("ERROR NO SUCH DATASET")
         exit(0)
 
-    test_ocean_one_hot(x, y, ds_info)
-
+    # normalize numeric and discrete features to [0, 1]
     if preprocessing == "Normalize":
-        # normalize x to [0, 1]
-        max_value = np.max(x, axis=0)
-        min_value = np.min(x, axis=0)
-        x = (x - min_value) / (max_value - min_value)
-    elif preprocessing == "Scale":
-        float_transformer = StandardScaler()
-        x = float_transformer.fit_transform(x)
-    return x, y
+        normalize_data(x, ds_info.col_types)
+    return x, y, ds_info
 
 
 def type_to_enum(col_types) -> List[FeatureType]:
+    '''
+    Convert the characters `N`, `B`, `D`, `C` used to denote feature types in the dataset csv to their matching FeatureType enum value.
+    '''
     enum_types = []
     for type_str in col_types:
         if type_str == "N":
@@ -152,7 +153,9 @@ def action_to_enum(col_actionability) -> List[FeatureActionability]:
 
 
 def normalize_data(x: np.ndarray, col_types: List[FeatureType]):
-    # normalize numeric and discrete data
+    '''
+    Normalizes Numeric and Discrete columns to the range [0, 1]
+    '''
     for i in range(len(col_types)):
         if col_types[i] in [FeatureType.Numeric, FeatureType.Discrete]:
             max_value = np.max(x[:, i])
@@ -173,7 +176,7 @@ def one_hot_encode(input: np.ndarray, col_names: List[str], col_types: List[Feat
     one_hot_mappings = {}
     one_hot_names = []
     one_hot_types = []
-    one_hot_schema = dict()  # dict to trace one-hot from source col to column index
+    one_hot_schema = {}  # dict to trace one-hot from source col to column index
 
     # one-hot encode the input categorical features
     for i in range(len(col_types)):
@@ -210,7 +213,7 @@ def one_hot_encode(input: np.ndarray, col_names: List[str], col_types: List[Feat
 
 def get_possible_vals(x, col_types):
     '''
-    Determine the range of allowed values for each column. Currently only applying a range to Discreete values as  this is reqruired by OCEAN
+    Determine the range of allowed values for each column. Currently only applying a range to Discrete values as  this is reqruired by OCEAN
     '''
     possible_vals = [[] for _ in range(len(col_types))]
     for i in range(len(col_types)):
@@ -220,6 +223,13 @@ def get_possible_vals(x, col_types):
 
 
 def load_facet_data(ds_name: str) -> Tuple[np.ndarray, np.ndarray, DataInfo]:
+    '''
+    Load a csv file tagged with feature types and actionabilities as per the FACET/OCEAN encoding
+
+    Row 1: column names
+    Row 2: feature types using the character encodings `N`, `B`, `D`, `C`. See type_to_enum()
+    Row 3: feature actionability `FREE`, `FIXED`, `INC`, `PREDICT` or `PROBLEM`. See action_to_enum()
+    '''
     # load the csv
     path: str = DS_PATHS[ds_name]
     data: pd.array = pd.read_csv(path)
@@ -351,7 +361,9 @@ def util_load_cancer():
     y = np.zeros(labels.shape[0], dtype=int)
     y[labels == "M"] = 1
     x = data[:, 2:].astype(float)
-    return x, y
+
+    ds_info = DataInfo.generic(ncols=x.shape[1])
+    return x, y, ds_info
 
 
 def util_load_glass():
@@ -382,7 +394,9 @@ def util_load_glass():
     # drop all samples that are not float or nonfloat (keeps ~75% of dataset)
     y = y[is_float | is_nonfloat]
     x = x[is_float | is_nonfloat]
-    return x, y
+
+    ds_info = DataInfo.generic(ncols=x.shape[1])
+    return x, y, ds_info
 
 
 def util_load_magic():
@@ -393,7 +407,8 @@ def util_load_magic():
     y = np.zeros(labels.shape[0], dtype=int)
     y[labels == "g"] = 1
     x = data[:, :-1].astype(float)
-    return x, y
+    ds_info = DataInfo.generic(ncols=x.shape[1])
+    return x, y, ds_info
 
 
 def util_load_spambase():
@@ -401,7 +416,8 @@ def util_load_spambase():
     data = pd.read_csv(path).to_numpy()
     x = data[:, :-1]
     y = data[:, -1:].squeeze().astype('int')
-    return x, y
+    ds_info = DataInfo.generic(ncols=x.shape[1])
+    return x, y, ds_info
 
 
 def util_load_vertebral():
@@ -412,4 +428,5 @@ def util_load_vertebral():
     y = np.zeros(labels.shape[0], dtype=int)
     y[labels == "AB"] = 1
     x = data[:, :-1].astype(float)
-    return x, y
+    ds_info = DataInfo.generic(ncols=x.shape[1])
+    return x, y, ds_info
