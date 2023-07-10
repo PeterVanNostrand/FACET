@@ -29,12 +29,24 @@ DS_PATHS = {
     "credit": "data/credit/Credit-Card-Default_processedMACE.csv",
 }
 
-DS_DIMENSIONS = {
-    "cancer": (568, 30),
-    "glass": (162, 9),
-    "magic": (19019, 10),
-    "spambase": (4600, 57),
-    "vertebral": (309, 6)
+# DS_DIMENSIONS = {
+#     "cancer": (568, 30),
+#     "glass": (162, 9),
+#     "magic": (19019, 10),
+#     "spambase": (4600, 57),
+#     "vertebral": (309, 6)
+# }
+
+RANGED_DISCRETE = {
+    # adult
+    "Age": [0, 120],
+    "HoursPerWeek": [0, 100],
+    # credit
+    "MonthsWithZeroBalanceOverLast6Months": [0, 6],
+    "MonthsWithLowSpendingOverLast6Months": [0, 6],
+    "MonthsWithHighSpendingOverLast6Months": [0, 6],
+    # compas
+    "PriorsCount": [0, 40]
 }
 
 
@@ -45,9 +57,15 @@ class DataInfo:
     col_actions: List[FeatureActionability]
     possible_vals: List
     one_hot_schema: dict
+    is_normalized: bool = False
+    col_scales: dict = None
 
     def __post_init__(self):
         self.ncols = len(self.col_names)
+        self.all_numeric = True
+        for type in self.col_types:
+            if type != FeatureType.Numeric:
+                self.all_numeric = False
 
     @classmethod
     def generic(cls, ncols):
@@ -61,6 +79,41 @@ class DataInfo:
         one_hot_schema = {}
 
         return cls(col_names, col_types, col_actionability, possible_values, one_hot_schema)
+
+    def normalize_data(self, x: np.ndarray) -> None:
+        '''
+        Normalizes Numeric and Discrete columns to the range [0, 1]. Adjusts possible values to match
+        '''
+        self.is_normalized = True
+        self.col_scales = {}
+        for i in range(self.ncols):
+            if self.col_types[i] in [FeatureType.Numeric, FeatureType.Discrete]:
+                # get the lowest and highest possible values for the feature
+                min_value = np.min(x[:, i])
+                max_value = np.max(x[:, i])
+                if self.col_names[i] in RANGED_DISCRETE:
+                    min_value, max_value = RANGED_DISCRETE[self.col_names[i]]
+                # save the scaling values for later
+                self.col_scales[i] = [min_value, max_value]
+
+                # adjust the given data to map this to [0, 1]
+                x[:, i] = (x[:, i] - min_value) / (max_value - min_value)
+
+                # if we have listed possible values, adjust them as well
+                if len(self.possible_vals[i]) > 0:
+                    for j in range(len(self.possible_vals[i])):
+                        self.possible_vals[i][j] = (self.possible_vals[i][j] - min_value) / (max_value - min_value)
+
+    def unscale(self, x: np.ndarray, col_id: int = None):
+        if col_id is not None:
+            return x * (self.col_scales[col_id][1] - self.col_scales[col_id][0]) + self.col_scales[col_id][0]
+        else:
+            unscaled = x.copy()
+            for i in range(self.ncols):
+                if i in self.col_scales:
+                    unscaled[i] = unscaled[i] * (self.col_scales[col_id][1] -
+                                                 self.col_scales[col_id][0]) + + self.col_scales[col_id][0]
+            return unscaled
 
 
 def load_data(dataset_name, preprocessing: str = "Normalize"):
@@ -99,7 +152,7 @@ def load_data(dataset_name, preprocessing: str = "Normalize"):
 
     # normalize numeric and discrete features to [0, 1]
     if preprocessing == "Normalize":
-        normalize_data(x, ds_info.col_types)
+        ds_info.normalize_data(x)
     return x, y, ds_info
 
 
@@ -146,18 +199,6 @@ def action_to_enum(col_actionability) -> List[FeatureActionability]:
     return action_enums
 
 
-def normalize_data(x: np.ndarray, col_types: List[FeatureType]):
-    '''
-    Normalizes Numeric and Discrete columns to the range [0, 1]
-    '''
-    for i in range(len(col_types)):
-        if col_types[i] in [FeatureType.Numeric, FeatureType.Discrete]:
-            max_value = np.max(x[:, i])
-            min_value = np.min(x[:, i])
-            x[:, i] = (x[:, i] - min_value) / (max_value - min_value)
-    return x
-
-
 def one_hot_encode(input: np.ndarray, col_names: List[str], col_types: List[FeatureType]) -> DataInfo:
     '''
     One-hot encode the given data. Categorical features are removed and replaced with one column for each categorical value
@@ -195,7 +236,7 @@ def one_hot_encode(input: np.ndarray, col_names: List[str], col_types: List[Feat
     x = np.array(x).T
 
     # get the allowed values for each feature
-    one_hot_possible_vals = get_possible_vals(x, one_hot_types)
+    one_hot_possible_vals = get_possible_vals(x, one_hot_types, one_hot_names)
 
     # allowing alteration on all features
     one_hot_actions = [FeatureActionability.Free for _ in range(len(one_hot_names))]
@@ -205,14 +246,18 @@ def one_hot_encode(input: np.ndarray, col_names: List[str], col_types: List[Feat
     return x, ds_info
 
 
-def get_possible_vals(x, col_types):
+def get_possible_vals(x: np.ndarray, col_types: List[FeatureType], col_names: List[str]) -> List[List[float]]:
     '''
     Determine the range of allowed values for each column. Currently only applying a range to Discrete values as  this is reqruired by OCEAN
     '''
     possible_vals = [[] for _ in range(len(col_types))]
     for i in range(len(col_types)):
         if col_types[i] == FeatureType.Discrete:
-            possible_vals[i] = [np.min(x[:, i]), np.max(x[:, i])]
+            if col_names[i] in RANGED_DISCRETE:
+                range_min, range_max = RANGED_DISCRETE[col_names[i]]
+                possible_vals[i] = list(range(range_min, range_max+1))
+            else:
+                possible_vals[i] = list(np.unique(x[:, i]))
     return possible_vals
 
 
@@ -246,7 +291,6 @@ def load_facet_data(ds_name: str) -> Tuple[np.ndarray, np.ndarray, DataInfo]:
     input_col_action = col_actionabiltiy.copy()
     input_col_action.pop(target_col)
     input = data[input_col_names].iloc[2:].to_numpy(dtype=np.float64)
-    input = normalize_data(input, input_col_types)
 
     x, ds_info = one_hot_encode(input, input_col_names, input_col_types)
     y = target.astype(int)
@@ -261,15 +305,20 @@ def check_one_hot_validity(x: np.ndarray, one_hot_schema: dict, verbose: bool = 
     `x`: a numpy array of shape `(n_instances, n_features)`
     `one_hot_schema`: a dictionary which maps `{"feature_name": [i, j, ... , k]}` where `feature_name` is the name of the feature which was one hot encoded and `[i, j, ... , k]` are the column indices for the resulting one hot columns
     '''
+    if len(x.shape) == 1:
+        data = x.reshape(1, x.shape[0])
+    else:
+        data = x
+
     all_valid = True
-    for i in range(x.shape[0]):
+    for i in range(data.shape[0]):
         for cat_column_name, sub_col_idxs in one_hot_schema.items():
-            n_set_colums = sum(x[i][sub_col_idxs])
+            n_set_colums = sum(data[i][sub_col_idxs])
             if (n_set_colums != 1):
                 all_valid = False
                 if verbose:
                     print("failed one-hot encoding\t\t{}\t{}\t{}".format(i,
-                          cat_column_name, sum(x[i][sub_col_idxs])))
+                                                                         cat_column_name, sum(data[i][sub_col_idxs])))
     return all_valid
 
 

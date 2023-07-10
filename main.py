@@ -89,7 +89,7 @@ def simple_run(ds_name="vertebral", explainer="FACETIndex", random_state=0, ntre
 
 if __name__ == "__main__":
 
-    all_ds = ["cancer", "glass", "magic", "spambase", "vertebral"]
+    all_ds = ["cancer", "glass", "magic", "spambase", "vertebral", "adult", "credit", "compas"]
     all_explaiers = ["FACETIndex", "OCEAN", "RFOCSE", "AFT", "MACE"]
 
     parser = argparse.ArgumentParser(description='Run FACET Experiments')

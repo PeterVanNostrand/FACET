@@ -112,8 +112,12 @@ class BitVectorIndex():
                     empty_query_region = True  # skip the search this iteration
                     # jump radius to nearest point in constraints region so the next iteration has a nonempty region
                     test_instance = self.explainer.fit_to_rectangle(instance, constraints)
-                    dist = self.explainer.distance_fn(instance, test_instance, weights)
-                    search_radius = dist
+                    if test_instance is not None:
+                        dist = self.explainer.distance_fn(instance, test_instance, weights)
+                        search_radius = dist
+                    else:  # the constraints region has no valid instances (e.g. enforces invalid one-hot encoding)
+                        search_radius = np.inf
+                        search_complete = True
             if search_radius > max_dist:
                 search_complete = True
                 search_radius = max_dist
@@ -147,11 +151,12 @@ class BitVectorIndex():
                             if min_widths is None or ((rect[:, UPPER] - rect[:, LOWER]) >= min_widths).all():
                                 # check the distance to the found rectangle
                                 test_instance = self.explainer.fit_to_rectangle(instance, rect)
-                                dist = self.explainer.distance_fn(instance, test_instance, weights)
-                                # if its closer than the best solution so far, save it
-                                if dist < closest_dist:
-                                    closest_rect = rect
-                                    closest_dist = dist
+                                if test_instance is not None:
+                                    dist = self.explainer.distance_fn(instance, test_instance, weights)
+                                    # if its closer than the best solution so far, save it
+                                    if dist < closest_dist:
+                                        closest_rect = rect
+                                        closest_dist = dist
 
                 # if the best solution falls within the search radius, exit
                 solution_found = (closest_dist <= search_radius)
@@ -241,9 +246,12 @@ class BitVectorIndex():
                     empty_query_region = True  # skip the search this iteration
                     # jump radius to nearest point in constraints region so the next iteration has a nonempty region
                     test_instance = self.explainer.fit_to_rectangle(instance, constraints)
-                    dist = self.explainer.distance_fn(instance, test_instance, weights)
-                    search_radius = dist
-
+                    if test_instance is not None:
+                        dist = self.explainer.distance_fn(instance, test_instance, weights)
+                        search_radius = dist
+                    else:  # the constraints region has no valid instances (e.g. enforces invalid one-hot encoding)
+                        search_radius = np.inf
+                        search_complete = True
             if not empty_query_region:
                 # get the set of hyper-rect records in the query rectangle
                 matching_bits = self.rect_query(query_rect)

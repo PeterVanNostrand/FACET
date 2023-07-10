@@ -1,5 +1,5 @@
 isMale,isMarried,AgeGroup,EducationLevel,MaxBillAmountOverLast6Months,MaxPaymentAmountOverLast6Months,MonthsWithZeroBalanceOverLast6Months,MonthsWithLowSpendingOverLast6Months,MonthsWithHighSpendingOverLast6Months,MostRecentBillAmount,MostRecentPaymentAmount,TotalOverdueCounts,TotalMonthsOverdue,HasHistoryOfOverduePayments,Class
-B,B,D,D,N,N,D,D,D,N,N,D,D,B,B
+B,B,D,D,D,D,D,D,D,D,D,D,D,B,B
 FIXED,FREE,INC,FREE,FREE,FREE,FREE,FREE,FREE,FREE,FREE,FREE,FREE,FREE,PREDICT
 0,1,1,3,120,20,0,6,0,120,0,1,4,1,0
 0,0,2,3,110,60,0,6,0,80,0,2,4,1,0

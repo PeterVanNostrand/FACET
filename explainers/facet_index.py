@@ -12,17 +12,21 @@ import networkx as nx
 import numpy as np
 from sklearn import tree
 from tqdm.auto import tqdm
+from dataset import DataInfo
+from dataset import check_one_hot_validity
 
 from detectors.random_forest import RandomForest
 # from explainers.branching import BranchIndex
-from explainers.bit_vector import BitVectorIndex
 from explainers.explainer import Explainer
+from explainers.bit_vector import BitVectorIndex
+from explainers.bit_vector import LOWER, UPPER
 # custom classes
 from utilities.metrics import dist_euclidean
+from baselines.ocean.CounterFactualParameters import FeatureType
+
 
 if TYPE_CHECKING:
     from manager import MethodManager
-    from dataset import DataInfo
 
 
 class FACETIndex(Explainer):
@@ -64,7 +68,25 @@ class FACETIndex(Explainer):
                                             explainer=self, hyperparameters=self.hyperparameters))
 
     def prepare_dataset(self, x: np.ndarray, y: np.ndarray, ds_info: DataInfo) -> None:
-        pass
+        # create a copy of the DataInfo object
+        names = ds_info.col_names.copy()
+        types = ds_info.col_types.copy()
+        actions = ds_info.col_actions.copy()
+        schema = ds_info.one_hot_schema.copy()
+
+        # parse possible values to numpy arrays for fast computations
+        possible_vals = [[] for i in range(ds_info.ncols)]
+        for i in range(ds_info.ncols):
+            if ds_info.possible_vals[i] != []:
+                possible_vals[i] = np.array(ds_info.possible_vals[i])
+        self.ds_info = DataInfo(names, types, actions, possible_vals, schema)
+        self.ds_info.is_normalized = ds_info.is_normalized
+        self.ds_info.col_scales = ds_info.col_scales.copy()
+        self.reverse_one_hot_schema = {}
+        # create a reverse lookup for the schema
+        for col_name, col_idxs in schema.items():
+            for idx in col_idxs:
+                self.reverse_one_hot_schema[idx] = col_name
 
     def compute_supports(self, data: np.ndarray):
         '''
@@ -114,6 +136,19 @@ class FACETIndex(Explainer):
         '''
         rect_points = self.select_points(training_data=data)
         self.index_rectangles(data=rect_points)
+        if not self.check_rects_one_hot_valid():  # ! DEBUG
+            print("WARNING INVALID HYPERRECTS IN INDEX")
+
+    def check_rects_one_hot_valid(self) -> bool:
+        invalid_count = 0
+        for class_id in [0, 1]:
+            for rect in self.index[class_id]:
+                for cat_column_name, sub_col_idxs in self.ds_info.one_hot_schema.items():
+                    n_set_high = sum(rect[sub_col_idxs, LOWER] > 0)
+                    n_set_low = sum(rect[sub_col_idxs, UPPER] < 1)
+                    if n_set_high > 1 or n_set_low == self.ds_info.ncols:
+                        invalid_count += 1
+        return invalid_count == 0
 
     def select_points(self, training_data: np.ndarray) -> np.ndarray:
         '''
@@ -527,25 +562,107 @@ class FACETIndex(Explainer):
         -------
         xprime: the adjusted instance
         '''
-        xprime = x.copy()
-        # determine which values need to adjusted to be smaller, and which need to be larger
         EPSILON = 1e-8  # use epsilon to account for floating point impercision for rare values
-        low_values = xprime <= (rect[:, 0] + EPSILON)
-        high_values = xprime >= (rect[:, 1] - EPSILON)
+        xprime = x.copy()
+        binary_required_high = set()
+        binary_required_low = set()
+        if self.ds_info.all_numeric:  # if all features are numeric, do a quick fit using array operations
+            # determine which values need to adjusted to be smaller, and which need to be larger
+            low_values = xprime <= (rect[:, LOWER] + EPSILON)
+            high_values = xprime >= (rect[:, UPPER] - EPSILON)
 
-        # check that the offset will not overstep the min or max value, this occurs when the range between
-        # a min and max value is less than the offset size
-        overstep_range = (rect[:, 1] - rect[:, 0]) <= self.offset
-        # identify features which need to be adjusted and will overstep the min or max value
-        idx_overstep = np.logical_and(overstep_range, np.logical_or(low_values, high_values))
+            # check that the offset will not overstep the min or max value, this occurs when the range between
+            # a min and max value is less than the offset size
+            rect_width = (rect[:, UPPER] - rect[:, LOWER])
+            overstep_range = rect_width <= self.offset
+            # identify features which need to be adjusted and will overstep the min or max value
+            idx_overstep = np.logical_and(overstep_range, np.logical_or(low_values, high_values))
 
-        # increase low feature values to one offset above min
-        xprime[low_values] = rect[low_values, 0] + self.offset
-        # decrease high features one to one offset below min
-        xprime[high_values] = rect[high_values, 1] - self.offset
-        # for oversteped bounds use the average between min and max
-        xprime[idx_overstep] = rect[idx_overstep, 0] + (rect[idx_overstep, 1] - rect[idx_overstep, 0]) / 2
+            # increase low feature values to one offset above min
+            xprime[low_values] = rect[low_values, LOWER] + self.offset
+            # decrease high features one to one offset below min
+            xprime[high_values] = rect[high_values, UPPER] - self.offset
+            # for oversteped bounds use the average between min and max
+            xprime[idx_overstep] = rect[idx_overstep, LOWER] + rect_width / 2
+        else:  # if there are non-numeric features, handle them directly
+            i = 0
+            is_valid = True
+            while i < self.ds_info.ncols and is_valid:
+                # determine if the value is too low, too high, and if an overstep will occur
+                is_low = (xprime[i] <= (rect[i, LOWER] + EPSILON))
+                is_high = (xprime[i] >= (rect[i, UPPER] - EPSILON))
+                rect_width_i = (rect[i, UPPER] - rect[i, LOWER])
+                is_overstep = (rect_width_i <= self.offset)
 
+                # for numeric features do a simple step if needed with overstep checking
+                if self.ds_info.col_types[i] == FeatureType.Numeric:
+                    if is_overstep:
+                        xprime[i] = rect[i, LOWER] + rect_width_i / 2
+                    elif is_low:
+                        xprime[i] = rect[i, LOWER] + self.offset
+                    elif is_high:
+                        xprime[i] = rect[i, UPPER] - self.offset
+                # for binary features flip the value if needed
+                elif self.ds_info.col_types[i] == FeatureType.Binary:
+                    if rect[i, UPPER] < 1.0:
+                        binary_required_low.add(i)
+                    if rect[i, LOWER] > 0.0:
+                        binary_required_high.add(i)
+                    if is_low:
+                        # since some binary columns are from one-hot encoding of categorical features
+                        # we need to enfore the one-hot property for these features
+                        if i in self.reverse_one_hot_schema:  # if this column is for a one-hot encoding
+                            # determine which feature it encodes
+                            feat_name = self.reverse_one_hot_schema[i]
+                            # clear the other columns for this feature
+                            xprime[self.ds_info.one_hot_schema[feat_name]] = 0.0
+                        # set the current column value if needed
+                        xprime[i] = 1.0
+                        if xprime[i] > rect[i, UPPER]:  # ! debug
+                            print("WARNING BINARY OVERSTEPPED")
+                    elif is_high:
+                        # set the feature low
+                        xprime[i] = 0.0
+                        binary_required_low.add(i)
+                        if i in self.reverse_one_hot_schema:  # if this column is for a one-hot encoding
+                            # determine which feature it encodes
+                            feat_name = self.reverse_one_hot_schema[i]
+                            # check which other columns are set
+                            feature_columns = np.array(self.ds_info.one_hot_schema[feat_name])
+                            n_set_cols = sum(xprime[feature_columns])
+                            if n_set_cols == 0:  # if this was the only col set, we need to set one
+                                rect_allowed_high = feature_columns[rect[feature_columns, UPPER] >= 1.0]
+                                xprime[np.random.choice(rect_allowed_high, 1)] = 1.0
+                        if xprime[i] < rect[i, LOWER]:  # ! debug
+                            print("WARNING BINARY OVERSTEPPED")
+
+                # for discrete values find the next largest or next smallest value as needed
+                elif self.ds_info.col_types[i] == FeatureType.Discrete:
+                    if is_low:  # find next largest value
+                        differences = (self.ds_info.possible_vals[i] - rect[i, LOWER])
+                        differences[differences < 0] = np.inf
+                        idx_next_larger = np.argmin(differences)
+                        xprime[i] = self.ds_info.possible_vals[i][idx_next_larger]
+                        if xprime[i] > rect[i, UPPER]:  # ! DEBUG
+                            print("WARNING DISCRETE OVERSTEPPED")
+                    elif is_high:
+                        differences = (self.ds_info.possible_vals[i] - rect[i, UPPER])
+                        differences[differences > 0] = -np.inf
+                        idx_next_lower = np.argmax(differences)
+                        xprime[i] = self.ds_info.possible_vals[i][idx_next_lower]
+                        if xprime[i] < rect[i, LOWER]:  # ! DEBUG
+                            print("WARNING DISCRETE OVERSTEPPED")
+                # handle categorical one-hot encoded values, making sure only one column is hot for categorical feature
+                elif self.ds_info.col_types[i] == FeatureType.Categorical:
+                    print("How'd you get here? Categorical features should be one-hot encoded")
+                    print("If for some reason you don't want to one-hot encode please consider marking as discrete instead")
+                i += 1
+
+        if xprime is not None:
+            if not check_one_hot_validity(xprime, self.ds_info.one_hot_schema, verbose=False):  # !DEBUG
+                print("CRITICAL ERROR - FACET GENERATED AN INVALID EXPLANATION")
+            if not self.is_inside(xprime, rect):  # ! DEBUG
+                print("ERROR, COUNTERFACTUAL EXAMPLE NOT IN REGION")
         return xprime
 
     def rect_center(self, rect: np.ndarray) -> np.ndarray:
