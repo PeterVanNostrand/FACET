@@ -1,9 +1,7 @@
 import os
-import copy
 import pickle
 import argparse
 import numpy as np
-import pandas as pd
 
 from pprint import pprint
 from datetime import datetime
@@ -11,12 +9,12 @@ from datetime import datetime
 import baselines.mace.loadData as loadData
 import baselines.mace.loadModel as loadModel
 
-from baselines.mace.debug import ipsh
 
-try:
-    import baselines.mace.generateSATExplanations as generateSATExplanations
-except:
-    print('[ENV WARNING] activate virtualenv to allow for testing MACE or MINT')
+# try:
+import baselines.mace.generateSATExplanations as generateSATExplanations
+# except:
+#     print('[ENV WARNING] activate virtualenv to allow for testing MACE or MINT')
+
 import baselines.mace.generateMOExplanations as generateMOExplanations
 import baselines.mace.generateFTExplanations as generateFTExplanations
 # try:
@@ -47,9 +45,11 @@ def generateExplanations(
         observable_data_dict=None,
         standard_deviations=None):
 
-    if 'MACE' in approach_string:  # 'MACE_counterfactual':
+    valid_approach = ["MACE", "MINT", "MO", "FT", "PFT", "AR"]
+    error_string = f'{approach_string} not recognized as a valid `approach_string`.'
+    assert approach_string.split("_")[0] in valid_approach, error_string
 
-        # print("MACE")
+    if 'MACE' in approach_string:  # 'MACE_counterfactual':
         return generateSATExplanations.genExp(
             explanation_file_name,
             model_trained,
@@ -59,9 +59,7 @@ def generateExplanations(
             'mace',
             getEpsilonInString(approach_string)
         )
-
     elif 'MINT' in approach_string:  # 'MINT_counterfactual':
-
         return generateSATExplanations.genExp(
             explanation_file_name,
             model_trained,
@@ -71,9 +69,7 @@ def generateExplanations(
             'mint',
             getEpsilonInString(approach_string)
         )
-
     elif approach_string == 'MO':  # 'minimum_observable':
-
         return generateMOExplanations.genExp(
             explanation_file_name,
             dataset_obj,
@@ -81,9 +77,7 @@ def generateExplanations(
             observable_data_dict,
             norm_type_string
         )
-
     elif approach_string == 'FT':  # 'feature_tweaking':
-
         possible_labels = [0, 1]
         epsilon = .5
         perform_while_plausibility = False
@@ -97,9 +91,7 @@ def generateExplanations(
             standard_deviations,
             perform_while_plausibility
         )
-
     elif approach_string == 'PFT':  # 'plausible_feature_tweaking':
-
         possible_labels = [0, 1]
         epsilon = .5
         perform_while_plausibility = True
@@ -113,9 +105,7 @@ def generateExplanations(
             standard_deviations,
             perform_while_plausibility
         )
-
     elif approach_string == 'AR':  # 'actionable_recourse':
-
         # return generateARExplanations.genExp(
         #     model_trained,
         #     factual_sample,
@@ -123,10 +113,6 @@ def generateExplanations(
         #     dataset_obj
         # )
         pass
-
-    else:
-
-        raise Exception(f'{approach_string} not recognized as a valid `approach_string`.')
 
 
 def runExperiments(dataset_values, model_class_values, norm_values, approaches_values, batch_number, sample_count, gen_cf_for, process_id):
@@ -165,12 +151,12 @@ def runExperiments(dataset_values, model_class_values, norm_values, approaches_v
                     os.mkdir(f'{experiment_folder_name}')
                     os.mkdir(f'{explanation_folder_name}')
                     os.mkdir(f'{minimum_distance_folder_name}')
-                    log_file = open(f'{experiment_folder_name}/log_experiment.txt', 'w')
+                    # log_file = open(f'{experiment_folder_name}/log_experiment.txt', 'w')
 
                     # save some files
                     dataset_obj = loadData.loadDataset(
                         dataset_string, return_one_hot=one_hot, load_from_cache=False, debug_flag=False)
-                    pickle.dump(dataset_obj, open(f'{experiment_folder_name}/_dataset_obj', 'wb'))
+                    # pickle.dump(dataset_obj, open(f'{experiment_folder_name}/_dataset_obj', 'wb'))
                     #     training portion used to train models
                     #     testing portion used to compute counterfactuals
                     X_train, X_test, y_train, y_test = dataset_obj.getTrainTestSplit()

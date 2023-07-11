@@ -225,7 +225,7 @@ def doMACEExplanationWithQueueCatch(queue,
                                    factual_sample,
                                    norm_type_string
                                    )
-    except:
+    except (AssertionError):
         print("solver returned error for", approach_string)
         queue.put(None)
 

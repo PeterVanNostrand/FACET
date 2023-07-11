@@ -59,13 +59,20 @@ class DataInfo:
     one_hot_schema: dict
     is_normalized: bool = False
     col_scales: dict = None
+    reverse_one_hot_schema = None
 
     def __post_init__(self):
         self.ncols = len(self.col_names)
+        # check if all the features are numeric
         self.all_numeric = True
         for type in self.col_types:
             if type != FeatureType.Numeric:
                 self.all_numeric = False
+        # create a reverse lookup for the schema
+        self.reverse_one_hot_schema = {}
+        for col_name, col_idxs in self.one_hot_schema.items():
+            for idx in col_idxs:
+                self.reverse_one_hot_schema[idx] = col_name
 
     @classmethod
     def generic(cls, ncols):
@@ -82,7 +89,7 @@ class DataInfo:
 
     def normalize_data(self, x: np.ndarray) -> None:
         '''
-        Normalizes Numeric and Discrete columns to the range [0, 1]. Adjusts possible values to match
+        Normalizes Numeric and Discrete columns to the range [0, 1]. Updates `self.possible_vals` to match new scale
         '''
         self.is_normalized = True
         self.col_scales = {}
@@ -105,15 +112,79 @@ class DataInfo:
                         self.possible_vals[i][j] = (self.possible_vals[i][j] - min_value) / (max_value - min_value)
 
     def unscale(self, x: np.ndarray, col_id: int = None):
+        '''
+        Unscales the given data to match the values ranges before normalization
+
+        Parameters
+        ----------
+        x: a numpy array of shape (ncols,) or a single column value e.g. array of (1,) or a int/float
+        col_id: when x is a single value, the integer column ID of the value to unscale. set to None otherwise
+
+        Returns
+        -------
+        unscaled: the unscaled data matching the type and shape of x
+        '''
+        if not self.is_normalized:
+            return x
+
         if col_id is not None:
             return x * (self.col_scales[col_id][1] - self.col_scales[col_id][0]) + self.col_scales[col_id][0]
         else:
             unscaled = x.copy()
-            for i in range(self.ncols):
-                if i in self.col_scales:
-                    unscaled[i] = unscaled[i] * (self.col_scales[col_id][1] -
-                                                 self.col_scales[col_id][0]) + + self.col_scales[col_id][0]
+            for col_id in range(self.ncols):
+                if col_id in self.col_scales:
+                    unscaled[col_id] = unscaled[col_id] * (self.col_scales[col_id][1] -
+                                                           self.col_scales[col_id][0]) + + self.col_scales[col_id][0]
             return unscaled
+
+    def check_valid(self, x: np.ndarray) -> bool:
+        '''
+        Checks if the given data array `x` matches requirements for one-hot encoding, discrete values, and value ranges
+
+        Parameters
+        ----------
+        x: a scaled numpy array of shape (ninstances, ncols)
+
+        Returns
+        -------
+        all_valid: a bool which is true iff all instances are valid
+        '''
+        all_valid = True
+        for instance in x:
+            valid_i = True
+            for col_id in range(self.ncols):
+                if self.col_types[col_id] == FeatureType.Binary:
+                    valid_i = valid_i and (instance[col_id] in [0.0, 1.0])
+                if self.col_types[col_id] == FeatureType.Discrete:
+                    valid_i = valid_i and (instance[col_id] in self.possible_vals[col_id])
+                if self.col_types == FeatureType.Categorical:
+                    n_hot_for_feature = sum(instance[self.reverse_one_hot_schema[col_id]])
+                    valid_i = valid_i and (n_hot_for_feature == 1)
+            all_valid = all_valid and valid_i
+        return all_valid
+
+    def check_one_hot_validity(self, x: np.ndarray, verbose: bool = False) -> bool:
+        '''
+        Given an array `x` with one hot encoded features. Check that each one hot feature has exactly one column set
+
+        `x`: a numpy array of shape `(n_instances, n_features)`
+        `one_hot_schema`: a dictionary which maps `{"feature_name": [i, j, ... , k]}` where `feature_name` is the name of the feature which was one hot encoded and `[i, j, ... , k]` are the column indices for the resulting one hot columns
+        '''
+        if len(x.shape) == 1:
+            data = x.reshape(1, x.shape[0])
+        else:
+            data = x
+
+        all_valid = True
+        for i in range(data.shape[0]):
+            for cat_column_name, sub_col_idxs in self.one_hot_schema.items():
+                n_set_colums = sum(data[i][sub_col_idxs])
+                if (n_set_colums != 1):
+                    all_valid = False
+                    if verbose:
+                        print("failed one-hot encoding\t\t{}\t{}\t{}".format(i,
+                                                                             cat_column_name, sum(data[i][sub_col_idxs])))
+        return all_valid
 
 
 def load_data(dataset_name, preprocessing: str = "Normalize"):
@@ -296,30 +367,6 @@ def load_facet_data(ds_name: str) -> Tuple[np.ndarray, np.ndarray, DataInfo]:
     y = target.astype(int)
 
     return x, y, ds_info
-
-
-def check_one_hot_validity(x: np.ndarray, one_hot_schema: dict, verbose: bool = False) -> bool:
-    '''
-    Given an array `x` with one hot encoded features. Check that each one hot feature has exactly one column set
-
-    `x`: a numpy array of shape `(n_instances, n_features)`
-    `one_hot_schema`: a dictionary which maps `{"feature_name": [i, j, ... , k]}` where `feature_name` is the name of the feature which was one hot encoded and `[i, j, ... , k]` are the column indices for the resulting one hot columns
-    '''
-    if len(x.shape) == 1:
-        data = x.reshape(1, x.shape[0])
-    else:
-        data = x
-
-    all_valid = True
-    for i in range(data.shape[0]):
-        for cat_column_name, sub_col_idxs in one_hot_schema.items():
-            n_set_colums = sum(data[i][sub_col_idxs])
-            if (n_set_colums != 1):
-                all_valid = False
-                if verbose:
-                    print("failed one-hot encoding\t\t{}\t{}\t{}".format(i,
-                                                                         cat_column_name, sum(data[i][sub_col_idxs])))
-    return all_valid
 
 
 def util_load_cancer():
