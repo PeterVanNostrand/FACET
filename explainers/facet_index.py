@@ -208,9 +208,9 @@ class FACETIndex(Explainer):
         Unbounded axis minimums and maximums are treated as zero and one respectively
         '''
         test_rect = rect.copy()
-        test_rect[:, 0][test_rect[:, 0] == -np.inf] = 0
-        test_rect[:, 1][test_rect[:, 1] == np.inf] = 1
-        widths = test_rect[:, 1] - test_rect[:, 0]
+        test_rect[:, LOWER][test_rect[:, LOWER] == -np.inf] = 0
+        test_rect[:, UPPER][test_rect[:, UPPER] == np.inf] = 1
+        widths = test_rect[:, UPPER] - test_rect[:, LOWER]
         return widths
 
     def inside_index(self, point: np.ndarray) -> bool:
@@ -316,8 +316,8 @@ class FACETIndex(Explainer):
         '''
         # initialize the hyper-rectangle as unbounded on both side of all axes
         rect = np.zeros((self.rf_nfeatures, 2))
-        rect[:, 0] = -np.inf
-        rect[:, 1] = np.inf
+        rect[:, LOWER] = -np.inf
+        rect[:, UPPER] = np.inf
 
         if self.intersect_order == "Axes":
             # compute how many axes each rectangle bounds, this is equal to the number of noninfinite threshold
@@ -339,8 +339,8 @@ class FACETIndex(Explainer):
         i = 0
         paths_used = []
         while i < len(all_bounds) and i < self.majority_size:
-            rect[:, 0] = np.maximum(rect[:, 0], all_bounds[order[i]][:, 0])  # intersection of minimums
-            rect[:, 1] = np.minimum(rect[:, 1], all_bounds[order[i]][:, 1])  # intersection of maximums
+            rect[:, LOWER] = np.maximum(rect[:, LOWER], all_bounds[order[i]][:, LOWER])  # intersection of minimums
+            rect[:, UPPER] = np.minimum(rect[:, UPPER], all_bounds[order[i]][:, UPPER])  # intersection of maximums
             bisect.insort(paths_used, paths[order[i]])  # remember which leaves we've used, keep sorted asc by tid
             i += 1
 
@@ -353,8 +353,8 @@ class FACETIndex(Explainer):
 
         # initialize the hyper-rectangle as unbounded on both side of all axes
         rect = np.zeros((self.rf_nfeatures, 2))
-        rect[:, 0] = -np.inf
-        rect[:, 1] = np.inf
+        rect[:, LOWER] = -np.inf
+        rect[:, UPPER] = np.inf
         paths_used = []
         accumulated_prob = np.zeros(shape=(self.rf_nclasses,))
 
@@ -363,8 +363,8 @@ class FACETIndex(Explainer):
             order = path_probs[:, label].argsort()[::-1]
             i = 0
             while i < len(all_bounds) and accumulated_prob[label] <= 0.5:
-                rect[:, 0] = np.maximum(rect[:, 0], all_bounds[order[i]][:, 0])  # intersection of minimums
-                rect[:, 1] = np.minimum(rect[:, 1], all_bounds[order[i]][:, 1])  # intersection of maximums
+                rect[:, LOWER] = np.maximum(rect[:, LOWER], all_bounds[order[i]][:, LOWER])  # intersection of minimums
+                rect[:, UPPER] = np.minimum(rect[:, UPPER], all_bounds[order[i]][:, UPPER])  # intersection of maximums
                 bisect.insort(paths_used, paths[order[i]])  # remember which leaves we've used, keep sorted asc by tid
                 accumulated_prob += (1 / self.rf_ntrees) * path_probs[order[i]]
                 i += 1
@@ -399,8 +399,8 @@ class FACETIndex(Explainer):
             # start with intersecting the hyper-rectangles which have the matching class
             i = 0
             while i < len(match_bounds) and accumulated_prob[label] <= 0.5:
-                rect[:, 0] = np.maximum(rect[:, 0], match_bounds[match_order[i]][:, 0])  # intersection of minimums
-                rect[:, 1] = np.minimum(rect[:, 1], match_bounds[match_order[i]][:, 1])  # intersection of maximums
+                rect[:, LOWER] = np.maximum(rect[:, LOWER], match_bounds[match_order[i]][:, LOWER])  # itersect mins
+                rect[:, UPPER] = np.minimum(rect[:, UPPER], match_bounds[match_order[i]][:, UPPER])  # itersect maxs
                 bisect.insort(paths_used, tuple(match_paths[match_order[i]]))  # remember leaves we used
                 accumulated_prob += (1 / self.rf_ntrees) * match_probs[match_order[i]]
                 i += 1
@@ -410,8 +410,8 @@ class FACETIndex(Explainer):
             nm_order = other_probs[:, label].argsort()[::-1]  # take other leaf with highest desired class prob first
             i = 0
             while i < len(other_bounds) and accumulated_prob[label] <= 0.5:
-                rect[:, 0] = np.maximum(rect[:, 0], other_bounds[nm_order[i]][:, 0])  # intersection of minimums
-                rect[:, 1] = np.minimum(rect[:, 1], other_bounds[nm_order[i]][:, 1])  # intersection of maximums
+                rect[:, LOWER] = np.maximum(rect[:, LOWER], other_bounds[nm_order[i]][:, LOWER])  # itersect mins
+                rect[:, UPPER] = np.minimum(rect[:, UPPER], other_bounds[nm_order[i]][:, UPPER])  # itersect maxs
                 bisect.insort(paths_used, tuple(other_paths[nm_order[i]]))  # remember leaves we used
                 accumulated_prob += (1 / self.rf_ntrees) * other_probs[nm_order[i]]
                 i += 1
@@ -452,8 +452,8 @@ class FACETIndex(Explainer):
         '''
         # initialize the thresholds as unbounded on both side of all axis
         feature_bounds = np.zeros((self.rf_nfeatures, 2))
-        feature_bounds[:, 0] = -np.inf
-        feature_bounds[:, 1] = np.inf
+        feature_bounds[:, LOWER] = -np.inf
+        feature_bounds[:, UPPER] = np.inf
 
         for i in range(path[:-1, :].shape[0]):
             feature = int(path[i, 1])
@@ -542,7 +542,7 @@ class FACETIndex(Explainer):
         '''
         Returns true if x falls inside the given rectangle, false otherwise
         '''
-        return (x > rect[:, 0]).all() and (x < rect[:, 1]).all()
+        return (x >= rect[:, LOWER]).all() and (x <= rect[:, UPPER]).all()
 
     def fit_to_rectangle(self, x: np.ndarray, rect: np.ndarray) -> np.ndarray:
         '''
@@ -557,7 +557,7 @@ class FACETIndex(Explainer):
         -------
         xprime: the adjusted instance
         '''
-        EPSILON = 1e-8  # use epsilon to account for floating point impercision for rare values
+        EPSILON = 1e-8  # use epsilon to account for floating point imprecision for rare values
         xprime = x.copy()
         binary_required_high = set()
         binary_required_low = set()
@@ -629,16 +629,22 @@ class FACETIndex(Explainer):
 
                 # for discrete values find the next largest or next smallest value as needed
                 elif self.ds_info.col_types[i] == FeatureType.Discrete:
-                    if is_low:  # find next largest value
+                    if is_low:  # if low, choose the next largest value
                         differences = (self.ds_info.possible_vals[i] - rect[i, LOWER])
                         differences[differences < 0] = np.inf
                         idx_next_larger = np.argmin(differences)
                         xprime[i] = self.ds_info.possible_vals[i][idx_next_larger]
-                    elif is_high:
+                        if xprime[i] > rect[i, UPPER]:  # if the next step up is no longer in the rect
+                            is_valid = False
+                            xprime = None
+                    elif is_high:  # if high, choose the next smalles value
                         differences = (self.ds_info.possible_vals[i] - rect[i, UPPER])
                         differences[differences > 0] = -np.inf
                         idx_next_lower = np.argmax(differences)
                         xprime[i] = self.ds_info.possible_vals[i][idx_next_lower]
+                        if xprime[i] < rect[i, LOWER]:  # if the next step down is no longer in the rect
+                            is_valid = False
+                            xprime = None
                 # handle categorical one-hot encoded values, making sure only one column is hot for categorical feature
                 elif self.ds_info.col_types[i] == FeatureType.Categorical:
                     print("How'd you get here? Categorical features should be one-hot encoded")
@@ -647,18 +653,19 @@ class FACETIndex(Explainer):
 
         # !DEUBUG
         # if xprime is not None:
-        #     if not self.ds_info.check_valid(xprime):  # !DEBUG
+        #     if not self.ds_info.check_valid([xprime]):  # !DEBUG
         #         print("CRITICAL ERROR - FACET GENERATED AN INVALID EXPLANATION")
         #     if not self.is_inside(xprime, rect):  # ! DEBUG
         #         print("ERROR, COUNTERFACTUAL EXAMPLE NOT IN REGION")
-        # return xprime
+
+        return xprime
 
     def rect_center(self, rect: np.ndarray) -> np.ndarray:
         '''
         Returns the center point of the given rectangle, assuming bounds of +-inf are 1.0 and 0.0 respectively
         '''
-        lower_bounds = np.maximum(rect[:, 0], -10.0)
-        upper_bounds = np.minimum(rect[:, 1], 10.0)
+        lower_bounds = np.maximum(rect[:, LOWER], -10.0)
+        upper_bounds = np.minimum(rect[:, UPPER], 10.0)
         center = (upper_bounds + lower_bounds) / 2
         return center
 
