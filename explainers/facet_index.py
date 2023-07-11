@@ -68,19 +68,11 @@ class FACETIndex(Explainer):
 
     def prepare_dataset(self, x: np.ndarray, y: np.ndarray, ds_info: DataInfo) -> None:
         # create a copy of the DataInfo object
-        names = ds_info.col_names.copy()
-        types = ds_info.col_types.copy()
-        actions = ds_info.col_actions.copy()
-        schema = ds_info.one_hot_schema.copy()
-
-        # parse possible values to numpy arrays for fast computations
-        possible_vals = [[] for i in range(ds_info.ncols)]
-        for i in range(ds_info.ncols):
-            if ds_info.possible_vals[i] != []:
-                possible_vals[i] = np.array(ds_info.possible_vals[i])
-        self.ds_info = DataInfo(names, types, actions, possible_vals, schema)
-        self.ds_info.is_normalized = ds_info.is_normalized
-        self.ds_info.col_scales = ds_info.col_scales.copy()
+        self.ds_info: DataInfo = ds_info.copy()
+        # make the possible values into numpy arrays
+        for i in range(self.ds_info.ncols):
+            if self.ds_info.possible_vals[i] != []:
+                self.ds_info.possible_vals[i] = np.array(self.ds_info.possible_vals[i])
 
     def compute_supports(self, data: np.ndarray):
         '''
@@ -131,8 +123,8 @@ class FACETIndex(Explainer):
         rect_points = self.select_points(training_data=data)
         self.index_rectangles(data=rect_points)
         # ! DEBUG
-        # if not self.check_rects_one_hot_valid():  # ! DEBUG
-        #     print("WARNING INVALID HYPERRECTS IN INDEX")
+        if not self.check_rects_one_hot_valid():  # ! DEBUG
+            print("WARNING INVALID HYPERRECTS IN INDEX")
 
     def check_rects_one_hot_valid(self) -> bool:
         invalid_count = 0
@@ -652,11 +644,11 @@ class FACETIndex(Explainer):
                 i += 1
 
         # !DEUBUG
-        # if xprime is not None:
-        #     if not self.ds_info.check_valid([xprime]):  # !DEBUG
-        #         print("CRITICAL ERROR - FACET GENERATED AN INVALID EXPLANATION")
-        #     if not self.is_inside(xprime, rect):  # ! DEBUG
-        #         print("ERROR, COUNTERFACTUAL EXAMPLE NOT IN REGION")
+        if xprime is not None:
+            if not self.ds_info.check_valid([xprime]):  # !DEBUG
+                print("CRITICAL ERROR - FACET GENERATED AN INVALID EXPLANATION")
+            if not self.is_inside(xprime, rect):  # ! DEBUG
+                print("ERROR, COUNTERFACTUAL EXAMPLE NOT IN REGION")
 
         return xprime
 

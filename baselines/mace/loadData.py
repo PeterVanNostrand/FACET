@@ -1265,8 +1265,9 @@ def loadDataset(dataset_name, return_one_hot, load_from_cache=False, debug_flag=
         pass
 
     else:
-
-        raise Exception(f'{dataset_name} not recognized as a valid dataset.')
+        print(f'{dataset_name} not recognized as a valid dataset.')
+        return None
+        # raise Exception(f'{dataset_name} not recognized as a valid dataset.')
 
     if return_one_hot:
         data_frame, attributes = getOneHotEquivalent(data_frame_non_hot, attributes_non_hot)

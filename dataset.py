@@ -2,6 +2,7 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 from typing import List, Tuple
+import copy
 
 from baselines.mace.fair_utils_data import get_one_hot_encoding as mace_get_one_hot
 from baselines.ocean.CounterFactualParameters import FeatureActionability
@@ -57,9 +58,11 @@ class DataInfo:
     col_actions: List[FeatureActionability]
     possible_vals: List
     one_hot_schema: dict
-    is_normalized: bool = False
-    col_scales: dict = None
-    reverse_one_hot_schema = None
+    ncols: int = -1                 # set in post_init
+    all_numeric: bool = False       # set in post_init
+    reverse_one_hot_schema = None   # set in post_init
+    is_normalized: bool = False     # set by normalize()
+    col_scales: dict = None         # set by normalize()
 
     def __post_init__(self):
         self.ncols = len(self.col_names)
@@ -86,6 +89,18 @@ class DataInfo:
         one_hot_schema = {}
 
         return cls(col_names, col_types, col_actionability, possible_values, one_hot_schema)
+
+    def copy(self):
+        names = copy.deepcopy(self.col_names)
+        types = copy.deepcopy(self.col_types)
+        actions = copy.deepcopy(self.col_actions)
+        possible_vals = copy.deepcopy(self.possible_vals)
+        schema = copy.deepcopy(self.one_hot_schema)
+        new_info = DataInfo(names, types, actions, possible_vals, schema)
+
+        new_info.is_normalized = self.is_normalized
+        new_info.col_scales = copy.deepcopy(self.col_scales)
+        return new_info
 
     def normalize_data(self, x: np.ndarray) -> None:
         '''
@@ -185,6 +200,23 @@ class DataInfo:
                         print("failed one-hot encoding\t\t{}\t{}\t{}".format(i,
                                                                              cat_column_name, sum(data[i][sub_col_idxs])))
         return all_valid
+
+
+def rescale_discrete(x: np.ndarray, ds_info: DataInfo, scale_up=True):
+    # if the datasets not normalized, we're dong
+    if not ds_info.is_normalized:
+        return x
+
+    # if the dataset is normalized
+    if scale_up:  # and we want to scal up (convert [0, 1] back to ints)
+        for i in range(ds_info.ncols):
+            if ds_info.col_types[i] == FeatureType.Discrete:
+                x[:, i] = np.round(ds_info.unscale(x[:, i], i))
+    if not scale_up:  # and we want to scale down (ints back to [0, 1])
+        for i in range(ds_info.ncols):
+            if ds_info.col_types[i] == FeatureType.Discrete:
+                x[:, i] = (x[:, i] - ds_info.col_scales[i][0]) / (ds_info.col_scales[i][1] - ds_info.col_scales[i][0])
+    return x
 
 
 def load_data(dataset_name, preprocessing: str = "Normalize"):
@@ -319,10 +351,16 @@ def one_hot_encode(input: np.ndarray, col_names: List[str], col_types: List[Feat
 
 def get_possible_vals(x: np.ndarray, col_types: List[FeatureType], col_names: List[str]) -> List[List[float]]:
     '''
-    Determine the range of allowed values for each column. Currently only applying a range to Discrete values as  this is reqruired by OCEAN
+    Determine the range of allowed values for each column. For Discrete values this is a list of all allowed options, for Numeric values it is the min and max allowed value from the data. For Binary it is [0, 1]. Categorical features are one-hot encoded as multiple Binary columns
     '''
     possible_vals = [[] for _ in range(len(col_types))]
     for i in range(len(col_types)):
+        if col_types[i] == FeatureType.Binary:
+            possible_vals[i] = [0.0, 1.0]
+        if col_types[i] == FeatureType.Numeric:
+            col_min = x[:, i].min()
+            col_max = x[:, i].max()
+            possible_vals[i] = [col_min, col_max]
         if col_types[i] == FeatureType.Discrete:
             if col_names[i] in RANGED_DISCRETE:
                 range_min, range_max = RANGED_DISCRETE[col_names[i]]
@@ -379,6 +417,7 @@ def util_load_cancer():
     x = data[:, 2:].astype(float)
 
     ds_info = DataInfo.generic(ncols=x.shape[1])
+    ds_info.possible_vals = get_possible_vals(x, ds_info.col_types, col_names=ds_info.col_names)
     return x, y, ds_info
 
 
@@ -412,6 +451,7 @@ def util_load_glass():
     x = x[is_float | is_nonfloat]
 
     ds_info = DataInfo.generic(ncols=x.shape[1])
+    ds_info.possible_vals = get_possible_vals(x, ds_info.col_types, col_names=ds_info.col_names)
     return x, y, ds_info
 
 
@@ -424,6 +464,7 @@ def util_load_magic():
     y[labels == "g"] = 1
     x = data[:, :-1].astype(float)
     ds_info = DataInfo.generic(ncols=x.shape[1])
+    ds_info.possible_vals = get_possible_vals(x, ds_info.col_types, col_names=ds_info.col_names)
     return x, y, ds_info
 
 
@@ -433,6 +474,7 @@ def util_load_spambase():
     x = data[:, :-1]
     y = data[:, -1:].squeeze().astype('int')
     ds_info = DataInfo.generic(ncols=x.shape[1])
+    ds_info.possible_vals = get_possible_vals(x, ds_info.col_types, col_names=ds_info.col_names)
     return x, y, ds_info
 
 
@@ -445,4 +487,5 @@ def util_load_vertebral():
     y[labels == "AB"] = 1
     x = data[:, :-1].astype(float)
     ds_info = DataInfo.generic(ncols=x.shape[1])
+    ds_info.possible_vals = get_possible_vals(x, ds_info.col_types, col_names=ds_info.col_names)
     return x, y, ds_info

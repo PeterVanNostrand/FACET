@@ -1,5 +1,5 @@
 import multiprocessing as mp
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict
 
 import numpy as np
 import pandas as pd
@@ -9,6 +9,9 @@ from baselines.mace.batchTest import generateExplanations
 from baselines.mace.loadData import Dataset, DatasetAttribute, loadDataset
 from baselines.ocean.CounterFactualParameters import FeatureActionability, FeatureType
 from explainers.explainer import Explainer
+from dataset import DataInfo
+from dataset import rescale_discrete
+
 
 if TYPE_CHECKING:
     from manager import MethodManager
@@ -16,7 +19,7 @@ if TYPE_CHECKING:
 MACE_TYPE_FROM_FACET_TYPE = {
     FeatureType.Numeric: "numeric-real",
     FeatureType.Binary: "binary",
-    FeatureType.Discrete: "numeric-int",
+    FeatureType.Discrete: "numeric-int",  # formerly numeric-int
     FeatureType.Categorical: "categorical",
     FeatureType.CategoricalNonOneHot: "ordinal",  # ! WARNING NOT MACE SUPPORTED
 }
@@ -34,35 +37,32 @@ MACE_MUTABILITY_FROM_FACET_ACTION = {
     FeatureActionability.Increasing: True,
     FeatureActionability.Predict: False,
 }
-# prepare the MACE dataset info object
-# non_hot_df = data.iloc[2:].astype(np.float64)
-# attributes_non_hot = get_mace_non_hot(data=non_hot_df, col_names=col_names, col_types=col_types, col_actions=col_actionabiltiy)
 
 
-def get_mace_non_hot(data, col_names, col_types, col_actions):
-    '''
-    Takes FACET/OCEAN encoded feature types and converts them to MACE DatasetAttributes
-    '''
-    attributes_non_hot = {}
+# def get_mace_non_hot(data, col_names, col_types, col_actions):
+#     '''
+#     Takes FACET/OCEAN encoded feature types and converts them to MACE DatasetAttributes
+#     '''
+#     attributes_non_hot = {}
 
-    for i in range(len(col_names)):
-        if col_types[i] in (FeatureType.Numeric, FeatureType.Binary, FeatureType.Discrete, FeatureType.CategoricalNonOneHot):
-            col_name = col_names[i]
+#     for i in range(len(col_names)):
+#         if col_types[i] in (FeatureType.Numeric, FeatureType.Binary, FeatureType.Discrete, FeatureType.CategoricalNonOneHot):
+#             col_name = col_names[i]
 
-            attributes_non_hot[col_name] = DatasetAttribute(
-                attr_name_long=col_name,
-                attr_name_kurz=f"x{i}" if col_actions[i] != FeatureActionability.Predict else "y",
-                attr_type=MACE_TYPE_FROM_FACET_TYPE[col_types[i]],
-                node_type="input" if col_actions[i] != FeatureActionability.Predict else "output",
-                actionability=MACE_ACTION_FROM_FACET_ACTION[col_actions[i]],
-                mutability=MACE_MUTABILITY_FROM_FACET_ACTION[col_actions[i]],
-                parent_name_long=-1,
-                parent_name_kurz=-1,
-                lower_bound=data[col_name].min(),
-                upper_bound=data[col_name].max()
-            )
+#             attributes_non_hot[col_name] = DatasetAttribute(
+#                 attr_name_long=col_name,
+#                 attr_name_kurz=f"x{i}" if col_actions[i] != FeatureActionability.Predict else "y",
+#                 attr_type=MACE_TYPE_FROM_FACET_TYPE[col_types[i]],
+#                 node_type="input" if col_actions[i] != FeatureActionability.Predict else "output",
+#                 actionability=MACE_ACTION_FROM_FACET_ACTION[col_actions[i]],
+#                 mutability=MACE_MUTABILITY_FROM_FACET_ACTION[col_actions[i]],
+#                 parent_name_long=-1,
+#                 parent_name_kurz=-1,
+#                 lower_bound=data[col_name].min(),
+#                 upper_bound=data[col_name].max()
+#             )
 
-    return attributes_non_hot
+#     return attributes_non_hot
 
 
 class MACE(Explainer):
@@ -106,14 +106,83 @@ class MACE(Explainer):
     def prepare(self, xtrain=None, ytrain=None):
         pass
 
-    def prepare_dataset(self, x: np.ndarray, y: np.ndarray, ds_info) -> None:
+    def get_mace_attributes(self) -> Dict[str, DatasetAttribute]:
+        '''
+        Takes FACET/OCEAN encoded feature types and converts them to MACE DatasetAttributes
+        '''
+        attributes_non_hot = {}
+        self.ds_info.mace_names_long = []
+        self.ds_info.mace_names_kurz = []
+        for i in range(self.ds_info.ncols):  # for each column
+            # if i not in self.ds_info.reverse_one_hot_schema:  # if its not part of the one-hot encoding
+            col_name = self.ds_info.col_names[i]
+
+            # get the min and max allowed values for the feature
+            if self.ds_info.col_types[i] == FeatureType.Numeric:  # for numeric we have the range ends
+                lower_bound = self.ds_info.possible_vals[i]
+                upper_bound = self.ds_info.possible_vals[i]
+            if self.ds_info.col_types[i] == FeatureType.Discrete:  # we have a list of all possible values
+                lower_bound = self.ds_info.unscale(self.ds_info.possible_vals[i][0], i)  # smallest val
+                upper_bound = self.ds_info.unscale(self.ds_info.possible_vals[i][-1], i)  # biggest val
+            else:  # for other types we have a list of all possible values
+                lower_bound = min(self.ds_info.possible_vals[i])
+                upper_bound = max(self.ds_info.possible_vals[i])
+
+            # if this column in one hot encoded
+            if i in self.ds_info.reverse_one_hot_schema:
+                parent_name_long = self.ds_info.reverse_one_hot_schema[i]
+                parent_name_kurz = self.ds_info.reverse_one_hot_schema[i]
+                attr_type = "sub-categorical"
+                # mace names one-hot columns as FeatName_cat_X, where X is the option
+                idx_in_cat_list = self.ds_info.one_hot_schema[parent_name_long].index(i)
+                attr_name_long = "{}_cat_{}".format(parent_name_long, idx_in_cat_list)
+                # attr_name_kurz = "x{}".format(i)
+                attr_name_kurz = "x{}_cat_{}".format(i, idx_in_cat_list)
+            else:
+                parent_name_long = -1
+                parent_name_kurz = -1
+                attr_type = MACE_TYPE_FROM_FACET_TYPE[self.ds_info.col_types[i]]
+                attr_name_long = col_name
+                attr_name_kurz = "x{}".format(i)
+            self.ds_info.mace_names_long.append(attr_name_long)
+            self.ds_info.mace_names_kurz.append(attr_name_kurz)
+
+            attributes_non_hot[attr_name_long] = DatasetAttribute(
+                attr_name_long=attr_name_long,
+                attr_name_kurz=attr_name_kurz,
+                attr_type=attr_type,
+                node_type="input",
+                actionability=MACE_ACTION_FROM_FACET_ACTION[self.ds_info.col_actions[i]],
+                mutability=MACE_MUTABILITY_FROM_FACET_ACTION[self.ds_info.col_actions[i]],
+                parent_name_long=parent_name_long,
+                parent_name_kurz=parent_name_kurz,
+                lower_bound=lower_bound,
+                upper_bound=upper_bound,
+            )
+
+        # add the output column
+        attributes_non_hot["y"] = DatasetAttribute(
+            attr_name_long="label",
+            attr_name_kurz='y',
+            attr_type='binary',
+            node_type='output',
+            actionability='none',
+            mutability=False,
+            parent_name_long=-1,
+            parent_name_kurz=-1,
+            lower_bound=0.0,
+            upper_bound=1.0)
+        return attributes_non_hot
+
+    def prepare_dataset(self, x: np.ndarray, y: np.ndarray, ds_info: DataInfo) -> None:
         df = pd.DataFrame(x)
         col_names = []
         for i in range(x.shape[1]):
             col_names.append("x" + str(i))
         df.columns = col_names
         y_pred = self.manager.random_forest.predict(x)
-        df.insert(0, "alpha (label)", y_pred)
+        # df.insert(0, "alpha (label)", y_pred)
+        df["label"] = y_pred
         df = df + 0  # convert boolean values to numeric
         df = df.reset_index(drop=True)
         df = df.dropna()
@@ -123,6 +192,25 @@ class MACE(Explainer):
                                            load_from_cache=False, debug_flag=False, my_df=df.copy())
         self.dataset_obj = dataset_obj
 
+        # HANDLING NEW DATA FORMAT
+        self.ds_info = ds_info.copy()
+        attributes = self.get_mace_attributes()
+
+        # MACE requires numeric-int features to be unscaled while FACET and OCEAN used the scaled versions
+        # here we unscale the discrete values, we'll also have to scale/rescale elsewhere in the MACE code
+        x_unscaled = rescale_discrete(x.copy(), self.ds_info)
+        df = pd.DataFrame(x_unscaled)
+        df.columns = self.ds_info.mace_names_long
+        y_pred = self.manager.random_forest.predict(x)
+        df["label"] = y_pred
+        df = df + 0  # convert boolean values to numeric
+        df = df.reset_index(drop=True)
+        df = df.dropna()
+        df = df.astype('float64')
+
+        self.datset_obj = Dataset(data_frame=df, attributes=attributes,
+                                  is_one_hot=self.ds_info.one_hot_schema, dataset_name="dataset")
+
     def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf, opt_robust: bool = False, min_robust: float = None) -> np.ndarray:
         xprime = []
 
@@ -131,13 +219,19 @@ class MACE(Explainer):
         norm_type_string = "two_norm"
         rf_model = self.manager.random_forest.model
 
-        progress = tqdm(total=x.shape[0], desc="MACE", leave=False)
-        for i in range(x.shape[0]):
-            factual_sample = {}
-            for j in range(x.shape[1]):
-                factual_sample["x{}".format(j)] = x[i][j]
-            factual_sample['y'] = bool(y[i])
+        # rescale the discrete features for MACE
+        # x_unscaled = rescale_discrete(x.copy(), self.ds_info, scale_up=True)
+        x_unscaled = x
 
+        progress = tqdm(total=x_unscaled.shape[0], desc="MACE", leave=False)
+        for i in range(x_unscaled.shape[0]):  # for each instance
+            # build the sample dictionary as needed by MACE
+            factual_sample = {}
+            for j in range(self.ds_info.ncols):
+                # factual_sample[self.ds_info.mace_names_kurz[j]] = x_unscaled[i][j]
+                factual_sample["x{}".format(j)] = x_unscaled[i][j]
+            factual_sample['y'] = bool(y[i])
+            # explain the sample
             explanation = doMACEExplanationWithMaxTime(
                 self.maxtime,
                 approach_string,
@@ -156,10 +250,13 @@ class MACE(Explainer):
             #     factual_sample=factual_sample,
             #     norm_type_string=norm_type_string
             # )
+            # get MACE's explanation
             exp = [np.inf for _ in range(x.shape[1])]
             if explanation is not None:
-                for i in range(len(factual_sample)-1):
-                    exp[i] = explanation["cfe_sample"]["x{}".format(i)]
+                for j in range(len(factual_sample)-1):
+                    exp[j] = explanation["cfe_sample"]["x{}".format(j)]
+                # undo the discrete scaling
+                # exp = rescale_discrete(exp, self.ds_info, scale_up=False)
             xprime.append(exp)
             progress.update()
         progress.close()
