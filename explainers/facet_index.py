@@ -661,6 +661,26 @@ class FACETIndex(Explainer):
         center = (upper_bounds + lower_bounds) / 2
         return center
 
+    def equal_weights(self) -> np.ndarray:
+        weights = None
+        is_norm = self.ds_info.is_normalized
+        have_numeric = FeatureType.Numeric in self.ds_info.col_types
+        have_discrete = FeatureType.Discrete in self.ds_info.col_types
+        have_unscaled_num = (have_numeric and not is_norm)
+        have_unscaled_disc = (have_discrete and (not is_norm or is_norm and not self.ds_info.normalize_discrete))
+
+        # if there are unscaled features
+        if have_unscaled_num or have_unscaled_disc:
+            # default all feature to weight of one
+            weights = np.tile(1.0, (self.ds_info.ncols,))
+            for col_id in range(self.ds_info.ncols):
+                col_type = self.ds_info.col_types[col_id]
+                if col_type == FeatureType.Numeric and have_unscaled_num:  # if we col is unscaled numeric data
+                    weights[col_id] += (self.ds_info.col_scales[col_id][1] - self.ds_info.col_scales[col_id][0])
+                elif col_type == FeatureType.Discrete and have_unscaled_disc:  # if col is unscaled discrete
+                    weights[col_id] += (self.ds_info.col_scales[col_id][1] - self.ds_info.col_scales[col_id][0])
+        return weights
+
     def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf, min_robust: float = None, min_widths: np.ndarray = None, opt_robust: bool = False) -> np.ndarray:
         '''
         Parameters
@@ -685,6 +705,10 @@ class FACETIndex(Explainer):
 
         # assumimg binary classification [0, 1] set counterfactual class
         counterfactual_classes = ((y - 1) * -1)
+
+        # check if we need to weight for unscaled features
+        if weights is None:
+            weights = self.equal_weights()
 
         if self.search_type == "Linear":
             # performs, a linear scan of all the hyper-rectangles

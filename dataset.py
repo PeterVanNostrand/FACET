@@ -58,11 +58,12 @@ class DataInfo:
     col_actions: List[FeatureActionability]
     possible_vals: List
     one_hot_schema: dict
-    ncols: int = -1                 # set in post_init
-    all_numeric: bool = False       # set in post_init
-    reverse_one_hot_schema = None   # set in post_init
-    is_normalized: bool = False     # set by normalize()
-    col_scales: dict = None         # set by normalize()
+    ncols: int = -1                  # set in post_init
+    all_numeric: bool = False        # set in post_init
+    reverse_one_hot_schema = None    # set in post_init
+    is_normalized: bool = False      # set by normalize()
+    col_scales: dict = None          # set by normalize()
+    normalize_discrete: bool = False  # set by normalize()
 
     def __post_init__(self):
         self.ncols = len(self.col_names)
@@ -102,14 +103,19 @@ class DataInfo:
         new_info.col_scales = copy.deepcopy(self.col_scales)
         return new_info
 
-    def normalize_data(self, x: np.ndarray) -> None:
+    def normalize_data(self, x: np.ndarray, normalize_numeric=True, normalize_discrete: bool = False) -> None:
         '''
         Normalizes Numeric and Discrete columns to the range [0, 1]. Updates `self.possible_vals` to match new scale
         '''
+        # TODO: separate the process of picking col ranges from the process of normalizing
         self.is_normalized = True
+        self.normalize_discrete = normalize_discrete
         self.col_scales = {}
         for i in range(self.ncols):
-            if self.col_types[i] in [FeatureType.Numeric, FeatureType.Discrete]:
+            col_type = self.col_types[i]
+            if col_type == FeatureType.Binary:
+                self.col_scales[i] = [0.0, 1.0]
+            elif col_type in [FeatureType.Numeric, FeatureType.Discrete]:
                 # get the lowest and highest possible values for the feature
                 min_value = np.min(x[:, i])
                 max_value = np.max(x[:, i])
@@ -118,13 +124,14 @@ class DataInfo:
                 # save the scaling values for later
                 self.col_scales[i] = [min_value, max_value]
 
-                # adjust the given data to map this to [0, 1]
-                x[:, i] = (x[:, i] - min_value) / (max_value - min_value)
+                if (col_type == FeatureType.Numeric and normalize_numeric) or (col_type == FeatureType.Discrete and normalize_discrete):
+                    # adjust the given data to map this to [0, 1]
+                    x[:, i] = (x[:, i] - min_value) / (max_value - min_value)
 
-                # if we have listed possible values, adjust them as well
-                if len(self.possible_vals[i]) > 0:
-                    for j in range(len(self.possible_vals[i])):
-                        self.possible_vals[i][j] = (self.possible_vals[i][j] - min_value) / (max_value - min_value)
+                    # if we have listed possible values, adjust them as well
+                    if len(self.possible_vals[i]) > 0:
+                        for j in range(len(self.possible_vals[i])):
+                            self.possible_vals[i][j] = (self.possible_vals[i][j] - min_value) / (max_value - min_value)
 
     def unscale(self, x: np.ndarray, col_id: int = None):
         '''
@@ -143,13 +150,19 @@ class DataInfo:
             return x
 
         if col_id is not None:
-            return x * (self.col_scales[col_id][1] - self.col_scales[col_id][0]) + self.col_scales[col_id][0]
+            if self.col_types[col_id] == FeatureType.Discrete and not self.normalize_discrete:
+                return x
+            else:
+                return x * (self.col_scales[col_id][1] - self.col_scales[col_id][0]) + self.col_scales[col_id][0]
         else:
             unscaled = x.copy()
             for col_id in range(self.ncols):
                 if col_id in self.col_scales:
-                    unscaled[col_id] = unscaled[col_id] * (self.col_scales[col_id][1] -
-                                                           self.col_scales[col_id][0]) + + self.col_scales[col_id][0]
+                    if self.col_types[col_id] == FeatureType.Discrete and not self.normalize_discrete:
+                        pass
+                    else:
+                        unscaled[col_id] = unscaled[col_id] * (self.col_scales[col_id][1] -
+                                                               self.col_scales[col_id][0]) + self.col_scales[col_id][0]
             return unscaled
 
     def check_valid(self, x: np.ndarray) -> bool:
@@ -210,11 +223,11 @@ def rescale_discrete(x: np.ndarray, ds_info: DataInfo, scale_up=True):
     # if the dataset is normalized
     if scale_up:  # and we want to scal up (convert [0, 1] back to ints)
         for i in range(ds_info.ncols):
-            if ds_info.col_types[i] == FeatureType.Discrete:
+            if ds_info.col_types[i] == FeatureType.Discrete and ds_info.normalize_discrete:
                 x[:, i] = np.round(ds_info.unscale(x[:, i], i))
     if not scale_up:  # and we want to scale down (ints back to [0, 1])
         for i in range(ds_info.ncols):
-            if ds_info.col_types[i] == FeatureType.Discrete:
+            if ds_info.col_types[i] == FeatureType.Discrete and ds_info.normalize_discrete:
                 x[:, i] = (x[:, i] - ds_info.col_scales[i][0]) / (ds_info.col_scales[i][1] - ds_info.col_scales[i][0])
     return x
 
@@ -255,7 +268,9 @@ def load_data(dataset_name, preprocessing: str = "Normalize"):
 
     # normalize numeric and discrete features to [0, 1]
     if preprocessing == "Normalize":
-        ds_info.normalize_data(x)
+        ds_info.normalize_data(x, normalize_numeric=True, normalize_discrete=True)
+    else:
+        ds_info.normalize_data(x, normalize_numeric=False, normalize_discrete=False)
     return x, y, ds_info
 
 

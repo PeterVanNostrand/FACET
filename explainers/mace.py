@@ -39,32 +39,6 @@ MACE_MUTABILITY_FROM_FACET_ACTION = {
 }
 
 
-# def get_mace_non_hot(data, col_names, col_types, col_actions):
-#     '''
-#     Takes FACET/OCEAN encoded feature types and converts them to MACE DatasetAttributes
-#     '''
-#     attributes_non_hot = {}
-
-#     for i in range(len(col_names)):
-#         if col_types[i] in (FeatureType.Numeric, FeatureType.Binary, FeatureType.Discrete, FeatureType.CategoricalNonOneHot):
-#             col_name = col_names[i]
-
-#             attributes_non_hot[col_name] = DatasetAttribute(
-#                 attr_name_long=col_name,
-#                 attr_name_kurz=f"x{i}" if col_actions[i] != FeatureActionability.Predict else "y",
-#                 attr_type=MACE_TYPE_FROM_FACET_TYPE[col_types[i]],
-#                 node_type="input" if col_actions[i] != FeatureActionability.Predict else "output",
-#                 actionability=MACE_ACTION_FROM_FACET_ACTION[col_actions[i]],
-#                 mutability=MACE_MUTABILITY_FROM_FACET_ACTION[col_actions[i]],
-#                 parent_name_long=-1,
-#                 parent_name_kurz=-1,
-#                 lower_bound=data[col_name].min(),
-#                 upper_bound=data[col_name].max()
-#             )
-
-#     return attributes_non_hot
-
-
 class MACE(Explainer):
     '''
     A wrapper for the Model Agnostic Counterfactual Explanations method developed in "Model-Agnostic Counterfactual Explanations for Consequential Decisions." Code was pulled from https://github.com/amirhk/mace. The original paper can be found at https://proceedings.mlr.press/v108/karimi20a/karimi20a.pdf
@@ -117,16 +91,17 @@ class MACE(Explainer):
             # if i not in self.ds_info.reverse_one_hot_schema:  # if its not part of the one-hot encoding
             col_name = self.ds_info.col_names[i]
 
+            lower_bound, upper_bound = self.ds_info.col_scales[i]
             # get the min and max allowed values for the feature
-            if self.ds_info.col_types[i] == FeatureType.Numeric:  # for numeric we have the range ends
-                lower_bound = self.ds_info.possible_vals[i]
-                upper_bound = self.ds_info.possible_vals[i]
-            if self.ds_info.col_types[i] == FeatureType.Discrete:  # we have a list of all possible values
-                lower_bound = self.ds_info.unscale(self.ds_info.possible_vals[i][0], i)  # smallest val
-                upper_bound = self.ds_info.unscale(self.ds_info.possible_vals[i][-1], i)  # biggest val
-            else:  # for other types we have a list of all possible values
-                lower_bound = min(self.ds_info.possible_vals[i])
-                upper_bound = max(self.ds_info.possible_vals[i])
+            # if self.ds_info.col_types[i] == FeatureType.Numeric:  # for numeric we have the range ends
+            #     # lower_bound = self.ds_info.possible_vals[i]
+            #     # upper_bound = self.ds_info.possible_vals[i]
+            # if self.ds_info.col_types[i] == FeatureType.Discrete:  # we have a list of all possible values
+            #     # lower_bound = self.ds_info.unscale(self.ds_info.possible_vals[i][0], i)  # smallest val
+            #     # upper_bound = self.ds_info.unscale(self.ds_info.possible_vals[i][-1], i)  # biggest val
+            # else:  # for other types we have a list of all possible values
+            #     lower_bound = min(self.ds_info.possible_vals[i])
+            #     upper_bound = max(self.ds_info.possible_vals[i])
 
             # if this column in one hot encoded
             if i in self.ds_info.reverse_one_hot_schema:
@@ -175,22 +150,22 @@ class MACE(Explainer):
         return attributes_non_hot
 
     def prepare_dataset(self, x: np.ndarray, y: np.ndarray, ds_info: DataInfo) -> None:
-        df = pd.DataFrame(x)
-        col_names = []
-        for i in range(x.shape[1]):
-            col_names.append("x" + str(i))
-        df.columns = col_names
-        y_pred = self.manager.random_forest.predict(x)
-        # df.insert(0, "alpha (label)", y_pred)
-        df["label"] = y_pred
-        df = df + 0  # convert boolean values to numeric
-        df = df.reset_index(drop=True)
-        df = df.dropna()
-        df = df.astype('float64')
+        # df = pd.DataFrame(x)
+        # col_names = []
+        # for i in range(x.shape[1]):
+        #     col_names.append("x" + str(i))
+        # df.columns = col_names
+        # y_pred = self.manager.random_forest.predict(x)
+        # # df.insert(0, "alpha (label)", y_pred)
+        # df["label"] = y_pred
+        # df = df + 0  # convert boolean values to numeric
+        # df = df.reset_index(drop=True)
+        # df = df.dropna()
+        # df = df.astype('float64')
 
-        dataset_obj: Dataset = loadDataset(dataset_name="cust_data", return_one_hot=False,
-                                           load_from_cache=False, debug_flag=False, my_df=df.copy())
-        self.dataset_obj = dataset_obj
+        # dataset_obj: Dataset = loadDataset(dataset_name="cust_data", return_one_hot=False,
+        #                                    load_from_cache=False, debug_flag=False, my_df=df.copy())
+        # self.dataset_obj = dataset_obj
 
         # HANDLING NEW DATA FORMAT
         self.ds_info = ds_info.copy()
@@ -208,8 +183,8 @@ class MACE(Explainer):
         df = df.dropna()
         df = df.astype('float64')
 
-        self.datset_obj = Dataset(data_frame=df, attributes=attributes,
-                                  is_one_hot=self.ds_info.one_hot_schema, dataset_name="dataset")
+        self.dataset_obj = Dataset(data_frame=df, attributes=attributes,
+                                   is_one_hot=self.ds_info.one_hot_schema, dataset_name="dataset")
 
     def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf, opt_robust: bool = False, min_robust: float = None) -> np.ndarray:
         xprime = []
@@ -242,21 +217,15 @@ class MACE(Explainer):
                 norm_type_string,
                 self.verbose
             )
-            # explanation = generateExplanations(
-            #     approach_string=approach_string,
-            #     explanation_file_name=explanation_file_name,
-            #     model_trained=rf_model,
-            #     dataset_obj=self.dataset_obj,
-            #     factual_sample=factual_sample,
-            #     norm_type_string=norm_type_string
-            # )
             # get MACE's explanation
             exp = [np.inf for _ in range(x.shape[1])]
-            if explanation is not None:
+            if explanation is not None and len(explanation["cfe_sample"]) != 0:
                 for j in range(len(factual_sample)-1):
                     exp[j] = explanation["cfe_sample"]["x{}".format(j)]
                 # undo the discrete scaling
                 # exp = rescale_discrete(exp, self.ds_info, scale_up=False)
+                if not self.ds_info.check_valid([exp]):  # !DEBUG
+                    print("CRITICAL ERROR - MACE GENERATED AN INVALID EXPLANATION")
             xprime.append(exp)
             progress.update()
         progress.close()

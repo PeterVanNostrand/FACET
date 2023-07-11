@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from dataset import load_data
+from dataset import load_data, rescale_discrete
 from manager import MethodManager
 from utilities.metrics import (average_distance, classification_metrics,
                                percent_valid)
@@ -213,6 +213,13 @@ def execute_run(dataset_name: str, explainer: str, params: dict, output_path: st
     explanation_path = output_path + \
         "{}_{}_{}{:03d}_explns.csv".format(dataset_name, explainer.lower(), run_ext, iteration)
     expl_df.to_csv(explanation_path, index=False)
+
+    # if we didn't normalize the discrete data we can't trust the distances
+    if not ds_info.normalize_discrete:  # normalize a copy for distance computations, then set back
+        ds_info.normalize_discrete = True
+        x_explain = rescale_discrete(x_explain.copy(), ds_info, scale_up=False)
+        explanations = rescale_discrete(explanations.copy(), ds_info, scale_up=False)
+        ds_info.normalize_discrete = False
 
     # evalute the quality of the explanations
     per_valid = percent_valid(explanations)
