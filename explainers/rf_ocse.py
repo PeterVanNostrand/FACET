@@ -114,28 +114,6 @@ class RFOCSE(Explainer):
         self.rfocse_datainfo = self.get_rfocse_datainfo()
 
     def prepare(self, xtrain=None, ytrain=None):
-        # data = xtrain
-        # self.data = data
-        # df = pd.DataFrame(data)
-        # y = self.manager.predict(data)
-        # df["y"] = y
-        # override_dtypes = {}
-        # col_names = []
-        # for i in range(data.shape[1]):
-        #     name = "x{}".format(i)
-        #     col_names.append(name)
-        #     override_dtypes[name] = float
-        # col_names.append("y")
-        # self.col_names = col_names
-        # df.columns = col_names
-
-        # dataset_info, X, y = self.process_pandas_dataset(df[list(override_dtypes.keys()) + ['y']], 'y',
-        #                                                  **self.get_dataset_args(dict(override_feature_types=override_dtypes), {}))
-        # # self.rfocse_datainfo: DatasetInfo = dataset_info
-        # self.Xtrain: pd.DataFrame = X
-
-        # NEW DATA LAYOUT
-
         # create RFOCSE formatted dataset information, converted from FACET DataInfo
         self.rfocse_datainfo = self.get_rfocse_datainfo()
         # save the training data
@@ -176,6 +154,8 @@ class RFOCSE(Explainer):
                                                          verbose=self.verbose)
             if explanation is not None:
                 xprime[idx] = explanation
+                if not self.ds_info.check_valid([explanation]):  # !DEBUG
+                    print("CRITICAL ERROR - MACE GENERATED AN INVALID EXPLANATION")
 
         # locate non-counterfactual examples and replace them with [np.inf, ... , np.inf]
         idx_no_examples = (xprime == np.inf).any(axis=1)

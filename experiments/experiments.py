@@ -20,6 +20,7 @@ TUNED_FACET_SD = {
     "magic": 0.001,
     "spambase": 0.01,
     "vertebral": 0.05,
+    "compas": 0.0001
 }
 
 # generated as the average minimum point to point distance
@@ -172,7 +173,7 @@ def execute_run(dataset_name: str, explainer: str, params: dict, output_path: st
         normalize_discrete = True
         # MACE requires integer discrete features, this is fine as the RF is the same either way
         # we will later normalize when computing the explanation distance later for comparability
-        if explainer == "MACE":
+        if explainer in ["MACE", "RFOCSE"]:
             normalize_discrete = False
     else:
         normalize_numeric = False
