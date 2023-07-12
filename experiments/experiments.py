@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from dataset import load_data, rescale_discrete
+from dataset import load_data, rescale_discrete, rescale_numeric
 from manager import MethodManager
 from utilities.metrics import (average_distance, classification_metrics,
                                percent_valid)
@@ -71,6 +71,7 @@ FACET_DEFAULT_PARAMS = {
     "facet_intersect_order": "Axes",
     "facet_verbose": False,
     "facet_search": "BitVector",
+    "facet_smart_weight": True,
     # "facet_search": "Linear",
     "rbv_initial_radius": 0.01,
     "rbv_radius_step": 0.01,
@@ -165,7 +166,18 @@ def execute_run(dataset_name: str, explainer: str, params: dict, output_path: st
         f.write(json_text)
 
     # load and split the datset using random state for repeatability. Select samples to explain
-    x, y, ds_info = load_data(dataset_name, preprocessing=preprocessing)
+
+    if preprocessing == "Normalize":
+        normalize_numeric = True
+        normalize_discrete = True
+        # MACE requires integer discrete features, this is fine as the RF is the same either way
+        # we will later normalize when computing the explanation distance later for comparability
+        if explainer == "MACE":
+            normalize_discrete = False
+    else:
+        normalize_numeric = False
+        normalize_discrete = False
+    x, y, ds_info = load_data(dataset_name, normalize_numeric, normalize_discrete)
     indices = np.arange(start=0, stop=x.shape[0])
     xtrain, xtest, ytrain, ytest, idx_train, idx_test = train_test_split(
         x, y, indices, test_size=test_size, shuffle=True, random_state=random_state)
@@ -214,12 +226,22 @@ def execute_run(dataset_name: str, explainer: str, params: dict, output_path: st
         "{}_{}_{}{:03d}_explns.csv".format(dataset_name, explainer.lower(), run_ext, iteration)
     expl_df.to_csv(explanation_path, index=False)
 
-    # if we didn't normalize the discrete data we can't trust the distances
-    if not ds_info.normalize_discrete:  # normalize a copy for distance computations, then set back
-        ds_info.normalize_discrete = True
-        x_explain = rescale_discrete(x_explain.copy(), ds_info, scale_up=False)
-        explanations = rescale_discrete(explanations.copy(), ds_info, scale_up=False)
-        ds_info.normalize_discrete = False
+    # if we didn't normalize the data we can't trust the distances
+    if not ds_info.normalize_numeric or not ds_info.normalize_discrete:
+        # create copies so we don't disturb the underlying data
+        x_explain = x_explain.copy()
+        explanations = explanations.copy()
+        # if we didn't normalize the numeric features, scale them down now
+        if not ds_info.normalize_numeric:
+            ds_info.normalize_numeric = True
+            x_explain = rescale_numeric(x_explain, ds_info, scale_up=False)
+            explanations = rescale_numeric(explanations, ds_info, scale_up=False)
+            ds_info.normalize_numeric = False
+        if not ds_info.normalize_discrete:
+            ds_info.normalize_discrete = True
+            x_explain = rescale_discrete(x_explain, ds_info, scale_up=False)
+            explanations = rescale_discrete(explanations, ds_info, scale_up=False)
+            ds_info.normalize_discrete = False
 
     # evalute the quality of the explanations
     per_valid = percent_valid(explanations)

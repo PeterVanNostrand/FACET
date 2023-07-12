@@ -73,6 +73,17 @@ class FACETIndex(Explainer):
         for i in range(self.ds_info.ncols):
             if self.ds_info.possible_vals[i] != []:
                 self.ds_info.possible_vals[i] = np.array(self.ds_info.possible_vals[i])
+        # compute smart weights if needed for handling unscaled data
+        if self.use_smart_weight:
+            self.equal_weights = self.get_equal_weights()
+        # if we're using smart weights and they're different from unweighted
+        if self.equal_weights is not None:
+            self.EPSILONS = 1e-8 * self.equal_weights
+            self.offsets = self.offset_scalar * self.equal_weights
+        # we're not using smart weighting, or the smart weights are equivalent to unweighted
+        else:
+            self.EPSILONS = np.tile(1e-8, self.ds_info.ncols)
+            self.offsets = np.tile(self.offset_scalar, self.ds_info.ncols)
 
     def compute_supports(self, data: np.ndarray):
         '''
@@ -549,26 +560,29 @@ class FACETIndex(Explainer):
         -------
         xprime: the adjusted instance
         '''
-        EPSILON = 1e-8  # use epsilon to account for floating point imprecision for rare values
+        # use epsilon to account for floating point imprecision for rare values
+
+        # if we're using unscaled values, we may have very large values with large float. pt. error
+
         xprime = x.copy()
         binary_required_high = set()
         binary_required_low = set()
         if self.ds_info.all_numeric:  # if all features are numeric, do a quick fit using array operations
             # determine which values need to adjusted to be smaller, and which need to be larger
-            low_values = xprime <= (rect[:, LOWER] + EPSILON)
-            high_values = xprime >= (rect[:, UPPER] - EPSILON)
+            low_values = xprime <= (rect[:, LOWER] + self.EPSILONS)
+            high_values = xprime >= (rect[:, UPPER] - self.EPSILONS)
 
             # check that the offset will not overstep the min or max value, this occurs when the range between
             # a min and max value is less than the offset size
             rect_width = (rect[:, UPPER] - rect[:, LOWER])
-            overstep_range = rect_width <= self.offset
+            overstep_range = rect_width <= self.offsets
             # identify features which need to be adjusted and will overstep the min or max value
             idx_overstep = np.logical_and(overstep_range, np.logical_or(low_values, high_values))
 
             # increase low feature values to one offset above min
-            xprime[low_values] = rect[low_values, LOWER] + self.offset
+            xprime[low_values] = rect[low_values, LOWER] + self.offsets
             # decrease high features one to one offset below min
-            xprime[high_values] = rect[high_values, UPPER] - self.offset
+            xprime[high_values] = rect[high_values, UPPER] - self.offsets
             # for oversteped bounds use the average between min and max
             xprime[idx_overstep] = rect[idx_overstep, LOWER] + rect_width / 2
         else:  # if there are non-numeric features, handle them directly
@@ -576,19 +590,19 @@ class FACETIndex(Explainer):
             is_valid = True
             while i < self.ds_info.ncols and is_valid:
                 # determine if the value is too low, too high, and if an overstep will occur
-                is_low = (xprime[i] <= (rect[i, LOWER] + EPSILON))
-                is_high = (xprime[i] >= (rect[i, UPPER] - EPSILON))
+                is_low = (xprime[i] <= (rect[i, LOWER] + self.EPSILONS[i]))
+                is_high = (xprime[i] >= (rect[i, UPPER] - self.EPSILONS[i]))
                 rect_width_i = (rect[i, UPPER] - rect[i, LOWER])
-                is_overstep = (rect_width_i <= self.offset)
+                is_overstep = (rect_width_i <= self.offsets[i])
 
                 # for numeric features do a simple step if needed with overstep checking
                 if self.ds_info.col_types[i] == FeatureType.Numeric:
                     if is_overstep:
                         xprime[i] = rect[i, LOWER] + rect_width_i / 2
                     elif is_low:
-                        xprime[i] = rect[i, LOWER] + self.offset
+                        xprime[i] = rect[i, LOWER] + self.offsets[i]
                     elif is_high:
-                        xprime[i] = rect[i, UPPER] - self.offset
+                        xprime[i] = rect[i, UPPER] - self.offsets[i]
                 # for binary features flip the value if needed
                 elif self.ds_info.col_types[i] == FeatureType.Binary:
                     if rect[i, UPPER] < 1.0:
@@ -661,13 +675,12 @@ class FACETIndex(Explainer):
         center = (upper_bounds + lower_bounds) / 2
         return center
 
-    def equal_weights(self) -> np.ndarray:
+    def get_equal_weights(self) -> np.ndarray:
         weights = None
-        is_norm = self.ds_info.is_normalized
         have_numeric = FeatureType.Numeric in self.ds_info.col_types
         have_discrete = FeatureType.Discrete in self.ds_info.col_types
-        have_unscaled_num = (have_numeric and not is_norm)
-        have_unscaled_disc = (have_discrete and (not is_norm or is_norm and not self.ds_info.normalize_discrete))
+        have_unscaled_num = (have_numeric and not self.ds_info.normalize_numeric)
+        have_unscaled_disc = (have_discrete and not self.ds_info.normalize_discrete)
 
         # if there are unscaled features
         if have_unscaled_num or have_unscaled_disc:
@@ -708,7 +721,7 @@ class FACETIndex(Explainer):
 
         # check if we need to weight for unscaled features
         if weights is None:
-            weights = self.equal_weights()
+            weights = self.equal_weights
 
         if self.search_type == "Linear":
             # performs, a linear scan of all the hyper-rectangles
@@ -943,9 +956,9 @@ class FACETIndex(Explainer):
         offset = params.get("facet_offset")
         if offset is None:
             print("No facet_offset provided, using 0.001")
-            self.offset = 0.001
+            self.offset_scalar = 0.001
         else:
-            self.offset = offset
+            self.offset_scalar = offset
 
         # number of hyper-rectangles to index
         if params.get("facet_nrects") is None:
@@ -991,3 +1004,10 @@ class FACETIndex(Explainer):
             self.intersect_order = "Probability"
         else:
             self.intersect_order = params.get("facet_intersect_order")
+
+        if params.get("facet_smart_weight") is None:
+            print("no facet_smart_weight, usinge True")
+            self.use_smart_weight = True
+        else:
+            self.use_smart_weight = params.get("facet_smart_weight")
+            self.equal_weights = None  # default equal weights to None, will be set later if needed

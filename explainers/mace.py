@@ -150,24 +150,6 @@ class MACE(Explainer):
         return attributes_non_hot
 
     def prepare_dataset(self, x: np.ndarray, y: np.ndarray, ds_info: DataInfo) -> None:
-        # df = pd.DataFrame(x)
-        # col_names = []
-        # for i in range(x.shape[1]):
-        #     col_names.append("x" + str(i))
-        # df.columns = col_names
-        # y_pred = self.manager.random_forest.predict(x)
-        # # df.insert(0, "alpha (label)", y_pred)
-        # df["label"] = y_pred
-        # df = df + 0  # convert boolean values to numeric
-        # df = df.reset_index(drop=True)
-        # df = df.dropna()
-        # df = df.astype('float64')
-
-        # dataset_obj: Dataset = loadDataset(dataset_name="cust_data", return_one_hot=False,
-        #                                    load_from_cache=False, debug_flag=False, my_df=df.copy())
-        # self.dataset_obj = dataset_obj
-
-        # HANDLING NEW DATA FORMAT
         self.ds_info = ds_info.copy()
         attributes = self.get_mace_attributes()
 

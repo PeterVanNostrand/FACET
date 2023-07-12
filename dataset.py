@@ -53,17 +53,21 @@ RANGED_DISCRETE = {
 
 @dataclass
 class DataInfo:
+    # init required
     col_names: List[str]
     col_types: List[FeatureType]
     col_actions: List[FeatureActionability]
-    possible_vals: List
     one_hot_schema: dict
-    ncols: int = -1                  # set in post_init
-    all_numeric: bool = False        # set in post_init
-    reverse_one_hot_schema = None    # set in post_init
-    is_normalized: bool = False      # set by normalize()
-    col_scales: dict = None          # set by normalize()
-    normalize_discrete: bool = False  # set by normalize()
+    # computed in post_init()
+    ncols: int = -1
+    all_numeric: bool = False
+    reverse_one_hot_schema = None
+    # set in get_possible_vals
+    possible_vals: List = None
+    col_scales: dict = None
+    # set by normalize()
+    normalize_numeric: bool = False
+    normalize_discrete: bool = False
 
     def __post_init__(self):
         self.ncols = len(self.col_names)
@@ -86,52 +90,69 @@ class DataInfo:
         col_names = ["x{}".format(_) for _ in range(ncols)]
         col_types = [FeatureType.Numeric for _ in range(ncols)]
         col_actionability = [FeatureActionability.Free for _ in range(ncols)]
-        possible_values = [[] for _ in range(ncols)]
         one_hot_schema = {}
-
-        return cls(col_names, col_types, col_actionability, possible_values, one_hot_schema)
+        return cls(col_names, col_types, col_actionability, one_hot_schema)
 
     def copy(self):
         names = copy.deepcopy(self.col_names)
         types = copy.deepcopy(self.col_types)
         actions = copy.deepcopy(self.col_actions)
-        possible_vals = copy.deepcopy(self.possible_vals)
         schema = copy.deepcopy(self.one_hot_schema)
-        new_info = DataInfo(names, types, actions, possible_vals, schema)
+        new_info = DataInfo(names, types, actions, schema)
 
-        new_info.is_normalized = self.is_normalized
+        new_info.possible_vals = copy.deepcopy(self.possible_vals)
         new_info.col_scales = copy.deepcopy(self.col_scales)
+        new_info.normalize_numeric = copy.deepcopy(self.normalize_numeric)
+        new_info.normalize_discrete = copy.deepcopy(self.normalize_discrete)
         return new_info
+
+    def get_possible_vals(self, x: np.ndarray) -> None:
+        '''
+        Determine the range of allowed values for each column. For Discrete values this is a list of all allowed options, for Numeric values it is the min and max allowed value from the data. For Binary it is [0, 1]. Categorical features are one-hot encoded as multiple Binary columns
+        '''
+        possible_vals = [[] for _ in range(self.ncols)]  # a list of all possible values, may be scaled later
+        col_scales = dict()  # a dict of the min and max allowed value, will never be scaled
+        for i in range(self.ncols):
+            col_type = self.col_types[i]
+            col_min, col_max = [x[:, i].min(), x[:, i].max()]
+            # binary features are always 0 or 1
+            if col_type == FeatureType.Binary:
+                possible_vals[i] = [0.0, 1.0]
+            # numeric features can vary between a min and max
+            if col_type == FeatureType.Numeric:
+                possible_vals[i] = [col_min, col_max]
+            # discrete features must be one of the allowed options (integers) between the min and max
+            if col_type == FeatureType.Discrete:
+                # if we need to override with a range
+                if self.col_names[i] in RANGED_DISCRETE:
+                    col_min, col_max = RANGED_DISCRETE[self.col_names[i]]
+                    possible_vals[i] = list(range(col_min, col_max+1))
+                # otherwise use the availible options
+                else:
+                    possible_vals[i] = list(np.unique(x[:, i]))
+            # save the unscaled min/max along each column
+            col_scales[i] = [col_min, col_max]
+        self.possible_vals = possible_vals
+        self.col_scales = col_scales
 
     def normalize_data(self, x: np.ndarray, normalize_numeric=True, normalize_discrete: bool = False) -> None:
         '''
         Normalizes Numeric and Discrete columns to the range [0, 1]. Updates `self.possible_vals` to match new scale
         '''
         # TODO: separate the process of picking col ranges from the process of normalizing
-        self.is_normalized = True
+        self.normalize_numeric = normalize_numeric
         self.normalize_discrete = normalize_discrete
-        self.col_scales = {}
         for i in range(self.ncols):
             col_type = self.col_types[i]
-            if col_type == FeatureType.Binary:
-                self.col_scales[i] = [0.0, 1.0]
-            elif col_type in [FeatureType.Numeric, FeatureType.Discrete]:
-                # get the lowest and highest possible values for the feature
-                min_value = np.min(x[:, i])
-                max_value = np.max(x[:, i])
-                if self.col_names[i] in RANGED_DISCRETE:
-                    min_value, max_value = RANGED_DISCRETE[self.col_names[i]]
-                # save the scaling values for later
-                self.col_scales[i] = [min_value, max_value]
-
-                if (col_type == FeatureType.Numeric and normalize_numeric) or (col_type == FeatureType.Discrete and normalize_discrete):
-                    # adjust the given data to map this to [0, 1]
-                    x[:, i] = (x[:, i] - min_value) / (max_value - min_value)
-
-                    # if we have listed possible values, adjust them as well
-                    if len(self.possible_vals[i]) > 0:
-                        for j in range(len(self.possible_vals[i])):
-                            self.possible_vals[i][j] = (self.possible_vals[i][j] - min_value) / (max_value - min_value)
+            min_value, max_value = self.col_scales[i]
+            # if we need to scale this column
+            if (col_type == FeatureType.Numeric and normalize_numeric) or \
+                    (col_type == FeatureType.Discrete and normalize_discrete):
+                # scale the given data
+                x[:, i] = (x[:, i] - min_value) / (max_value - min_value)
+                # adjust the posssible values to match
+                for j in range(len(self.possible_vals[i])):
+                    self.possible_vals[i][j] = (self.possible_vals[i][j] - min_value) / (max_value - min_value)
 
     def unscale(self, x: np.ndarray, col_id: int = None):
         '''
@@ -146,23 +167,27 @@ class DataInfo:
         -------
         unscaled: the unscaled data matching the type and shape of x
         '''
-        if not self.is_normalized:
-            return x
+        # if not self.normalize_numeric:
+        #     return x
 
+        # given a single value, unscale that
         if col_id is not None:
-            if self.col_types[col_id] == FeatureType.Discrete and not self.normalize_discrete:
-                return x
-            else:
+            col_type = self.col_types[col_id]
+            if (col_type == FeatureType.Discrete and self.normalize_discrete) or \
+                    (col_type == FeatureType.Numeric and not self.normalize_numeric):
                 return x * (self.col_scales[col_id][1] - self.col_scales[col_id][0]) + self.col_scales[col_id][0]
+            else:
+                return x
+        # given and array of values, unscale them
         else:
             unscaled = x.copy()
             for col_id in range(self.ncols):
                 if col_id in self.col_scales:
-                    if self.col_types[col_id] == FeatureType.Discrete and not self.normalize_discrete:
-                        pass
-                    else:
-                        unscaled[col_id] = unscaled[col_id] * (self.col_scales[col_id][1] -
-                                                               self.col_scales[col_id][0]) + self.col_scales[col_id][0]
+                    col_type = self.col_types[col_id]
+                    if (col_type == FeatureType.Discrete and self.normalize_discrete) or \
+                            (col_type == FeatureType.Numeric and not self.normalize_numeric):
+                        min_val, max_val = self.col_scales[col_id]
+                        unscaled[col_id] = unscaled[col_id] * (max_val - min_val) + min_val
             return unscaled
 
     def check_valid(self, x: np.ndarray) -> bool:
@@ -215,24 +240,37 @@ class DataInfo:
         return all_valid
 
 
-def rescale_discrete(x: np.ndarray, ds_info: DataInfo, scale_up=True):
+def rescale_numeric(x: np.ndarray, ds_info: DataInfo, scale_up=True):
     # if the datasets not normalized, we're dong
-    if not ds_info.is_normalized:
+    if not ds_info.normalize_numeric:
         return x
-
-    # if the dataset is normalized
-    if scale_up:  # and we want to scal up (convert [0, 1] back to ints)
-        for i in range(ds_info.ncols):
-            if ds_info.col_types[i] == FeatureType.Discrete and ds_info.normalize_discrete:
-                x[:, i] = np.round(ds_info.unscale(x[:, i], i))
-    if not scale_up:  # and we want to scale down (ints back to [0, 1])
-        for i in range(ds_info.ncols):
-            if ds_info.col_types[i] == FeatureType.Discrete and ds_info.normalize_discrete:
-                x[:, i] = (x[:, i] - ds_info.col_scales[i][0]) / (ds_info.col_scales[i][1] - ds_info.col_scales[i][0])
+    for i in range(ds_info.ncols):
+        col_type = ds_info.col_types[i]
+        if col_type == FeatureType.Numeric:
+            min_val, max_val = ds_info.col_scales[i]
+            if scale_up:
+                x[:, i] * (max_val - min_val) + min_val
+            else:  # scaling down
+                x[:, i] = (x[:, i] - min_val) / (max_val - min_val)
     return x
 
 
-def load_data(dataset_name, preprocessing: str = "Normalize"):
+def rescale_discrete(x: np.ndarray, ds_info: DataInfo, scale_up=True):
+    # if the datasets not normalized, we're dong
+    if not ds_info.normalize_discrete:
+        return x
+    for i in range(ds_info.ncols):
+        col_type = ds_info.col_types[i]
+        if col_type == FeatureType.Discrete:
+            min_val, max_val = ds_info.col_scales[i]
+            if scale_up:
+                x[:, i] * (max_val - min_val) + min_val
+            else:  # scaling down
+                x[:, i] = (x[:, i] - min_val) / (max_val - min_val)
+    return x
+
+
+def load_data(dataset_name, normalize_numeric=True, normalize_discrete=True):
     '''
     Returns one of many possible anomaly detetion datasets based on the given `dataset_name`. Note that all features are currently treated as actionable regardless of source file designation
 
@@ -265,12 +303,10 @@ def load_data(dataset_name, preprocessing: str = "Normalize"):
     else:
         print("ERROR NO SUCH DATASET")
         exit(0)
-
+    # get the feature ranges for x
+    ds_info.get_possible_vals(x)
     # normalize numeric and discrete features to [0, 1]
-    if preprocessing == "Normalize":
-        ds_info.normalize_data(x, normalize_numeric=True, normalize_discrete=True)
-    else:
-        ds_info.normalize_data(x, normalize_numeric=False, normalize_discrete=False)
+    ds_info.normalize_data(x, normalize_numeric, normalize_discrete)
     return x, y, ds_info
 
 
@@ -353,36 +389,11 @@ def one_hot_encode(input: np.ndarray, col_names: List[str], col_types: List[Feat
                 one_hot_schema[col_names[i]].append(len(x) - 1)
     x = np.array(x).T
 
-    # get the allowed values for each feature
-    one_hot_possible_vals = get_possible_vals(x, one_hot_types, one_hot_names)
-
     # allowing alteration on all features
     one_hot_actions = [FeatureActionability.Free for _ in range(len(one_hot_names))]
-
     # create the data info object
-    ds_info = DataInfo(one_hot_names, one_hot_types, one_hot_actions, one_hot_possible_vals, one_hot_schema)
+    ds_info = DataInfo(one_hot_names, one_hot_types, one_hot_actions, one_hot_schema)
     return x, ds_info
-
-
-def get_possible_vals(x: np.ndarray, col_types: List[FeatureType], col_names: List[str]) -> List[List[float]]:
-    '''
-    Determine the range of allowed values for each column. For Discrete values this is a list of all allowed options, for Numeric values it is the min and max allowed value from the data. For Binary it is [0, 1]. Categorical features are one-hot encoded as multiple Binary columns
-    '''
-    possible_vals = [[] for _ in range(len(col_types))]
-    for i in range(len(col_types)):
-        if col_types[i] == FeatureType.Binary:
-            possible_vals[i] = [0.0, 1.0]
-        if col_types[i] == FeatureType.Numeric:
-            col_min = x[:, i].min()
-            col_max = x[:, i].max()
-            possible_vals[i] = [col_min, col_max]
-        if col_types[i] == FeatureType.Discrete:
-            if col_names[i] in RANGED_DISCRETE:
-                range_min, range_max = RANGED_DISCRETE[col_names[i]]
-                possible_vals[i] = list(range(range_min, range_max+1))
-            else:
-                possible_vals[i] = list(np.unique(x[:, i]))
-    return possible_vals
 
 
 def load_facet_data(ds_name: str) -> Tuple[np.ndarray, np.ndarray, DataInfo]:
@@ -432,7 +443,6 @@ def util_load_cancer():
     x = data[:, 2:].astype(float)
 
     ds_info = DataInfo.generic(ncols=x.shape[1])
-    ds_info.possible_vals = get_possible_vals(x, ds_info.col_types, col_names=ds_info.col_names)
     return x, y, ds_info
 
 
@@ -466,7 +476,6 @@ def util_load_glass():
     x = x[is_float | is_nonfloat]
 
     ds_info = DataInfo.generic(ncols=x.shape[1])
-    ds_info.possible_vals = get_possible_vals(x, ds_info.col_types, col_names=ds_info.col_names)
     return x, y, ds_info
 
 
@@ -479,7 +488,6 @@ def util_load_magic():
     y[labels == "g"] = 1
     x = data[:, :-1].astype(float)
     ds_info = DataInfo.generic(ncols=x.shape[1])
-    ds_info.possible_vals = get_possible_vals(x, ds_info.col_types, col_names=ds_info.col_names)
     return x, y, ds_info
 
 
@@ -489,7 +497,6 @@ def util_load_spambase():
     x = data[:, :-1]
     y = data[:, -1:].squeeze().astype('int')
     ds_info = DataInfo.generic(ncols=x.shape[1])
-    ds_info.possible_vals = get_possible_vals(x, ds_info.col_types, col_names=ds_info.col_names)
     return x, y, ds_info
 
 
@@ -502,5 +509,4 @@ def util_load_vertebral():
     y[labels == "AB"] = 1
     x = data[:, :-1].astype(float)
     ds_info = DataInfo.generic(ncols=x.shape[1])
-    ds_info.possible_vals = get_possible_vals(x, ds_info.col_types, col_names=ds_info.col_names)
     return x, y, ds_info
