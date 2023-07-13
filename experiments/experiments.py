@@ -14,13 +14,14 @@ from utilities.metrics import (average_distance, classification_metrics,
                                percent_valid)
 
 TUNED_FACET_SD = {
-    "adult": 0.01,  # TODO TUNE!
+    "adult": 0.0001,      # TODO TUNE!
     "cancer": 0.1,
+    "compas": 0.0001,   # TODO TUNE!
+    "credit": 0.0001,     # TODO TUNE!
     "glass": 0.005,
     "magic": 0.001,
     "spambase": 0.01,
     "vertebral": 0.05,
-    "compas": 0.0001
 }
 
 # generated as the average minimum point to point distance
@@ -45,6 +46,8 @@ AVG_CF_NN_DIST = {
 FACET_TUNED_M = {
     "adult": 16,  # TODO TUNE!
     "cancer": 16,
+    "compas": 16,  # TODO TUNE!
+    "credit": 16,  # TODO TUNE!
     "glass": 16,
     "magic": 16,
     "spambase": 16,
@@ -216,16 +219,23 @@ def execute_run(dataset_name: str, explainer: str, params: dict, output_path: st
     explain_time = explain_end - explain_start
     sample_time = explain_time / n_explain
 
+    # check that the returned explanations fit the data type requirements (one-hot, discrete, binary, etc)
+    if not ds_info.check_valid(explanations):
+        print("WARNING - {} PRODUCED AN EXPLANATION INCOMPATIBLE WITH THE GIVEN DATA SCHEMA".format(explainer))
+
     # store the returned explantions
-    col_names = []
-    for i in range(x.shape[1]):
-        col_names.append("x{}".format(i))
-    expl_df = pd.DataFrame(explanations, columns=col_names)
+    expl_df = pd.DataFrame(ds_info.unscale(explanations), columns=ds_info.col_names)
     # also store the index of the explained sample in the dataset
     expl_df.insert(0, "x_idx", idx_explain)
     explanation_path = output_path + \
         "{}_{}_{}{:03d}_explns.csv".format(dataset_name, explainer.lower(), run_ext, iteration)
     expl_df.to_csv(explanation_path, index=False)
+
+    x_df = pd.DataFrame(ds_info.unscale(x_explain), columns=ds_info.col_names)
+    x_df.insert(0, "x_idx", idx_explain)
+    x_path = output_path + \
+        "{}_{}_{}{:03d}_x.csv".format(dataset_name, explainer.lower(), run_ext, iteration)
+    x_df.to_csv(x_path, index=False)
 
     # if we didn't normalize the data we can't trust the distances
     if not ds_info.normalize_numeric or not ds_info.normalize_discrete:

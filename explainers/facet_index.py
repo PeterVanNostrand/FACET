@@ -580,11 +580,11 @@ class FACETIndex(Explainer):
             idx_overstep = np.logical_and(overstep_range, np.logical_or(low_values, high_values))
 
             # increase low feature values to one offset above min
-            xprime[low_values] = rect[low_values, LOWER] + self.offsets
+            xprime[low_values] = rect[low_values, LOWER] + self.offsets[low_values]
             # decrease high features one to one offset below min
-            xprime[high_values] = rect[high_values, UPPER] - self.offsets
+            xprime[high_values] = rect[high_values, UPPER] - self.offsets[high_values]
             # for oversteped bounds use the average between min and max
-            xprime[idx_overstep] = rect[idx_overstep, LOWER] + rect_width / 2
+            xprime[idx_overstep] = rect[idx_overstep, LOWER] + rect_width[idx_overstep] / 2
         else:  # if there are non-numeric features, handle them directly
             i = 0
             is_valid = True

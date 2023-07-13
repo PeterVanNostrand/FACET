@@ -104,5 +104,6 @@ class OCEAN(Explainer):
         preds = self.manager.predict(xprime)
         failed_explanation = (preds == y)
         xprime[failed_explanation] = np.tile(np.inf, x.shape[1])
+        xprime += 0  # make -0.0 values 0.0
 
         return xprime

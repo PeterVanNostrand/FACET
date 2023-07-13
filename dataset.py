@@ -178,9 +178,9 @@ class DataInfo:
                 return x * (self.col_scales[col_id][1] - self.col_scales[col_id][0]) + self.col_scales[col_id][0]
             else:
                 return x
-        # given and array of values, unscale them
-        else:
-            unscaled = x.copy()
+        # given an array of values, unscale them
+        unscaled = x.copy()
+        if len(unscaled.shape) == 1:  # given a single instance array (ncols,)
             for col_id in range(self.ncols):
                 if col_id in self.col_scales:
                     col_type = self.col_types[col_id]
@@ -188,7 +188,19 @@ class DataInfo:
                             (col_type == FeatureType.Numeric and not self.normalize_numeric):
                         min_val, max_val = self.col_scales[col_id]
                         unscaled[col_id] = unscaled[col_id] * (max_val - min_val) + min_val
-            return unscaled
+        elif len(unscaled.shape) == 2:  # given an array of (ninstances, ncols)
+            for i in range(unscaled.shape[0]):
+                for col_id in range(self.ncols):
+                    if col_id in self.col_scales:
+                        col_type = self.col_types[col_id]
+                        if (col_type == FeatureType.Discrete and self.normalize_discrete) or \
+                                (col_type == FeatureType.Numeric and not self.normalize_numeric):
+                            min_val, max_val = self.col_scales[col_id]
+                            unscaled[i, col_id] = unscaled[i, col_id] * (max_val - min_val) + min_val
+        else:
+            unscaled = None
+            print("mishapen array passed to unscale()")
+        return unscaled
 
     def check_valid(self, x: np.ndarray) -> bool:
         '''
@@ -207,12 +219,17 @@ class DataInfo:
             valid_i = True
             for col_id in range(self.ncols):
                 if self.col_types[col_id] == FeatureType.Binary:
+                    # binary values must be either zero or one
                     valid_i = valid_i and (instance[col_id] in [0.0, 1.0])
+                    # if the binary value encodes a one-hot feature
+                    if col_id in self.reverse_one_hot_schema:
+                        feat_name = self.reverse_one_hot_schema[col_id]
+                        # there can only be column set hot
+                        n_hot_for_feature = sum(instance[self.one_hot_schema[feat_name]])
+                        valid_i = valid_i and (n_hot_for_feature == 1)
                 if self.col_types[col_id] == FeatureType.Discrete:
+                    # discrete values must be one of the allowed values
                     valid_i = valid_i and (instance[col_id] in self.possible_vals[col_id])
-                if self.col_types == FeatureType.Categorical:
-                    n_hot_for_feature = sum(instance[self.reverse_one_hot_schema[col_id]])
-                    valid_i = valid_i and (n_hot_for_feature == 1)
             all_valid = all_valid and valid_i
         return all_valid
 
