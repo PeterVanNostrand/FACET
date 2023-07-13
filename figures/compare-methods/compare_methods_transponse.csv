@@ -1,0 +1,4 @@
+dataset,ADULT,ADULT,ADULT,ADULT,ADULT,,CREDIT,CREDIT,CREDIT,CREDIT,CREDIT,,COMPAS,COMPAS,COMPAS,COMPAS,COMPAS,,
+,sample_time,avg_length,avg_manhattan,avg_dist,per_valid,,sample_time,avg_length,avg_manhattan,avg_dist,per_valid,,sample_time,avg_length,avg_manhattan,avg_dist,per_valid,,
+FACET,0.2857,1.55,1.00,1.00,100.0,,0.0541,4.45,1.00,1.00,100.0,,0.0108,1.00,1.00,1.00,100.0,,
+OCEAN,0.5122,2.20,2.66,2.31,100.0,,3.0584,6.40,1.22,0.93,100.0,,0.5510,1.80,4.94,3.75,100.0,,

@@ -1,0 +1,15 @@
+\begin{table*}[t]
+\small
+\centering
+\begin{tabularx}{0.95\textwidth}{|X|ccccc|ccccc|ccccc|}
+\hline\textbf{Dataset} & \multicolumn{5}{c|}{\textbf{ADULT}} & \multicolumn{5}{c|}{\textbf{CREDIT}} & \multicolumn{5}{c|}{\textbf{COMPAS}} \\
+& $t\downarrow$ & $\delta_0\downarrow$ & $\delta_1\downarrow$ & $\delta_2\downarrow$ & $\%\uparrow$ & $t\downarrow$ & $\delta_0\downarrow$ & $\delta_1\downarrow$ & $\delta_2\downarrow$ & $\%\uparrow$ & $t\downarrow$ & $\delta_0\downarrow$ & $\delta_1\downarrow$ & $\delta_2\downarrow$ & $\%\uparrow$ \\
+\hline
+FACET & 0.2857 & 1.55 & 1.00 & 1.00 & 100.0 & 0.0541 & 4.45 & 1.00 & 1.00 & 100.0 & 0.0108 & 1.00 & 1.00 & 1.00 & 100.0 \\
+OCEAN & 0.5122 & 2.20 & 2.66 & 2.31 & 100.0 & 3.0584 & 6.40 & 1.22 & 0.93 & 100.0 & 0.5510 & 1.80 & 4.94 & 3.75 & 100.0 \\
+\hline
+\end{tabularx}
+\caption{Comparison to state-of-the art counterfactual example generation techniques in terms of explanation time $t$, explanation distance $\delta$, and percent of instances successfully explained. ($\ast$) denotes cases which necessitated uncapped explanation time.}
+\label{tab.compare_methods}
+\vspace{-7mm}
+\end{table*}
