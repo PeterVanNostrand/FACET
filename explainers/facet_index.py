@@ -137,14 +137,20 @@ class FACETIndex(Explainer):
         if not self.check_rects_one_hot_valid():  # ! DEBUG
             print("WARNING INVALID HYPERRECTS IN INDEX")
 
+    def one_hot_valid(self, rect: np.ndarray) -> bool:
+        for cat_column_name, sub_col_idxs in self.ds_info.one_hot_schema.items():
+            n_set_high = sum(rect[sub_col_idxs, LOWER] > 0)
+            if n_set_high != 1:
+                return False
+        return True
+
     def check_rects_one_hot_valid(self) -> bool:
         invalid_count = 0
         for class_id in [0, 1]:
             for rect in self.index[class_id]:
                 for cat_column_name, sub_col_idxs in self.ds_info.one_hot_schema.items():
                     n_set_high = sum(rect[sub_col_idxs, LOWER] > 0)
-                    n_set_low = sum(rect[sub_col_idxs, UPPER] < 1)
-                    if n_set_high > 1 or n_set_low == self.ds_info.ncols:
+                    if n_set_high != 1:
                         invalid_count += 1
         return invalid_count == 0
 
@@ -268,9 +274,9 @@ class FACETIndex(Explainer):
             rect, paths_used = self.enumerate_rectangle(leaf_ids, label)
             key = hash(tuple(paths_used))  # hash the path list to get a unique key corresponding to this HR
             if key not in visited_rects[label]:  # if we haven't visited this hyper-rectangle before
-                # if True:
-                self.add_to_index(label, rect)  # add it to the index
-                visited_rects[label][key] = True  # remember that we've indexed it
+                if self.one_hot_valid(rect):
+                    self.add_to_index(label, rect)  # add it to the index
+                    visited_rects[label][key] = True  # remember that we've indexed it
 
     def add_to_index(self, label: int, rectangle: np.ndarray) -> None:
         '''

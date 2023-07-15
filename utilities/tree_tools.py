@@ -1,6 +1,5 @@
 
 import numpy as np
-from utilities.metrics import dist_euclidean
 
 
 def get_best_of_tree(t, rf, x, y):
@@ -64,7 +63,7 @@ class TreeContraster():
             path_string = path_string + path_component
 
         # If the node is a leaf
-        if(self.t.tree_.children_left[node_id] == -1 and self.t.tree_.children_right[node_id] == -1):
+        if (self.t.tree_.children_left[node_id] == -1 and self.t.tree_.children_right[node_id] == -1):
             if self.verbose:
                 print(path)
                 print(path_string)

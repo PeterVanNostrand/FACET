@@ -36,7 +36,7 @@ class RandomForest(Detector):
         self.model.fit(x, y)
 
     def predict(self, x):
-        if(self.hard_voting):
+        if (self.hard_voting):
             tree_preds = np.empty(shape=(self.ntrees, len(x)))
             for i in range(self.ntrees):
                 tree_preds[i] = self.model.estimators_[i].predict(x)
