@@ -8,13 +8,13 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from tqdm.auto import tqdm
 
-from dataset import load_data
+from dataset import load_data, rescale_discrete, rescale_numeric
 from manager import MethodManager
 from utilities.metrics import (average_distance, classification_metrics,
                                percent_valid)
 
 from .experiments import (FACET_DEFAULT_PARAMS, FACET_TUNED_M,
-                          RF_DEFAULT_PARAMS, TUNED_FACET_SD, execute_run)
+                          RF_DEFAULT_PARAMS, TUNED_FACET_SD)
 
 
 def vary_m(ds_names, ms=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=None, ntrees=10, max_depth=5):
@@ -63,18 +63,19 @@ def vary_m(ds_names, ms=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=None,
                 os.makedirs(output_path)
 
             # load and split the datset using random state for repeatability. Select samples to explain
-            x, y = load_data(ds, preprocessing=preprocessing)
+            x, y, ds_info = load_data(ds, True, True)
             indices = np.arange(start=0, stop=x.shape[0])
+            xindices = np.arange(start=0, stop=x.shape[0])
             xtrain, xtest, ytrain, ytest, idx_train, idx_test = train_test_split(
                 x, y, indices, test_size=test_size, shuffle=True, random_state=random_state)
             if n_explain is not None:
                 x_explain = xtest[:n_explain]
                 y_explain = ytest[:n_explain]
-                ixd_explain = idx_test[:n_explain]
+                idx_explain = idx_test[:n_explain]
             else:
                 x_explain = xtest
                 y_explain = ytest
-                ixd_explain = idx_test
+                idx_explain = idx_test
                 n_explain = x_explain.shape[0]
 
             # create the manager which handles create the RF model and explainer
@@ -87,7 +88,7 @@ def vary_m(ds_names, ms=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=None,
 
             # prepare the explainer, handles any neccessary preprocessing
             prep_start = time.time()
-            manager.explainer.prepare_dataset(x, y)
+            manager.explainer.prepare_dataset(x, y, ds_info)
             manager.prepare(xtrain=xtrain, ytrain=ytrain)
             prep_end = time.time()
             prep_time = prep_end-prep_start
@@ -128,16 +129,40 @@ def vary_m(ds_names, ms=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=None,
                 explain_time = explain_end - explain_start
                 sample_time = explain_time / n_explain
 
+                # check that the returned explanations fit the data type requirements (one-hot, discrete, binary, etc)
+                if not ds_info.check_valid(explanations):
+                    print("WARNING - {} PRODUCED AN EXPLANATION INCOMPATIBLE WITH THE GIVEN DATA SCHEMA".format(explainer))
+
                 # store the returned explantions
-                col_names = []
-                for i in range(x.shape[1]):
-                    col_names.append("x{}".format(i))
-                expl_df = pd.DataFrame(explanations, columns=col_names)
+                expl_df = pd.DataFrame(ds_info.unscale(explanations), columns=ds_info.col_names)
                 # also store the index of the explained sample in the dataset
-                expl_df.insert(0, "x_idx", ixd_explain)
+                expl_df.insert(0, "x_idx", idx_explain)
                 explanation_path = output_path + \
                     "{}_{}_{}{:03d}_explns.csv".format(ds, explainer.lower(), run_ext, iter)
                 expl_df.to_csv(explanation_path, index=False)
+
+                x_df = pd.DataFrame(ds_info.unscale(x_explain), columns=ds_info.col_names)
+                x_df.insert(0, "x_idx", idx_explain)
+                x_path = output_path + \
+                    "{}_{}_{}{:03d}_x.csv".format(ds, explainer.lower(), run_ext, iter)
+                x_df.to_csv(x_path, index=False)
+
+                # if we didn't normalize the data we can't trust the distances
+                if not ds_info.normalize_numeric or not ds_info.normalize_discrete:
+                    # create copies so we don't disturb the underlying data
+                    x_explain = x_explain.copy()
+                    explanations = explanations.copy()
+                    # if we didn't normalize the numeric features, scale them down now
+                if not ds_info.normalize_numeric:
+                    ds_info.normalize_numeric = True
+                    x_explain = rescale_numeric(x_explain, ds_info, scale_up=False)
+                    explanations = rescale_numeric(explanations, ds_info, scale_up=False)
+                    ds_info.normalize_numeric = False
+                if not ds_info.normalize_discrete:
+                    ds_info.normalize_discrete = True
+                    x_explain = rescale_discrete(x_explain, ds_info, scale_up=False)
+                    explanations = rescale_discrete(explanations, ds_info, scale_up=False)
+                    ds_info.normalize_discrete = False
 
                 # evalute the quality of the explanations
                 per_valid = percent_valid(explanations)
