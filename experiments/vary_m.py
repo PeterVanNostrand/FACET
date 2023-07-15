@@ -69,11 +69,11 @@ def vary_m(ds_names, ms=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=None,
                 x, y, indices, test_size=test_size, shuffle=True, random_state=random_state)
             if n_explain is not None:
                 x_explain = xtest[:n_explain]
-                y_explain = ytest[:n_explain]
+                # y_explain = ytest[:n_explain]
                 idx_explain = idx_test[:n_explain]
             else:
                 x_explain = xtest
-                y_explain = ytest
+                # y_explain = ytest
                 idx_explain = idx_test
                 n_explain = x_explain.shape[0]
 
