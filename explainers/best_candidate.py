@@ -127,7 +127,7 @@ class AFT(Explainer):
         -------
         final_examples : an array of contrastive examples with dimensions (nsamples, k, nfeatures). Each of final_examples[i] corresponds to an array of the best k examples which explain x[i]
         '''
-        rf: RandomForest = self.manager.random_forest
+        rf: RandomForest = self.manager.model
 
         k = 1
         final_examples = np.empty(shape=(x.shape[0], k, x.shape[1]))

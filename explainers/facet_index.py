@@ -36,12 +36,12 @@ class FACETIndex(Explainer):
 
     def prepare(self, xtrain=None, ytrain=None):
         data = xtrain
-        rf_detector: RandomForest = self.manager.random_forest
+        rf_detector: RandomForest = self.manager.model
         rf_trees = rf_detector.model.estimators_
         self.rf_ntrees = len(rf_trees)
         self.rf_nclasses = rf_detector.model.n_classes_
         self.rf_nfeatures = len(rf_detector.model.feature_importances_)
-        self.rf_hardvoting = self.manager.random_forest.hard_voting
+        self.rf_hardvoting = self.manager.model.hard_voting
         # the number of trees which much aggree for a prediction
         self.majority_size = math.floor(self.rf_ntrees / 2) + 1
 
@@ -89,7 +89,7 @@ class FACETIndex(Explainer):
         '''
         Computes the support for each vertex and each pairs of vertices in the classification output of the training data. That is fraction of all samples which are classificed into vertex Vi or pair of vertices Vi, Vj. These values are stored in self.vertex_support[i] and self.pairwise_support[i][j] respectively
         '''
-        rf_detector: RandomForest = self.manager.random_forest
+        rf_detector: RandomForest = self.manager.model
         all_leaves = rf_detector.apply(data)  # leaves that each sample ends up in (nsamples in xtrain, ntrees)
 
         # compute the support of each vertex in the predictions of the training data
@@ -133,14 +133,20 @@ class FACETIndex(Explainer):
         '''
         rect_points = self.select_points(training_data=data)
         self.index_rectangles(data=rect_points)
-        # ! DEBUG
-        if not self.check_rects_one_hot_valid():  # ! DEBUG
-            print("WARNING INVALID HYPERRECTS IN INDEX")
+        # ! DEBUG START
+        # if not self.check_rects_one_hot_valid():
+        #     print("WARNING INVALID HYPERRECTS IN INDEX")
+        # ! DEBUG END
 
     def one_hot_valid(self, rect: np.ndarray) -> bool:
         for cat_column_name, sub_col_idxs in self.ds_info.one_hot_schema.items():
+            # requires more than one one-hot high
             n_set_high = sum(rect[sub_col_idxs, LOWER] > 0)
-            if n_set_high != 1:
+            if n_set_high > 1:
+                return False
+            # requires all one-hot low
+            n_set_low = sum(rect[sub_col_idxs, UPPER] < 1)
+            if n_set_low == len(sub_col_idxs):
                 return False
         return True
 
@@ -150,7 +156,10 @@ class FACETIndex(Explainer):
             for rect in self.index[class_id]:
                 for cat_column_name, sub_col_idxs in self.ds_info.one_hot_schema.items():
                     n_set_high = sum(rect[sub_col_idxs, LOWER] > 0)
-                    if n_set_high != 1:
+                    n_set_low = sum(rect[sub_col_idxs, UPPER] < 1)
+                    if n_set_high > 1:
+                        invalid_count += 1
+                    elif (n_set_low == len(sub_col_idxs)):
                         invalid_count += 1
         return invalid_count == 0
 
@@ -264,7 +273,7 @@ class FACETIndex(Explainer):
         '''
         self.initialize_index()
         preds = self.manager.predict(data)
-        rf_detector: RandomForest = self.manager.random_forest
+        rf_detector: RandomForest = self.manager.model
         # get the leaves that each sample ends up in
         all_leaves = rf_detector.apply(data)  # shape (nsamples in xtrain, ntrees)
 
@@ -593,8 +602,7 @@ class FACETIndex(Explainer):
             xprime[idx_overstep] = rect[idx_overstep, LOWER] + rect_width[idx_overstep] / 2
         else:  # if there are non-numeric features, handle them directly
             i = 0
-            is_valid = True
-            while i < self.ds_info.ncols and is_valid:
+            while i < self.ds_info.ncols:
                 # determine if the value is too low, too high, and if an overstep will occur
                 is_low = (xprime[i] <= (rect[i, LOWER] + self.EPSILONS[i]))
                 is_high = (xprime[i] >= (rect[i, UPPER] - self.EPSILONS[i]))
@@ -645,30 +653,39 @@ class FACETIndex(Explainer):
                         differences = (self.ds_info.possible_vals[i] - rect[i, LOWER])
                         differences[differences < 0] = np.inf
                         idx_next_larger = np.argmin(differences)
+                        # if we're in danger of floating point innacuracy
+                        if (self.ds_info.possible_vals[i][idx_next_larger] - rect[i, LOWER]) < self.EPSILONS[i]:
+                            if idx_next_larger < len(self.ds_info.possible_vals[i]) - 1:  # and we can step up, do it
+                                idx_next_larger += 1
+                            else:  # if we can't this is an invalid explanation
+                                return None
                         xprime[i] = self.ds_info.possible_vals[i][idx_next_larger]
                         if xprime[i] > rect[i, UPPER]:  # if the next step up is no longer in the rect
-                            is_valid = False
-                            xprime = None
+                            return None
                     elif is_high:  # if high, choose the next smalles value
                         differences = (self.ds_info.possible_vals[i] - rect[i, UPPER])
                         differences[differences > 0] = -np.inf
                         idx_next_lower = np.argmax(differences)
+                        # if we're in danger of floating point innacuracy
+                        if (rect[i, UPPER] - self.ds_info.possible_vals[i][idx_next_lower]) < self.EPSILONS[i]:
+                            if idx_next_lower > 1:  # and we can step down, do it
+                                idx_next_lower -= 1
+                            else:  # if we can't this is an invalid explanation
+                                return None
                         xprime[i] = self.ds_info.possible_vals[i][idx_next_lower]
                         if xprime[i] < rect[i, LOWER]:  # if the next step down is no longer in the rect
-                            is_valid = False
-                            xprime = None
+                            return None
                 # handle categorical one-hot encoded values, making sure only one column is hot for categorical feature
                 elif self.ds_info.col_types[i] == FeatureType.Categorical:
                     print("How'd you get here? Categorical features should be one-hot encoded")
                     print("If for some reason you don't want to one-hot encode please consider marking as discrete instead")
                 i += 1
-
-        # !DEUBUG
-        if xprime is not None:
-            if not self.ds_info.check_valid([xprime]):  # !DEBUG
-                print("CRITICAL ERROR - FACET GENERATED AN INVALID EXPLANATION")
-            if not self.is_inside(xprime, rect):  # ! DEBUG
-                print("ERROR, COUNTERFACTUAL EXAMPLE NOT IN REGION")
+        # !DEBUG START
+        # if not self.ds_info.check_valid([xprime]):
+        #     print("CRITICAL ERROR - FACET GENERATED AN INVALID EXPLANATION")
+        # if not self.is_inside(xprime, rect):
+        #     print("ERROR, COUNTERFACTUAL EXAMPLE NOT IN REGION")
+        # ! DEBUG END
 
         return xprime
 
@@ -768,11 +785,13 @@ class FACETIndex(Explainer):
                         explanation = self.rect_center(nearest_rect)
                     else:
                         explanation = self.fit_to_rectangle(x[i], nearest_rect)
-                    check_class = self.manager.predict([explanation])[0]
-                    if check_class != counterfactual_classes[i]:
-                        print("failed explanation")
-                        print("idx: {}, desired: {}, observed: {}".format(i, counterfactual_classes[i], check_class))
-                        print(x[i])
+                    # !DEBUG START
+                    # check_class = self.manager.predict([explanation])[0]
+                    # if check_class != counterfactual_classes[i]:
+                    #     print("failed explanation")
+                    #     print("idx: {}, desired: {}, observed: {}".format(i, counterfactual_classes[i], check_class))
+                    #     print(x[i])
+                    # !DEBUG END
                 elif k > 1 and len(result) > 0:
                     nearest_rect = result[0]
                     if opt_robust:

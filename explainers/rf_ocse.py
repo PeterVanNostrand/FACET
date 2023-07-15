@@ -130,7 +130,7 @@ class RFOCSE(Explainer):
         xprime = np.empty(shape=x.shape)
         xprime[:, :] = np.inf
         dataset_info = self.rfocse_datainfo
-        sklearn_rf = self.manager.random_forest.model
+        sklearn_rf = self.manager.model.model
         X_train = self.Xtrain
 
         # Make the RFOCSE problem
@@ -176,7 +176,7 @@ class RFOCSE(Explainer):
         xprime = np.empty(shape=x.shape)
         xprime[:, :] = np.inf
         dataset_info = self.rfocse_datainfo
-        rf = self.manager.random_forest.model
+        rf = self.manager.model.model
         X_train = self.Xtrain
 
         valids = []

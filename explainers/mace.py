@@ -158,7 +158,7 @@ class MACE(Explainer):
         x_unscaled = rescale_discrete(x.copy(), self.ds_info)
         df = pd.DataFrame(x_unscaled)
         df.columns = self.ds_info.mace_names_long
-        y_pred = self.manager.random_forest.predict(x)
+        y_pred = self.manager.model.predict(x)
         df["label"] = y_pred
         df = df + 0  # convert boolean values to numeric
         df = df.reset_index(drop=True)
@@ -174,7 +174,7 @@ class MACE(Explainer):
         approach_string = "MACE_eps_{}".format(self.epsilon)
         explanation_file_name = "mace_temp.log"
         norm_type_string = "two_norm"
-        rf_model = self.manager.random_forest.model
+        rf_model = self.manager.model.model
 
         # rescale the discrete features for MACE
         # x_unscaled = rescale_discrete(x.copy(), self.ds_info, scale_up=True)

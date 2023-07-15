@@ -41,7 +41,7 @@ class OCEAN(Explainer):
             self.use_ilf = params.get("ocean_ilf")
 
     def prepare(self, xtrain: np.ndarray = None, ytrain: np.ndarray = None):
-        rf_nclasses = self.manager.random_forest.model.n_classes_
+        rf_nclasses = self.manager.model.model.n_classes_
         if self.use_ilf:
             self.ilfs = []
             for i in range(rf_nclasses):
@@ -77,7 +77,7 @@ class OCEAN(Explainer):
             sample[0].index = feat_index
 
             randomForestMilp = RandomForestCounterFactualMilp(
-                classifier=self.manager.random_forest.model,
+                classifier=self.manager.model.model,
                 sample=sample,
                 outputDesired=desired_label,
                 isolationForest=self.ilfs[desired_label],

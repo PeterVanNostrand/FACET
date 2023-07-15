@@ -14,10 +14,10 @@ from utilities.metrics import (average_distance, classification_metrics,
                                percent_valid)
 
 TUNED_FACET_SD = {
-    "adult": 0.0001,      # TODO TUNE!
+    "adult": 0.1,
     "cancer": 0.1,
-    "compas": 0.0001,   # TODO TUNE!
-    "credit": 0.0001,     # TODO TUNE!
+    "compas": 0.1,
+    "credit": 0.2,
     "glass": 0.005,
     "magic": 0.001,
     "spambase": 0.01,
@@ -99,8 +99,14 @@ RF_DEFAULT_PARAMS = {
     "rf_hardvoting": False,
 }
 
+GBC_DEFUAULT_PARAMS = {
+    "gbc_ntrees": 100,
+    "gbc_maxdepth": 3,
+}
+
 DEFAULT_PARAMS = {
     "RandomForest": RF_DEFAULT_PARAMS,
+    "GradientBoostingClassifier": GBC_DEFUAULT_PARAMS,
     "FACETIndex": FACET_DEFAULT_PARAMS,
     "MACE": MACE_DEFAULT_PARAMS,
     "RFOCSE": RFOCSE_DEFAULT_PARAMS,

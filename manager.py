@@ -16,7 +16,7 @@ from explainers.rf_ocse import RFOCSE
 class MethodManager():
     def __init__(self, explainer=None, hyperparameters=None, random_state=None):
         self.params = hyperparameters
-        self.random_forest = RandomForest(hyperparameters=hyperparameters, random_state=random_state)
+        self.model = RandomForest(hyperparameters=hyperparameters, random_state=random_state)
         if explainer is not None:
             self.explainer = self.init_explainer(explainer=explainer, hyperparameters=hyperparameters)
         self.random_state = random_state
@@ -43,10 +43,10 @@ class MethodManager():
         self.explainer = self.init_explainer(explainer=explainer, hyperparameters=self.params)
 
     def train(self, x, y=None):
-        self.random_forest.train(x, y)
+        self.model.train(x, y)
 
     def predict(self, x):
-        return self.random_forest.predict(x)
+        return self.model.predict(x)
 
     def prepare(self, xtrain: np.ndarray = None, ytrain: np.ndarray = None):
         self.explainer.prepare(xtrain, ytrain)
