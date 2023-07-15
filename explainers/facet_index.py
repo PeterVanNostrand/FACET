@@ -660,7 +660,7 @@ class FACETIndex(Explainer):
                             else:  # if we can't this is an invalid explanation
                                 return None
                         xprime[i] = self.ds_info.possible_vals[i][idx_next_larger]
-                        if xprime[i] > rect[i, UPPER]:  # if the next step up is no longer in the rect
+                        if xprime[i] > rect[i, UPPER] - self.EPSILONS[i]:  # if the next step up is out of the rect
                             return None
                     elif is_high:  # if high, choose the next smalles value
                         differences = (self.ds_info.possible_vals[i] - rect[i, UPPER])
@@ -673,7 +673,7 @@ class FACETIndex(Explainer):
                             else:  # if we can't this is an invalid explanation
                                 return None
                         xprime[i] = self.ds_info.possible_vals[i][idx_next_lower]
-                        if xprime[i] < rect[i, LOWER]:  # if the next step down is no longer in the rect
+                        if xprime[i] < rect[i, LOWER] + self.EPSILONS[i]:  # if the next step down is out of the rect
                             return None
                 # handle categorical one-hot encoded values, making sure only one column is hot for categorical feature
                 elif self.ds_info.col_types[i] == FeatureType.Categorical:
@@ -789,6 +789,7 @@ class FACETIndex(Explainer):
                     # check_class = self.manager.predict([explanation])[0]
                     # if check_class != counterfactual_classes[i]:
                     #     print("failed explanation")
+                    #     a = self.fit_to_rectangle(x[i], nearest_rect)
                     #     print("idx: {}, desired: {}, observed: {}".format(i, counterfactual_classes[i], check_class))
                     #     print(x[i])
                     # !DEBUG END
