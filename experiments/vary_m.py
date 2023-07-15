@@ -65,7 +65,6 @@ def vary_m(ds_names, ms=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=None,
             # load and split the datset using random state for repeatability. Select samples to explain
             x, y, ds_info = load_data(ds, True, True)
             indices = np.arange(start=0, stop=x.shape[0])
-            xindices = np.arange(start=0, stop=x.shape[0])
             xtrain, xtest, ytrain, ytest, idx_train, idx_test = train_test_split(
                 x, y, indices, test_size=test_size, shuffle=True, random_state=random_state)
             if n_explain is not None:
