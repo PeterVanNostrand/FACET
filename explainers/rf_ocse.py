@@ -155,7 +155,7 @@ class RFOCSE(Explainer):
             if explanation is not None:
                 xprime[idx] = explanation
                 if not self.ds_info.check_valid([explanation]):  # !DEBUG
-                    print("CRITICAL ERROR - MACE GENERATED AN INVALID EXPLANATION")
+                    print("CRITICAL ERROR - RFOCSE GENERATED AN INVALID EXPLANATION")
 
         # locate non-counterfactual examples and replace them with [np.inf, ... , np.inf]
         idx_no_examples = (xprime == np.inf).any(axis=1)

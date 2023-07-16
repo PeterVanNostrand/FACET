@@ -91,7 +91,9 @@ class MACE(Explainer):
             # if i not in self.ds_info.reverse_one_hot_schema:  # if its not part of the one-hot encoding
             col_name = self.ds_info.col_names[i]
 
-            lower_bound, upper_bound = self.ds_info.col_scales[i]
+            # lower_bound, upper_bound = self.ds_info.col_scales[i]
+            lower_bound = self.ds_info.possible_vals[i][0]
+            upper_bound = self.ds_info.possible_vals[i][-1]
             # get the min and max allowed values for the feature
             # if self.ds_info.col_types[i] == FeatureType.Numeric:  # for numeric we have the range ends
             #     # lower_bound = self.ds_info.possible_vals[i]
@@ -183,10 +185,19 @@ class MACE(Explainer):
         progress = tqdm(total=x_unscaled.shape[0], desc="MACE", leave=False)
         for i in range(x_unscaled.shape[0]):  # for each instance
             # build the sample dictionary as needed by MACE
+            # for j in range(self.ds_info.ncols):
+            #     factual_sample[self.ds_info.mace_names_kurz[j]] = x_unscaled[i][j]
+            #     factual_sample["x{}".format(j)] = x_unscaled[i][j]
             factual_sample = {}
             for j in range(self.ds_info.ncols):
-                # factual_sample[self.ds_info.mace_names_kurz[j]] = x_unscaled[i][j]
-                factual_sample["x{}".format(j)] = x_unscaled[i][j]
+                if j in self.ds_info.reverse_one_hot_schema:
+                    parent_name_long = self.ds_info.reverse_one_hot_schema[j]
+                    idx_in_cat_list = self.ds_info.one_hot_schema[parent_name_long].index(j)
+                    attr_name_kurz = "x{}_cat_{}".format(j, idx_in_cat_list)
+                else:
+                    attr_name_kurz = "x{}".format(j)
+                factual_sample[attr_name_kurz] = x_unscaled[i][j]
+
             factual_sample['y'] = bool(y[i])
             # explain the sample
             explanation = doMACEExplanationWithMaxTime(
@@ -206,8 +217,8 @@ class MACE(Explainer):
                     exp[j] = explanation["cfe_sample"]["x{}".format(j)]
                 # undo the discrete scaling
                 # exp = rescale_discrete(exp, self.ds_info, scale_up=False)
-                if not self.ds_info.check_valid([exp]):  # !DEBUG
-                    print("CRITICAL ERROR - MACE GENERATED AN INVALID EXPLANATION")
+                # if not self.ds_info.check_valid([exp]):  # !DEBUG
+                #     print("CRITICAL ERROR - MACE GENERATED AN INVALID EXPLANATION")
             xprime.append(exp)
             progress.update()
         progress.close()

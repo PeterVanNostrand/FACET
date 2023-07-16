@@ -46,6 +46,8 @@ RANGED_DISCRETE = {
     "MonthsWithZeroBalanceOverLast6Months": [0, 6],
     "MonthsWithLowSpendingOverLast6Months": [0, 6],
     "MonthsWithHighSpendingOverLast6Months": [0, 6],
+    # "MaxBillAmountOverLast6Months": [0, 50810],
+    # "MaxPaymentAmountOverLast6Months": [0, 51430],
     # compas
     "PriorsCount": [0, 40]
 }

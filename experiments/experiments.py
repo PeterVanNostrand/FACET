@@ -188,11 +188,13 @@ def execute_run(dataset_name: str, explainer: str, params: dict, output_path: st
         normalize_discrete = True
         # MACE requires integer discrete features, this is fine as the RF is the same either way
         # we will later normalize when computing the explanation distance later for comparability
-        if explainer in ["MACE", "RFOCSE"]:
+        if explainer == "MACE":
             normalize_discrete = False
-    else:
-        normalize_numeric = False
-        normalize_discrete = False
+            normalize_numeric = True
+        if explainer == "RFOCSE":
+            normalize_discrete = False
+            normalize_numeric = True
+
     x, y, ds_info = load_data(dataset_name, normalize_numeric, normalize_discrete)
     indices = np.arange(start=0, stop=x.shape[0])
     xtrain, xtest, ytrain, ytest, idx_train, idx_test = train_test_split(
