@@ -65,7 +65,6 @@ class RFOCSE(Explainer):
         Converts the FACET DataInfo information to RFOCSE's DatasetInfo object. Note that these are NOT the same class
         '''
         dataset_builder = DatasetInfoBuilder("dataset")
-        one_hot_added = set()
         for col_id in range(self.ds_info.ncols):
             col_name: str = self.ds_info.col_names[col_id]
             col_type: FeatureType = self.ds_info.col_types[col_id]
@@ -73,7 +72,7 @@ class RFOCSE(Explainer):
                 dataset_builder.add_numerical_variable(
                     position=col_id,
                     lower_bound=self.ds_info.possible_vals[col_id][0],
-                    upper_bound=self.ds_info.possible_vals[col_id][0],
+                    upper_bound=self.ds_info.possible_vals[col_id][-1],
                     name=col_name
                 )
             elif col_type == FeatureType.Discrete:
@@ -84,30 +83,13 @@ class RFOCSE(Explainer):
                     name=col_name
                 )
             elif col_type == FeatureType.Binary:
-                # if its a binary feature not associated with a one-hot encoding
-                if col_id not in self.ds_info.reverse_one_hot_schema:
-                    dataset_builder.add_binary_variable(
-                        position=col_id,
-                        name=col_name,
-                        category_names=("0", "1")
-                    )
-                else:  # its a one-hot encoded column
-                    # get the feature it encodes
-                    one_hot_feature_name: str = self.ds_info.reverse_one_hot_schema[col_id]
-                    # if we haven't added this one-hot feature yet
-                    if one_hot_feature_name not in one_hot_added:
-                        # add it to the RFOCSE info object
-                        sub_col_ids = self.ds_info.one_hot_schema[one_hot_feature_name]
-                        sub_feat_names = tuple(self.ds_info.col_names[_] for _ in sub_col_ids)
-                        dataset_builder.add_one_hot_varible(
-                            start=col_id,
-                            num_categories=len(sub_col_ids),
-                            name=one_hot_feature_name,
-                            category_names=sub_feat_names
-                        )
-                        # mark it as added
-                        one_hot_added.add(one_hot_feature_name)
-        return dataset_builder.create_dataset_info()
+                dataset_builder.add_binary_variable(
+                    position=col_id,
+                    name=col_name,
+                    category_names=("0", "1")
+                )
+        built_ds = dataset_builder.create_dataset_info()
+        return built_ds
 
     def prepare_dataset(self, x: np.ndarray, y: np.ndarray, ds_info) -> None:
         self.ds_info: DataInfo = ds_info
