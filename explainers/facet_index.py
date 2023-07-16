@@ -417,15 +417,14 @@ class FACETIndex(Explainer):
             accumulated_odds += self.manager.model.lr * path_probs[i, 0]
             i += 1
 
-        class_one_prob = sigmoid(accumulated_odds)
-        class_probs = [1.0 - class_one_prob, class_one_prob]
-
         # !DEBUG - CHECK THAT THE LEAF CLASS PROBS MATCH THE PREDICATED PRBS
-        leaf_instance = self.fit_to_rectangle(np.zeros(shape=(self.nfeatures)), rect)
-        if leaf_instance is not None:
-            pred_probs = self.manager.model.model.predict_proba([leaf_instance])
-            if not (pred_probs == class_probs).all():
-                print("ERROR CALCULATING LEAF PROBAILITY")
+        # class_one_prob = sigmoid(accumulated_odds)
+        # class_probs = [1.0 - class_one_prob, class_one_prob]
+        # leaf_instance = self.fit_to_rectangle(np.zeros(shape=(self.nfeatures)), rect)
+        # if leaf_instance is not None:
+        #     pred_probs = self.manager.model.model.predict_proba([leaf_instance])
+        #     if not (pred_probs == class_probs).all():
+        #         print("ERROR CALCULATING LEAF PROBAILITY")
         # !DEBUG END
 
         return rect, paths_used
