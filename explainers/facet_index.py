@@ -5,6 +5,8 @@ import bisect
 # core python packages
 import math
 from typing import TYPE_CHECKING, Dict, List, Tuple
+from detectors.gradient_boosting_classifier import GradientBoostingClassifier
+from utilities.math_tools import sigmoid
 
 # graph packages
 import networkx as nx
@@ -23,6 +25,7 @@ from explainers.bit_vector import LOWER, UPPER
 from utilities.metrics import dist_euclidean
 from baselines.ocean.CounterFactualParameters import FeatureType
 
+import matplotlib.pyplot as plt
 
 if TYPE_CHECKING:
     from manager import MethodManager
@@ -30,25 +33,40 @@ if TYPE_CHECKING:
 
 class FACETIndex(Explainer):
     # TODO Implement per axis minimum robustness paramater, and minimum robustness along all axes
-    def __init__(self, manger, hyperparameters: dict):
-        self.manager: MethodManager = manger
+    def __init__(self, manager, hyperparameters: dict):
+        self.manager: MethodManager = manager
+        self.model_type = manager.model_type
         self.parse_hyperparameters(hyperparameters)
+
+    def save_tree_fig(self, t_id: int) -> None:
+        plt.figure(dpi=300)
+        t = self.manager.model.model.estimators_[0][t_id]
+        tree.plot_tree(t)
+        plt.savefig("tree_{:02d}.png".format(t_id))
+        # plt.show()
 
     def prepare(self, xtrain=None, ytrain=None):
         data = xtrain
-        rf_detector: RandomForest = self.manager.model
-        rf_trees = rf_detector.model.estimators_
-        self.rf_ntrees = len(rf_trees)
-        self.rf_nclasses = rf_detector.model.n_classes_
-        self.rf_nfeatures = len(rf_detector.model.feature_importances_)
-        self.rf_hardvoting = self.manager.model.hard_voting
-        # the number of trees which much aggree for a prediction
-        self.majority_size = math.floor(self.rf_ntrees / 2) + 1
+        if self.model_type == "RandomForest":
+            model: RandomForest = self.manager.model
+            trees = model.model.estimators_
+            self.ntrees = len(trees)
+            self.nclasses = model.model.n_classes_
+            self.nfeatures = len(model.model.feature_importances_)
+            self.rf_hardvoting = self.manager.model.hard_voting
+            # the number of trees which much aggree for a prediction
+            self.majority_size = math.floor(self.ntrees / 2) + 1
+        elif self.model_type == "GradientBoostingClassifier":
+            model: GradientBoostingClassifier = self.manager.model
+            trees = [_[0] for _ in model.model.estimators_]
+            self.ntrees = len(trees)
+            self.nclasses = model.model.n_classes_
+            self.nfeatures = len(model.model.feature_importances_)
 
         # walk each path and store their representation in an array
-        self.all_paths, self.path_class_probs = self.build_paths(rf_trees)
+        self.all_paths, self.leaf_vals = self.build_paths(trees)
         # convert each leaf node into its corresponding hyper-rectangle
-        self.leaf_rects = self.leaves_to_rects(self.all_paths, self.path_class_probs)
+        self.leaf_rects = self.leaves_to_rects(self.all_paths, self.leaf_vals)
 
         # build the index of majority size hyper-rectangles
         if self.enumeration_type == "PointBased":
@@ -60,7 +78,7 @@ class FACETIndex(Explainer):
     def build_bitvectorindex(self):
         # create redundant bit vector index
         self.rbvs: List[BitVectorIndex] = []
-        for class_id in range(self.rf_nclasses):
+        for class_id in range(self.nclasses):
             if self.verbose:
                 print("class {}".format(class_id))
             self.rbvs.append(BitVectorIndex(rects=self.index[class_id],
@@ -77,12 +95,15 @@ class FACETIndex(Explainer):
         if self.use_smart_weight:
             self.equal_weights = self.get_equal_weights()
         # if we're using smart weights and they're different from unweighted
+        float_point_val = 1e-8
+        if self.model_type == "GradientBoostingClassifier" and self.manager.model.maxdepth is None:
+            float_point_val = 2e-8  # deep gradient boosting leads to tight ranges, use extra space
         if self.equal_weights is not None:
-            self.EPSILONS = 1e-8 * self.equal_weights
+            self.EPSILONS = float_point_val * self.equal_weights
             self.offsets = self.offset_scalar * self.equal_weights
         # we're not using smart weighting, or the smart weights are equivalent to unweighted
         else:
-            self.EPSILONS = np.tile(1e-8, self.ds_info.ncols)
+            self.EPSILONS = np.tile(float_point_val, self.ds_info.ncols)
             self.offsets = np.tile(self.offset_scalar, self.ds_info.ncols)
 
     def compute_supports(self, data: np.ndarray):
@@ -96,7 +117,7 @@ class FACETIndex(Explainer):
         # i.e. what fraction of the training predictions classify into each leaf
         vertex_supports = []
         pairwise_supports = []
-        for class_id in range(self.rf_nclasses):
+        for class_id in range(self.nclasses):
             # instantiate arrays to hold the support values
             nvertices = self.adjacencys[class_id].shape[0]
             vertex_supports.append(np.zeros(shape=(nvertices,)))
@@ -200,7 +221,7 @@ class FACETIndex(Explainer):
         # generate points if not provided
         if points is None:
             if nfeatures == 0:
-                nfeatures = self.rf_nfeatures
+                nfeatures = self.nfeatures
             points = np.random.uniform(low=0.0, high=1.0, size=(npoints, nfeatures))
         # check the points
         num_inside = 0
@@ -211,9 +232,9 @@ class FACETIndex(Explainer):
         return percent_covered
 
     def mean_rect_sizes(self):
-        mean_size = np.zeros(shape=(self.rf_nclasses, self.rf_nfeatures))
-        # mean_noninf_size = np.zeros(shape=(self.rf_nclasses, self.rf_nfeatures))
-        for label in range(self.rf_nclasses):
+        mean_size = np.zeros(shape=(self.nclasses, self.nfeatures))
+        # mean_noninf_size = np.zeros(shape=(self.nclasses, self.rf_nfeatures))
+        for label in range(self.nclasses):
             for rect in self.index[label]:
                 widths = self.rect_width(rect)
                 mean_size[label] += widths
@@ -243,7 +264,7 @@ class FACETIndex(Explainer):
             i += 1
         return covered
 
-    def leaves_to_rects(self, all_paths: List[List[np.ndarray]], path_class_probs: List[List[np.ndarray]]) -> List[Dict]:
+    def leaves_to_rects(self, all_paths: List[List[np.ndarray]], leaf_vals: List[List[np.ndarray]]) -> List[Dict]:
         '''
         For each path in the ensemble, identifies the leaf node of that path and builds the corresponding hyper-rectangle
 
@@ -255,16 +276,21 @@ class FACETIndex(Explainer):
         -------
         leaf_rects: a list of dictionarys where leaft_rects[i][j] returns the (leaf_class, rect) corresponding to the path ending in scikit node id j from tree i
         '''
-        leaf_rects = [{} for _ in range(self.rf_ntrees)]
-        for tid in range(self.rf_ntrees):
-            for path, class_probs in zip(all_paths[tid], path_class_probs[tid]):
+        leaf_rects = [{} for _ in range(self.ntrees)]
+        for tid in range(self.ntrees):
+            for path, val in zip(all_paths[tid], leaf_vals[tid]):
                 # get the scikit node id of the leaf and its class
                 leaf_node_id = int(path[-1, 0])
-                leaf_class = int(path[-1, -1])
                 # build and save the hyper-rectangle that corresponds to this leaf
                 rect = self.leaf_rect(path)
-                # save the class and the hyper-rectangle
-                leaf_rects[tid][leaf_node_id] = (leaf_class, rect, class_probs)
+                if self.model_type == "RandomForest":
+                    leaf_class = int(path[-1, -1])
+                    # save the class and the hyper-rectangle
+                    leaf_rects[tid][leaf_node_id] = (leaf_class, rect, val)
+                elif self.model_type == "GradientBoostingClassifier":
+                    leaf_val = path[-1, -1]
+                    # save the class and the hyper-rectangle
+                    leaf_rects[tid][leaf_node_id] = (leaf_val, rect, val)
         return leaf_rects
 
     def index_rectangles(self, data: np.ndarray):
@@ -273,11 +299,11 @@ class FACETIndex(Explainer):
         '''
         self.initialize_index()
         preds = self.manager.predict(data)
-        rf_detector: RandomForest = self.manager.model
+        model = self.manager.model
         # get the leaves that each sample ends up in
-        all_leaves = rf_detector.apply(data)  # shape (nsamples in xtrain, ntrees)
+        all_leaves = model.apply(data).reshape(data.shape[0], self.ntrees)  # shape (nsamples in xtrain, ntrees)
 
-        visited_rects = [{} for _ in range(self.rf_nclasses)]  # a hashmap to store which rectangles we have visited
+        visited_rects = [{} for _ in range(self.nclasses)]  # a hashmap to store which rectangles we have visited
         # for each instance in the training set
         for instance, label, leaf_ids in zip(data, preds, all_leaves):
             rect, paths_used = self.enumerate_rectangle(leaf_ids, label)
@@ -297,7 +323,7 @@ class FACETIndex(Explainer):
         '''
         Creates an empty index to store the hyper-rectangles. Functionized to allow for multiple indexing options
         '''
-        self.index = [[] for _ in range(self.rf_nclasses)]
+        self.index = [[] for _ in range(self.nclasses)]
 
     def enumerate_rectangle(self, leaf_ids: List[int], label: int) -> np.ndarray:
         '''
@@ -315,12 +341,18 @@ class FACETIndex(Explainer):
         all_bounds: List[np.ndarray] = []  # list of leaf hyper-rectangles w/ dims (nfeatures, 2)
         paths: List[(int, int)] = []  # list of tree_id, leaf_id included in all_bounds
         path_probs: List[np.ndarray] = []  # list of class probs for the given leaves, dims (nclasses,)
-        for tree_id in range(self.rf_ntrees):
+        for tree_id in range(self.ntrees):
             leaf_class, leaf_rect, class_probs = self.leaf_rects[tree_id][leaf_ids[tree_id]]
-            # for hard voting take only the hyper-rectangles which predict the given label
-            # for soft voting the probability of all classes for all leaves contributes to the final classfication
-            # e.g. several leaves predict class 1 with probs [0.49, 0.51], we may need them to make class 0 prediction
-            if not self.rf_hardvoting or (self.rf_hardvoting and leaf_class == label):
+            if self.model_type == "RandomForest":
+                # for hard voting take only the hyper-rectangles which predict the given label
+                # for soft voting the probability of all classes for all leaves contributes to the final classfication
+                # e.g. several leaves predict class 1 with probs [0.49, 0.51], we may need them to make class 0 pred
+                use_path = not self.rf_hardvoting or (self.rf_hardvoting and leaf_class == label)
+            elif self.model_type == "GradientBoostingClassifier":
+                # in GBC we need to consider all paths as path's don't have classes in the same way
+                use_path = True
+
+            if use_path:
                 paths.append((tree_id, leaf_ids[tree_id]))
                 all_bounds.append(leaf_rect)
                 path_probs.append(class_probs)
@@ -333,7 +365,7 @@ class FACETIndex(Explainer):
         ensemble is using majority vote take the intersection of the first nmajority hyper-rectangles, we should only receive leaf hyper-rectangles of class `label`
         '''
         # initialize the hyper-rectangle as unbounded on both side of all axes
-        rect = np.zeros((self.rf_nfeatures, 2))
+        rect = np.zeros((self.nfeatures, 2))
         rect[:, LOWER] = -np.inf
         rect[:, UPPER] = np.inf
 
@@ -364,17 +396,51 @@ class FACETIndex(Explainer):
 
         return rect, paths_used
 
+    def select_gbc_intersection(self, all_bounds: List[np.ndarray], paths: List[Tuple[int]], path_probs: np.ndarray, label: int) -> np.ndarray:
+        '''
+        ensemble is using soft voting, take intersection of sufficient hyper-rects to reach a majority probability, we sould receive ntrees leaf hyper-rectangles
+        '''
+
+        # initialize the hyper-rectangle as unbounded on both side of all axes
+        rect = np.zeros((self.nfeatures, 2))
+        rect[:, LOWER] = -np.inf
+        rect[:, UPPER] = np.inf
+        paths_used = []
+
+        # start with intersecting the hyper-rectangles which have the matching class
+        i = 0
+        accumulated_odds = self.manager.model.init_value
+        while i < len(all_bounds):  # and accumulated_prob[label] <= 0.5:
+            rect[:, LOWER] = np.maximum(rect[:, LOWER], all_bounds[i][:, LOWER])  # itersect mins
+            rect[:, UPPER] = np.minimum(rect[:, UPPER], all_bounds[i][:, UPPER])  # itersect maxs
+            bisect.insort(paths_used, tuple(paths[i]))  # remember leaves we used
+            accumulated_odds += self.manager.model.lr * path_probs[i, 0]
+            i += 1
+
+        class_one_prob = sigmoid(accumulated_odds)
+        class_probs = [1.0 - class_one_prob, class_one_prob]
+
+        # !DEBUG - CHECK THAT THE LEAF CLASS PROBS MATCH THE PREDICATED PRBS
+        leaf_instance = self.fit_to_rectangle(np.zeros(shape=(self.nfeatures)), rect)
+        if leaf_instance is not None:
+            pred_probs = self.manager.model.model.predict_proba([leaf_instance])
+            if not (pred_probs == class_probs).all():
+                print("ERROR CALCULATING LEAF PROBAILITY")
+        # !DEBUG END
+
+        return rect, paths_used
+
     def select_soft_intersection(self, all_bounds: List[np.ndarray], paths: List[Tuple[int]], path_probs: np.ndarray, label: int) -> np.ndarray:
         '''
         ensemble is using soft voting, take intersection of sufficient hyper-rects to reach a majority probability, we sould receive ntrees leaf hyper-rectangles
         '''
 
         # initialize the hyper-rectangle as unbounded on both side of all axes
-        rect = np.zeros((self.rf_nfeatures, 2))
+        rect = np.zeros((self.nfeatures, 2))
         rect[:, LOWER] = -np.inf
         rect[:, UPPER] = np.inf
         paths_used = []
-        accumulated_prob = np.zeros(shape=(self.rf_nclasses,))
+        accumulated_prob = np.zeros(shape=(self.nclasses,))
 
         if self.intersect_order == "Probability":
             # take rects in order of largest probability
@@ -384,13 +450,13 @@ class FACETIndex(Explainer):
                 rect[:, LOWER] = np.maximum(rect[:, LOWER], all_bounds[order[i]][:, LOWER])  # intersection of minimums
                 rect[:, UPPER] = np.minimum(rect[:, UPPER], all_bounds[order[i]][:, UPPER])  # intersection of maximums
                 bisect.insort(paths_used, paths[order[i]])  # remember which leaves we've used, keep sorted asc by tid
-                accumulated_prob += (1 / self.rf_ntrees) * path_probs[order[i]]
+                accumulated_prob += (1 / self.ntrees) * path_probs[order[i]]
                 i += 1
 
         else:  # we use an order other than largest probability
             # separate the leaf hyper-rectangles by whether they match the desired class
             idx_match_label = path_probs[:, label] > 0.5
-            all_bounds = np.vstack(all_bounds).reshape(self.rf_ntrees, self.rf_nfeatures, 2)
+            all_bounds = np.vstack(all_bounds).reshape(self.ntrees, self.nfeatures, 2)
             paths = np.vstack(paths)
 
             match_bounds = all_bounds[idx_match_label]
@@ -420,7 +486,7 @@ class FACETIndex(Explainer):
                 rect[:, LOWER] = np.maximum(rect[:, LOWER], match_bounds[match_order[i]][:, LOWER])  # itersect mins
                 rect[:, UPPER] = np.minimum(rect[:, UPPER], match_bounds[match_order[i]][:, UPPER])  # itersect maxs
                 bisect.insort(paths_used, tuple(match_paths[match_order[i]]))  # remember leaves we used
-                accumulated_prob += (1 / self.rf_ntrees) * match_probs[match_order[i]]
+                accumulated_prob += (1 / self.ntrees) * match_probs[match_order[i]]
                 i += 1
 
             # on rare occassion this intersection will not have sufficient probability for the desired class
@@ -431,7 +497,7 @@ class FACETIndex(Explainer):
                 rect[:, LOWER] = np.maximum(rect[:, LOWER], other_bounds[nm_order[i]][:, LOWER])  # itersect mins
                 rect[:, UPPER] = np.minimum(rect[:, UPPER], other_bounds[nm_order[i]][:, UPPER])  # itersect maxs
                 bisect.insort(paths_used, tuple(other_paths[nm_order[i]]))  # remember leaves we used
-                accumulated_prob += (1 / self.rf_ntrees) * other_probs[nm_order[i]]
+                accumulated_prob += (1 / self.ntrees) * other_probs[nm_order[i]]
                 i += 1
 
         return rect, paths_used
@@ -450,11 +516,13 @@ class FACETIndex(Explainer):
         rect: a numpy ndarray of shape (ndim, 2) containing a majority size hyper-rectangle
         paths_used: a list of pairs (tree_id, leaf_id) which correspond to the leaves the form the intersection
         '''
-
-        if self.rf_hardvoting:
-            return self.select_hard_intersection(all_bounds, paths, path_probs, label)
-        else:
-            return self.select_soft_intersection(all_bounds, paths, path_probs, label)
+        if self.model_type == "RandomForest":
+            if self.rf_hardvoting:
+                return self.select_hard_intersection(all_bounds, paths, path_probs, label)
+            else:
+                return self.select_soft_intersection(all_bounds, paths, path_probs, label)
+        elif self.model_type == "GradientBoostingClassifier":
+            return self.select_gbc_intersection(all_bounds, paths, path_probs, label)
 
     def leaf_rect(self, path: np.ndarray) -> np.ndarray:
         '''
@@ -469,7 +537,7 @@ class FACETIndex(Explainer):
         feature_bounds : a numpy array of size `(nfeatures, 2)` where `feature_bounds[i][0]` represents the minimum threshold of feature `i` and `feature_bounds[i][1]` the maximum threshold
         '''
         # initialize the thresholds as unbounded on both side of all axis
-        feature_bounds = np.zeros((self.rf_nfeatures, 2))
+        feature_bounds = np.zeros((self.nfeatures, 2))
         feature_bounds[:, LOWER] = -np.inf
         feature_bounds[:, UPPER] = np.inf
 
@@ -490,16 +558,17 @@ class FACETIndex(Explainer):
         Returns
         -------
         all_paths: a list of length ntrees, where all_paths[i] contains a list of the paths in tree i each represented by a numpy array as generated by in_order_path
+        path_class_vals: the value of the leaf for each path. for random forest this is a list of class probabilities (nclasses,), for gradient boosting classifier its the logodds of the leaf
         '''
         ntrees = len(trees)
         all_paths = [[] for _ in range(ntrees)]
-        path_class_probs = [[] for _ in range(ntrees)]
+        path_class_vals = [[] for _ in range(ntrees)]
         for i in range(ntrees):
-            all_paths[i], path_class_probs[i] = self.__in_order_path(t=trees[i], built_paths=[], leaf_probs=[])
+            all_paths[i], path_class_vals[i] = self.__in_order_path(t=trees[i], built_paths=[], leaf_vals=[])
 
-        return all_paths, path_class_probs
+        return all_paths, path_class_vals
 
-    def __in_order_path(self, t, built_paths: List[np.ndarray] = [], leaf_probs: List[np.ndarray] = [], node_id=0, path: List = []):
+    def __in_order_path(self, t, built_paths: List[np.ndarray] = [], leaf_vals: List[np.ndarray] = [], node_id=0, path: List = []):
         '''
         An algorithm for pre-order binary tree traversal. This walks through the entire tree enumerating each paths the root node to a leaf.
 
@@ -532,29 +601,35 @@ class FACETIndex(Explainer):
             # process left child, conditioned (<=)
             left_path = path.copy()
             left_path.append([node_id, feature, 0, threshold])
-            self.__in_order_path(t, built_paths, leaf_probs, node_id=t.tree_.children_left[node_id], path=left_path)
+            self.__in_order_path(t, built_paths, leaf_vals, node_id=t.tree_.children_left[node_id], path=left_path)
 
             # process right node, conditioned (>)
             right_path = path.copy()
             right_path.append([node_id, feature, 1, threshold])
-            self.__in_order_path(t, built_paths, leaf_probs, node_id=t.tree_.children_right[node_id], path=right_path)
+            self.__in_order_path(t, built_paths, leaf_vals, node_id=t.tree_.children_right[node_id], path=right_path)
 
-            return built_paths, leaf_probs
+            return built_paths, leaf_vals
 
         else:  # this is a leaf node
-            samps_per_class: np.ndarray = t.tree_.value[node_id]
-            class_id = np.argmax(samps_per_class)
+            leaf_val: np.ndarray = t.tree_.value[node_id]
             path = path.copy()
-            path.append([node_id, -1, -1, class_id])
+            # get the class probabilities for this leaf
+            if self.model_type == "RandomForest":
+                samps_per_class = leaf_val
+                class_id = np.argmax(samps_per_class)
+                path.append([node_id, -1, -1, class_id])
+                class_probs: np.ndarray = (samps_per_class / samps_per_class.sum()).squeeze()
+                leaf_vals.append(class_probs)
+            elif self.model_type == "GradientBoostingClassifier":
+                leaf_odds = leaf_val[0, 0]
+                path.append([node_id, -1, -1, leaf_odds])
+                leaf_vals.append(leaf_odds)
 
             # store the completed path and exit
             finished_path = np.array(path)
             built_paths.append(finished_path)
 
-            # get the class probabilities for this leaf
-            class_probs: np.ndarray = (samps_per_class / samps_per_class.sum()).squeeze()
-            leaf_probs.append(class_probs)
-            return built_paths, leaf_probs
+            return built_paths, leaf_vals
 
     def is_inside(self, x: np.ndarray, rect: np.ndarray) -> bool:
         '''

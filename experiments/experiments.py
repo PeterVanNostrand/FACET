@@ -99,9 +99,13 @@ RF_DEFAULT_PARAMS = {
     "rf_hardvoting": False,
 }
 
+
 GBC_DEFUAULT_PARAMS = {
     "gbc_ntrees": 100,
     "gbc_maxdepth": 3,
+    "gbc_learning_rate": 0.1,
+    "gbc_loss": "log_loss",
+    "gbc_init": "zero",
 }
 
 DEFAULT_PARAMS = {
@@ -140,7 +144,9 @@ def check_create_directory(dir_path="./results"):
     return run_id, run_path
 
 
-def execute_run(dataset_name: str, explainer: str, params: dict, output_path: str, iteration: int, test_size=0.2, n_explain: int = None, random_state: int = None, preprocessing: str = "Normalize", run_ext=""):
+def execute_run(dataset_name: str, explainer: str, params: dict, output_path: str, iteration: int, test_size=0.2,
+                n_explain: int = None, random_state: int = None, preprocessing: str = "Normalize", run_ext="",
+                model_type: str = "RandomForest"):
     '''
     dataset_name: the name of a valid dataset to load see datasets.py
     explainer: string name of a valid explainer class
@@ -193,16 +199,17 @@ def execute_run(dataset_name: str, explainer: str, params: dict, output_path: st
         x, y, indices, test_size=test_size, shuffle=True, random_state=random_state)
     if n_explain is not None:
         x_explain = xtest[:n_explain]
-        y_explain = ytest[:n_explain]
+        # y_explain = ytest[:n_explain]
         idx_explain = idx_test[:n_explain]
     else:
         x_explain = xtest
-        y_explain = ytest
+        # y_explain = ytest
         idx_explain = idx_test
         n_explain = x_explain.shape[0]
 
     # create the manager which handles create the RF model and explainer
-    manager = MethodManager(explainer=explainer, hyperparameters=params, random_state=random_state)
+    manager = MethodManager(explainer=explainer, hyperparameters=params,
+                            model_type=model_type)
 
     # train ane evalute the random forest model
     manager.train(xtrain, ytrain)

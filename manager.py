@@ -4,6 +4,7 @@ import numpy as np
 
 # Detector classes
 from detectors.random_forest import RandomForest
+from detectors.gradient_boosting_classifier import GradientBoostingClassifier
 # Explainer classes
 # from explainers import *
 from explainers.best_candidate import AFT
@@ -14,9 +15,19 @@ from explainers.rf_ocse import RFOCSE
 
 
 class MethodManager():
-    def __init__(self, explainer=None, hyperparameters=None, random_state=None):
+    def __init__(self, explainer: str = None, hyperparameters: dict = None,
+                 random_state: int = None, model_type: str = "RandomForest"):
         self.params = hyperparameters
-        self.model = RandomForest(hyperparameters=hyperparameters, random_state=random_state)
+        self.model_type = model_type
+        if model_type == "RandomForest":
+            self.model = RandomForest(hyperparameters=hyperparameters, random_state=random_state)
+        elif model_type == "GradientBoostingClassifier":
+            self.model = GradientBoostingClassifier(hyperparameters=hyperparameters, random_state=random_state)
+        else:
+            print("Unknown model_type!, using RandomForest")
+            self.model_type = "RandomForest"
+            self.model = RandomForest(hyperparameters=hyperparameters, random_state=random_state)
+
         if explainer is not None:
             self.explainer = self.init_explainer(explainer=explainer, hyperparameters=hyperparameters)
         self.random_state = random_state
@@ -31,11 +42,11 @@ class MethodManager():
         elif explainer == "RFOCSE":
             return RFOCSE(manager=self, hyperparameters=hyperparameters)
         elif explainer == "FACETIndex":
-            return FACETIndex(manger=self, hyperparameters=hyperparameters)
+            return FACETIndex(manager=self, hyperparameters=hyperparameters)
         else:
             print("Unknown explainer type of " + explainer)
             print("using FACETIndex")
-            return FACETIndex(manger=self, hyperparameters=hyperparameters)
+            return FACETIndex(manager=self, hyperparameters=hyperparameters)
 
     def set_explainer(self, explainer=None, random_state=None):
         random.seed(random_state)

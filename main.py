@@ -52,14 +52,19 @@ def check_create_directory(dir_path="./results/"):
     return run_id, run_path
 
 
-def simple_run(ds_name="vertebral", explainer="FACETIndex", random_state=0, ntrees=10, max_depth=5):
+def simple_run(ds_name="vertebral", explainer="FACETIndex", random_state=0, ntrees=10,
+               max_depth=5, model_type="RandomForest"):
     # Euclidean, FeaturesChanged
     run_id, run_path = check_create_directory("./results/simple-run/")
 
     params = DEFAULT_PARAMS
-    params["RandomForest"]["rf_ntrees"] = ntrees
-    params["RandomForest"]["rf_maxdepth"] = max_depth
-    params["RandomForest"]["rf_maxdepth"] = max_depth
+    if model_type == "RandomForest":
+        params["RandomForest"]["rf_ntrees"] = ntrees
+        params["RandomForest"]["rf_maxdepth"] = max_depth
+    if model_type == "GradientBoostingClassifier":
+        params["GradientBoostingClassifier"]["gbc_ntrees"] = ntrees
+        params["GradientBoostingClassifier"]["gbc_maxdepth"] = max_depth
+
     params["FACETIndex"]["facet_sd"] = TUNED_FACET_SD[ds_name] if ds_name in TUNED_FACET_SD else 0.01
     params["FACETIndex"]["rbv_num_interval"] = FACET_TUNED_M[ds_name] if ds_name in FACET_TUNED_M else 16
 
@@ -81,7 +86,8 @@ def simple_run(ds_name="vertebral", explainer="FACETIndex", random_state=0, ntre
         test_size=0.2,
         n_explain=n_explain,
         random_state=random_state,
-        preprocessing=preprocessing
+        preprocessing=preprocessing,
+        model_type=model_type,
     )
     print("results:")
     print(json.dumps(results, indent=4))
@@ -103,18 +109,26 @@ if __name__ == "__main__":
     parser.add_argument("--maxdepth", type=int, default=5)
     parser.add_argument("--it", type=int, nargs="+", default=[0])
     parser.add_argument("--fmod", type=str, default=None)
+    parser.add_argument("--model", type=str, default="rf", choices=["rf", "gbc"])
     args = parser.parse_args()
 
     # Set maxdepth to -1 to allow trees to grow uncapped
     if args.maxdepth == -1:
         args.maxdepth = None
 
+    # parse the long version of the model string
+    MODEL_TYPES = {
+        "rf": "RandomForest",
+        "gbc": "GradientBoostingClassifier",
+    }
+    args.model = MODEL_TYPES[args.model]
+
     print(args)
 
     # Do a single quick run with one explaienr and one dataset
     if args.expr == "simple":
         simple_run(ds_name=args.ds[0], explainer=args.method[0],
-                   random_state=args.it[0], ntrees=args.ntrees, max_depth=args.maxdepth)
+                   random_state=args.it[0], ntrees=args.ntrees, max_depth=args.maxdepth, model_type=args.model)
     # Vary the number of trees and compare explaienrs
     elif args.expr == "ntrees":
         if args.values is not None:
