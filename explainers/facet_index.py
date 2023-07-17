@@ -884,10 +884,11 @@ class FACETIndex(Explainer):
                 # find the indexed rectangle of the the counterfactual class that is cloest
                 for rect in self.index[counterfactual_classes[i]]:
                     test_instance = self.fit_to_rectangle(x[i], rect)
-                    dist = self.distance_fn(x[i], test_instance)
-                    if dist < min_dist:
-                        min_dist = dist
-                        nearest_rect = rect
+                    if test_instance is not None:
+                        dist = self.distance_fn(x[i], test_instance)
+                        if dist < min_dist:
+                            min_dist = dist
+                            nearest_rect = rect
                 # generate a counterfactual example which falls within this rectangle
                 if opt_robust:
                     explanation = self.rect_center(nearest_rect)
