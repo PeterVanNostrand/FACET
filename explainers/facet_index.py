@@ -68,6 +68,9 @@ class FACETIndex(Explainer):
         # convert each leaf node into its corresponding hyper-rectangle
         self.leaf_rects = self.leaves_to_rects(self.all_paths, self.leaf_vals)
 
+        if self.model_type == "GradientBoostingClassifier":
+            self.leaf_extremes = self.find_leaf_extremes()
+
         # build the index of majority size hyper-rectangles
         if self.enumeration_type == "PointBased":
             self.point_enumerate(data)
@@ -396,27 +399,77 @@ class FACETIndex(Explainer):
 
         return rect, paths_used
 
-    def select_gbc_intersection(self, all_bounds: List[np.ndarray], paths: List[Tuple[int]], path_probs: np.ndarray, label: int) -> np.ndarray:
+    def gbc_intersect_all(self, leaf_rects: List[np.ndarray], leaf_vals: np.ndarray) -> Tuple[np.ndarray, float]:
         '''
-        ensemble is using soft voting, take intersection of sufficient hyper-rects to reach a majority probability, we sould receive ntrees leaf hyper-rectangles
+        returns the intersection of all the leaf rectangles and the accumulated odds of that intersection
         '''
-
         # initialize the hyper-rectangle as unbounded on both side of all axes
         rect = np.zeros((self.nfeatures, 2))
         rect[:, LOWER] = -np.inf
         rect[:, UPPER] = np.inf
-        paths_used = []
-
-        # start with intersecting the hyper-rectangles which have the matching class
-        i = 0
+        # take the interesection
         accumulated_odds = self.manager.model.init_value
-        while i < len(all_bounds):  # and accumulated_prob[label] <= 0.5:
-            rect[:, LOWER] = np.maximum(rect[:, LOWER], all_bounds[i][:, LOWER])  # itersect mins
-            rect[:, UPPER] = np.minimum(rect[:, UPPER], all_bounds[i][:, UPPER])  # itersect maxs
-            bisect.insort(paths_used, tuple(paths[i]))  # remember leaves we used
-            accumulated_odds += self.manager.model.lr * path_probs[i, 0]
-            i += 1
+        for i in range(len(leaf_rects)):
+            rect[:, LOWER] = np.maximum(rect[:, LOWER], leaf_rects[i][:, LOWER])  # itersect mins
+            rect[:, UPPER] = np.minimum(rect[:, UPPER], leaf_rects[i][:, UPPER])  # itersect maxs
+            accumulated_odds += self.manager.model.lr * leaf_vals[i, 0]
+        return rect, accumulated_odds
 
+    def find_leaf_extremes(self) -> List[Tuple[float, float]]:
+        worst_values = []
+        for tree_id in range(self.ntrees):
+            lowest_val = np.inf
+            highest_val = -np.inf
+            for path_id in range(len(self.all_paths[tree_id])):
+                val = self.all_paths[tree_id][path_id][-1, -1]
+                if val < lowest_val:
+                    lowest_val = val
+                if val > highest_val:
+                    highest_val = val
+            worst_values.append([lowest_val, highest_val])
+        return worst_values
+
+    def gbc_accumulate_odds(self, leaf_vals: np.ndarray) -> float:
+        return self.manager.model.init_value + self.manager.model.lr * sum(leaf_vals)[0]
+
+    def select_gbc_intersection_minimal(self, leaf_rects: List[np.ndarray], paths: List[Tuple[int]], leaf_vals: np.ndarray, label: int) -> np.ndarray:
+        '''
+        Given a set of of leaf rectangles, their corresponding paths, and their leaf values. Examine the set of leaves and intersect as few as needed to ensure that the intersection is guaranteed to be a counterfactual region of the observed class
+        '''
+
+        # if we intersect all the leaf rects, we're guranteed to be class homogenous
+        odds = self.gbc_accumulate_odds(leaf_vals)
+        # odds > 0 correspond to class one, odds < 0 correspond to class zero
+        is_class_one = (odds > 0)  # raw odds, run through sigmoid(odds) to get class probs
+        bad_direction = 0 if is_class_one else 1  # for [lowest_val, highest_val] of leaf_extremes
+        # we then start from the end and drop leaf rects and assume that its replaced with the worst
+        next_tree = self.ntrees - 1
+        bad_vals = []
+        while ((is_class_one and odds > 0) or (not is_class_one and odds < 0)) and next_tree > 0:
+            # drop the last leaf
+            dropped_odds = self.gbc_accumulate_odds(leaf_vals[0:next_tree])
+            # replace it with the worse possible leaf from that tree
+            bad_vals.append(self.leaf_extremes[next_tree][bad_direction])
+            # compute the worst case odds
+            odds = dropped_odds + self.manager.model.lr * sum(bad_vals)
+            # move to the next tree
+            next_tree -= 1
+        rect, accumulated_odds = self.gbc_intersect_all(leaf_rects[0:next_tree+1], leaf_vals[0:next_tree+1])
+        used_paths = paths[0:next_tree+1]
+        # !DEBUG - CHECK THAT THE LEAF CLASS PROBS MATCH THE PREDICATED PRBS
+        # rect_instance = self.fit_to_rectangle(np.zeros(shape=(self.nfeatures)), rect)
+        # if rect_instance is not None:
+        #     pred = self.manager.model.model.predict([rect_instance])[0]
+        #     if pred != label:
+        #         print("ERROR CREATING RECT")
+        # !DEBUG END
+        return rect, used_paths
+
+    def select_gbc_intersection_complete(self, leaf_rects: List[np.ndarray], paths: List[Tuple[int]], leaf_vals: np.ndarray, label: int) -> np.ndarray:
+        '''
+        Given a set of of leaf rectangles, their corresponding paths, and their leaf values. Intersect all the leaf rectangles to create a counterfactual region of the observed class
+        '''
+        rect, accumulated_odds = self.gbc_intersect_all(leaf_rects=leaf_rects, leaf_vals=leaf_vals)
         # !DEBUG - CHECK THAT THE LEAF CLASS PROBS MATCH THE PREDICATED PRBS
         # class_one_prob = sigmoid(accumulated_odds)
         # class_probs = [1.0 - class_one_prob, class_one_prob]
@@ -426,8 +479,7 @@ class FACETIndex(Explainer):
         #     if not (pred_probs == class_probs).all():
         #         print("ERROR CALCULATING LEAF PROBAILITY")
         # !DEBUG END
-
-        return rect, paths_used
+        return rect, paths
 
     def select_soft_intersection(self, all_bounds: List[np.ndarray], paths: List[Tuple[int]], path_probs: np.ndarray, label: int) -> np.ndarray:
         '''
@@ -521,7 +573,10 @@ class FACETIndex(Explainer):
             else:
                 return self.select_soft_intersection(all_bounds, paths, path_probs, label)
         elif self.model_type == "GradientBoostingClassifier":
-            return self.select_gbc_intersection(all_bounds, paths, path_probs, label)
+            if self.gbc_intersect_order == "CompleteEnsemble":
+                return self.select_gbc_intersection_complete(all_bounds, paths, path_probs, label)
+            elif self.gbc_intersect_order == "MinimalWorstGuess":
+                return self.select_gbc_intersection_minimal(all_bounds, paths, path_probs, label)
 
     def leaf_rect(self, path: np.ndarray) -> np.ndarray:
         '''
@@ -1045,69 +1100,40 @@ class FACETIndex(Explainer):
 
         return all_resolveable
 
+    def parse_param(self, param: str, default_val):
+        '''
+        Check self.params for the given value and return it, if not present return the default value
+        '''
+        if param in self.params:
+            return self.params[param]
+        else:
+            print("No {} set, using default {}={}".format(param, param, default_val))
+            return default_val
+
     def parse_hyperparameters(self, hyperparameters: dict) -> None:
         self.hyperparameters = hyperparameters
-        params: dict = hyperparameters.get("FACETIndex")
+        self.params: dict = hyperparameters.get("FACETIndex")
 
         # distance metric for explanation
         self.distance_fn = dist_euclidean
 
         # threshold offest for picking new values
-        offset = params.get("facet_offset")
-        if offset is None:
-            print("No facet_offset provided, using 0.001")
-            self.offset_scalar = 0.001
-        else:
-            self.offset_scalar = offset
+        self.offset_scalar = self.parse_param("facet_offset", 0.001)
+        self.n_rects = self.parse_param("facet_nrects", 20_000)
 
-        # number of hyper-rectangles to index
-        if params.get("facet_nrects") is None:
-            self.n_rects = 1000
-            print("No facet_nrects provided, using {}".format(self.n_rects))
-        else:
-            self.n_rects = params.get("facet_nrects")
+        self.offset_scalar = self.parse_param("facet_offset", 0.001)
+        self.n_rects = self.parse_param("facet_nrects", 20_000)
+        self.sample_type = self.parse_param("facet_sample", "Training")
+        self.enumeration_type = self.parse_param("facet_enumerate", "PointBased")
+        self.search_type = self.parse_param("facet_search", "Linear")
+        self.verbose = self.parse_param("facet_verbose", False)
+        self.standard_dev = self.parse_param("facet_sd", 0.1)
+        self.intersect_order = self.parse_param("facet_intersect_order", "Probability")
+        self.gbc_intersect_order = self.parse_param("gbc_intersection", "MinimalWorstGuess")
 
-        if params.get("facet_sample") is None:
-            self.sample_type = "Training"
-            print("No facet_sample type provided, using training data")
-        else:
-            self.sample_type = params.get("facet_sample")
-
-        if params.get("facet_enumerate") is None:
-            self.enumeration_type = "PointBased"
-            print("No facet_enumerate type provided, using PointBased")
-        else:
-            self.enumeration_type = params.get("facet_enumerate")
-            if self.enumeration_type not in ["PointBased", "GraphBased"]:
-                print("{} not a valid facet_enumerate, defaulting to PointBased")
-                self.enumeration_type = "PointBased"
-
-        if params.get("facet_search") is None:
-            self.search_type = "Linear"
-            print("No facet_search type provided, using Linear")
-        else:
-            self.search_type = params.get("facet_search")
-
-        # print messages
-        if params.get("facet_verbose") is None:
-            self.verbose = False
-        else:
-            self.verbose = params.get("verbose")
-
-        if params.get("facet_sd") is None:
-            self.standard_dev = 0.1
-        else:
-            self.standard_dev = params.get("facet_sd")
-
-        if params.get("facet_intersect_order") is None:
-            print("No facet_intersect_order, using Probability")
-            self.intersect_order = "Probability"
-        else:
-            self.intersect_order = params.get("facet_intersect_order")
-
-        if params.get("facet_smart_weight") is None:
+        if self.params.get("facet_smart_weight") is None:
             print("no facet_smart_weight, usinge True")
             self.use_smart_weight = True
         else:
-            self.use_smart_weight = params.get("facet_smart_weight")
+            self.use_smart_weight = self.params.get("facet_smart_weight")
             self.equal_weights = None  # default equal weights to None, will be set later if needed

@@ -70,6 +70,7 @@ class DataInfo:
     # set by normalize()
     normalize_numeric: bool = False
     normalize_discrete: bool = False
+    numeric_int_map: dict = None  # only used for adult on MACE
 
     def __post_init__(self):
         self.ncols = len(self.col_names)
@@ -106,15 +107,17 @@ class DataInfo:
         new_info.col_scales = copy.deepcopy(self.col_scales)
         new_info.normalize_numeric = copy.deepcopy(self.normalize_numeric)
         new_info.normalize_discrete = copy.deepcopy(self.normalize_discrete)
+        new_info.numeric_int_map = copy.deepcopy(self.numeric_int_map)
         return new_info
 
-    def get_possible_vals(self, x: np.ndarray) -> None:
+    def get_possible_vals(self, x: np.ndarray, do_convert=False) -> None:
         '''
         Determine the range of allowed values for each column. For Discrete values this is a list of all allowed options, for Numeric values it is the min and max allowed value from the data. For Binary it is [0, 1]. Categorical features are one-hot encoded as multiple Binary columns
         '''
         possible_vals = [[] for _ in range(self.ncols)]  # a list of all possible values, may be scaled later
         col_scales = dict()  # a dict of the min and max allowed value, will never be scaled
         for i in range(self.ncols):
+            col_name = self.col_names[i]
             col_type = self.col_types[i]
             col_min, col_max = [x[:, i].min(), x[:, i].max()]
             # binary features are always 0 or 1
@@ -122,6 +125,19 @@ class DataInfo:
                 possible_vals[i] = [0.0, 1.0]
             # numeric features can vary between a min and max
             if col_type == FeatureType.Numeric:
+                # mace fails to handle numeric-real features with other featuers, this occurs for two columns in the adult dataset. in this case we map the values to ints and back
+                if col_name in ["CapitalGain", "CapitalLoss"] and do_convert:
+                    # recast the feature as an int feature, will handle later
+                    self.col_types[i] = FeatureType.Discrete
+                    if self.numeric_int_map is None:
+                        self.numeric_int_map = {}
+                    unique_vals = list(np.unique(x[:, i]))
+                    self.numeric_int_map[col_name] = unique_vals
+                    col_min = 0
+                    col_max = len(unique_vals)-1
+                    for j in range(x.shape[0]):
+                        x[j][i] = unique_vals.index(x[j][i])
+                # set the possible vals
                 possible_vals[i] = [col_min, col_max]
             # discrete features must be one of the allowed options (integers) between the min and max
             if col_type == FeatureType.Discrete:
@@ -289,7 +305,7 @@ def rescale_discrete(x: np.ndarray, ds_info: DataInfo, scale_up=True):
     return x
 
 
-def load_data(dataset_name, normalize_numeric=True, normalize_discrete=True):
+def load_data(dataset_name, normalize_numeric=True, normalize_discrete=True, do_convert=False):
     '''
     Returns one of many possible anomaly detetion datasets based on the given `dataset_name`. Note that all features are currently treated as actionable regardless of source file designation
 
@@ -323,7 +339,7 @@ def load_data(dataset_name, normalize_numeric=True, normalize_discrete=True):
         print("ERROR NO SUCH DATASET")
         exit(0)
     # get the feature ranges for x
-    ds_info.get_possible_vals(x)
+    ds_info.get_possible_vals(x, do_convert)
     # normalize numeric and discrete features to [0, 1]
     ds_info.normalize_data(x, normalize_numeric, normalize_discrete)
     return x, y, ds_info

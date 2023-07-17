@@ -94,16 +94,6 @@ class MACE(Explainer):
             # lower_bound, upper_bound = self.ds_info.col_scales[i]
             lower_bound = self.ds_info.possible_vals[i][0]
             upper_bound = self.ds_info.possible_vals[i][-1]
-            # get the min and max allowed values for the feature
-            # if self.ds_info.col_types[i] == FeatureType.Numeric:  # for numeric we have the range ends
-            #     # lower_bound = self.ds_info.possible_vals[i]
-            #     # upper_bound = self.ds_info.possible_vals[i]
-            # if self.ds_info.col_types[i] == FeatureType.Discrete:  # we have a list of all possible values
-            #     # lower_bound = self.ds_info.unscale(self.ds_info.possible_vals[i][0], i)  # smallest val
-            #     # upper_bound = self.ds_info.unscale(self.ds_info.possible_vals[i][-1], i)  # biggest val
-            # else:  # for other types we have a list of all possible values
-            #     lower_bound = min(self.ds_info.possible_vals[i])
-            #     upper_bound = max(self.ds_info.possible_vals[i])
 
             # if this column in one hot encoded
             if i in self.ds_info.reverse_one_hot_schema:
@@ -111,16 +101,17 @@ class MACE(Explainer):
                 parent_name_kurz = self.ds_info.reverse_one_hot_schema[i]
                 attr_type = "sub-categorical"
                 # mace names one-hot columns as FeatName_cat_X, where X is the option
-                idx_in_cat_list = self.ds_info.one_hot_schema[parent_name_long].index(i)
-                attr_name_long = "{}_cat_{}".format(parent_name_long, idx_in_cat_list)
+                sub_cat_cols = self.ds_info.one_hot_schema[parent_name_long]
+                attr_name_long = "{}_cat_{}".format(parent_name_long, sub_cat_cols.index(i))
                 # attr_name_kurz = "x{}".format(i)
-                attr_name_kurz = "x{}_cat_{}".format(i, idx_in_cat_list)
+                attr_name_kurz = "x{}_cat_{}".format(sub_cat_cols[0], sub_cat_cols.index(i))
             else:
                 parent_name_long = -1
                 parent_name_kurz = -1
                 attr_type = MACE_TYPE_FROM_FACET_TYPE[self.ds_info.col_types[i]]
                 attr_name_long = col_name
                 attr_name_kurz = "x{}".format(i)
+
             self.ds_info.mace_names_long.append(attr_name_long)
             self.ds_info.mace_names_kurz.append(attr_name_kurz)
 
@@ -178,25 +169,13 @@ class MACE(Explainer):
         norm_type_string = "two_norm"
         rf_model = self.manager.model.model
 
-        # rescale the discrete features for MACE
-        # x_unscaled = rescale_discrete(x.copy(), self.ds_info, scale_up=True)
-        x_unscaled = x
-
-        progress = tqdm(total=x_unscaled.shape[0], desc="MACE", leave=False)
-        for i in range(x_unscaled.shape[0]):  # for each instance
-            # build the sample dictionary as needed by MACE
-            # for j in range(self.ds_info.ncols):
-            #     factual_sample[self.ds_info.mace_names_kurz[j]] = x_unscaled[i][j]
-            #     factual_sample["x{}".format(j)] = x_unscaled[i][j]
+        mace_col_names = list(self.dataset_obj.data_frame_kurz.columns)
+        progress = tqdm(total=x.shape[0], desc="MACE", leave=False)
+        for i in range(x.shape[0]):  # for each instance
             factual_sample = {}
+
             for j in range(self.ds_info.ncols):
-                if j in self.ds_info.reverse_one_hot_schema:
-                    parent_name_long = self.ds_info.reverse_one_hot_schema[j]
-                    idx_in_cat_list = self.ds_info.one_hot_schema[parent_name_long].index(j)
-                    attr_name_kurz = "x{}_cat_{}".format(j, idx_in_cat_list)
-                else:
-                    attr_name_kurz = "x{}".format(j)
-                factual_sample[attr_name_kurz] = x_unscaled[i][j]
+                factual_sample[mace_col_names[j]] = x[i][j]
 
             factual_sample['y'] = bool(y[i])
             # explain the sample
@@ -214,11 +193,10 @@ class MACE(Explainer):
             exp = [np.inf for _ in range(x.shape[1])]
             if explanation is not None and len(explanation["cfe_sample"]) != 0:
                 for j in range(len(factual_sample)-1):
-                    exp[j] = explanation["cfe_sample"]["x{}".format(j)]
-                # undo the discrete scaling
-                # exp = rescale_discrete(exp, self.ds_info, scale_up=False)
-                # if not self.ds_info.check_valid([exp]):  # !DEBUG
-                #     print("CRITICAL ERROR - MACE GENERATED AN INVALID EXPLANATION")
+                    attr_name_kurz = mace_col_names[j]
+                    exp[j] = explanation["cfe_sample"][attr_name_kurz]
+            else:
+                print("mace returned no explanation. time out?")
             xprime.append(exp)
             progress.update()
         progress.close()

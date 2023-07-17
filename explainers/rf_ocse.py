@@ -93,11 +93,10 @@ class RFOCSE(Explainer):
 
     def prepare_dataset(self, x: np.ndarray, y: np.ndarray, ds_info) -> None:
         self.ds_info: DataInfo = ds_info
+        # create RFOCSE formatted dataset information, converted from FACET DataInfo
         self.rfocse_datainfo = self.get_rfocse_datainfo()
 
     def prepare(self, xtrain=None, ytrain=None):
-        # create RFOCSE formatted dataset information, converted from FACET DataInfo
-        self.rfocse_datainfo = self.get_rfocse_datainfo()
         # save the training data
         df = pd.DataFrame(xtrain)
         df.columns = self.ds_info.col_names

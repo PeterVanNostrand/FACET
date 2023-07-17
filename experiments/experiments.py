@@ -81,6 +81,7 @@ FACET_DEFAULT_PARAMS = {
     "rbv_radius_step": 0.01,
     "rbv_radius_growth": "Linear",
     "rbv_num_interval": 16,
+    "gbc_intersection": "MinimalWorstGuess",  # "CompleteEnsemble"
 }
 
 RFOCSE_DEFAULT_PARAMS = {
@@ -186,19 +187,23 @@ def execute_run(dataset_name: str, explainer: str, params: dict, output_path: st
     if preprocessing == "Normalize":
         normalize_numeric = True
         normalize_discrete = True
+        do_convert = False
         # MACE requires integer discrete features, this is fine as the RF is the same either way
         # we will later normalize when computing the explanation distance later for comparability
         if explainer == "MACE":
             normalize_discrete = False
-            normalize_numeric = True
+            if dataset_name == "adult":  # will treat numeric-real as numeric-int
+                normalize_numeric = False  # this handles a pysmt bug with mixed-numeric and non-numeric
+                do_convert = True
         if explainer == "RFOCSE":
             normalize_discrete = False
             normalize_numeric = True
 
-    x, y, ds_info = load_data(dataset_name, normalize_numeric, normalize_discrete)
+    x, y, ds_info = load_data(dataset_name, normalize_numeric, normalize_discrete, do_convert)
     indices = np.arange(start=0, stop=x.shape[0])
     xtrain, xtest, ytrain, ytest, idx_train, idx_test = train_test_split(
         x, y, indices, test_size=test_size, shuffle=True, random_state=random_state)
+
     if n_explain is not None:
         x_explain = xtest[:n_explain]
         # y_explain = ytest[:n_explain]
@@ -252,6 +257,21 @@ def execute_run(dataset_name: str, explainer: str, params: dict, output_path: st
         "{}_{}_{}{:03d}_x.csv".format(dataset_name, explainer.lower(), run_ext, iteration)
     x_df.to_csv(x_path, index=False)
 
+    per_valid = percent_valid(explanations)
+
+    # handle special mace int encoding
+    if ds_info.numeric_int_map is not None:
+        print("unscaled")
+        for i in range(x_explain.shape[0]):
+            for col_name in ds_info.numeric_int_map.keys():
+                col_id = ds_info.col_names.index(col_name)
+                expl_val = np.floor(explanations[i][col_id])
+                if expl_val not in [np.inf, -np.inf]:
+                    expl_val = int(expl_val)
+                    explanations[i][col_id] = ds_info.numeric_int_map[col_name][expl_val]
+                x_val = int(np.floor(x_explain[i][col_id]))
+                explanations[i][col_id] = ds_info.numeric_int_map[col_name][x_val]
+
     # if we didn't normalize the data we can't trust the distances
     if not ds_info.normalize_numeric or not ds_info.normalize_discrete:
         # create copies so we don't disturb the underlying data
@@ -270,7 +290,6 @@ def execute_run(dataset_name: str, explainer: str, params: dict, output_path: st
             ds_info.normalize_discrete = False
 
     # evalute the quality of the explanations
-    per_valid = percent_valid(explanations)
     avg_dist = average_distance(x_explain, explanations, distance_metric="Euclidean")  # L2 Norm Euclidean
     avg_manhattan = average_distance(x_explain, explanations, distance_metric="Manhattan")  # L1 Norm Manhattan
     avg_length = average_distance(x_explain, explanations, distance_metric="FeaturesChanged")  # L0 Norm Sparsity
