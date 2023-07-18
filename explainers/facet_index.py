@@ -73,6 +73,7 @@ class FACETIndex(Explainer):
 
         # build the index of majority size hyper-rectangles
         if self.enumeration_type == "PointBased":
+            self.initialize_index()
             self.point_enumerate(data)
 
         if self.search_type == "BitVector":
@@ -155,8 +156,14 @@ class FACETIndex(Explainer):
         '''
         Uses the provided set of data to select a set of points in the input space, then selects and indexes one hyper-rectangle around each point
         '''
-        rect_points = self.select_points(training_data=data)
-        self.index_rectangles(data=rect_points)
+        tries = 0
+        while len(self.index[0]) == 0 or len(self.index[1]) == 0:
+            tries += 1
+            if tries > 1:
+                print("bad luck finding rects, trying again...")
+            rect_points = self.select_points(training_data=data)
+            self.index_rectangles(data=rect_points)
+
         # ! DEBUG START
         # if not self.check_rects_one_hot_valid():
         #     print("WARNING INVALID HYPERRECTS IN INDEX")
@@ -300,7 +307,6 @@ class FACETIndex(Explainer):
         '''
         This method uses the training data to enumerate a set of hyper-rectangles of each classes and adds them to an index for later searching during explanation
         '''
-        self.initialize_index()
         preds = self.manager.predict(data)
         model = self.manager.model
         # get the leaves that each sample ends up in
