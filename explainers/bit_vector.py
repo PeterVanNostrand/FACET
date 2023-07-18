@@ -282,9 +282,10 @@ class BitVectorIndex():
                             # check that the found rectangle is larger than the robustness requiremetns
                             if min_widths is None or ((rect[:, UPPER] - rect[:, LOWER]) >= min_widths).all():
                                 test_instance = self.explainer.fit_to_rectangle(instance, rect)
-                                dist = self.explainer.distance_fn(instance, test_instance, weights)
-                                # record the dist to this rect on the priority queue
-                                bisect.insort(rect_dists, (dist, rect_id))
+                                if test_instance is not None:
+                                    dist = self.explainer.distance_fn(instance, test_instance, weights)
+                                    # record the dist to this rect on the priority queue
+                                    bisect.insort(rect_dists, (dist, rect_id))
 
             # if the closest k rects fall within the search radius sufficent solutions were found, search complete
             if k is not None:
