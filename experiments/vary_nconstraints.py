@@ -23,8 +23,8 @@ constrain_binary = False
 
 def random_constraints(nconstr, ds_info: DataInfo):
     constraints = np.zeros(shape=(ds_info.ncols, 2))
-    constraints[:, 0] = -np.inf
-    constraints[:, 1] = np.inf
+    constraints[:, 0] = -1
+    constraints[:, 1] = 2
 
     one_hot_visited = {}
     col_id = 0
