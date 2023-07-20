@@ -129,13 +129,13 @@ class BitVectorIndex():
                 new_match_bits = (matching_bits & ~searched_bits)
                 n_new_rects = new_match_bits.count()
                 n_searched_rects += n_new_rects
+                # check if if we've searched every hyper-rectangle
+                search_complete = search_complete or (n_searched_rects == self.nrects)
 
                 # if we have new matches, check their distance
                 if n_new_rects > 0:
                     # record the new matches as searched
                     searched_bits |= new_match_bits
-                    # check if if we've searched every hyper-rectangle
-                    search_complete = search_complete or (n_searched_rects == self.nrects)
                     # expand the packed bitarry to an array of booleans
                     new_match_slice = np.array(new_match_bits.tolist(), dtype=bool)
                     # get the matching rectangles
@@ -259,13 +259,13 @@ class BitVectorIndex():
                 new_match_bits = (matching_bits & ~searched_bits)
                 n_new_rects = new_match_bits.count()
                 n_searched_rects += n_new_rects
+                # check if if we've searched every hyper-rectangle
+                search_complete = search_complete or (n_searched_rects == self.nrects)
 
                 # if we have new matches, check their distance
                 if n_new_rects > 0:
                     # record the new matches as searched
                     searched_bits |= new_match_bits
-                    # check if if we've searched every hyper-rectangle
-                    search_complete = search_complete or (n_searched_rects == self.nrects)
                     # expand the packed bitarry to an array of booleans
                     new_match_slice = np.array(new_match_bits.tolist(), dtype=bool)
                     # get the matching rectangles

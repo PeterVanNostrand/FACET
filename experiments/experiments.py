@@ -74,9 +74,8 @@ FACET_DEFAULT_PARAMS = {
     "facet_sd": 0.01,
     "facet_intersect_order": "Axes",
     "facet_verbose": False,
-    "facet_search": "BitVector",
+    "facet_search": "BitVector",  # Linear
     "facet_smart_weight": True,
-    # "facet_search": "Linear",
     "rbv_initial_radius": 0.01,
     "rbv_radius_step": 0.01,
     "rbv_radius_growth": "Linear",
