@@ -1,0 +1,5 @@
+dataset,ADULT,ADULT,ADULT,ADULT,ADULT,,CANCER,CANCER,CANCER,CANCER,CANCER,,CREDIT,CREDIT,CREDIT,CREDIT,CREDIT,,MAGIC,MAGIC,MAGIC,MAGIC,MAGIC,,SPAMBASE,SPAMBASE,SPAMBASE,SPAMBASE,SPAMBASE,,
+,sample_time,avg_length,avg_manhattan,avg_dist,per_valid,,sample_time,avg_length,avg_manhattan,avg_dist,per_valid,,sample_time,avg_length,avg_manhattan,avg_dist,per_valid,,sample_time,avg_length,avg_manhattan,avg_dist,per_valid,,sample_time,avg_length,avg_manhattan,avg_dist,per_valid,,
+FCT-RF,0.2328,3.92,1.00,1.00,100.0,,0.1104,11.86,1.00,1.00,100.0,,0.1287,6.31,1.00,1.00,100.0,,0.0065,4.24,1.00,1.00,100.0,,0.0355,11.04,1.00,1.00,100.0,,
+FCT-GB1,0.3377,2.60,0.11,0.15,100.0,,0.0539,8.08,0.50,0.60,100.0,,0.1189,4.15,0.13,0.14,100.0,,0.0053,4.86,0.78,0.68,100.0,,0.0527,7.75,0.51,0.59,100.0,,
+FCT-GB2,0.2995,2.48,0.08,0.12,100.0,,0.0472,7.52,0.47,0.58,100.0,,0.1175,4.09,0.12,0.13,100.0,,0.0052,4.83,0.77,0.68,100.0,,0.0496,7.61,0.50,0.55,100.0,,
