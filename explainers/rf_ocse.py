@@ -135,8 +135,8 @@ class RFOCSE(Explainer):
                                                          verbose=self.verbose)
             if explanation is not None:
                 xprime[idx] = explanation
-                if not self.ds_info.check_valid([explanation]):  # !DEBUG
-                    print("CRITICAL ERROR - RFOCSE GENERATED AN INVALID EXPLANATION")
+                # if not self.ds_info.check_valid([explanation]):  # !DEBUG
+                #     print("CRITICAL ERROR - RFOCSE GENERATED AN INVALID EXPLANATION")
 
         # locate non-counterfactual examples and replace them with [np.inf, ... , np.inf]
         idx_no_examples = (xprime == np.inf).any(axis=1)

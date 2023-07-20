@@ -129,8 +129,8 @@ def vary_m(ds_names, ms=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=None,
                 sample_time = explain_time / n_explain
 
                 # check that the returned explanations fit the data type requirements (one-hot, discrete, binary, etc)
-                if not ds_info.check_valid(explanations):
-                    print("WARNING - {} PRODUCED AN EXPLANATION INCOMPATIBLE WITH THE GIVEN DATA SCHEMA".format(explainer))
+                # if not ds_info.check_valid(explanations):
+                #     print("WARNING - {} PRODUCED AN EXPLANATION INCOMPATIBLE WITH THE GIVEN DATA SCHEMA".format(explainer))
 
                 # store the returned explantions
                 expl_df = pd.DataFrame(ds_info.unscale(explanations), columns=ds_info.col_names)

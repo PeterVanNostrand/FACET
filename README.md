@@ -78,7 +78,7 @@ A listing of datasets which FACET has been applied on including the number of in
 
 ### Requirements
 
-The code in this repository was developed using Python 3.8.13, [requirements.txt](./requirements.txt) contains a list of required packages and is formatted for use with [Anaconda](https://www.anaconda.com/). To run experiments with OCEAN, a state-of-the-art method we compare to, you will need a license for the Gurobi optimizer. Free academic licenses are available [here](https://www.gurobi.com/academia/academic-program-and-licenses/). Setup can be done as follow
+The code in this repository was developed using Python 3.8.13, [`requirements.yml`](./requirements.yml) contains a list of required packages and is formatted for use with [Anaconda](https://www.anaconda.com/) and [`requirements.txt`](./requirements.txt) a list formatted for pip. To run experiments with OCEAN, a state-of-the-art method we compare to, you will need a license for the Gurobi optimizer. Free academic licenses are available [here](https://www.gurobi.com/academia/academic-program-and-licenses/). Setup can be done as follow
 
 ```bash
 # create the anaconda environment
@@ -95,17 +95,17 @@ grbgetkey <your_acadmic_license_key>
 
 For convenience [main.py](./main.py) takes a variety of command line arguments
 
-| flag         | purpose                                              | allowed values                                                       |
-| ------------ | ---------------------------------------------------- | -------------------------------------------------------------------- |
-| --expr       | the experiment to run                                | simple, ntrees, nrects, compare, k, m, nconstraints, perturb, robust |
-| --values     | the experimental values to test                      | space separated list of values e.g. `10 50 100` or `0.1 0.2 0.3`     |
-| --ds         | the dataset to explain                               | cancer, glass, magic, spambase, vertebral                            |
-| --method     | the XAI method to use                                | FACETIndex, OCEAN, RFOCSE, AFT, MACE                                 |
-| --ntrees     | the ensemble size to test                            | integer value, overridden in for --expr ntrees                       |
-| ----maxdepth | the max depth of ensemble trees                      | integer value, `-1` for no max depth                                 |
-| --it         | the iteration to run, used as random seed            | space separated integer values                                       |
-| --fmod       | a filename modifier append to append to results file | string value                                                         |
-| --model      | the underlying mode to explain                       | `rf` or `gbc`                                                        |
+| flag         | purpose                                              | allowed values                                                                         |
+| ------------ | ---------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `--expr`     | the experiment to run                                | `simple`, `ntrees`, `nrects`, `compare`, `k`, `m`, `nconstraints`, `perturb`, `robust` |
+| `--values`   | the experimental values to test                      | space separated list of values e.g. `10 50 100` or `0.1 0.2 0.3`                       |
+| `--ds`       | the dataset to explain                               | cancer, glass, magic, spambase, vertebral                                              |
+| `--method`   | the XAI method to use                                | `FACETIndex`, `OCEAN`, `RFOCSE`, `AFT`, `MACE`                                         |
+| `--ntrees`   | the ensemble size to test                            | integer value, overridden in for `--expr` `ntrees`                                     |
+| `--maxdepth` | the max depth of ensemble trees                      | integer value, `-1` for no max depth                                                   |
+| `--it`       | the iteration to run, used as random seed            | space separated integer values                                                         |
+| `--fmod`     | a filename modifier append to append to results file | string value                                                                           |
+| `--model`    | the underlying mode to explain                       | `rf` or `gbc`                                                                          |
 
 Executing `python main.py` with no flags will perform a simple explanation of 20 instances on the vertebral dataset using FACET and an ensemble with `T=10, Dmax=5`. Parameters not involved in any given experiment are set to the default values provided in [experiments.py](./experiments/experiments.py)
 

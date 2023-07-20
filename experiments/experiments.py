@@ -239,8 +239,8 @@ def execute_run(dataset_name: str, explainer: str, params: dict, output_path: st
     sample_time = explain_time / n_explain
 
     # check that the returned explanations fit the data type requirements (one-hot, discrete, binary, etc)
-    if not ds_info.check_valid(explanations):
-        print("WARNING - {} PRODUCED AN EXPLANATION INCOMPATIBLE WITH THE GIVEN DATA SCHEMA".format(explainer))
+    # if not ds_info.check_valid(explanations):
+    #     print("WARNING - {} PRODUCED AN EXPLANATION INCOMPATIBLE WITH THE GIVEN DATA SCHEMA".format(explainer))
 
     # store the returned explantions
     expl_df = pd.DataFrame(ds_info.unscale(explanations), columns=ds_info.col_names)
@@ -260,7 +260,6 @@ def execute_run(dataset_name: str, explainer: str, params: dict, output_path: st
 
     # handle special mace int encoding
     if ds_info.numeric_int_map is not None:
-        print("unscaled")
         for i in range(x_explain.shape[0]):
             for col_name in ds_info.numeric_int_map.keys():
                 col_id = ds_info.col_names.index(col_name)
