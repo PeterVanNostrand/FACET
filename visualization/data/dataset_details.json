@@ -1,0 +1,29 @@
+{
+    "dataset": "loans",
+    "normalized": true,
+    "target_name": "Loan_Status",
+    "feature_names": {
+        "x0": "ApplicantIncome",
+        "x1": "CoapplicantIncome",
+        "x2": "LoanAmount",
+        "x3": "Loan_Amount_Term"
+    },
+    "min_values": {
+        "x0": 150.0,
+        "x1": 0.0,
+        "x2": 0.0,
+        "x3": 12.0
+    },
+    "max_values": {
+        "x0": 81000.0,
+        "x1": 41667.0,
+        "x2": 70000.0,
+        "x3": 480.0
+    },
+    "std_dev": {
+        "x0": 6171.2307239379015,
+        "x1": 2949.48506913547,
+        "x2": 8895.881571142349,
+        "x3": 65.11624970099784
+    }
+}

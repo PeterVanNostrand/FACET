@@ -1,0 +1,15 @@
+{
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "devDependencies": {
+    "@rollup/plugin-buble": "latest",
+    "rollup": "^3.21.7"
+  },
+  "type": "module",
+  "dependencies": {
+    "bubble": "^0.1.0",
+    "nodemon": "^2.0.22",
+    "package.json": "^2.0.1"
+  }
+}
