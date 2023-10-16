@@ -6,7 +6,7 @@ from .experiments import execute_run
 from .experiments import TUNED_FACET_SD, DEFAULT_PARAMS, FACET_TUNED_M
 
 
-def compare_methods(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", "AFT", "MACE"], iterations=[0, 1, 2, 3, 4], fmod=None, ntrees=10, max_depth=5):
+def compare_methods(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", "AFT", "MACE"], iterations=[0, 1, 2, 3, 4], fmod=None, ntrees=10, max_depth=5, model_type: str = "RandomForest"):
     '''
     Experiment to compare the performance of different explainers on the same ensemble
     '''
