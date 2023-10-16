@@ -13,6 +13,7 @@ def compare_methods(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", "AFT"
     print("Comparing methods:")
     print("\tds_names:", ds_names)
     print("\texplainers:", explainers)
+    print("\tmodel:", model_type)
     print("\titerations:", iterations)
 
     if fmod is not None:
@@ -45,7 +46,8 @@ def compare_methods(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", "AFT"
                     n_explain=20,
                     random_state=iter,
                     preprocessing="Normalize",
-                    run_ext=""
+                    run_ext="",
+                    model_type=model_type,
                 )
                 df_item = {
                     "dataset": ds,
