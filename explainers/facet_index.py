@@ -460,14 +460,16 @@ class FACETIndex(Explainer):
             odds = dropped_odds + self.manager.model.lr * sum(bad_vals)
             # move to the next tree
             next_tree -= 1
+        if next_tree != (self.ntrees - 1):
+            next_tree += 1
         rect, accumulated_odds = self.gbc_intersect_all(leaf_rects[0:next_tree+1], leaf_vals[0:next_tree+1])
         used_paths = paths[0:next_tree+1]
         # !DEBUG - CHECK THAT THE LEAF CLASS PROBS MATCH THE PREDICATED PRBS
-        # rect_instance = self.fit_to_rectangle(np.zeros(shape=(self.nfeatures)), rect)
-        # if rect_instance is not None:
-        #     pred = self.manager.model.model.predict([rect_instance])[0]
-        #     if pred != label:
-        #         print("ERROR CREATING RECT")
+        rect_instance = self.fit_to_rectangle(np.zeros(shape=(self.nfeatures)), rect)
+        if rect_instance is not None:
+            pred = self.manager.model.model.predict([rect_instance])[0]
+            if pred != label:
+                print("ERROR CREATING RECT")
         # !DEBUG END
         return rect, used_paths
 
@@ -479,11 +481,11 @@ class FACETIndex(Explainer):
         # !DEBUG - CHECK THAT THE LEAF CLASS PROBS MATCH THE PREDICATED PRBS
         # class_one_prob = sigmoid(accumulated_odds)
         # class_probs = [1.0 - class_one_prob, class_one_prob]
-        # leaf_instance = self.fit_to_rectangle(np.zeros(shape=(self.nfeatures)), rect)
-        # if leaf_instance is not None:
-        #     pred_probs = self.manager.model.model.predict_proba([leaf_instance])
-        #     if not (pred_probs == class_probs).all():
-        #         print("ERROR CALCULATING LEAF PROBAILITY")
+        leaf_instance = self.fit_to_rectangle(np.zeros(shape=(self.nfeatures)), rect)
+        if leaf_instance is not None:
+            pred = self.manager.model.model.predict([leaf_instance])[0]
+            if pred != label:
+                print("ERROR CREATING RECT")
         # !DEBUG END
         return rect, paths
 
