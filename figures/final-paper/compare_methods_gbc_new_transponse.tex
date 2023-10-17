@@ -1,0 +1,16 @@
+\begin{table*}[t]
+\small
+\centering
+\begin{tabularx}{0.95\textwidth}{|X|ccccc|ccccc|ccccc|ccccc|ccccc|}
+\hline\textbf{Dataset} & \multicolumn{5}{c|}{\textbf{ADULT}} & \multicolumn{5}{c|}{\textbf{CANCER}} & \multicolumn{5}{c|}{\textbf{CREDIT}} & \multicolumn{5}{c|}{\textbf{MAGIC}} & \multicolumn{5}{c|}{\textbf{SPAMBASE}} \\
+& $t\downarrow$ & $\delta_0\downarrow$ & $\delta_1\downarrow$ & $\delta_2\downarrow$ & $\%\uparrow$ & $t\downarrow$ & $\delta_0\downarrow$ & $\delta_1\downarrow$ & $\delta_2\downarrow$ & $\%\uparrow$ & $t\downarrow$ & $\delta_0\downarrow$ & $\delta_1\downarrow$ & $\delta_2\downarrow$ & $\%\uparrow$ & $t\downarrow$ & $\delta_0\downarrow$ & $\delta_1\downarrow$ & $\delta_2\downarrow$ & $\%\uparrow$ & $t\downarrow$ & $\delta_0\downarrow$ & $\delta_1\downarrow$ & $\delta_2\downarrow$ & $\%\uparrow$ \\
+\hline
+FC-RF & 0.2328 & 3.92 & 1.00 & 1.00 & 100.0 & 0.1104 & 11.86 & 1.00 & 1.00 & 100.0 & 0.1287 & 6.31 & 1.00 & 1.00 & 100.0 & 0.0065 & 4.24 & 1.00 & 1.00 & 100.0 & 0.0355 & 11.04 & 1.00 & 1.00 & 100.0 \\
+FCT-GB1 & 0.3681 & 2.60 & 0.11 & 0.15 & 100.0 & 0.0587 & 8.08 & 0.50 & 0.60 & 100.0 & 0.1290 & 4.15 & 0.13 & 0.14 & 100.0 & 0.0058 & 4.86 & 0.78 & 0.68 & 100.0 & 0.0556 & 7.75 & 0.51 & 0.61 & 100.0 \\
+FCT-GB2 & 0.3418 & 2.50 & 0.08 & 0.12 & 100.0 & 0.0482 & 7.54 & 0.47 & 0.58 & 100.0 & 0.1283 & 4.10 & 0.12 & 0.14 & 100.0 & 0.0059 & 4.83 & 0.78 & 0.68 & 100.0 & 0.0556 & 7.66 & 0.49 & 0.59 & 100.0 \\
+\hline
+\end{tabularx}
+\caption{Comparison to state-of-the art counterfactual example generation techniques in terms of explanation time $t$, explanation distance $\delta$, and percent of instances successfully explained. ($\ast$) denotes cases which necessitated uncapped explanation time.}
+\label{tab.compare_methods}
+\vspace{-7mm}
+\end{table*}
