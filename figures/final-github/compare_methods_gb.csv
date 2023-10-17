@@ -1,0 +1,5 @@
+dataset,COMPAS,COMPAS,COMPAS,COMPAS,COMPAS,,VERTEBRAL,VERTEBRAL,VERTEBRAL,VERTEBRAL,VERTEBRAL,,GLASS,GLASS,GLASS,GLASS,GLASS,,
+,sample_time,avg_length,avg_manhattan,avg_dist,per_valid,,sample_time,avg_length,avg_manhattan,avg_dist,per_valid,,sample_time,avg_length,avg_manhattan,avg_dist,per_valid,,
+FC-RF,0.0019,1.00,1.00,1.00,100.0,,0.0036,3.35,1.00,1.00,100.0,,0.0080,4.85,1.00,1.00,100.0,,
+FCT-GB1,0.0019,1.00,1.29,1.29,100.0,,0.0014,2.50,0.62,0.72,100.0,,0.0052,4.21,0.76,0.77,100.0,,
+FCT-GB2,0.0019,1.00,1.29,1.29,100.0,,0.0015,2.39,0.60,0.71,100.0,,0.0039,4.02,0.67,0.73,100.0,,

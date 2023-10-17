@@ -1,0 +1,13 @@
+*__pycache__
+.vscode
+*.code-workspace
+fastcrf/*.html
+fastcrf/*.cpp
+fastcrf/*.so
+build/*
+mace_temp.log
+!figures/*.ipynb
+./baselines/ocean-err/*
+rf.lp
+scripts/*
+visualization/*

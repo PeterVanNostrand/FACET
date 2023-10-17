@@ -1,0 +1,18 @@
+\begin{table*}[t]
+\small
+\centering
+\begin{tabularx}{0.95\textwidth}{|X|ccccc|ccccc|ccccc|ccccc|ccccc|}
+\hline\textbf{Dataset} & \multicolumn{5}{c|}{\textbf{ADULT}} & \multicolumn{5}{c|}{\textbf{CANCER}} & \multicolumn{5}{c|}{\textbf{CREDIT}} & \multicolumn{5}{c|}{\textbf{MAGIC}} & \multicolumn{5}{c|}{\textbf{SPAMBASE}} \\
+& $t\downarrow$ & $\delta_0\downarrow$ & $\delta_1\downarrow$ & $\delta_2\downarrow$ & $\%\uparrow$ & $t\downarrow$ & $\delta_0\downarrow$ & $\delta_1\downarrow$ & $\delta_2\downarrow$ & $\%\uparrow$ & $t\downarrow$ & $\delta_0\downarrow$ & $\delta_1\downarrow$ & $\delta_2\downarrow$ & $\%\uparrow$ & $t\downarrow$ & $\delta_0\downarrow$ & $\delta_1\downarrow$ & $\delta_2\downarrow$ & $\%\uparrow$ & $t\downarrow$ & $\delta_0\downarrow$ & $\delta_1\downarrow$ & $\delta_2\downarrow$ & $\%\uparrow$ \\
+\hline
+FACET & 0.1072 & 1.68 & 1.00 & 1.00 & 100.0 & 0.0942 & 4.33 & 1.00 & 1.00 & 100.0 & 0.1281 & 4.54 & 1.00 & 1.00 & 100.0 & 0.0030 & 2.99 & 1.00 & 1.00 & 100.0 & 0.2009 & 4.47 & 1.00 & 1.00 & 100.0 \\
+MACE & 107.4059 & 5.69 & 70.47 & 81.37 & 68.5 & 2.2219 & 30.00 & 21.21 & 8.88 & 100.0 & 190.2118 & 10.87 & 9.07 & 5.77 & 38.0 & 2.4722 & 10.00 & 12.35 & 7.61 & 100.0 & 19.9130 & 57.00 & 1261.81 & 370.76 & 100.0 \\
+OCEAN & 0.5858 & 2.44 & 3.26 & 2.97 & 100.0 & 0.6809 & 11.41 & 1.43 & 1.02 & 100.0 & 1.7205 & 6.15 & 2.13 & 1.97 & 100.0 & 1.7903 & 6.30 & 1.45 & 1.05 & 100.0 & 0.4635 & 7.50 & 0.69 & 0.64 & 100.0 \\
+RFOCSE & 56.5828 & 1.40 & 0.54 & 0.58 & 90.5 & 1936.0154 & 4.65 & 1.29 & 1.07 & 100.0 & 202.5380 & 2.44 & 0.16 & 0.21 & 35.0 & 147.0445 & 2.42 & 0.87 & 1.04 & 95.0 & 2208.3975 & 3.30 & 4.25 & 4.51 & 100.0 \\
+AFT & 0.0026 & 1.46 & 0.76 & 0.80 & 96.0 & 0.0019 & 1.86 & 0.92 & 1.26 & 37.0 & 0.0023 & 2.42 & 1.12 & 1.22 & 85.5 & 0.0036 & 1.65 & 0.99 & 1.24 & 99.0 & 0.0027 & 1.98 & 2.00 & 3.03 & 76.0 \\
+\hline
+\end{tabularx}
+\caption{Comparison to state-of-the art counterfactual example generation techniques in terms of explanation time $t$, explanation distance $\delta$, and percent of instances successfully explained. ($\ast$) denotes cases which necessitated uncapped explanation time.}
+\label{tab.compare_methods}
+\vspace{-7mm}
+\end{table*}
