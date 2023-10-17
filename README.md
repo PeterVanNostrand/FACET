@@ -49,7 +49,7 @@ All results are output to `./results/<expr_name>.csv`. Generated explanations, a
 
 ## Datasets
 
-A listing of datasets which FACET has been applied on including the number of instance `N`, the number of features `n` and the number of features after one hot encoding. Datasets marked with `*` have results included in the paper with the remainder expect `loans` presented here. All figures shown here and in the paper can be found in the `./figures/` directory.
+A listing of datasets which FACET has been applied on including the number of instance `N`, the number of features `n` and the number of features after one hot encoding. Datasets marked with `*` have results included in the paper with the remainder except `loans` presented here. All figures shown here and in the paper can be found in the `./figures/` directory.
 
 | Dataset Name                                   | Abbreviated Name | N     | n   | n (one-hot) | Source                                                                                  |
 | ---------------------------------------------- | ---------------- | ----- | --- | ----------- | --------------------------------------------------------------------------------------- |
