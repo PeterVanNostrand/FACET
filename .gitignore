@@ -11,5 +11,3 @@ mace_temp.log
 rf.lp
 scripts/*
 visualization/*
-results/*
-!results/final
