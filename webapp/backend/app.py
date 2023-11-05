@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
-
+import numpy as np
+import json
 import os
 import sys
 
@@ -14,31 +15,39 @@ app = Flask(__name__)
 manager = None
 
 
-def test_manager():
-    x, y = load_data("vertebral", preprocessing="Normalize")
-    print(x, y)
-
-    test_data = {"property_name": "sample_property"}
-
-    result = manager.explainer.explain(test_data)
-    print("Manager test result:", result)
-
-
 @app.before_first_request
 def initialize_app():
-    print("Initializing app...")
-    current_directory = os.getcwd()
-    print("Current Working Directory:", current_directory)
+    global manager
+    print("\nInitializing app...\n")
 
     manager = flask_run()
-    print("Manager initialized")
+    print("\nManager initialized\n")
 
-    test_manager()
-
+def serialize_np_array(obj):
+    if isinstance(obj, np.ndarray):
+        return obj.tolist()
+    raise TypeError("Type not serializable")
 
 @app.route("/")
 def index():
-    return "Welcome to the Facet web app!"
+    x, y = load_data("loans", preprocessing="Normalize")
+    x_explain = x[0:10]
+
+    explain_preds = manager.predict(x_explain)
+    explanations = manager.explain(x_explain, explain_preds)
+
+    explanations_dict = {
+        "explanations": []
+    }
+
+    # Populate the dictionary
+    for explanation in explanations:
+        explanations_dict["explanations"].append(explanation)
+
+    # Convert the dictionary to JSON
+    json_explanations = json.dumps(explanations_dict, indent=4)
+
+    return json.loads(json_explanations)
 
 
 @app.route("/facet/explanation", methods=["POST"])
@@ -50,11 +59,8 @@ def facet_explanation():
 
 
 def process_facet_data(data):
-    # JSON object received in the request
-    # data['property_name']
-
     return data
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(port=3000)

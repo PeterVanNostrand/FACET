@@ -187,7 +187,6 @@ def execute_run(
         y_explain = ytest
         ixd_explain = idx_test
         n_explain = x_explain.shape[0]
-    print(x_explain.shape, y_explain.shape)
 
     # create the manager which handles create the RF model and explainer
     manager = MethodManager(

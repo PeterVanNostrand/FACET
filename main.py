@@ -95,7 +95,7 @@ def simple_run(
 
 
 def flask_run(
-    ds_name="vertebral",
+    ds_name="loans",
     explainer="FACETIndex",
     random_state=0,
     ntrees=10,
@@ -115,8 +115,6 @@ def flask_run(
     print("Run ID: {}".format(run_id))
     print("explainer: " + explainer)
     print("dataset: " + ds_name)
-    print("config:")
-    print(json.dumps(params, indent=4))
 
     manager = flask_setup_manager(
         dataset_name=ds_name,
@@ -159,7 +157,7 @@ if __name__ == "__main__":
         ],
         default="flask",
     )
-    parser.add_argument("--ds", type=str, nargs="+", default=["vertebral"])
+    parser.add_argument("--ds", type=str, nargs="+", default=["loans"])
     parser.add_argument(
         "--method", type=str, nargs="+", choices=all_explaiers, default=["FACETIndex"]
     )
