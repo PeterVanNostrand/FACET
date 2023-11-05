@@ -782,12 +782,16 @@ class FACETIndex(Explainer):
                         explanation = self.fit_to_rectangle(x[i], nearest_rect)
                 else:
                     explanation = [np.inf for _ in range(x.shape[1])]
-                
+
+                save_instance_region_JSON(
+                    x[i],
+                    nearest_rect,
+                    path=VIZ_DATA_PATH
+                    + "explanations/explanation_{:03d}.json".format(i),
+                )
+
                 # Generate a JSON explanation as a dictionary and add it to the explanations list
-                explanation_dict = {
-                    "instance": {},
-                    "region": {}
-                }
+                explanation_dict = {"instance": {}, "region": {}}
 
                 curr_instance = x[i]
                 for j in range(curr_instance.shape[0]):
@@ -796,12 +800,11 @@ class FACETIndex(Explainer):
                         nearest_rect[j, 0],
                         nearest_rect[j, 1],
                     ]
-                
+
                 explanations.append(explanation_dict)
                 xprime.append(explanation)
                 progress.update()
             progress.close()
-
 
         if DO_VIZUALIZATION:
             save_JSON_paths(VIZ_DATA_PATH + "explanation_paths.json")
@@ -820,7 +823,7 @@ class FACETIndex(Explainer):
         if self.verbose:
             print("failed x':", failed_explanation.sum())
 
-        return explanations
+        return xprime, explanations
 
     def find_synthesizeable_paths(self, trees):
         ntrees = len(trees)

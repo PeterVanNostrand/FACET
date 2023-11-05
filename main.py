@@ -52,7 +52,7 @@ def check_create_directory(dir_path="./results/"):
 
 
 def simple_run(
-    ds_name="vertebral",
+    ds_name="loans",
     explainer="FACETIndex",
     random_state=0,
     ntrees=10,

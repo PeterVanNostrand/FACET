@@ -173,7 +173,7 @@ def execute_run(
         f.write(json_text)
 
     # load and split the datset using random state for repeatability. Select samples to explain
-    x, y = load_data(dataset_name, preprocessing=preprocessing)
+    x, y, min_value, max_value = load_data(dataset_name, preprocessing=preprocessing)
     indices = np.arange(start=0, stop=x.shape[0])
     xtrain, xtest, ytrain, ytest, idx_train, idx_test = train_test_split(
         x, y, indices, test_size=test_size, shuffle=True, random_state=random_state
@@ -187,6 +187,7 @@ def execute_run(
         y_explain = ytest
         ixd_explain = idx_test
         n_explain = x_explain.shape[0]
+    print("x_explain", x_explain)
 
     # create the manager which handles create the RF model and explainer
     manager = MethodManager(
@@ -215,7 +216,7 @@ def execute_run(
     # explain the samples using RF predictions (not ground truth)
     explain_preds = manager.predict(x_explain)
     explain_start = time.time()
-    explanations: np.ndarray = manager.explain(x_explain, explain_preds)
+    instances, explanations = manager.explain(x_explain, explain_preds)
 
     explain_end = time.time()
     explain_time = explain_end - explain_start
@@ -225,7 +226,7 @@ def execute_run(
     col_names = []
     for i in range(x.shape[1]):
         col_names.append("x{}".format(i))
-    expl_df = pd.DataFrame(explanations, columns=col_names)
+    expl_df = pd.DataFrame(instances, columns=col_names)
     # also store the index of the explained sample in the dataset
     expl_df.insert(0, "x_idx", ixd_explain)
     explanation_path = output_path + "{}_{}_{}{:03d}_explns.csv".format(
@@ -234,15 +235,15 @@ def execute_run(
     expl_df.to_csv(explanation_path, index=False)
 
     # evalute the quality of the explanations
-    per_valid = percent_valid(explanations)
+    per_valid = percent_valid(instances)
     avg_dist = average_distance(
-        x_explain, explanations, distance_metric="Euclidean"
+        x_explain, instances, distance_metric="Euclidean"
     )  # L2 Norm Euclidean
     avg_manhattan = average_distance(
-        x_explain, explanations, distance_metric="Manhattan"
+        x_explain, instances, distance_metric="Manhattan"
     )  # L1 Norm Manhattan
     avg_length = average_distance(
-        x_explain, explanations, distance_metric="FeaturesChanged"
+        x_explain, instances, distance_metric="FeaturesChanged"
     )  # L0 Norm Sparsity
 
     # store and return the top level results
@@ -313,7 +314,7 @@ def flask_setup_manager(
         f.write(json_text)
 
     # Load and split the dataset using random state for repeatability. Select samples to explain
-    x, y = load_data(dataset_name, preprocessing=preprocessing)
+    x, y, min_value, max_value = load_data(dataset_name, preprocessing=preprocessing)
 
     # Create the manager which handles creating the RF model and explainer
     manager = MethodManager(
@@ -322,6 +323,6 @@ def flask_setup_manager(
 
     manager.train(x, y)
     manager.explainer.prepare_dataset(x, y)
-    manager.prepare(xtrain=x, ytrain=y)
+    manager.prepare(xtrain=x, ytrain=x)
 
     return manager

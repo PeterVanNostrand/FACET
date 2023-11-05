@@ -86,7 +86,7 @@ def load_data(dataset_name, preprocessing: str = "Normalize"):
     elif preprocessing == "Scale":
         float_transformer = StandardScaler()
         x = float_transformer.fit_transform(x)
-    return x, y
+    return x, y, min_value, max_value
 
 
 def util_load_cancer():
