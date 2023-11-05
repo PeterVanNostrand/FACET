@@ -1,9 +1,13 @@
 import numpy as np
 import pandas as pd
+import os
 from sklearn.preprocessing import StandardScaler
 from config import DO_VIZUALIZATION, VIZ_DATA_PATH
+
 if DO_VIZUALIZATION:
     from visualization.viz_tools import save_data_dict
+
+script_directory = os.path.dirname(os.path.abspath(__file__))
 
 # a list of the abbreviated name for all classification datasets
 DS_NAMES = [
@@ -16,13 +20,12 @@ DS_NAMES = [
 ]
 
 DS_PATHS = {
-    "cancer": "data/cancer/wdbc.data",
-    "glass": "data/glass/glass.data",
-    "magic": "data/magic/magic04.data",
-    "spambase": "data/spambase/spambase.data",
-    "vertebral": "data/vertebral/column_2C.dat",
-    "loans": "./data/loans/loans_continuous.csv"
-
+    "cancer": os.path.join(script_directory, "data/cancer/wdbc.data"),
+    "glass": os.path.join(script_directory, "data/glass/glass.data"),
+    "magic": os.path.join(script_directory, "data/magic/magic04.data"),
+    "spambase": os.path.join(script_directory, "data/spambase/spambase.data"),
+    "vertebral": os.path.join(script_directory, "data/vertebral/column_2C.dat"),
+    "loans": os.path.join(script_directory, "data/loans/loans_continuous.csv"),
 }
 
 DS_DIMENSIONS = {
@@ -31,12 +34,12 @@ DS_DIMENSIONS = {
     "magic": (19019, 10),
     "spambase": (4600, 57),
     "vertebral": (309, 6),
-    "loans": (578, 4)
+    "loans": (578, 4),
 }
 
 
 def load_data(dataset_name, preprocessing: str = "Normalize"):
-    '''
+    """
     Returns one of many possible anomaly detetion datasets based on the given `dataset_name`
 
     Parameters
@@ -49,7 +52,7 @@ def load_data(dataset_name, preprocessing: str = "Normalize"):
     -------
     x : the dataset samples with shape (nsamples, nfeatures)
     y : the dataset labels with shape (nsamples,) containing 0 to represent a normal label and 1 for an anomaly label
-    '''
+    """
     if dataset_name == "cancer":
         x, y, colnames = util_load_cancer()
     elif dataset_name == "glass":
@@ -68,7 +71,14 @@ def load_data(dataset_name, preprocessing: str = "Normalize"):
 
     if preprocessing == "Normalize":
         if DO_VIZUALIZATION:
-            save_data_dict(dataset_name, x, y, colnames, path=VIZ_DATA_PATH+"dataset_details.json", normalize=True)
+            save_data_dict(
+                dataset_name,
+                x,
+                y,
+                colnames,
+                path=VIZ_DATA_PATH + "dataset_details.json",
+                normalize=True,
+            )
         # normalize x to [0, 1]
         min_value = np.min(x, axis=0)
         max_value = np.max(x, axis=0)
@@ -145,7 +155,7 @@ def util_load_spambase():
     colnames = list(data.columns)
     data = data.to_numpy()
     x = data[:, :-1]
-    y = data[:, -1:].squeeze().astype('int')
+    y = data[:, -1:].squeeze().astype("int")
     return x, y, colnames
 
 
