@@ -187,6 +187,7 @@ def execute_run(
         y_explain = ytest
         ixd_explain = idx_test
         n_explain = x_explain.shape[0]
+    print(x_explain.shape, y_explain.shape)
 
     # create the manager which handles create the RF model and explainer
     manager = MethodManager(
@@ -285,7 +286,6 @@ def flask_setup_manager(
     preprocessing="Normalize",
     run_ext="",
 ):
-    # Set appropriate random seeds for reproducibility
     random.seed(random_state)
     np.random.seed(random_state)
 
@@ -302,6 +302,7 @@ def flask_setup_manager(
     config["output_path"] = output_path
     config["random_state"] = random_state
     config["params"] = params
+
     with open(
         output_path
         + "{}_{}_{}{:03d}_config.json".format(
@@ -314,47 +315,14 @@ def flask_setup_manager(
 
     # Load and split the dataset using random state for repeatability. Select samples to explain
     x, y = load_data(dataset_name, preprocessing=preprocessing)
-    indices = np.arange(start=0, stop=x.shape[0])
-    xtrain, xtest, ytrain, ytest, idx_train, idx_test = train_test_split(
-        x, y, indices, test_size=0.2, shuffle=True, random_state=random_state
-    )
 
     # Create the manager which handles creating the RF model and explainer
     manager = MethodManager(
         explainer=explainer, hyperparameters=params, random_state=random_state
     )
 
-    manager.train(xtrain, ytrain)
-    preds = manager.predict(xtest)
-    accuracy, precision, recall, f1 = classification_metrics(
-        preds, ytest, verbose=False
-    )
-
-    # Prepare the dataset and manager
-    prep_start = time.time()
+    manager.train(x, y)
     manager.explainer.prepare_dataset(x, y)
-    manager.prepare(xtrain=xtrain, ytrain=ytrain)
-    prep_end = time.time()
-    prep_time = prep_end - prep_start
+    manager.prepare(xtrain=x, ytrain=y)
 
-
-    results = {
-        "accuracy": accuracy,
-        "precision": precision,
-        "recall": recall,
-        "f1": f1,
-        "prep_time": prep_time,
-    }
-
-    with open(
-        output_path
-        + "{}_{}_{}{:03d}_result.json".format(
-            dataset_name, explainer.lower(), run_ext, iteration
-        ),
-        "w",
-    ) as f:
-        json_text = json.dumps(results, indent=4)
-        f.write(json_text)
-
-    # Store this manager in the app context
     return manager

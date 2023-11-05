@@ -127,8 +127,8 @@ def flask_run(
         random_state=random_state,
         preprocessing=preprocessing,
     )
-    # print("results:")
-    # print(json.dumps(results, indent=4))
+
+    return manager
 
 
 if __name__ == "__main__":
