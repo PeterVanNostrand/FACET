@@ -2,21 +2,25 @@
 from __future__ import annotations
 
 import bisect
+
 # core python packages
 import math
 from typing import TYPE_CHECKING, Dict, List, Tuple
 
 # graph packages
 import networkx as nx
+
 # scientific and utility packages
 import numpy as np
 from sklearn import tree
 from tqdm.auto import tqdm
 
 from detectors.random_forest import RandomForest
+
 # from explainers.branching import BranchIndex
 from explainers.bit_vector import BitVectorIndex
 from explainers.explainer import Explainer
+
 # custom classes
 from utilities.metrics import dist_euclidean
 from config import DO_VIZUALIZATION, VIZ_DATA_PATH
@@ -63,18 +67,25 @@ class FACETIndex(Explainer):
         for class_id in range(self.rf_nclasses):
             if self.verbose:
                 print("class {}".format(class_id))
-            self.rbvs.append(BitVectorIndex(rects=self.index[class_id],
-                                            explainer=self, hyperparameters=self.hyperparameters))
+            self.rbvs.append(
+                BitVectorIndex(
+                    rects=self.index[class_id],
+                    explainer=self,
+                    hyperparameters=self.hyperparameters,
+                )
+            )
 
     def prepare_dataset(self, x, y):
         pass
 
     def compute_supports(self, data: np.ndarray):
-        '''
+        """
         Computes the support for each vertex and each pairs of vertices in the classification output of the training data. That is fraction of all samples which are classificed into vertex Vi or pair of vertices Vi, Vj. These values are stored in self.vertex_support[i] and self.pairwise_support[i][j] respectively
-        '''
+        """
         rf_detector: RandomForest = self.manager.random_forest
-        all_leaves = rf_detector.apply(data)  # leaves that each sample ends up in (nsamples in xtrain, ntrees)
+        all_leaves = rf_detector.apply(
+            data
+        )  # leaves that each sample ends up in (nsamples in xtrain, ntrees)
 
         # compute the support of each vertex in the predictions of the training data
         # i.e. what fraction of the training predictions classify into each leaf
@@ -112,17 +123,17 @@ class FACETIndex(Explainer):
         self.pairwise_support = pairwise_supports
 
     def point_enumerate(self, data: np.ndarray) -> None:
-        '''
+        """
         Uses the provided set of data to select a set of points in the input space, then selects and indexes one hyper-rectangle around each point
-        '''
+        """
         rect_points = self.select_points(training_data=data)
         self.index_rectangles(data=rect_points)
 
     def select_points(self, training_data: np.ndarray) -> np.ndarray:
-        '''
+        """
         Given the training data, selects a set of points which will be used to determine
         the location of each hyper-rectangle to be indexed
-        '''
+        """
         if self.sample_type == "Training":
             rect_points = training_data
         elif self.sample_type == "Random":
@@ -130,7 +141,9 @@ class FACETIndex(Explainer):
             while all_same_class:
                 print("all same")
                 # create a set of points randomly placed with a uniform distribution along each axis
-                rect_points = np.random.uniform(low=0.0, high=1.0, size=(self.n_rects, training_data.shape[1]))
+                rect_points = np.random.uniform(
+                    low=0.0, high=1.0, size=(self.n_rects, training_data.shape[1])
+                )
                 # check to make sure the resulting set has points of both classes, redraw if needed
                 preds = self.manager.predict(rect_points)
                 all_same_class = len(np.unique(preds)) < 2
@@ -138,20 +151,26 @@ class FACETIndex(Explainer):
             all_same_class = True
             while all_same_class:
                 # take a bootstrap sample of the training data
-                rand_idxs = np.random.randint(low=0, high=training_data.shape[0], size=self.n_rects)
+                rand_idxs = np.random.randint(
+                    low=0, high=training_data.shape[0], size=self.n_rects
+                )
                 rect_points = training_data[rand_idxs]
                 # augment these points with random normally distributed noise
-                noise = np.random.normal(loc=0.0, scale=self.standard_dev, size=rect_points.shape)
+                noise = np.random.normal(
+                    loc=0.0, scale=self.standard_dev, size=rect_points.shape
+                )
                 rect_points += noise
                 # check to make sure the resulting set has points of both classes, redraw if needed
                 preds = self.manager.predict(rect_points)
                 all_same_class = len(np.unique(preds)) < 2
         return rect_points
 
-    def explore_index(self, nfeatures: int = 0, npoints: int = 1000, points: np.ndarray = None) -> float:
-        '''
+    def explore_index(
+        self, nfeatures: int = 0, npoints: int = 1000, points: np.ndarray = None
+    ) -> float:
+        """
         Randomly samples a number of points and checks what percentage of those points fall in the index
-        '''
+        """
         # generate points if not provided
         if points is None:
             if nfeatures == 0:
@@ -176,10 +195,10 @@ class FACETIndex(Explainer):
         return mean_size
 
     def rect_width(self, rect: np.ndarray) -> np.ndarray:
-        '''
+        """
         Returns the width of the rectangle along each axis
         Unbounded axis minimums and maximums are treated as zero and one respectively
-        '''
+        """
         test_rect = rect.copy()
         test_rect[:, 0][test_rect[:, 0] == -np.inf] = 0
         test_rect[:, 1][test_rect[:, 1] == np.inf] = 1
@@ -187,9 +206,9 @@ class FACETIndex(Explainer):
         return widths
 
     def inside_index(self, point: np.ndarray) -> bool:
-        '''
+        """
         Checks if the given point falls within a hyper-rectangle included in the index
-        '''
+        """
         label = self.manager.predict([point])
         covered = False
         i = 0
@@ -198,8 +217,12 @@ class FACETIndex(Explainer):
             i += 1
         return covered
 
-    def leaves_to_rects(self, all_paths: List[List[np.ndarray]], path_class_probs: List[List[np.ndarray]]) -> List[Dict]:
-        '''
+    def leaves_to_rects(
+        self,
+        all_paths: List[List[np.ndarray]],
+        path_class_probs: List[List[np.ndarray]],
+    ) -> List[Dict]:
+        """
         For each path in the ensemble, identifies the leaf node of that path and builds the corresponding hyper-rectangle
 
         Parameters
@@ -209,7 +232,7 @@ class FACETIndex(Explainer):
         Returns
         -------
         leaf_rects: a list of dictionarys where leaft_rects[i][j] returns the (leaf_class, rect) corresponding to the path ending in scikit node id j from tree i
-        '''
+        """
         leaf_rects = [{} for _ in range(self.rf_ntrees)]
         for tid in range(self.rf_ntrees):
             for path, class_probs in zip(all_paths[tid], path_class_probs[tid]):
@@ -223,39 +246,45 @@ class FACETIndex(Explainer):
         return leaf_rects
 
     def index_rectangles(self, data: np.ndarray):
-        '''
+        """
         This method uses the training data to enumerate a set of hyper-rectangles of each classes and adds them to an index for later searching during explanation
-        '''
+        """
         self.initialize_index()
         preds = self.manager.predict(data)
         rf_detector: RandomForest = self.manager.random_forest
         # get the leaves that each sample ends up in
         all_leaves = rf_detector.apply(data)  # shape (nsamples in xtrain, ntrees)
 
-        visited_rects = [{} for _ in range(self.rf_nclasses)]  # a hashmap to store which rectangles we have visited
+        visited_rects = [
+            {} for _ in range(self.rf_nclasses)
+        ]  # a hashmap to store which rectangles we have visited
         # for each instance in the training set
         for instance, label, leaf_ids in zip(data, preds, all_leaves):
             rect, paths_used = self.enumerate_rectangle(leaf_ids, label)
-            key = hash(tuple(paths_used))  # hash the path list to get a unique key corresponding to this HR
-            if key not in visited_rects[label]:  # if we haven't visited this hyper-rectangle before
+            key = hash(
+                tuple(paths_used)
+            )  # hash the path list to get a unique key corresponding to this HR
+            if (
+                key not in visited_rects[label]
+            ):  # if we haven't visited this hyper-rectangle before
                 # if True:
                 self.add_to_index(label, rect)  # add it to the index
                 visited_rects[label][key] = True  # remember that we've indexed it
 
     def add_to_index(self, label: int, rectangle: np.ndarray) -> None:
-        '''
+        """
         Add the rectangle to the index
-        '''
+        """
         self.index[label].append(rectangle)
 
     def initialize_index(self) -> None:
-        '''
+        """
         Creates an empty index to store the hyper-rectangles. Functionized to allow for multiple indexing options
-        '''
+        """
         self.index = [[] for _ in range(self.rf_nclasses)]
 
     def enumerate_rectangle(self, leaf_ids: List[int], label: int) -> np.ndarray:
-        '''
+        """
         Given a set of scikitlearns leaf_ids, one per tree in the ensemble, extracts the paths which correspond to these leaves and constructs a majority size hyper-rectangle from their intersection
 
         Paramters
@@ -266,12 +295,18 @@ class FACETIndex(Explainer):
         -------
         rect: a numpy ndarray of shape (ndim, 2) containing a majority size hyper-rectangle
         paths_used: a list of pairs (tree_id, leaf_id) which correspond to the leaves the form the intersection
-        '''
-        all_bounds: List[np.ndarray] = []  # list of leaf hyper-rectangles w/ dims (nfeatures, 2)
+        """
+        all_bounds: List[
+            np.ndarray
+        ] = []  # list of leaf hyper-rectangles w/ dims (nfeatures, 2)
         paths: List[(int, int)] = []  # list of tree_id, leaf_id included in all_bounds
-        path_probs: List[np.ndarray] = []  # list of class probs for the given leaves, dims (nclasses,)
+        path_probs: List[
+            np.ndarray
+        ] = []  # list of class probs for the given leaves, dims (nclasses,)
         for tree_id in range(self.rf_ntrees):
-            leaf_class, leaf_rect, class_probs = self.leaf_rects[tree_id][leaf_ids[tree_id]]
+            leaf_class, leaf_rect, class_probs = self.leaf_rects[tree_id][
+                leaf_ids[tree_id]
+            ]
             # for hard voting take only the hyper-rectangles which predict the given label
             # for soft voting the probability of all classes for all leaves contributes to the final classfication
             # e.g. several leaves predict class 1 with probs [0.49, 0.51], we may need them to make class 0 prediction
@@ -280,13 +315,21 @@ class FACETIndex(Explainer):
                 all_bounds.append(leaf_rect)
                 path_probs.append(class_probs)
         path_probs = np.vstack(path_probs)
-        rect, paths_used = self.select_intersection(all_bounds, paths, path_probs, label)
+        rect, paths_used = self.select_intersection(
+            all_bounds, paths, path_probs, label
+        )
         return rect, paths_used
 
-    def select_hard_intersection(self, all_bounds: List[np.ndarray], paths: List[Tuple[int]], path_probs: np.ndarray, label: int) -> np.ndarray:
-        '''
+    def select_hard_intersection(
+        self,
+        all_bounds: List[np.ndarray],
+        paths: List[Tuple[int]],
+        path_probs: np.ndarray,
+        label: int,
+    ) -> np.ndarray:
+        """
         ensemble is using majority vote take the intersection of the first nmajority hyper-rectangles, we should only receive leaf hyper-rectangles of class `label`
-        '''
+        """
         # initialize the hyper-rectangle as unbounded on both side of all axes
         rect = np.zeros((self.rf_nfeatures, 2))
         rect[:, 0] = -np.inf
@@ -298,31 +341,49 @@ class FACETIndex(Explainer):
             n_bounded_axes = [0] * len(all_bounds)
             for i in range(len(all_bounds)):
                 n_bounded_axes[i] = np.isfinite(all_bounds[i]).sum()
-            order = np.argsort(n_bounded_axes)  # take rects with the fewest bounds first
+            order = np.argsort(
+                n_bounded_axes
+            )  # take rects with the fewest bounds first
         elif self.intersect_order == "Size":
             mean_rect_widths = [0] * len(all_bounds)
             for i in range(len(all_bounds)):
                 mean_rect_widths[i] = self.rect_width(all_bounds[i]).mean()
             order = np.argsort(mean_rect_widths)  # take largest rects first
         elif self.intersect_order == "Ensemble":
-            order = list(range(len(all_bounds)))  # take rects in order of trees in ensemble
-        elif self.intersect_order == "Probability":  # take rects in order of largest probability
+            order = list(
+                range(len(all_bounds))
+            )  # take rects in order of trees in ensemble
+        elif (
+            self.intersect_order == "Probability"
+        ):  # take rects in order of largest probability
             order = path_probs[:, label].argsort()[::-1]
 
         i = 0
         paths_used = []
         while i < len(all_bounds) and i < self.majority_size:
-            rect[:, 0] = np.maximum(rect[:, 0], all_bounds[order[i]][:, 0])  # intersection of minimums
-            rect[:, 1] = np.minimum(rect[:, 1], all_bounds[order[i]][:, 1])  # intersection of maximums
-            bisect.insort(paths_used, paths[order[i]])  # remember which leaves we've used, keep sorted asc by tid
+            rect[:, 0] = np.maximum(
+                rect[:, 0], all_bounds[order[i]][:, 0]
+            )  # intersection of minimums
+            rect[:, 1] = np.minimum(
+                rect[:, 1], all_bounds[order[i]][:, 1]
+            )  # intersection of maximums
+            bisect.insort(
+                paths_used, paths[order[i]]
+            )  # remember which leaves we've used, keep sorted asc by tid
             i += 1
 
         return rect, paths_used
 
-    def select_soft_intersection(self, all_bounds: List[np.ndarray], paths: List[Tuple[int]], path_probs: np.ndarray, label: int) -> np.ndarray:
-        '''
+    def select_soft_intersection(
+        self,
+        all_bounds: List[np.ndarray],
+        paths: List[Tuple[int]],
+        path_probs: np.ndarray,
+        label: int,
+    ) -> np.ndarray:
+        """
         ensemble is using soft voting, take intersection of sufficient hyper-rects to reach a majority probability, we sould receive ntrees leaf hyper-rectangles
-        '''
+        """
 
         # initialize the hyper-rectangle as unbounded on both side of all axes
         rect = np.zeros((self.rf_nfeatures, 2))
@@ -336,16 +397,24 @@ class FACETIndex(Explainer):
             order = path_probs[:, label].argsort()[::-1]
             i = 0
             while i < len(all_bounds) and accumulated_prob[label] <= 0.5:
-                rect[:, 0] = np.maximum(rect[:, 0], all_bounds[order[i]][:, 0])  # intersection of minimums
-                rect[:, 1] = np.minimum(rect[:, 1], all_bounds[order[i]][:, 1])  # intersection of maximums
-                bisect.insort(paths_used, paths[order[i]])  # remember which leaves we've used, keep sorted asc by tid
+                rect[:, 0] = np.maximum(
+                    rect[:, 0], all_bounds[order[i]][:, 0]
+                )  # intersection of minimums
+                rect[:, 1] = np.minimum(
+                    rect[:, 1], all_bounds[order[i]][:, 1]
+                )  # intersection of maximums
+                bisect.insort(
+                    paths_used, paths[order[i]]
+                )  # remember which leaves we've used, keep sorted asc by tid
                 accumulated_prob += (1 / self.rf_ntrees) * path_probs[order[i]]
                 i += 1
 
         else:  # we use an order other than largest probability
             # separate the leaf hyper-rectangles by whether they match the desired class
             idx_match_label = path_probs[:, label] > 0.5
-            all_bounds = np.vstack(all_bounds).reshape(self.rf_ntrees, self.rf_nfeatures, 2)
+            all_bounds = np.vstack(all_bounds).reshape(
+                self.rf_ntrees, self.rf_nfeatures, 2
+            )
             paths = np.vstack(paths)
 
             match_bounds = all_bounds[idx_match_label]
@@ -360,39 +429,63 @@ class FACETIndex(Explainer):
                 n_bounded_axes = [0] * len(match_bounds)
                 for i in range(len(match_bounds)):
                     n_bounded_axes[i] = np.isfinite(match_bounds[i]).sum()
-                match_order = np.argsort(n_bounded_axes)  # take rects with the fewest bounds first
+                match_order = np.argsort(
+                    n_bounded_axes
+                )  # take rects with the fewest bounds first
             elif self.intersect_order == "Size":
                 mean_rect_widths = [0] * len(match_bounds)
                 for i in range(len(match_bounds)):
                     mean_rect_widths[i] = self.rect_width(match_bounds[i]).mean()
                 match_order = np.argsort(mean_rect_widths)  # take largest rects first
             elif self.intersect_order == "Ensemble":
-                match_order = list(range(len(match_bounds)))  # take rects in order of trees in ensemble
+                match_order = list(
+                    range(len(match_bounds))
+                )  # take rects in order of trees in ensemble
 
             # start with intersecting the hyper-rectangles which have the matching class
             i = 0
             while i < len(match_bounds) and accumulated_prob[label] <= 0.5:
-                rect[:, 0] = np.maximum(rect[:, 0], match_bounds[match_order[i]][:, 0])  # intersection of minimums
-                rect[:, 1] = np.minimum(rect[:, 1], match_bounds[match_order[i]][:, 1])  # intersection of maximums
-                bisect.insort(paths_used, tuple(match_paths[match_order[i]]))  # remember leaves we used
+                rect[:, 0] = np.maximum(
+                    rect[:, 0], match_bounds[match_order[i]][:, 0]
+                )  # intersection of minimums
+                rect[:, 1] = np.minimum(
+                    rect[:, 1], match_bounds[match_order[i]][:, 1]
+                )  # intersection of maximums
+                bisect.insort(
+                    paths_used, tuple(match_paths[match_order[i]])
+                )  # remember leaves we used
                 accumulated_prob += (1 / self.rf_ntrees) * match_probs[match_order[i]]
                 i += 1
 
             # on rare occassion this intersection will not have sufficient probability for the desired class
             # if needed continue intersecting leaves of the non-desired class until the desired class is the majority
-            nm_order = other_probs[:, label].argsort()[::-1]  # take other leaf with highest desired class prob first
+            nm_order = other_probs[:, label].argsort()[
+                ::-1
+            ]  # take other leaf with highest desired class prob first
             i = 0
             while i < len(other_bounds) and accumulated_prob[label] <= 0.5:
-                rect[:, 0] = np.maximum(rect[:, 0], other_bounds[nm_order[i]][:, 0])  # intersection of minimums
-                rect[:, 1] = np.minimum(rect[:, 1], other_bounds[nm_order[i]][:, 1])  # intersection of maximums
-                bisect.insort(paths_used, tuple(other_paths[nm_order[i]]))  # remember leaves we used
+                rect[:, 0] = np.maximum(
+                    rect[:, 0], other_bounds[nm_order[i]][:, 0]
+                )  # intersection of minimums
+                rect[:, 1] = np.minimum(
+                    rect[:, 1], other_bounds[nm_order[i]][:, 1]
+                )  # intersection of maximums
+                bisect.insort(
+                    paths_used, tuple(other_paths[nm_order[i]])
+                )  # remember leaves we used
                 accumulated_prob += (1 / self.rf_ntrees) * other_probs[nm_order[i]]
                 i += 1
 
         return rect, paths_used
 
-    def select_intersection(self, all_bounds: List[np.ndarray], paths: List[(int, int)], path_probs: np.ndarray, label: int) -> np.ndarray:
-        '''
+    def select_intersection(
+        self,
+        all_bounds: List[np.ndarray],
+        paths: List[(int, int)],
+        path_probs: np.ndarray,
+        label: int,
+    ) -> np.ndarray:
+        """
         Given a list of ntrees hyper-rectangles each corresponing to a leaf node, constructs a majority size hyper-rectangle by taking the intersection of nmajority leaf node hyper-rectangles
 
         Parameters
@@ -404,7 +497,7 @@ class FACETIndex(Explainer):
         -------
         rect: a numpy ndarray of shape (ndim, 2) containing a majority size hyper-rectangle
         paths_used: a list of pairs (tree_id, leaf_id) which correspond to the leaves the form the intersection
-        '''
+        """
 
         if self.rf_hardvoting:
             return self.select_hard_intersection(all_bounds, paths, path_probs, label)
@@ -412,7 +505,7 @@ class FACETIndex(Explainer):
             return self.select_soft_intersection(all_bounds, paths, path_probs, label)
 
     def leaf_rect(self, path: np.ndarray) -> np.ndarray:
-        '''
+        """
         Given a path of a decision tree, compute the hyper-rectangle of size 1 which corresponds to the leaf node of this branch by computing the minimum and maximum threshold values along each axis
 
         Parameters
@@ -422,7 +515,7 @@ class FACETIndex(Explainer):
         Returns
         -------
         feature_bounds : a numpy array of size `(nfeatures, 2)` where `feature_bounds[i][0]` represents the minimum threshold of feature `i` and `feature_bounds[i][1]` the maximum threshold
-        '''
+        """
         # initialize the thresholds as unbounded on both side of all axis
         feature_bounds = np.zeros((self.rf_nfeatures, 2))
         feature_bounds[:, 0] = -np.inf
@@ -438,24 +531,35 @@ class FACETIndex(Explainer):
                 feature_bounds[feature][0] = max(threshold, feature_bounds[feature][0])
         return feature_bounds
 
-    def build_paths(self, trees: List[tree.DecisionTreeClassifier]) -> List[List[np.ndarray]]:
-        '''
+    def build_paths(
+        self, trees: List[tree.DecisionTreeClassifier]
+    ) -> List[List[np.ndarray]]:
+        """
         Walks each tree and extracts each path from root to leaf into a data structure. Each tree is represented as a list of paths, with each path stored into an array
 
         Returns
         -------
         all_paths: a list of length ntrees, where all_paths[i] contains a list of the paths in tree i each represented by a numpy array as generated by in_order_path
-        '''
+        """
         ntrees = len(trees)
         all_paths = [[] for _ in range(ntrees)]
         path_class_probs = [[] for _ in range(ntrees)]
         for i in range(ntrees):
-            all_paths[i], path_class_probs[i] = self.__in_order_path(t=trees[i], built_paths=[], leaf_probs=[])
+            all_paths[i], path_class_probs[i] = self.__in_order_path(
+                t=trees[i], built_paths=[], leaf_probs=[]
+            )
 
         return all_paths, path_class_probs
 
-    def __in_order_path(self, t, built_paths: List[np.ndarray] = [], leaf_probs: List[np.ndarray] = [], node_id=0, path: List = []):
-        '''
+    def __in_order_path(
+        self,
+        t,
+        built_paths: List[np.ndarray] = [],
+        leaf_probs: List[np.ndarray] = [],
+        node_id=0,
+        path: List = [],
+    ):
+        """
         An algorithm for pre-order binary tree traversal. This walks through the entire tree enumerating each paths the root node to a leaf.
 
         Each path is represented by an array of nodes
@@ -477,7 +581,7 @@ class FACETIndex(Explainer):
         Returns
         -------
         None : see the output parameter `built_paths`
-        '''
+        """
 
         # process current node
         feature = t.tree_.feature[node_id]
@@ -487,12 +591,24 @@ class FACETIndex(Explainer):
             # process left child, conditioned (<=)
             left_path = path.copy()
             left_path.append([node_id, feature, 0, threshold])
-            self.__in_order_path(t, built_paths, leaf_probs, node_id=t.tree_.children_left[node_id], path=left_path)
+            self.__in_order_path(
+                t,
+                built_paths,
+                leaf_probs,
+                node_id=t.tree_.children_left[node_id],
+                path=left_path,
+            )
 
             # process right node, conditioned (>)
             right_path = path.copy()
             right_path.append([node_id, feature, 1, threshold])
-            self.__in_order_path(t, built_paths, leaf_probs, node_id=t.tree_.children_right[node_id], path=right_path)
+            self.__in_order_path(
+                t,
+                built_paths,
+                leaf_probs,
+                node_id=t.tree_.children_right[node_id],
+                path=right_path,
+            )
 
             return built_paths, leaf_probs
 
@@ -507,18 +623,20 @@ class FACETIndex(Explainer):
             built_paths.append(finished_path)
 
             # get the class probabilities for this leaf
-            class_probs: np.ndarray = (samps_per_class / samps_per_class.sum()).squeeze()
+            class_probs: np.ndarray = (
+                samps_per_class / samps_per_class.sum()
+            ).squeeze()
             leaf_probs.append(class_probs)
             return built_paths, leaf_probs
 
     def is_inside(self, x: np.ndarray, rect: np.ndarray) -> bool:
-        '''
+        """
         Returns true if x falls inside the given rectangle, false otherwise
-        '''
+        """
         return (x > rect[:, 0]).all() and (x < rect[:, 1]).all()
 
     def fit_to_rectangle(self, x: np.ndarray, rect: np.ndarray) -> np.ndarray:
-        '''
+        """
         Computes xprime, an adjusted copy of x that falls within the bounds of the given rectangle
 
         Parameters
@@ -529,7 +647,7 @@ class FACETIndex(Explainer):
         Returns
         -------
         xprime: the adjusted instance
-        '''
+        """
         xprime = x.copy()
         # determine which values need to adjusted to be smaller, and which need to be larger
         EPSILON = 1e-8  # use epsilon to account for floating point impercision for rare values
@@ -538,30 +656,45 @@ class FACETIndex(Explainer):
 
         # check that the offset will not overstep the min or max value, this occurs when the range between
         # a min and max value is less than the offset size. we target being centered when range < 2 * offset
-        overstep_range = ((rect[:, 1] - rect[:, 0]) / 2 <= self.offset)
+        overstep_range = (rect[:, 1] - rect[:, 0]) / 2 <= self.offset
         # identify features which need to be adjusted and will overstep the min or max value
-        idx_overstep = np.logical_and(overstep_range, np.logical_or(low_values, high_values))
+        idx_overstep = np.logical_and(
+            overstep_range, np.logical_or(low_values, high_values)
+        )
 
         # increase low feature values to one offset above min
         xprime[low_values] = rect[low_values, 0] + self.offset
         # decrease high features one to one offset below min
         xprime[high_values] = rect[high_values, 1] - self.offset
         # for oversteped bounds use the average between min and max
-        xprime[idx_overstep] = rect[idx_overstep, 0] + (rect[idx_overstep, 1] - rect[idx_overstep, 0]) / 2
+        xprime[idx_overstep] = (
+            rect[idx_overstep, 0] + (rect[idx_overstep, 1] - rect[idx_overstep, 0]) / 2
+        )
 
         return xprime
 
     def rect_center(self, rect: np.ndarray) -> np.ndarray:
-        '''
+        """
         Returns the center point of the given rectangle, assuming bounds of +-inf are 1.0 and 0.0 respectively
-        '''
+        """
         lower_bounds = np.maximum(rect[:, 0], -10.0)
         upper_bounds = np.minimum(rect[:, 1], 10.0)
         center = (upper_bounds + lower_bounds) / 2
         return center
 
-    def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf, min_robust: float = None, min_widths: np.ndarray = None, opt_robust: bool = False) -> np.ndarray:
-        '''
+    def explain(
+        self,
+        x: np.ndarray,
+        y: np.ndarray,
+        k: int = 1,
+        constraints: np.ndarray = None,
+        weights: np.ndarray = None,
+        max_dist: float = np.inf,
+        min_robust: float = None,
+        min_widths: np.ndarray = None,
+        opt_robust: bool = False,
+    ):
+        """
         Parameters
         ----------
         `x`               : an array of samples each of dimensions (nsamples, nfeatures)
@@ -578,12 +711,13 @@ class FACETIndex(Explainer):
 
         Returns
         -------
-        `xprime` : a list of of counterfactual example arrays each with dimensions (nsamples, nfeatures)
-        '''
-        xprime = []  # an array for the constructed contrastive examples
+        `explanations` : a list of JSON explanations for each instance
+        """
+        xprime = []
+        explanations = []
 
         # assumimg binary classification [0, 1] set counterfactual class
-        counterfactual_classes = ((y - 1) * -1)
+        counterfactual_classes = (y - 1) * -1
 
         if self.search_type == "Linear":
             # performs, a linear scan of all the hyper-rectangles
@@ -605,8 +739,12 @@ class FACETIndex(Explainer):
                     explanation = self.fit_to_rectangle(x[i], nearest_rect)
                 xprime.append(explanation)
                 if DO_VIZUALIZATION:
-                    save_instance_region_JSON(x[i], nearest_rect, path=VIZ_DATA_PATH +
-                                              "explanations/explanation_{:03d}.json".format(i))
+                    save_instance_region_JSON(
+                        x[i],
+                        nearest_rect,
+                        path=VIZ_DATA_PATH
+                        + "explanations/explanation_{:03d}.json".format(i),
+                    )
 
         elif self.search_type == "BitVector":
             progress = tqdm(total=x.shape[0], desc="FACETIndex", leave=False)
@@ -619,7 +757,7 @@ class FACETIndex(Explainer):
                     k=k,
                     max_dist=max_dist,
                     min_robust=min_robust,
-                    min_widths=min_widths
+                    min_widths=min_widths,
                 )
                 if k == 1 and result is not None:
                     nearest_rect = result
@@ -630,7 +768,11 @@ class FACETIndex(Explainer):
                     check_class = self.manager.predict([explanation])[0]
                     if check_class != counterfactual_classes[i]:
                         print("failed explanation")
-                        print("idx: {}, desired: {}, observed: {}".format(i, counterfactual_classes[i], check_class))
+                        print(
+                            "idx: {}, desired: {}, observed: {}".format(
+                                i, counterfactual_classes[i], check_class
+                            )
+                        )
                         print(x[i])
                 elif k > 1 and len(result) > 0:
                     nearest_rect = result[0]
@@ -640,9 +782,26 @@ class FACETIndex(Explainer):
                         explanation = self.fit_to_rectangle(x[i], nearest_rect)
                 else:
                     explanation = [np.inf for _ in range(x.shape[1])]
-                if DO_VIZUALIZATION:
-                    save_instance_region_JSON(x[i], nearest_rect, path=VIZ_DATA_PATH +
-                                              "explanations/explanation_{:03d}.json".format(i))
+
+                save_instance_region_JSON(
+                    x[i],
+                    nearest_rect,
+                    path=VIZ_DATA_PATH
+                    + "explanations/explanation_{:03d}.json".format(i),
+                )
+
+                # Generate a JSON explanation as a dictionary and add it to the explanations list
+                explanation_dict = {"instance": {}, "region": {}}
+
+                curr_instance = x[i]
+                for j in range(curr_instance.shape[0]):
+                    explanation_dict["instance"]["x{:d}".format(j)] = curr_instance[j]
+                    explanation_dict["region"]["x{:d}".format(j)] = [
+                        nearest_rect[j, 0],
+                        nearest_rect[j, 1],
+                    ]
+
+                explanations.append(explanation_dict)
                 xprime.append(explanation)
                 progress.update()
             progress.close()
@@ -656,7 +815,7 @@ class FACETIndex(Explainer):
         xprime[idx_inf] = np.tile(0, x.shape[1])
         # check that all counterfactuals result in a different class
         preds = self.manager.predict(xprime)
-        failed_explanation = (preds == y)
+        failed_explanation = preds == y
         xprime[failed_explanation] = np.tile(np.inf, x.shape[1])
         # replace infinite values for invalid explanation
         xprime[idx_inf] = np.tile(np.inf, x.shape[1])
@@ -664,28 +823,28 @@ class FACETIndex(Explainer):
         if self.verbose:
             print("failed x':", failed_explanation.sum())
 
-        return xprime
+        return xprime, explanations
 
     def find_synthesizeable_paths(self, trees):
         ntrees = len(trees)
         sythesizable_paths = [[[] for _ in range(ntrees)] for _ in range(ntrees)]
         for i in range(ntrees):
             for k in range(ntrees):
-                if (i != k):
+                if i != k:
                     t1_t2_merges = self.get_merges(t1_id=i, t2_id=k)
                     sythesizable_paths[i][k] = t1_t2_merges
 
         self.sythesizable_paths = sythesizable_paths
 
     def get_merges(self, t1_id, t2_id):
-        '''
+        """
         For each path p in t1, identifies all paths in t2 which are mergable with p
 
         Returns
         ----------
         t1_merges: a list of lists which maps path ids from t1 to a list of path ids from t2
                    mergeable_paths[t1pi] = [t2pj, t2pk, t2pl, ...]
-        '''
+        """
         t1_paths = self.all_paths[t1_id]
         t2_paths = self.all_paths[t2_id]
 
@@ -735,7 +894,10 @@ class FACETIndex(Explainer):
         # an entry adjancy[i][j] indicates that those two paths are sythesizeable and should be connected in the graph
         for class_id in range(nclasses):
             adjacencys.append(
-                np.zeros(shape=(self.npaths[class_id], self.npaths[class_id]), dtype=int))
+                np.zeros(
+                    shape=(self.npaths[class_id], self.npaths[class_id]), dtype=int
+                )
+            )
 
         for t1_id in range(ntrees):  # for each tree
             for t2_id in range(ntrees):  # check every other tree pairwise
@@ -743,7 +905,9 @@ class FACETIndex(Explainer):
                 t1_t2_merges = self.sythesizable_paths[t1_id][t2_id]
                 # for each path in t1 with at least one sythesizeable path in t2
                 for p1_id in range(len(t1_t2_merges)):
-                    t1p1_index = self.treepath_to_idx[t1_id][p1_id][1]  # index is classid, pathid
+                    t1p1_index = self.treepath_to_idx[t1_id][p1_id][
+                        1
+                    ]  # index is classid, pathid
                     t1p1_class = int(self.all_paths[t1_id][p1_id][-1, 3])
                     # iterate over each sythesizeable path and connect them
                     for p2_id in t1_t2_merges[p1_id]:
@@ -753,12 +917,12 @@ class FACETIndex(Explainer):
         return adjacencys
 
     def index_paths(self, nclasses):
-        '''
+        """
         Creates a pair of data structures which index the paths of the decision trees. By iterating by tree and then by path each path is assigned an increasing index. Each class is indexed independently
 
         treepath_to_idx: takes [tree_id, path_id] and returns [class_id, index]
         idx_to_treepath: takes [class_id, index] and returns [tree_id, path_id]
-        '''
+        """
 
         ntrees = len(self.all_paths)
 
@@ -792,10 +956,10 @@ class FACETIndex(Explainer):
         self.idx_to_treepath = idx_to_treepath
 
     def is_resolveable(self, p1, p2, feature_i):
-        '''
+        """
         Find the nodes in p1 and p2 which condition feature_i and check that they don't have conflicting conditions
         For two nodes n1 and n2 which condition feature i n1: x[i] <> a, n2: x[i] <> b, assuming a < b. Return false if the unresolveable condition n1: x[i] < a, n2: x[i] > b is found and true otherwise.
-        '''
+        """
         idx1 = (p1[:, 1:2] == feature_i).squeeze()
         idx2 = (p2[:, 1:2] == feature_i).squeeze()
 
@@ -806,7 +970,7 @@ class FACETIndex(Explainer):
                 if thresh1 < thresh2:
                     fails = (cond2 == 1) and (cond1 == 0)
                 elif thresh1 == thresh2:
-                    fails = (cond1 != cond2)
+                    fails = cond1 != cond2
                 elif thresh1 > thresh2:
                     fails = (cond1 == 1) and (cond2 == 0)
 
