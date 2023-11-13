@@ -4,10 +4,10 @@ import './css/App.css'
 
 
 function App() {
-    const [explanation, setExplanation] = useState('');
     const [applications, setApplications] = useState([]);
-    const [selectedApplication, setSelectedApplication] = useState('');
     const [count, setCount] = useState(0);
+    const [selectedApplication, setSelectedApplication] = useState('');
+    const [explanation, setExplanation] = useState('');
 
     useEffect(() => {
         const fetchApplications = async () => {
@@ -22,6 +22,10 @@ function App() {
         fetchApplications();
     }, []);
 
+    useEffect(() => {
+        handleExplanation()
+    }, [selectedApplication]);
+
     const featureDict = {
         "x0": "Applicant Income",
         "x1": "Coapplicant Income",
@@ -29,24 +33,7 @@ function App() {
         "x3": "Loan Amount Term"
     }
 
-    const handlePrevApp = () => {
-        setExplanation('');
-        if (count > 0) {
-            setCount(count - 1);
-            setSelectedApplication(applications[count - 1]);
-        }
-    }
-
-    const handleNextApp = () => {
-        setExplanation('');
-        if (count < applications.length - 1) {
-            setCount(count + 1);
-            setSelectedApplication(applications[count + 1]);
-        }
-    }
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
+    const handleExplanation = async () => {
         try {
             const response = await axios.post(
                 'http://localhost:3001/facet/explanation',
@@ -64,8 +51,24 @@ function App() {
         }
     }
 
+    const handlePrevApp = () => {
+        if (count > 0) {
+            setCount(count - 1);
+            setSelectedApplication(applications[count - 1]);
+        }
+        handleExplanation();
+    }
+
+    const handleNextApp = () => {
+        if (count < applications.length - 1) {
+            setCount(count + 1);
+            setSelectedApplication(applications[count + 1]);
+        }
+        handleExplanation();
+    }
+
     return (
-        <div>
+        <>
             <div>
                 <h2>Application {count}</h2>
                 <button onClick={handlePrevApp}>Previous</button>
@@ -79,19 +82,13 @@ function App() {
 
             <h2>Explanation</h2>
 
-            <form onSubmit={handleSubmit}>
-                <button type="submit">Get explanation</button>
-            </form>
-
-            {explanation && typeof explanation === 'object' && (
-                Object.keys(explanation).map((key, index) => (
-                    <div key={index}>
-                        <h3>{featureDict[key]}</h3>
-                        <p>{explanation[key][0]}, {explanation[key][1]}</p>
-                    </div>
-                ))
-            )}
-        </div>
+            {Object.keys(explanation).map((key, index) => (
+                <div key={index}>
+                    <h3>{featureDict[key]}</h3>
+                    <p>{explanation[key][0]}, {explanation[key][1]}</p>
+                </div>
+            ))}
+        </>
     )
 }
 
