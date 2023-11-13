@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import numpy as np
 import json
 import os
@@ -11,22 +12,28 @@ from main import flask_run
 from dataset import load_data
 
 app = Flask(__name__)
+CORS(app)
 
 manager = None
 min_value, max_value = None, None
 x, y = None, None
 
-@app.before_first_request
-def initialize_app():
-    global manager, min_value, max_value, x, y
 
-    print("\nInitializing app...\n")
+def initialize_app():
+    global manager, min_value, max_value, x, y, initialized
+    print("\nInitializing app...")
+
+    print("\nInitializing manager...")
     manager = flask_run()
     print("\nManager initialized\n")
 
+    # TODO take loaded data from manager instead of reload
     print("Loading data...")
     x, y, min_value, max_value = load_data("loans", preprocessing="Normalize")
-    print("Data loaded\n")
+    print("Loan data loaded\n")
+
+
+initialize_app()
 
 
 @app.route("/")
@@ -51,32 +58,20 @@ def index():
 @app.route("/facet/explanation", methods=["POST"])
 def facet_explanation():
     try:
-        # example instance: 
-        # {
-        #    "ApplicantIncome": 4583,
-        #    "CoapplicantIncome": 1508,
-        #    "LoanAmount": 12800,
-        #    "LoanAmountTerm": 360
-        # }
-        # label: N
         data = request.json
 
         # Extract and transform the input data into a numpy array
-        applicant_income = data.get("ApplicantIncome", 0)
-        coapplicant_income = data.get("CoapplicantIncome", 0)
-        loan_amount = data.get("LoanAmount", 0)
-        loan_amount_term = data.get("LoanAmountTerm", 0)
+        applicant_income = data.get("x0", 0)
+        coapplicant_income = data.get("x1", 0)
+        loan_amount = data.get("x2", 0)
+        loan_amount_term = data.get("x3", 0)
 
         input_data = np.array(
-            [
-                applicant_income,
-                coapplicant_income,
-                loan_amount,
-                loan_amount_term
-            ]
+            [applicant_income, coapplicant_income, loan_amount, loan_amount_term]
         )
 
         # Normalize the input data and reshape to 2d array
+        # denormalize: input_data * (max_value - min_value) + min_value
         input_data = (input_data - min_value) / (max_value - min_value)
         input_data = input_data.reshape(1, -1)
 
@@ -85,10 +80,10 @@ def facet_explanation():
         instance, explanation = manager.explain(input_data, explain_pred)
 
         return jsonify(explanation[0])
-    
+
     except Exception as e:
         return jsonify({"error": str(e)})
-    
+
 
 if __name__ == "__main__":
-    app.run(port=3000, debug=True)
+    app.run(port=3001, debug=True)
