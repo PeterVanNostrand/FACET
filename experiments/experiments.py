@@ -276,7 +276,7 @@ def execute_run(
     return results
 
 
-def flask_setup_manager(
+def flask_setup_server(
     dataset_name,
     explainer,
     params,
@@ -302,6 +302,4 @@ def flask_setup_manager(
     manager.explainer.prepare_dataset(x, y)
     manager.prepare(xtrain=xtrain, ytrain=xtrain)
 
-    test_applicants = [xtest, ytest]
-
-    return manager, test_applicants, x, y, min_value, max_value
+    return manager, xtest, min_value, max_value

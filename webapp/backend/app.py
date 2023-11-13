@@ -15,39 +15,43 @@ app = Flask(__name__)
 CORS(app)
 
 manager = None
-test_applicants = None
+test_applications = None
 min_values, max_values = None, None
-x, y = None, None
-instances = None
 
 
 def init_app():
-    global manager, test_applicants, min_values, max_values, x, y, initialized
-    print("\nInitializing app...")
+    global manager, test_applications, min_values, max_values
 
-    print("\nInitializing manager...")
-    manager, test_applicants, x, y, min_values, max_values = flask_run()
-    print("\nManager initialized\n")
+    print("\nApp initializing...\n")
+
+    manager, test_applications, min_values, max_values = flask_run()
+
+    for test_application in test_applications:
+        for i in range(len(test_application)):
+            min_val = min_values[i]
+            max_val = max_values[i]
+            test_application[i] = min_val + test_application[i] * (max_val - min_val)
+
+    print("\nApp initialized\n")
+
 
 init_app()
 
-@app.route("/")
-def index():
-    x_explain = x[0:10]
 
-    explain_preds = manager.predict(x_explain)
-    instances, explanations = manager.explain(x_explain, explain_preds)
+@app.route("/facet/applications", methods=["GET"])
+def get_test_applications():
+    num_arrays, array_length = test_applications.shape
 
-    explanations_dict = {"explanations": []}
+    json_data = []
 
-    # Populate the dictionary
-    for explanation in explanations:
-        explanations_dict["explanations"].append(explanation)
+    # Iterate over the arrays and build the dictionary
+    for i in range(num_arrays):
+        values = [round(val, 0) for val in test_applications[i, :]]
+        json_data.append(
+            {"x0": values[0], "x1": values[1], "x2": values[2], "x3": values[3]}
+        )
 
-    # Convert the dictionary to JSON
-    json_explanations = json.dumps(explanations_dict, indent=4)
-
-    return json.loads(json_explanations)
+    return jsonify(json_data)
 
 
 @app.route("/facet/explanation", methods=["POST"])
@@ -65,8 +69,9 @@ def facet_explanation():
             [applicant_income, coapplicant_income, loan_amount, loan_amount_term]
         )
 
+        print("input_data", input_data)
+
         # Normalize the input data and reshape to 2d array
-        # denormalize: output_data * (max_value - min_value) + min_value
         input_data = (input_data - min_values) / (max_values - min_values)
         input_data = input_data.reshape(1, -1)
 
@@ -78,7 +83,6 @@ def facet_explanation():
         denormalized_explanation = {}
 
         for i, (feature, values) in enumerate(explanation.items()):
-            print(i)
             min_val = min_values[i]
             max_val = max_values[i]
             low = values[0]
@@ -94,13 +98,12 @@ def facet_explanation():
                 if high == 100000000000000
                 else min_val + high * (max_val - min_val)
             )
-            
+
             # TODO round to 1 decimal place?
             denormalized_explanation["x{:d}".format(i)] = [
                 round(new_low, 1),
                 round(new_high, 1),
             ]
-
 
         return jsonify(denormalized_explanation)
 

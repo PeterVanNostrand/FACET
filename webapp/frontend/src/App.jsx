@@ -1,16 +1,26 @@
 import axios from 'axios';
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './css/App.css'
+
 
 function App() {
     const [explanation, setExplanation] = useState('');
+    const [applications, setApplications] = useState([]);
+    const [selectedApplication, setSelectedApplication] = useState('');
+    const [count, setCount] = useState(0);
 
-    const instance = {
-        "ApplicantIncome": 4583,
-        "CoapplicantIncome": 1508,
-        "LoanAmount": 12800,
-        "LoanAmountTerm": 360
-    }
+    useEffect(() => {
+        const fetchApplications = async () => {
+            try {
+                const response = await axios.get('http://localhost:3001/facet/applications');
+                setApplications(response.data);
+                setSelectedApplication(response.data[0]);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchApplications();
+    }, []);
 
     const featureDict = {
         "x0": "Applicant Income",
@@ -19,12 +29,31 @@ function App() {
         "x3": "Loan Amount Term"
     }
 
+    const handlePrevApp = () => {
+        if (count > 0) {
+            setCount(count - 1);
+            setSelectedApplication(applications[count - 1]);
+        }
+    }
+
+    const handleNextApp = () => {
+        if (count < applications.length - 1) {
+            setCount(count + 1);
+            setSelectedApplication(applications[count + 1]);
+        }
+    }
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
             const response = await axios.post(
                 'http://localhost:3001/facet/explanation',
-                instance,
+                {
+                    "x0": selectedApplication.x0,
+                    "x1": selectedApplication.x1,
+                    "x2": selectedApplication.x2,
+                    "x3": selectedApplication.x3
+                },
             );
 
             setExplanation(response.data);
@@ -36,19 +65,22 @@ function App() {
     return (
         <div>
             <div>
-                <h2>Instance</h2>
-                <p>Applicant Income: {instance.ApplicantIncome}</p>
-                <p>Coapplicant Income: {instance.CoapplicantIncome}</p>
-                <p>Loan Amount: {instance.LoanAmount}</p>
-                <p>Loan Amount Term: {instance.LoanAmountTerm}</p>
+                <h2>Application {count}</h2>
+                <button onClick={handlePrevApp}>Previous</button>
+                <button onClick={handleNextApp}>Next</button>
+
+                <p>Applicant Income: {selectedApplication.x0}</p>
+                <p>Coapplicant Income: {selectedApplication.x1}</p>
+                <p>Loan Amount: {selectedApplication.x2}</p>
+                <p>Loan Amount Term: {selectedApplication.x3}</p>
             </div>
 
             <h2>Explanation</h2>
-            
+
             <form onSubmit={handleSubmit}>
                 <button type="submit">Get explanation</button>
             </form>
-            
+
             {explanation && typeof explanation === 'object' && (
                 Object.keys(explanation).map((key, index) => (
                     <div key={index}>

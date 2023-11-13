@@ -9,7 +9,7 @@ from experiments.experiments import (
     FACET_TUNED_M,
     TUNED_FACET_SD,
     execute_run,
-    flask_setup_manager,
+    flask_setup_server,
 )
 from experiments.vary_enum import vary_enum
 from experiments.vary_eps import vary_eps
@@ -110,14 +110,14 @@ def flask_run(
 
     print("dataset: " + ds_name)
 
-    manager, test_applicants, x, y, min_values, max_values = flask_setup_manager(
+    manager, test_applicants, min_values, max_values = flask_setup_server(
         dataset_name=ds_name,
         explainer=explainer,
         params=params,
         random_state=random_state,
     )
 
-    return manager, test_applicants, x, y, min_values, max_values
+    return manager, test_applicants, min_values, max_values
 
 
 if __name__ == "__main__":
