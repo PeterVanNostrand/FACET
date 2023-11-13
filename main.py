@@ -101,8 +101,6 @@ def flask_run(
     ntrees=10,
     max_depth=5,
 ):
-    run_id, run_path = check_create_directory("./results/flask-run/")
-
     params = DEFAULT_PARAMS
     params["RandomForest"]["rf_ntrees"] = ntrees
     params["RandomForest"]["rf_maxdepth"] = max_depth
@@ -112,15 +110,12 @@ def flask_run(
 
     preprocessing = "Normalize"
 
-    print("Run ID: {}".format(run_id))
-    print("explainer: " + explainer)
     print("dataset: " + ds_name)
 
     manager = flask_setup_manager(
         dataset_name=ds_name,
         explainer=explainer,
         params=params,
-        output_path=run_path,
         iteration=random_state,
         random_state=random_state,
         preprocessing=preprocessing,

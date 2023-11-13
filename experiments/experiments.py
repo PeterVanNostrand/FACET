@@ -280,38 +280,12 @@ def flask_setup_manager(
     dataset_name,
     explainer,
     params,
-    output_path,
     iteration,
     random_state=None,
     preprocessing="Normalize",
-    run_ext="",
 ):
     random.seed(random_state)
     np.random.seed(random_state)
-
-    # Create the output directory
-    if not os.path.isdir(output_path):
-        os.makedirs(output_path)
-
-    # Store this run's configuration
-    config = {}
-    config["explainer"] = explainer
-    config["iteration"] = iteration
-    config["dataset_name"] = dataset_name
-    config["preprocessing"] = preprocessing
-    config["output_path"] = output_path
-    config["random_state"] = random_state
-    config["params"] = params
-
-    with open(
-        output_path
-        + "{}_{}_{}{:03d}_config.json".format(
-            dataset_name, explainer.lower(), run_ext, iteration
-        ),
-        "w",
-    ) as f:
-        json_text = json.dumps(config, indent=4)
-        f.write(json_text)
 
     # Load and split the dataset using random state for repeatability. Select samples to explain
     x, y, min_value, max_value = load_data(dataset_name, preprocessing=preprocessing)

@@ -802,8 +802,6 @@ class FACETIndex(Explainer):
                 progress.update()
             progress.close()
 
-        if DO_VIZUALIZATION:
-            save_JSON_paths(VIZ_DATA_PATH + "explanation_paths.json")
 
         # swap np.inf (no explanatio found) for zeros to allow for prediction on xprime
         xprime = np.array(xprime)
