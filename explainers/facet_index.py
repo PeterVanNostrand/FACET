@@ -782,21 +782,17 @@ class FACETIndex(Explainer):
                         explanation = self.fit_to_rectangle(x[i], nearest_rect)
                 else:
                     explanation = [np.inf for _ in range(x.shape[1])]
-
-                save_instance_region_JSON(
-                    x[i],
-                    nearest_rect,
-                    path=VIZ_DATA_PATH
-                    + "explanations/explanation_{:03d}.json".format(i),
-                )
+                
+                # convert inf to large numbers for JSON
+                nearest_rect[nearest_rect == -np.inf] = -100000000000000
+                nearest_rect[nearest_rect == np.inf] = 100000000000000
 
                 # Generate a JSON explanation as a dictionary and add it to the explanations list
-                explanation_dict = {"instance": {}, "region": {}}
+                explanation_dict = {}
 
                 curr_instance = x[i]
                 for j in range(curr_instance.shape[0]):
-                    explanation_dict["instance"]["x{:d}".format(j)] = curr_instance[j]
-                    explanation_dict["region"]["x{:d}".format(j)] = [
+                    explanation_dict["x{:d}".format(j)] = [
                         nearest_rect[j, 0],
                         nearest_rect[j, 1],
                     ]
