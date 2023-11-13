@@ -30,6 +30,7 @@ function App() {
     }
 
     const handlePrevApp = () => {
+        setExplanation('');
         if (count > 0) {
             setCount(count - 1);
             setSelectedApplication(applications[count - 1]);
@@ -37,6 +38,7 @@ function App() {
     }
 
     const handleNextApp = () => {
+        setExplanation('');
         if (count < applications.length - 1) {
             setCount(count + 1);
             setSelectedApplication(applications[count + 1]);
