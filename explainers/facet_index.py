@@ -803,7 +803,7 @@ class FACETIndex(Explainer):
             progress.close()
 
 
-        # swap np.inf (no explanatio found) for zeros to allow for prediction on xprime
+        # swap np.inf (no explanation found) for zeros to allow for prediction on xprime
         xprime = np.array(xprime)
         idx_inf = (xprime == np.inf).any(axis=1)
         xprime[idx_inf] = np.tile(0, x.shape[1])

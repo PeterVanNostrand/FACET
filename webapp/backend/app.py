@@ -15,12 +15,12 @@ app = Flask(__name__)
 CORS(app)
 
 manager = None
-min_value, max_value = None, None
+min_values, max_values = None, None
 x, y = None, None
 
 
 def initialize_app():
-    global manager, min_value, max_value, x, y, initialized
+    global manager, min_values, max_values, x, y, initialized
     print("\nInitializing app...")
 
     print("\nInitializing manager...")
@@ -29,7 +29,7 @@ def initialize_app():
 
     # TODO take loaded data from manager instead of reload
     print("Loading data...")
-    x, y, min_value, max_value = load_data("loans", preprocessing="Normalize")
+    x, y, min_values, max_values = load_data("loans", preprocessing="Normalize")
     print("Loan data loaded\n")
 
 
@@ -71,15 +71,43 @@ def facet_explanation():
         )
 
         # Normalize the input data and reshape to 2d array
-        # denormalize: input_data * (max_value - min_value) + min_value
-        input_data = (input_data - min_value) / (max_value - min_value)
+        # denormalize: output_data * (max_value - min_value) + min_value
+        input_data = (input_data - min_values) / (max_values - min_values)
         input_data = input_data.reshape(1, -1)
 
         # Perform explanations using manager.explain
         explain_pred = manager.predict(input_data)
-        instance, explanation = manager.explain(input_data, explain_pred)
+        instance, explanations = manager.explain(input_data, explain_pred)
 
-        return jsonify(explanation[0])
+        explanation = explanations[0]
+        denormalized_explanation = {}
+
+        for i, (feature, values) in enumerate(explanation.items()):
+            print(i)
+            min_val = min_values[i]
+            max_val = max_values[i]
+            low = values[0]
+            high = values[1]
+
+            new_low = (
+                min_val
+                if low == -100000000000000
+                else min_val + low * (max_val - min_val)
+            )
+            new_high = (
+                max_val
+                if high == 100000000000000
+                else min_val + high * (max_val - min_val)
+            )
+            
+            # TODO round to 1 decimal place?!
+            denormalized_explanation["x{:d}".format(i)] = [
+                round(new_low, 1),
+                round(new_high, 1),
+            ]
+
+
+        return jsonify(denormalized_explanation)
 
     except Exception as e:
         return jsonify({"error": str(e)})
