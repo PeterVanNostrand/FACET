@@ -15,26 +15,21 @@ app = Flask(__name__)
 CORS(app)
 
 manager = None
+test_applicants = None
 min_values, max_values = None, None
 x, y = None, None
+instances = None
 
 
-def initialize_app():
-    global manager, min_values, max_values, x, y, initialized
+def init_app():
+    global manager, test_applicants, min_values, max_values, x, y, initialized
     print("\nInitializing app...")
 
     print("\nInitializing manager...")
-    manager = flask_run()
+    manager, test_applicants, x, y, min_values, max_values = flask_run()
     print("\nManager initialized\n")
 
-    # TODO take loaded data from manager instead of reload
-    print("Loading data...")
-    x, y, min_values, max_values = load_data("loans", preprocessing="Normalize")
-    print("Loan data loaded\n")
-
-
-initialize_app()
-
+init_app()
 
 @app.route("/")
 def index():
@@ -100,7 +95,7 @@ def facet_explanation():
                 else min_val + high * (max_val - min_val)
             )
             
-            # TODO round to 1 decimal place?!
+            # TODO round to 1 decimal place?
             denormalized_explanation["x{:d}".format(i)] = [
                 round(new_low, 1),
                 round(new_high, 1),

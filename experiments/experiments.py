@@ -280,23 +280,28 @@ def flask_setup_manager(
     dataset_name,
     explainer,
     params,
-    iteration,
     random_state=None,
     preprocessing="Normalize",
 ):
     random.seed(random_state)
     np.random.seed(random_state)
 
-    # Load and split the dataset using random state for repeatability. Select samples to explain
+    # Load and split the dataset into train/explain
     x, y, min_value, max_value = load_data(dataset_name, preprocessing=preprocessing)
+
+    indices = np.arange(start=0, stop=x.shape[0])
+    xtrain, xtest, ytrain, ytest, idx_train, idx_test = train_test_split(
+        x, y, indices, test_size=0.1, shuffle=True, random_state=random_state
+    )
 
     # Create the manager which handles creating the RF model and explainer
     manager = MethodManager(
         explainer=explainer, hyperparameters=params, random_state=random_state
     )
-
-    manager.train(x, y)
+    manager.train(xtrain, ytrain)
     manager.explainer.prepare_dataset(x, y)
-    manager.prepare(xtrain=x, ytrain=x)
+    manager.prepare(xtrain=xtrain, ytrain=xtrain)
 
-    return manager
+    test_applicants = [xtest, ytest]
+
+    return manager, test_applicants, x, y, min_value, max_value

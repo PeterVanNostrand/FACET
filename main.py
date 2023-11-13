@@ -9,7 +9,7 @@ from experiments.experiments import (
     FACET_TUNED_M,
     TUNED_FACET_SD,
     execute_run,
-    flask_setup_manager
+    flask_setup_manager,
 )
 from experiments.vary_enum import vary_enum
 from experiments.vary_eps import vary_eps
@@ -108,20 +108,16 @@ def flask_run(
     params["FACETIndex"]["facet_sd"] = TUNED_FACET_SD[ds_name]
     params["FACETIndex"]["rbv_num_interval"] = FACET_TUNED_M[ds_name]
 
-    preprocessing = "Normalize"
-
     print("dataset: " + ds_name)
 
-    manager = flask_setup_manager(
+    manager, test_applicants, x, y, min_values, max_values = flask_setup_manager(
         dataset_name=ds_name,
         explainer=explainer,
         params=params,
-        iteration=random_state,
         random_state=random_state,
-        preprocessing=preprocessing,
     )
 
-    return manager
+    return manager, test_applicants, x, y, min_values, max_values
 
 
 if __name__ == "__main__":
