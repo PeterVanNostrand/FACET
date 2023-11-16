@@ -700,7 +700,7 @@ class FACETIndex(Explainer):
         `x`               : an array of samples each of dimensions (nsamples, nfeatures)
         `y`               : an array of predicted labels which correspond to the labels, (nsamples,)
         `k`               : the number of explanations requested
-        `contraints`      : an array of shape (nfeatures, 2) where constraints[i][0/1] represents the
+        `constraints`     : an array of shape (nfeatures, 2) where constraints[i][0/1] represents the
                             smallest/largest allowed value for feature i
         `weights`         : an array of shape (nfeatures,) corresonding to the ease of changing a feature
                             weights[i]=1 indicates normal cost and weights[i]>1 an easier cost
@@ -714,7 +714,7 @@ class FACETIndex(Explainer):
         `explanations` : a list of JSON explanations for each instance
         """
         xprime = []
-        explanations = []
+        regions = []
 
         # assumimg binary classification [0, 1] set counterfactual class
         counterfactual_classes = (y - 1) * -1
@@ -797,7 +797,7 @@ class FACETIndex(Explainer):
                         nearest_rect[j, 1],
                     ]
 
-                explanations.append(explanation_dict)
+                regions.append(explanation_dict)
                 xprime.append(explanation)
                 progress.update()
             progress.close()
@@ -817,7 +817,7 @@ class FACETIndex(Explainer):
         if self.verbose:
             print("failed x':", failed_explanation.sum())
 
-        return xprime, explanations
+        return xprime, regions
 
     def find_synthesizeable_paths(self, trees):
         ntrees = len(trees)
