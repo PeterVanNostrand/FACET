@@ -120,10 +120,6 @@ button:focus-visible {
     color: #888;
 }
 
-.features-container {
-    display: inline-block;
-}
-
 .feature {
     margin-right: 10px; /* Adjust the margin as needed */
 }
