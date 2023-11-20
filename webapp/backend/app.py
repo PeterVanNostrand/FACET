@@ -48,7 +48,12 @@ def get_test_applications():
     for i in range(num_arrays):
         values = [round(val, 0) for val in test_applications[i, :]]
         json_data.append(
-            {"x0": values[0], "x1": values[1], "x2": values[2], "x3": values[3]}
+            {
+                "x0": values[0],
+                "x1": values[1],
+                "x2": values[2],
+                "x3": values[3],
+            }
         )
 
     return jsonify(json_data)
@@ -105,7 +110,7 @@ def facet_explanation():
                 round(new_high, 1),
             ]
 
-        return jsonify(denormalized_explanation)
+        return jsonify(explanation)
 
     except Exception as e:
         return jsonify({"error": str(e)})
