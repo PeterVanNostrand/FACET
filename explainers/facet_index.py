@@ -700,7 +700,7 @@ class FACETIndex(Explainer):
         `x`               : an array of samples each of dimensions (nsamples, nfeatures)
         `y`               : an array of predicted labels which correspond to the labels, (nsamples,)
         `k`               : the number of explanations requested
-        `contraints`      : an array of shape (nfeatures, 2) where constraints[i][0/1] represents the
+        `constraints`     : an array of shape (nfeatures, 2) where constraints[i][0/1] represents the
                             smallest/largest allowed value for feature i
         `weights`         : an array of shape (nfeatures,) corresonding to the ease of changing a feature
                             weights[i]=1 indicates normal cost and weights[i]>1 an easier cost
@@ -714,7 +714,7 @@ class FACETIndex(Explainer):
         `explanations` : a list of JSON explanations for each instance
         """
         xprime = []
-        explanations = []
+        regions = []
 
         # assumimg binary classification [0, 1] set counterfactual class
         counterfactual_classes = (y - 1) * -1
@@ -782,34 +782,28 @@ class FACETIndex(Explainer):
                         explanation = self.fit_to_rectangle(x[i], nearest_rect)
                 else:
                     explanation = [np.inf for _ in range(x.shape[1])]
-
-                save_instance_region_JSON(
-                    x[i],
-                    nearest_rect,
-                    path=VIZ_DATA_PATH
-                    + "explanations/explanation_{:03d}.json".format(i),
-                )
+                
+                # convert inf to large numbers for JSON
+                nearest_rect[nearest_rect == -np.inf] = -100000000000000
+                nearest_rect[nearest_rect == np.inf] = 100000000000000
 
                 # Generate a JSON explanation as a dictionary and add it to the explanations list
-                explanation_dict = {"instance": {}, "region": {}}
+                explanation_dict = {}
 
                 curr_instance = x[i]
                 for j in range(curr_instance.shape[0]):
-                    explanation_dict["instance"]["x{:d}".format(j)] = curr_instance[j]
-                    explanation_dict["region"]["x{:d}".format(j)] = [
+                    explanation_dict["x{:d}".format(j)] = [
                         nearest_rect[j, 0],
                         nearest_rect[j, 1],
                     ]
 
-                explanations.append(explanation_dict)
+                regions.append(explanation_dict)
                 xprime.append(explanation)
                 progress.update()
             progress.close()
 
-        if DO_VIZUALIZATION:
-            save_JSON_paths(VIZ_DATA_PATH + "explanation_paths.json")
 
-        # swap np.inf (no explanatio found) for zeros to allow for prediction on xprime
+        # swap np.inf (no explanation found) for zeros to allow for prediction on xprime
         xprime = np.array(xprime)
         idx_inf = (xprime == np.inf).any(axis=1)
         xprime[idx_inf] = np.tile(0, x.shape[1])
@@ -823,7 +817,7 @@ class FACETIndex(Explainer):
         if self.verbose:
             print("failed x':", failed_explanation.sum())
 
-        return xprime, explanations
+        return xprime, regions
 
     def find_synthesizeable_paths(self, trees):
         ntrees = len(trees)

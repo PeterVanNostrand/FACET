@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import numpy as np
 import json
 import os
@@ -11,84 +12,109 @@ from main import flask_run
 from dataset import load_data
 
 app = Flask(__name__)
+CORS(app)
 
 manager = None
-min_value, max_value = None, None
-x, y = None, None
-
-@app.before_first_request
-def initialize_app():
-    global manager, min_value, max_value, x, y
-
-    print("\nInitializing app...\n")
-    manager = flask_run()
-    print("\nManager initialized\n")
-
-    print("Loading data...")
-    x, y, min_value, max_value = load_data("loans", preprocessing="Normalize")
-    print("Data loaded\n")
+test_applications = None
+min_values, max_values = None, None
 
 
-@app.route("/")
-def index():
-    x_explain = x[0:10]
+def init_app():
+    global manager, test_applications, min_values, max_values
 
-    explain_preds = manager.predict(x_explain)
-    instances, explanations = manager.explain(x_explain, explain_preds)
+    print("\nApp initializing...\n")
 
-    explanations_dict = {"explanations": []}
+    manager, test_applications, min_values, max_values = flask_run()
 
-    # Populate the dictionary
-    for explanation in explanations:
-        explanations_dict["explanations"].append(explanation)
+    for test_application in test_applications:
+        for i in range(len(test_application)):
+            min_val = min_values[i]
+            max_val = max_values[i]
+            test_application[i] = min_val + test_application[i] * (max_val - min_val)
 
-    # Convert the dictionary to JSON
-    json_explanations = json.dumps(explanations_dict, indent=4)
+    print("\nApp initialized\n")
 
-    return json.loads(json_explanations)
+
+init_app()
+
+
+@app.route("/facet/applications", methods=["GET"])
+def get_test_applications():
+    num_arrays, array_length = test_applications.shape
+
+    json_data = []
+
+    # Iterate over the arrays and build the dictionary
+    for i in range(num_arrays):
+        values = [round(val, 0) for val in test_applications[i, :]]
+        json_data.append(
+            {
+                "x0": values[0],
+                "x1": values[1],
+                "x2": values[2],
+                "x3": values[3],
+            }
+        )
+
+    return jsonify(json_data)
 
 
 @app.route("/facet/explanation", methods=["POST"])
 def facet_explanation():
     try:
-        # example instance: 
-        # {
-        #    "ApplicantIncome": 4583,
-        #    "CoapplicantIncome": 1508,
-        #    "LoanAmount": 12800,
-        #    "LoanAmountTerm": 360
-        # }
-        # label: N
         data = request.json
 
         # Extract and transform the input data into a numpy array
-        applicant_income = data.get("ApplicantIncome", 0)
-        coapplicant_income = data.get("CoapplicantIncome", 0)
-        loan_amount = data.get("LoanAmount", 0)
-        loan_amount_term = data.get("LoanAmountTerm", 0)
+        applicant_income = data.get("x0", 0)
+        coapplicant_income = data.get("x1", 0)
+        loan_amount = data.get("x2", 0)
+        loan_amount_term = data.get("x3", 0)
 
         input_data = np.array(
-            [
-                applicant_income,
-                coapplicant_income,
-                loan_amount,
-                loan_amount_term
-            ]
+            [applicant_income, coapplicant_income, loan_amount, loan_amount_term]
         )
 
+        print("input_data", input_data)
+
         # Normalize the input data and reshape to 2d array
-        input_data = (input_data - min_value) / (max_value - min_value)
+        input_data = (input_data - min_values) / (max_values - min_values)
         input_data = input_data.reshape(1, -1)
 
         # Perform explanations using manager.explain
         explain_pred = manager.predict(input_data)
-        instance, explanation = manager.explain(input_data, explain_pred)
+        instance, explanations = manager.explain(input_data, explain_pred)
 
-        return jsonify(explanation[0])
-    
+        explanation = explanations[0]
+        denormalized_explanation = {}
+
+        for i, (feature, values) in enumerate(explanation.items()):
+            min_val = min_values[i]
+            max_val = max_values[i]
+            low = values[0]
+            high = values[1]
+
+            new_low = (
+                min_val
+                if low == -100000000000000
+                else min_val + low * (max_val - min_val)
+            )
+            new_high = (
+                max_val
+                if high == 100000000000000
+                else min_val + high * (max_val - min_val)
+            )
+
+            # TODO round to 1 decimal place?
+            denormalized_explanation["x{:d}".format(i)] = [
+                round(new_low, 1),
+                round(new_high, 1),
+            ]
+
+        return jsonify(explanation)
+
     except Exception as e:
         return jsonify({"error": str(e)})
-    
+
 
 if __name__ == "__main__":
-    app.run(port=3000, debug=True)
+    app.run(port=3001, debug=True)

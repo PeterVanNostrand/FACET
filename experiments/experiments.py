@@ -276,53 +276,30 @@ def execute_run(
     return results
 
 
-def flask_setup_manager(
+def flask_setup_server(
     dataset_name,
     explainer,
     params,
-    output_path,
-    iteration,
     random_state=None,
     preprocessing="Normalize",
-    run_ext="",
 ):
     random.seed(random_state)
     np.random.seed(random_state)
 
-    # Create the output directory
-    if not os.path.isdir(output_path):
-        os.makedirs(output_path)
-
-    # Store this run's configuration
-    config = {}
-    config["explainer"] = explainer
-    config["iteration"] = iteration
-    config["dataset_name"] = dataset_name
-    config["preprocessing"] = preprocessing
-    config["output_path"] = output_path
-    config["random_state"] = random_state
-    config["params"] = params
-
-    with open(
-        output_path
-        + "{}_{}_{}{:03d}_config.json".format(
-            dataset_name, explainer.lower(), run_ext, iteration
-        ),
-        "w",
-    ) as f:
-        json_text = json.dumps(config, indent=4)
-        f.write(json_text)
-
-    # Load and split the dataset using random state for repeatability. Select samples to explain
+    # Load and split the dataset into train/explain
     x, y, min_value, max_value = load_data(dataset_name, preprocessing=preprocessing)
+
+    indices = np.arange(start=0, stop=x.shape[0])
+    xtrain, xtest, ytrain, ytest, idx_train, idx_test = train_test_split(
+        x, y, indices, test_size=0.1, shuffle=True, random_state=random_state
+    )
 
     # Create the manager which handles creating the RF model and explainer
     manager = MethodManager(
         explainer=explainer, hyperparameters=params, random_state=random_state
     )
-
-    manager.train(x, y)
+    manager.train(xtrain, ytrain)
     manager.explainer.prepare_dataset(x, y)
-    manager.prepare(xtrain=x, ytrain=x)
+    manager.prepare(xtrain=xtrain, ytrain=xtrain)
 
-    return manager
+    return manager, xtest, min_value, max_value
