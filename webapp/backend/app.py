@@ -18,9 +18,12 @@ manager = None
 test_applications = None
 min_values, max_values = None, None
 
+#Master json file
+master_json = None
+
 
 def init_app():
-    global manager, test_applications, min_values, max_values
+    global manager, test_applications, min_values, max_values, master_json
 
     print("\nApp initializing...\n")
 
@@ -31,6 +34,15 @@ def init_app():
             min_val = min_values[i]
             max_val = max_values[i]
             test_application[i] = min_val + test_application[i] * (max_val - min_val)
+    
+    print("\nExtracting master json file details...\n")
+    try:
+        with open("visualization\data\dataset_details.json") as master:
+            master_json = json.load(master)
+            print("master_json file loaded")
+    except Exception as e:
+        print(f"ERROR: Unable to load master json file. Details:\n{e}")
+        exit(1)
 
     print("\nApp initialized\n")
 
@@ -47,14 +59,11 @@ def get_test_applications():
     # Iterate over the arrays and build the dictionary
     for i in range(num_arrays):
         values = [round(val, 0) for val in test_applications[i, :]]
-        json_data.append(
-            {
-                "x0": values[0],
-                "x1": values[1],
-                "x2": values[2],
-                "x3": values[3],
-            }
-        )
+        val_dict = {} #dictionary that holds x0 - xn values
+        for entry in range(array_length):
+            val_dict[f"x{entry}"] = values[entry]
+        
+        json_data.append(val_dict)
 
     return jsonify(json_data)
 
@@ -65,16 +74,12 @@ def facet_explanation():
         data = request.json
 
         # Extract and transform the input data into a numpy array
-        applicant_income = data.get("x0", 0)
-        coapplicant_income = data.get("x1", 0)
-        loan_amount = data.get("x2", 0)
-        loan_amount_term = data.get("x3", 0)
+        input_data = []
+        for feature in master_json["feature_names"]:
+            input_data.append(data.get(feature, 0))
+        input_data = np.array(input_data)
 
-        input_data = np.array(
-            [applicant_income, coapplicant_income, loan_amount, loan_amount_term]
-        )
-
-        print("input_data", input_data)
+        print("input_data", input_data) #debug
 
         # Normalize the input data and reshape to 2d array
         input_data = (input_data - min_values) / (max_values - min_values)
