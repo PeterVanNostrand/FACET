@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react'
 import './css/App.css'
+import masterJson from '../../backend/visualization/data/dataset_details.json'
 
 function App() {
     const [applications, setApplications] = useState([]);
@@ -28,24 +29,18 @@ function App() {
         handleExplanation();
     }, [selectedApplication]);
 
-    const featureDict = {
-        "x0": "Applicant Income",
-        "x1": "Coapplicant Income",
-        "x2": "Loan Amount",
-        "x3": "Loan Amount Term"
-    }
+    const featureDict = masterJson.feature_names; //fetches all the feature names and their xn label
 
     // Function to fetch explanation data from the server
     const handleExplanation = async () => {
         try {
+            let featureResponses = {};
+            for(let f in featureDict){
+                featureResponses[f] = selectedApplication[f];
+            }
             const response = await axios.post(
                 'http://localhost:3001/facet/explanation',
-                {
-                    "x0": selectedApplication.x0,
-                    "x1": selectedApplication.x1,
-                    "x2": selectedApplication.x2,
-                    "x3": selectedApplication.x3
-                },
+                featureResponses,
             );
             setExplanation(response.data);
         } catch (error) {
@@ -78,10 +73,13 @@ function App() {
                 <button onClick={handlePrevApp}>Previous</button>
                 <button onClick={handleNextApp}>Next</button>
 
-                <Feature name="Applicant Income" value={selectedApplication.x0} />
-                <Feature name="Coapplicant Income" value={selectedApplication.x1} />
-                <Feature name="Loan Amount" value={selectedApplication.x2} />
-                <Feature name="Loan Amount Term" value={selectedApplication.x3} />
+                {Object.keys(featureDict).map((key, index) =>(
+                    <div key={index}>
+                        <Feature name={featureDict[key]} value={selectedApplication[key]} />
+                    </div>
+                ))}
+ 
+
 
             </div>
 
@@ -110,5 +108,6 @@ function Feature({ name, value }) {
         </div>
     )
 }
+
 
 export default App;
