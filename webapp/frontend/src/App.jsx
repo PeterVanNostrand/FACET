@@ -16,6 +16,7 @@ const featureDict = {
     "x3": "Loan Amount Term"
 }
 
+import masterJson from '../../backend/visualization/data/dataset_details.json'
 
 function App() {
     const [applications, setApplications] = useState([]);
