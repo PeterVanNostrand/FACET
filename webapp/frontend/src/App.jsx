@@ -66,6 +66,14 @@ function App() {
         handleExplanation();
     }
 
+    //function to help format the feature strings to be more readable
+    const format = (value) =>{
+        const regex = /[A-Z][a-z]*/g;
+        const matchArray = [...value.matchAll(regex)];
+        console.log(matchArray.join(' '));
+        return(matchArray.join(' '));
+    }
+
     return (
         <>
             <div>
@@ -75,7 +83,7 @@ function App() {
 
                 {Object.keys(featureDict).map((key, index) =>(
                     <div key={index}>
-                        <Feature name={featureDict[key]} value={selectedApplication[key]} />
+                        <Feature name={format(featureDict[key])} value={selectedApplication[key]} />
                     </div>
                 ))}
  
