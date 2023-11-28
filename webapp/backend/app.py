@@ -17,6 +17,7 @@ CORS(app)
 manager = None
 test_applications = None
 min_values, max_values = None, None
+infinity = 100000000000000
 
 #Master json file
 master_json = None
@@ -100,12 +101,12 @@ def facet_explanation():
 
             new_low = (
                 min_val
-                if low == -100000000000000
+                if low == -1 * infinity
                 else min_val + low * (max_val - min_val)
             )
             new_high = (
                 max_val
-                if high == 100000000000000
+                if high == infinity
                 else min_val + high * (max_val - min_val)
             )
 
