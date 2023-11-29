@@ -1,5 +1,4 @@
 // utilities.js
-
 // Frontend Utility Functions
 
 /**
@@ -31,16 +30,7 @@ export function formatNumerical(featureValue, featureName, readable) {
     }
     return valueText
 }
-  // Backend Utility Functions
-  
-  /**
-   * Function to perform a task on the backend.
-   * @param {any} data - Input data for the task.
-   * @returns {any} - Result of the task.
-   */
-  
   // Export the functions if using in a Node.js environment
-  // You can also use a module system if applicable (e.g., CommonJS, ES modules)
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
         formatString,

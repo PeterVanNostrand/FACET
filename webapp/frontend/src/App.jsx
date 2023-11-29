@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useState, useEffect } from 'react'
 import './css/App.css'
 import masterJson from '../../../data/loans/dataset_details.json'
-import {formatString} from '../../utilities'
+import {formatString} from '../utilities'
 
 function App() {
     const [applications, setApplications] = useState([]);

@@ -11,6 +11,7 @@ sys.path.append(facet_dir)
 from main import flask_run
 from dataset import load_data
 from config import VIZ_DATA_PATH
+from backend.utilities import normalize
 app = Flask(__name__)
 CORS(app)
 
@@ -29,14 +30,17 @@ def init_app():
     global manager, test_applications, min_values, max_values, master_json
 
     print("\nApp initializing...\n")
+    try:
+        manager, test_applications, min_values, max_values = flask_run()
 
-    manager, test_applications, min_values, max_values = flask_run()
-
-    for test_application in test_applications:
-        for i in range(len(test_application)):
-            min_val = min_values[i]
-            max_val = max_values[i]
-            test_application[i] = min_val + test_application[i] * (max_val - min_val)
+        for test_application in test_applications:
+            for i in range(len(test_application)):
+                min_val = min_values[i]
+                max_val = max_values[i]
+                test_application[i] = min_val + test_application[i] * (max_val - min_val)
+    except Exception as e:
+        print(f"ERROR: Failed to run FACET. Details:\n{e}")
+        exit(1)
     
     print("\nExtracting master json file details...\n")
     try:
@@ -84,8 +88,11 @@ def facet_explanation():
 
         print("input_data", input_data) #debug
 
-        # Normalize the input data and reshape to 2d array
-        input_data = (input_data - min_values) / (max_values - min_values)
+        if(master_json["normalized"]):
+            # Normalize the input data
+            input_data = normalize(input_data, min_values, max_values)
+
+        #reshape to 2D array
         input_data = input_data.reshape(1, -1)
 
         # Perform explanations using manager.explain
