@@ -10,7 +10,7 @@ facet_dir = os.path.dirname(os.path.dirname(current_dir))
 sys.path.append(facet_dir)
 from main import flask_run
 from dataset import load_data
-
+from config import VIZ_DATA_PATH
 app = Flask(__name__)
 CORS(app)
 
@@ -20,7 +20,7 @@ min_values, max_values = None, None
 infinity = 100000000000000
 
 #Master json file
-json_path = "visualization\data\dataset_details.json"
+json_path = f"{VIZ_DATA_PATH}\\dataset_details.json"
 master_json = None
 
 
