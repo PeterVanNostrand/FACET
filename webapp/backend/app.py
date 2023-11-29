@@ -20,6 +20,7 @@ min_values, max_values = None, None
 infinity = 100000000000000
 
 #Master json file
+json_path = "visualization\data\dataset_details.json"
 master_json = None
 
 
@@ -38,7 +39,7 @@ def init_app():
     
     print("\nExtracting master json file details...\n")
     try:
-        with open("visualization\data\dataset_details.json") as master:
+        with open(json_path) as master:
             master_json = json.load(master)
             print("master_json file loaded")
     except Exception as e:

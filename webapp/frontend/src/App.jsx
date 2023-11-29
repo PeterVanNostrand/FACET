@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useState, useEffect } from 'react'
 import './css/App.css'
 import masterJson from '../../backend/visualization/data/dataset_details.json'
+import {formatString,formatNumerical} from '../../utilities'
 
 function App() {
     const [applications, setApplications] = useState([]);
@@ -66,14 +67,6 @@ function App() {
         handleExplanation();
     }
 
-    //function to help format the feature strings to be more readable
-    const format = (value) =>{
-        const regex = /[A-Z][a-z]*/g;
-        const matchArray = [...value.matchAll(regex)];
-        console.log(matchArray.join(' '));
-        return(matchArray.join(' '));
-    }
-
     return (
         <>
             <div>
@@ -83,12 +76,9 @@ function App() {
 
                 {Object.keys(featureDict).map((key, index) =>(
                     <div key={index}>
-                        <Feature name={format(featureDict[key])} value={selectedApplication[key]} />
+                        <Feature name={formatString(featureDict[key])} value={selectedApplication[key]} />
                     </div>
                 ))}
- 
-
-
             </div>
 
             <h2>Explanation</h2>
