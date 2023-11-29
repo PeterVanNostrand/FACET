@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react'
 import './css/App.css'
-import masterJson from '../../backend/visualization/data/dataset_details.json'
-import {formatString,formatNumerical} from '../../utilities'
+import masterJson from '../../../data/loans/dataset_details.json'
+import {formatString} from '../../utilities'
 
 function App() {
     const [applications, setApplications] = useState([]);
@@ -17,6 +17,7 @@ function App() {
                 const response = await axios.get('http://localhost:3001/facet/applications');
                 setApplications(response.data);
                 setSelectedApplication(response.data[0]);
+                console.debug("Application fetched")
             } catch (error) {
                 console.error(error);
             }
@@ -31,6 +32,7 @@ function App() {
     }, [selectedApplication]);
 
     const featureDict = masterJson.feature_names; //fetches all the feature names and their xn label
+    console.log(featureDict)
 
     // Function to fetch explanation data from the server
     const handleExplanation = async () => {
