@@ -7,7 +7,7 @@
  * @param {String} str - Input string to format
  * @returns {String} - formatted string. (ex: BananaPudding_In_Salami -> Banana Pudding In Salami)
  */
-function formatString(str){
+export function formatString(str){
     const regex = /[A-Z][a-z]*/g;
     const matchArray = [...str.matchAll(regex)];
     return(matchArray.join(' '));
@@ -20,7 +20,7 @@ function formatString(str){
  * @param {Object} readable - Input dictionary of units
  * @returns {String} - formatted string. (ex: BananaPudding_In_Salami -> Banana Pudding In Salami)
  */
-function formatNumerical(featureValue, featureName, readable) {
+export function formatNumerical(featureValue, featureName, readable) {
     var valueText = "";
     var trimmedValue = parseFloat(featureValue).toFixed(readable["feature_decimals"][featureName])
     if (readable["feature_units"][featureName] == "$") {
