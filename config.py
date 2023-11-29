@@ -1,2 +1,2 @@
 DO_VIZUALIZATION: bool = False
-VIZ_DATA_PATH = "./visualization/data/"
+VIZ_DATA_PATH = "../../data/loans/"
