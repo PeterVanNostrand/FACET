@@ -18,6 +18,7 @@ manager = None
 test_applications = None
 min_values, max_values = None, None
 infinity = 100000000000000
+port = 3001
 
 #Master json file
 json_path = f"{VIZ_DATA_PATH}\\dataset_details.json"
@@ -124,4 +125,4 @@ def facet_explanation():
 
 
 if __name__ == "__main__":
-    app.run(port=3001, debug=True)
+    app.run(port=port, debug=True)

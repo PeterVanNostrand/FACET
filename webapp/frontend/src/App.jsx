@@ -32,7 +32,7 @@ function App() {
     }, [selectedApplication]);
 
     const featureDict = masterJson.feature_names; //fetches all the feature names and their xn label
-    console.log(featureDict)
+    console.debug(featureDict)
 
     // Function to fetch explanation data from the server
     const handleExplanation = async () => {
