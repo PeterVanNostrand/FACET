@@ -34,7 +34,6 @@ def init_app():
 
     print("\nApp initialized\n")
 
-
 init_app()
 
 
@@ -70,19 +69,9 @@ def facet_explanation():
         loan_amount = data.get("x2", 0)
         loan_amount_term = data.get("x3", 0)
         num_explanations = data.get("num_explanations", 1)
-        constraints = {
-            "x0": [1000, 1600],
-            "x1": [0, 10],
-            "x2": [6000, 10000],
-            "x3": [300, 500],
-        }
+        constraints = data.get("constraints", None)
 
-        constraints = np.array([
-            [1000, 1600],
-            [0, 10],
-            [6000, 10000],
-            [300, 500]
-        ])
+        constraints = np.array(constraints)
 
         reshaped_mins = np.repeat(min_values, 2, axis=0)
         reshaped_mins = reshaped_mins.reshape(4, 2)
@@ -98,16 +87,15 @@ def facet_explanation():
         input_data = input_data.reshape(1, -1)
 
         # Normalize the constraints
-        normalized_constraints = (constraints - reshaped_mins) / (reshaped_maxs - reshaped_mins)
+        # normalized_constraints = (constraints - reshaped_mins) / (reshaped_maxs - reshaped_mins)
 
         # Perform explanations using manager.explain
         explain_pred = manager.predict(input_data)
         instance, explanations = manager.explain(
-            input_data, explain_pred, num_explanations, normalized_constraints
+            input_data, explain_pred, num_explanations
         )
 
         new_explanations = []
-
         for explanation in explanations:
             new_values = {}
 
