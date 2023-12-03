@@ -88,14 +88,12 @@ def facet_explanation():
         # Normalize the input data and constraints
         input_data = (input_data - min_values) / (max_values - min_values)
         input_data = input_data.reshape(1, -1)
-        normalized_constraints = (constraints - reshaped_mins) / (
-            reshaped_maxs - reshaped_mins
-        )
+        normalized_constraints = (constraints - reshaped_mins) / (reshaped_maxs - reshaped_mins)
 
         # Perform explanations using manager.explain
         explain_pred = manager.predict(input_data)
         instance, explanations = manager.explain(
-            input_data, explain_pred, num_explanations
+            input_data, explain_pred, num_explanations, normalized_constraints
         )
 
         new_explanations = []
