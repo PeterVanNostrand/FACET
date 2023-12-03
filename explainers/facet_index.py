@@ -6,6 +6,7 @@ import bisect
 # core python packages
 import math
 from typing import TYPE_CHECKING, Dict, List, Tuple
+import copy
 
 # graph packages
 import networkx as nx
@@ -711,7 +712,7 @@ class FACETIndex(Explainer):
 
         Returns
         -------
-        `explanations` : a list of JSON explanations for each instance
+        `regions` : a list of JSON explanations for each instance
         """
         xprime = []
         regions = []
@@ -759,6 +760,7 @@ class FACETIndex(Explainer):
                     min_robust=min_robust,
                     min_widths=min_widths,
                 )
+
                 if k == 1 and result is not None:
                     nearest_rect = result
                     if opt_robust:
@@ -774,6 +776,7 @@ class FACETIndex(Explainer):
                             )
                         )
                         print(x[i])
+
                 elif k > 1 and len(result) > 0:
                     nearest_rect = result[0]
                     if opt_robust:
@@ -782,26 +785,39 @@ class FACETIndex(Explainer):
                         explanation = self.fit_to_rectangle(x[i], nearest_rect)
                 else:
                     explanation = [np.inf for _ in range(x.shape[1])]
-                
-                # convert inf to large numbers for JSON
-                nearest_rect[nearest_rect == -np.inf] = -100000000000000
-                nearest_rect[nearest_rect == np.inf] = 100000000000000
 
-                # Generate a JSON explanation as a dictionary and add it to the explanations list
-                explanation_dict = {}
+                if k == 1:
+                    explanation_dict = {}
 
-                curr_instance = x[i]
-                for j in range(curr_instance.shape[0]):
-                    explanation_dict["x{:d}".format(j)] = [
-                        nearest_rect[j, 0],
-                        nearest_rect[j, 1],
-                    ]
+                    nearest_rect[nearest_rect == -np.inf] = -100000000000000
+                    nearest_rect[nearest_rect == np.inf] = 100000000000000
 
-                regions.append(explanation_dict)
+                    curr_instance = x[i]
+                    for j in range(curr_instance.shape[0]):
+                        explanation_dict["x{:d}".format(j)] = [
+                            nearest_rect[j, 0],
+                            nearest_rect[j, 1],
+                        ]
+                    regions.append(explanation_dict)
+
+                elif k > 1:
+                    for nearest_rect in result:
+                        explanation_dict = {}
+                        nearest_rect[nearest_rect == -np.inf] = -100000000000000
+                        nearest_rect[nearest_rect == np.inf] = 100000000000000
+
+                        curr_instance = x[i]
+                        for j in range(curr_instance.shape[0]):
+                            explanation_dict["x{:d}".format(j)] = [
+                                nearest_rect[j, 0],
+                                nearest_rect[j, 1],
+                            ]
+                        regions.append(explanation_dict)
+
                 xprime.append(explanation)
                 progress.update()
-            progress.close()
 
+            progress.close()
 
         # swap np.inf (no explanation found) for zeros to allow for prediction on xprime
         xprime = np.array(xprime)
