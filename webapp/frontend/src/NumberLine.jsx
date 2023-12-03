@@ -1,14 +1,16 @@
 import React, { useEffect, useRef } from 'react';
 import { visualDisplay } from '../../../visualization/src/visualDisplay.js';
 import * as d3 from 'd3'
-import { json } from 'd3';
 
-const ExplanationComponent = ({ explanationData, datasetDetails, explType }) => {
+import readable from "../../../visualization/data/human_readable_details.json";
+import datasetDetails from "../../../visualization/data/dataset_details.json";
+
+
+const NumberLine = ({ explanationData }) => {
     const svgRef = useRef();
 
     useEffect(() => {
-        const readableURL = "/visualization/data/human_readable_details.json";
-        const readable = async () => await json(readableURL);
+        const explType = 'region'
 
         if (explanationData && datasetDetails && readable) {
             const width = 800;
@@ -28,9 +30,9 @@ const ExplanationComponent = ({ explanationData, datasetDetails, explType }) => 
 
             svg.call(visualization);
         }
-    }, [explanationData, datasetDetails, readable, explType]);
+    }, [explanationData]);
 
     return <svg ref={svgRef} />;
 };
 
-export default ExplanationComponent;
+export default NumberLine;
