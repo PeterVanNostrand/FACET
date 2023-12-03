@@ -35,6 +35,7 @@ function App() {
             [6000, 10000],
             [300, 500]
         ])
+
     }, []);
 
     // useEffect to handle explanation when the selected application changes

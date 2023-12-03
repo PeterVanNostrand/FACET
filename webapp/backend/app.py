@@ -35,7 +35,6 @@ def init_app():
 
     print("\nApp initialized\n")
 
-
 init_app()
 
 
@@ -96,7 +95,7 @@ def facet_explanation():
         # Perform explanations using manager.explain
         explain_pred = manager.predict(input_data)
         instance, explanations = manager.explain(
-            input_data, explain_pred, num_explanations, normalized_constraints
+            input_data, explain_pred, num_explanations
         )
 
         new_explanations = []
