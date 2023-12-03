@@ -63,7 +63,7 @@ def facet_explanation():
     try:
         data = request.json
 
-        # Extract and transform the input data into a numpy array
+        # Extract and transform the input data from the request
         applicant_income = data.get("x0", 0)
         coapplicant_income = data.get("x1", 0)
         loan_amount = data.get("x2", 0)
@@ -82,17 +82,15 @@ def facet_explanation():
             [applicant_income, coapplicant_income, loan_amount, loan_amount_term]
         )
 
-        # Normalize the input data and reshape to 2d array
+        # Normalize the input data and constraints
         input_data = (input_data - min_values) / (max_values - min_values)
         input_data = input_data.reshape(1, -1)
-
-        # Normalize the constraints
-        # normalized_constraints = (constraints - reshaped_mins) / (reshaped_maxs - reshaped_mins)
+        normalized_constraints = (constraints - reshaped_mins) / (reshaped_maxs - reshaped_mins)
 
         # Perform explanations using manager.explain
         explain_pred = manager.predict(input_data)
         instance, explanations = manager.explain(
-            input_data, explain_pred, num_explanations
+            input_data, explain_pred, num_explanations, normalized_constraints
         )
 
         new_explanations = []

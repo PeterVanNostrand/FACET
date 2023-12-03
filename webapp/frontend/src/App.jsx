@@ -13,16 +13,19 @@ function App() {
     const [explanations, setExplanations] = useState([]);
     const [constraints, setConstraints] = useState([]);
     const [showForm, setShowForm] = useState(false)
+    const [numExplanations, setNumExplanations] = useState(1)
 
     // useEffect to fetch applications data when the component mounts
     useEffect(() => {
         const fetchApplications = async () => {
-            try {
-                const response = await axios.get('http://localhost:3001/facet/applications');
-                setApplications(response.data);
-                setSelectedApplication(response.data[0]);
-            } catch (error) {
-                console.error(error);
+            if (constraints != []) {
+                try {
+                    const response = await axios.get('http://localhost:3001/facet/applications');
+                    setApplications(response.data);
+                    setSelectedApplication(response.data[0]);
+                } catch (error) {
+                    console.error(error);
+                }
             }
         };
         // Call the fetchApplications funtion when the component mounts
@@ -33,13 +36,13 @@ function App() {
             [6000, 10000],
             [300, 500]
         ])
-
     }, []);
 
     // useEffect to handle explanation when the selected application changes
     useEffect(() => {
-        handleExplanation(multipleExplanations);
-    }, [selectedApplication]);
+        handleExplanation();
+    }, [selectedApplication, numExplanations, constraints]);
+
 
     const featureDict = {
         "x0": "Applicant Income",
@@ -49,7 +52,7 @@ function App() {
     }
 
     // Function to fetch explanation data from the server
-    const handleExplanation = async (numExplanations) => {
+    const handleExplanation = async () => {
         try {
             const response = await axios.post(
                 'http://localhost:3001/facet/explanation',
@@ -74,7 +77,7 @@ function App() {
             setCount(count - 1);
             setSelectedApplication(applications[count - 1]);
         }
-        handleExplanation(1);
+        handleExplanation();
     }
 
     // Function to handle displaying the next application
@@ -83,15 +86,15 @@ function App() {
             setCount(count + 1);
             setSelectedApplication(applications[count + 1]);
         }
-        handleExplanation(1);
+        handleExplanation();
     }
 
     const handleNumExplanations = (numExplanations) => () => {
-        handleExplanation(numExplanations);
+        setNumExplanations(numExplanations);
     }
 
     return (
-        <>
+        <div style={{ display: 'flex', flexDirection: 'row' }}>
             <div>
                 <h2>Application {count}</h2>
                 <button onClick={handlePrevApp}>Previous</button>
@@ -104,6 +107,11 @@ function App() {
                             name={featureDict[key]}
                             constraint={constraints[index]}
                             value={selectedApplication[key]}
+                            updateConstraint={(i, newValue) => {
+                                const updatedConstraints = [...constraints];
+                                updatedConstraints[index][i] = newValue;
+                                setConstraints(updatedConstraints);
+                            }}
                         />
                     </div>
                 ))}
@@ -112,21 +120,23 @@ function App() {
                 <button onClick={handleNumExplanations(multipleExplanations)}>List of Explanations</button>
             </div>
 
-            {explanations.map((item, index) => (
-                <div key={index}>
-                    <h2>Explanation {index + 1}</h2>
-                    {Object.keys(item).map((key, innerIndex) => (
-                        <div key={innerIndex}>
-                            <h3>{featureDict[key]}</h3>
-                            <p>{item[key][0]}, {item[key][1]}</p>
-                            {/* <NumberLine explanationData={item[key]} /> */}
-                        </div>
-                    ))}
-                    <p style={elementSpacer}></p>
-                </div >
-            ))
-            }
-        </>
+            <div>
+                {explanations.map((item, index) => (
+                    <div key={index}>
+                        <h2>Explanation {index + 1}</h2>
+                        {Object.keys(item).map((key, innerIndex) => (
+                            <div key={innerIndex}>
+                                <h3>{featureDict[key]}</h3>
+                                <p>{item[key][0]}, {item[key][1]}</p>
+                                {/* <NumberLine explanationData={item[key]} /> */}
+                            </div>
+                        ))}
+                        <p style={elementSpacer}></p>
+                    </div >
+                ))
+                }
+            </div>
+        </div>
     )
 }
 
@@ -135,13 +145,19 @@ const elementSpacer = {
 }
 
 
-function Feature({ name, constraint, value }) {
+function Feature({ name, constraint, value, updateConstraint }) {
     return (
         <div className="features-container">
             <div className='feature'>
                 <div>{name}&nbsp;
-                    (<EditableText currText={constraint[0]} />,&nbsp;
-                    <EditableText currText={constraint[1]} />)
+                    (<EditableText
+                        currText={constraint[0]}
+                        updateValue={(newValue) => updateConstraint(0, newValue)}
+                    />,&nbsp;
+                    <EditableText
+                        currText={constraint[1]}
+                        updateValue={(newValue) => updateConstraint(1, newValue)}
+                    />)
                     : <span className="featureValue">{value}</span>
                 </div>
             </div>
@@ -149,7 +165,8 @@ function Feature({ name, constraint, value }) {
     )
 }
 
-const EditableText = ({ currText }) => {
+
+const EditableText = ({ currText, updateValue }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [text, setText] = useState(currText);
 
@@ -160,11 +177,15 @@ const EditableText = ({ currText }) => {
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {
             setIsEditing(false);
+            // Pass the updated value to the parent component
+            updateValue(parseInt(text));
         }
     };
 
     const handleBlur = () => {
         setIsEditing(false);
+        // Pass the updated value to the parent component
+        updateValue(text);
     };
 
     const handleChange = (e) => {
@@ -191,6 +212,5 @@ const EditableText = ({ currText }) => {
         </div>
     );
 };
-
 
 export default App;
