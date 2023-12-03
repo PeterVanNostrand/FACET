@@ -65,11 +65,29 @@ def facet_explanation():
         data = request.json
 
         # Extract and transform the input data into a numpy array
-        num_explanations = data.get("num_explanations", 1)
         applicant_income = data.get("x0", 0)
         coapplicant_income = data.get("x1", 0)
         loan_amount = data.get("x2", 0)
         loan_amount_term = data.get("x3", 0)
+        num_explanations = data.get("num_explanations", 1)
+        constraints = {
+            "x0": [1000, 1600],
+            "x1": [0, 10],
+            "x2": [6000, 10000],
+            "x3": [300, 500],
+        }
+
+        constraints = np.array([
+            [1000, 1600],
+            [0, 10],
+            [6000, 10000],
+            [300, 500]
+        ])
+
+        reshaped_mins = np.repeat(min_values, 2, axis=0)
+        reshaped_mins = reshaped_mins.reshape(4, 2)
+        reshaped_maxs = np.repeat(max_values, 2, axis=0)
+        reshaped_maxs = reshaped_maxs.reshape(4, 2)
 
         input_data = np.array(
             [applicant_income, coapplicant_income, loan_amount, loan_amount_term]
@@ -79,14 +97,17 @@ def facet_explanation():
         input_data = (input_data - min_values) / (max_values - min_values)
         input_data = input_data.reshape(1, -1)
 
+        # Normalize the constraints
+        normalized_constraints = (constraints - reshaped_mins) / (reshaped_maxs - reshaped_mins)
+
         # Perform explanations using manager.explain
         explain_pred = manager.predict(input_data)
         instance, explanations = manager.explain(
-            input_data, explain_pred, num_explanations
+            input_data, explain_pred, num_explanations, normalized_constraints
         )
 
         new_explanations = []
- 
+
         for explanation in explanations:
             new_values = {}
 
