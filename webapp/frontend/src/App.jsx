@@ -94,8 +94,14 @@ function App() {
     }
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'row' }}>
-            <div>
+        <div className="container" style={{ display: 'flex', flexDirection: 'row', height: '95vh', overflow: 'auto' }}>
+            <div 
+            className="applicant-container"
+            style={{
+                position: 'sticky',
+                top: 0,
+            }}
+            >
                 <h2>Application {count}</h2>
                 <button onClick={handlePrevApp}>Previous</button>
                 <button onClick={handleNextApp}>Next</button>
@@ -120,7 +126,7 @@ function App() {
                 <button onClick={handleNumExplanations(multipleExplanations)}>List of Explanations</button>
             </div>
 
-            <div>
+            <div className="explanation-container" style={{marginLeft: 40, marginRight: 40}}>
                 {explanations.map((item, index) => (
                     <div key={index}>
                         <h2>Explanation {index + 1}</h2>
@@ -136,7 +142,7 @@ function App() {
                 ))
                 }
             </div>
-        </div>
+        </div >
     )
 }
 
