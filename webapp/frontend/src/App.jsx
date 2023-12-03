@@ -1,7 +1,8 @@
 import axios from 'axios';
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import './css/App.css'
 import NumberLine from './NumberLine';
+import { autoType } from 'd3';
 
 const multipleExplanations = 5
 
@@ -10,6 +11,8 @@ function App() {
     const [count, setCount] = useState(0);
     const [selectedApplication, setSelectedApplication] = useState('');
     const [explanations, setExplanations] = useState([]);
+    const [constraints, setConstraints] = useState([]);
+    const [showForm, setShowForm] = useState(false)
 
     // useEffect to fetch applications data when the component mounts
     useEffect(() => {
@@ -24,6 +27,13 @@ function App() {
         };
         // Call the fetchApplications funtion when the component mounts
         fetchApplications();
+        setConstraints([
+            [1000, 1600],
+            [0, 10],
+            [6000, 10000],
+            [300, 500]
+        ])
+
     }, []);
 
     // useEffect to handle explanation when the selected application changes
@@ -48,7 +58,8 @@ function App() {
                     "x0": selectedApplication.x0,
                     "x1": selectedApplication.x1,
                     "x2": selectedApplication.x2,
-                    "x3": selectedApplication.x3
+                    "x3": selectedApplication.x3,
+                    "constraints": constraints
                 },
             );
             setExplanations(response.data);
@@ -86,16 +97,20 @@ function App() {
                 <button onClick={handlePrevApp}>Previous</button>
                 <button onClick={handleNextApp}>Next</button>
 
+                <p><em>Feature (Constraints): <span className="featureValue">Value</span></em></p>
                 {Object.keys(selectedApplication).map((key, index) => (
                     <div key={index}>
-                        <Feature name={featureDict[key]} value={selectedApplication[key]} />
+                        <Feature
+                            name={featureDict[key]}
+                            constraint={constraints[index]}
+                            value={selectedApplication[key]}
+                        />
                     </div>
                 ))}
 
+                <button onClick={handleNumExplanations(1)}>Single Explanation</button>
+                <button onClick={handleNumExplanations(multipleExplanations)}>List of Explanations</button>
             </div>
-
-            <button onClick={handleNumExplanations(1)}>Single Explanation</button>
-            <button onClick={handleNumExplanations(multipleExplanations)}>List of Explanations</button>
 
             {explanations.map((item, index) => (
                 <div key={index}>
@@ -116,19 +131,66 @@ function App() {
 }
 
 const elementSpacer = {
-    marginTop: 80,
+    marginTop: 50,
 }
 
 
-function Feature({ name, value }) {
-
+function Feature({ name, constraint, value }) {
     return (
         <div className="features-container">
             <div className='feature'>
-                <p>{name}: <span className="featureValue">{value}</span></p>
+                <div>{name}&nbsp;
+                    (<EditableText currText={constraint[0]} />,&nbsp;
+                    <EditableText currText={constraint[1]} />)
+                    : <span className="featureValue">{value}</span>
+                </div>
             </div>
         </div>
     )
 }
+
+const EditableText = ({ currText }) => {
+    const [isEditing, setIsEditing] = useState(false);
+    const [text, setText] = useState(currText);
+
+    const handleDoubleClick = () => {
+        setIsEditing(true);
+    };
+
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            setIsEditing(false);
+        }
+    };
+
+    const handleBlur = () => {
+        setIsEditing(false);
+    };
+
+    const handleChange = (e) => {
+        setText(e.target.value);
+    };
+
+    return (
+        <div style={{ display: 'inline-block' }}>
+            {isEditing ? (
+                <input
+                    style={{ width: Math.min(Math.max(text.length, 2), 20) + 'ch' }}
+                    type="text"
+                    value={text}
+                    autoFocus
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    onKeyPress={handleKeyPress}
+                />
+            ) : (
+                <p onClick={handleDoubleClick} style={{ cursor: 'pointer' }}>
+                    {text}
+                </p>
+            )}
+        </div>
+    );
+};
+
 
 export default App;
