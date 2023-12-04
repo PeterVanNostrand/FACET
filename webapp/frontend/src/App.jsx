@@ -1,12 +1,15 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react'
 import './css/App.css'
+import NumberLine from './NumberLine';
+
+const multipleExplanations = 5
 
 function App() {
     const [applications, setApplications] = useState([]);
     const [count, setCount] = useState(0);
     const [selectedApplication, setSelectedApplication] = useState('');
-    const [explanation, setExplanation] = useState('');
+    const [explanations, setExplanations] = useState([]);
 
     // useEffect to fetch applications data when the component mounts
     useEffect(() => {
@@ -25,7 +28,7 @@ function App() {
 
     // useEffect to handle explanation when the selected application changes
     useEffect(() => {
-        handleExplanation();
+        handleExplanation(multipleExplanations);
     }, [selectedApplication]);
 
     const featureDict = {
@@ -36,18 +39,19 @@ function App() {
     }
 
     // Function to fetch explanation data from the server
-    const handleExplanation = async () => {
+    const handleExplanation = async (numExplanations) => {
         try {
             const response = await axios.post(
                 'http://localhost:3001/facet/explanation',
                 {
+                    "num_explanations": numExplanations,
                     "x0": selectedApplication.x0,
                     "x1": selectedApplication.x1,
                     "x2": selectedApplication.x2,
                     "x3": selectedApplication.x3
                 },
             );
-            setExplanation(response.data);
+            setExplanations(response.data);
         } catch (error) {
             console.error(error);
         }
@@ -59,7 +63,7 @@ function App() {
             setCount(count - 1);
             setSelectedApplication(applications[count - 1]);
         }
-        handleExplanation();
+        handleExplanation(1);
     }
 
     // Function to handle displaying the next application
@@ -68,7 +72,11 @@ function App() {
             setCount(count + 1);
             setSelectedApplication(applications[count + 1]);
         }
-        handleExplanation();
+        handleExplanation(1);
+    }
+
+    const handleNumExplanations = (numExplanations) => () => {
+        handleExplanation(numExplanations);
     }
 
     return (
@@ -78,24 +86,37 @@ function App() {
                 <button onClick={handlePrevApp}>Previous</button>
                 <button onClick={handleNextApp}>Next</button>
 
-                <Feature name="Applicant Income" value={selectedApplication.x0} />
-                <Feature name="Coapplicant Income" value={selectedApplication.x1} />
-                <Feature name="Loan Amount" value={selectedApplication.x2} />
-                <Feature name="Loan Amount Term" value={selectedApplication.x3} />
+                {Object.keys(selectedApplication).map((key, index) => (
+                    <div key={index}>
+                        <Feature name={featureDict[key]} value={selectedApplication[key]} />
+                    </div>
+                ))}
 
             </div>
 
-            <h2>Explanation</h2>
+            <button onClick={handleNumExplanations(1)}>Single Explanation</button>
+            <button onClick={handleNumExplanations(multipleExplanations)}>List of Explanations</button>
 
-
-            {Object.keys(explanation).map((key, index) => (
+            {explanations.map((item, index) => (
                 <div key={index}>
-                    <h3>{featureDict[key]}</h3>
-                    <p>{explanation[key][0]}, {explanation[key][1]}</p>
-                </div>
-            ))}
+                    <h2>Explanation {index + 1}</h2>
+                    {Object.keys(item).map((key, innerIndex) => (
+                        <div key={innerIndex}>
+                            <h3>{featureDict[key]}</h3>
+                            <p>{item[key][0]}, {item[key][1]}</p>
+                            {/* <NumberLine explanationData={item[key]} /> */}
+                        </div>
+                    ))}
+                    <p style={elementSpacer}></p>
+                </div >
+            ))
+            }
         </>
     )
+}
+
+const elementSpacer = {
+    marginTop: 80,
 }
 
 
@@ -106,7 +127,6 @@ function Feature({ name, value }) {
             <div className='feature'>
                 <p>{name}: <span className="featureValue">{value}</span></p>
             </div>
-            {/* Add more similar div elements for each feature */}
         </div>
     )
 }

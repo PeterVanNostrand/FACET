@@ -65,6 +65,7 @@ def facet_explanation():
         data = request.json
 
         # Extract and transform the input data into a numpy array
+        num_explanations = data.get("num_explanations", 1)
         applicant_income = data.get("x0", 0)
         coapplicant_income = data.get("x1", 0)
         loan_amount = data.get("x2", 0)
@@ -74,43 +75,47 @@ def facet_explanation():
             [applicant_income, coapplicant_income, loan_amount, loan_amount_term]
         )
 
-        print("input_data", input_data)
-
         # Normalize the input data and reshape to 2d array
         input_data = (input_data - min_values) / (max_values - min_values)
         input_data = input_data.reshape(1, -1)
 
         # Perform explanations using manager.explain
         explain_pred = manager.predict(input_data)
-        instance, explanations = manager.explain(input_data, explain_pred)
+        instance, explanations = manager.explain(
+            input_data, explain_pred, num_explanations
+        )
 
-        explanation = explanations[0]
-        denormalized_explanation = {}
+        new_explanations = []
+ 
+        for explanation in explanations:
+            new_values = {}
 
-        for i, (feature, values) in enumerate(explanation.items()):
-            min_val = min_values[i]
-            max_val = max_values[i]
-            low = values[0]
-            high = values[1]
+            for i, (feature, values) in enumerate(explanation.items()):
+                min_val = min_values[i]
+                max_val = max_values[i]
+                low = values[0]
+                high = values[1]
 
-            new_low = (
-                min_val
-                if low == -100000000000000
-                else min_val + low * (max_val - min_val)
-            )
-            new_high = (
-                max_val
-                if high == 100000000000000
-                else min_val + high * (max_val - min_val)
-            )
+                new_low = (
+                    min_val
+                    if low == -100000000000000
+                    else min_val + low * (max_val - min_val)
+                )
+                new_high = (
+                    max_val
+                    if high == 100000000000000
+                    else min_val + high * (max_val - min_val)
+                )
 
-            # TODO round to 1 decimal place?
-            denormalized_explanation["x{:d}".format(i)] = [
-                round(new_low, 1),
-                round(new_high, 1),
-            ]
+                new_values["x{:d}".format(i)] = [round(new_low, 1), round(new_high, 1)]
 
-        return jsonify(explanation)
+            new_explanations.append(new_values)
+
+        # Update the original explanations with the modified values
+        for i in range(len(explanations)):
+            explanations[i].update(new_explanations[i])
+
+        return jsonify(explanations)
 
     except Exception as e:
         return jsonify({"error": str(e)})
