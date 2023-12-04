@@ -5,6 +5,18 @@ import NumberLine from './NumberLine';
 import { autoType } from 'd3';
 
 const multipleExplanations = 5
+const initialConstraints = [
+    [1000, 1600],
+    [0, 10],
+    [6000, 10000],
+    [300, 500]
+]
+const featureDict = {
+    "x0": "Applicant Income",
+    "x1": "Coapplicant Income",
+    "x2": "Loan Amount",
+    "x3": "Loan Amount Term"
+}
 
 function App() {
     const [applications, setApplications] = useState([]);
@@ -18,24 +30,17 @@ function App() {
     // useEffect to fetch applications data when the component mounts
     useEffect(() => {
         const fetchApplications = async () => {
-            if (constraints != []) {
-                try {
-                    const response = await axios.get('http://localhost:3001/facet/applications');
-                    setApplications(response.data);
-                    setSelectedApplication(response.data[0]);
-                } catch (error) {
-                    console.error(error);
-                }
+            try {
+                const response = await axios.get('http://localhost:3001/facet/applications');
+                setApplications(response.data);
+                setSelectedApplication(response.data[0]);
+            } catch (error) {
+                console.error(error);
             }
         };
         // Call the fetchApplications funtion when the component mounts
         fetchApplications();
-        setConstraints([
-            [1000, 1600],
-            [0, 10],
-            [6000, 10000],
-            [300, 500]
-        ])
+        setConstraints(initialConstraints);
     }, []);
 
     // useEffect to handle explanation when the selected application changes
@@ -44,15 +49,10 @@ function App() {
     }, [selectedApplication, numExplanations, constraints]);
 
 
-    const featureDict = {
-        "x0": "Applicant Income",
-        "x1": "Coapplicant Income",
-        "x2": "Loan Amount",
-        "x3": "Loan Amount Term"
-    }
-
     // Function to fetch explanation data from the server
     const handleExplanation = async () => {
+        if (constraints == []) return;
+
         try {
             const response = await axios.post(
                 'http://localhost:3001/facet/explanation',
@@ -95,13 +95,7 @@ function App() {
 
     return (
         <div className="container" style={{ display: 'flex', flexDirection: 'row', height: '95vh', overflow: 'auto' }}>
-            <div 
-            className="applicant-container"
-            style={{
-                position: 'sticky',
-                top: 0,
-            }}
-            >
+            <div className="applicant-container" style={{ position: 'sticky', top: 0 }}>
                 <h2>Application {count}</h2>
                 <button onClick={handlePrevApp}>Previous</button>
                 <button onClick={handleNextApp}>Next</button>
@@ -125,8 +119,10 @@ function App() {
                 <button onClick={handleNumExplanations(1)}>Single Explanation</button>
                 <button onClick={handleNumExplanations(multipleExplanations)}>List of Explanations</button>
             </div>
+            
+            {console.log('exps:', explanations)}
 
-            <div className="explanation-container" style={{marginLeft: 40, marginRight: 40}}>
+            <div className="explanation-container" style={{ marginLeft: 40, marginRight: 40 }}>
                 {explanations.map((item, index) => (
                     <div key={index}>
                         <h2>Explanation {index + 1}</h2>
