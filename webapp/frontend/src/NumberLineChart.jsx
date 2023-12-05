@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { VictoryChart, VictoryAxis, VictoryLine, VictoryScatter, VictoryTheme, VictoryLabel} from 'victory';
 import './style.css';
 
-const NumberLine = ({ start, end, initialMinRange, initialMaxRange, currentValue }) => {
+const NumberLineChart = ({ start, end, initialMinRange, initialMaxRange, currentValue }) => {
   // Set up useState
   const [minRange, setMinRange] = useState(initialMinRange);
   const [maxRange, setMaxRange] = useState(initialMaxRange);
@@ -137,4 +137,4 @@ const NumberLine = ({ start, end, initialMinRange, initialMaxRange, currentValue
   );
 };
 
-export default NumberLine;
+export default NumberLineChart;
