@@ -6,37 +6,10 @@ import { RangeTypes } from "./numberLineUtil.js";
 const detailsURL = "http://localhost:3001/visualization/data/dataset_details.json";
 const readableURL = "http://localhost:3001/visualization/data/human_readable_details.json";
 
-export const numberLineBuilder = () => {
+export const numberLineBuilder = (explanation) => {
 
     const my = async (selection) => {
         const width = 800;
-        const height = 375;
-        const explanation = {
-            "instance": {
-                "x0": 0.058688930117501543,
-                "x1": 0.0,
-                "x2": 0.1457142857142857,
-                "x3": 0.7435897435897436
-            },
-            "region": {
-                "x0": [
-                    0.0032405690290033817,
-                    0.010667903814464808
-                ],
-                "x1": [
-                    -100000000000000.0,
-                    0.00019343846361152828
-                ],
-                "x2": [
-                    0.10142857208848,
-                    0.17642857134342194
-                ],
-                "x3": [
-                    0.0769230779260397,
-                    0.8717948794364929
-                ]
-            }
-        };
         const dataset_details = await json(detailsURL);
         const readable = await json(readableURL);
         let expl_type = ExplanationTypes.Region;
@@ -49,13 +22,9 @@ export const numberLineBuilder = () => {
         const sidebar_width_ratio = 0.33;
         const sidebar_margin = 10;
         const bbox_width = width - 20;
-        const bbox_height = height - 20;
         const bbox_x = 10;
         const bbox_y = 10;
 
-        let ebox_width_ratio = 1 - sidebar_width_ratio;
-        let ebox_width = (bbox_width * ebox_width_ratio) - 3 * sidebar_margin;
-        let ebox_height = bbox_height - (sidebar_margin * 2);
         let ebox_x = bbox_x + (sidebar_width_ratio * bbox_width) + (2 * sidebar_margin);
         let ebox_y = bbox_y + sidebar_margin;
 
@@ -123,8 +92,6 @@ export const numberLineBuilder = () => {
         for (let i = 0; i < n_features; i++) { // for each feature
             const feature_id = "x" + idx_order[i];
             const feature_name = dataset_details["feature_names"][feature_id];
-
-
 
 
             // ##### DRAW THE NUMBER LINE #####
@@ -354,6 +321,5 @@ export const numberLineBuilder = () => {
             }
         }
     }
-    
     return my;
 }

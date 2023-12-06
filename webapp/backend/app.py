@@ -14,15 +14,18 @@ CORS(app)
 
 manager = None
 test_applications = None
-min_values, max_values = None, None
+min_values, max_values, reshaped_mins, reshaped_maxs = None, None, None, None
 
 
 def init_app():
-    global manager, test_applications, min_values, max_values
+    global manager, test_applications, min_values, max_values, reshaped_mins, reshaped_maxs
 
     print("\nApp initializing...\n")
 
     manager, test_applications, min_values, max_values = flask_run()
+
+    reshaped_mins = np.repeat(min_values, 2, axis=0).reshape(4, 2)
+    reshaped_maxs = np.repeat(max_values, 2, axis=0).reshape(4, 2)
 
     for test_application in test_applications:
         for i in range(len(test_application)):
@@ -32,14 +35,15 @@ def init_app():
 
     print("\nApp initialized\n")
 
+
 init_app()
 
 
-@app.route('/visualization/data/<path:filename>')
+@app.route("/visualization/data/<path:filename>")
 def serve_file(filename):
     root_dir = os.path.dirname(os.path.abspath(__file__))
-    visualization_dir = os.path.join(root_dir, '..', '..', 'visualization')
-    return send_from_directory(os.path.join(visualization_dir, 'data'), filename)
+    visualization_dir = os.path.join(root_dir, "..", "..", "visualization")
+    return send_from_directory(os.path.join(visualization_dir, "data"), filename)
 
 
 @app.route("/facet/applications", methods=["GET"])
@@ -78,11 +82,6 @@ def facet_explanation():
 
         constraints = np.array(constraints)
 
-        reshaped_mins = np.repeat(min_values, 2, axis=0)
-        reshaped_mins = reshaped_mins.reshape(4, 2)
-        reshaped_maxs = np.repeat(max_values, 2, axis=0)
-        reshaped_maxs = reshaped_maxs.reshape(4, 2)
-
         input_data = np.array(
             [applicant_income, coapplicant_income, loan_amount, loan_amount_term]
         )
@@ -90,7 +89,9 @@ def facet_explanation():
         # Normalize the input data and constraints
         input_data = (input_data - min_values) / (max_values - min_values)
         input_data = input_data.reshape(1, -1)
-        normalized_constraints = (constraints - reshaped_mins) / (reshaped_maxs - reshaped_mins)
+        normalized_constraints = (constraints - reshaped_mins) / (
+            reshaped_maxs - reshaped_mins
+        )
 
         # Perform explanations using manager.explain
         explain_pred = manager.predict(input_data)
@@ -119,7 +120,7 @@ def facet_explanation():
                     else min_val + high * (max_val - min_val)
                 )
 
-                new_values["x{:d}".format(i)] = [round(new_low, 1), round(new_high, 1)]
+                new_values["x{:d}".format(i)] = [round(new_low, 0), round(new_high, 0)]
 
             new_explanations.append(new_values)
 
