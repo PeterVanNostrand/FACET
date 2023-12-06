@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useState, useEffect, useRef } from 'react'
 import './css/App.css'
-import NumberLine from './NumberLine';
+import NumberLine from './components/explanation/NumberLine';
 import { autoType } from 'd3';
 
 const multipleExplanations = 5
@@ -18,15 +18,14 @@ function App() {
     // useEffect to fetch applications data when the component mounts
     useEffect(() => {
         const fetchApplications = async () => {
-            if (constraints != []) {
-                try {
-                    const response = await axios.get('http://localhost:3001/facet/applications');
-                    setApplications(response.data);
-                    setSelectedApplication(response.data[0]);
-                } catch (error) {
-                    console.error(error);
-                }
+            try {
+                const response = await axios.get('http://localhost:3001/facet/applications');
+                setApplications(response.data);
+                setSelectedApplication(response.data[0]);
+            } catch (error) {
+                console.error(error);
             }
+
         };
         // Call the fetchApplications funtion when the component mounts
         fetchApplications();
@@ -53,6 +52,8 @@ function App() {
 
     // Function to fetch explanation data from the server
     const handleExplanation = async () => {
+        if (constraints.length === 0) return;
+
         try {
             const response = await axios.post(
                 'http://localhost:3001/facet/explanation',
@@ -95,12 +96,16 @@ function App() {
 
     return (
         <div className="container" style={{ display: 'flex', flexDirection: 'row', height: '95vh', overflow: 'auto' }}>
-            <div 
-            className="applicant-container"
-            style={{
-                position: 'sticky',
-                top: 0,
-            }}
+            <div className='number-line-container'>
+                <NumberLine />
+            </div>
+
+            <div
+                className="applicant-container"
+                style={{
+                    position: 'sticky',
+                    top: 0,
+                }}
             >
                 <h2>Application {count}</h2>
                 <button onClick={handlePrevApp}>Previous</button>
@@ -126,7 +131,7 @@ function App() {
                 <button onClick={handleNumExplanations(multipleExplanations)}>List of Explanations</button>
             </div>
 
-            <div className="explanation-container" style={{marginLeft: 40, marginRight: 40}}>
+            <div className="explanation-container" style={{ marginLeft: 40, marginRight: 40 }}>
                 {explanations.map((item, index) => (
                     <div key={index}>
                         <h2>Explanation {index + 1}</h2>

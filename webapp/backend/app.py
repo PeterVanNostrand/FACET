@@ -1,9 +1,7 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import numpy as np
-import json
-import os
-import sys
+import json, os, sys
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 facet_dir = os.path.dirname(os.path.dirname(current_dir))
@@ -35,6 +33,13 @@ def init_app():
     print("\nApp initialized\n")
 
 init_app()
+
+
+@app.route('/visualization/data/<path:filename>')
+def serve_file(filename):
+    root_dir = os.path.dirname(os.path.abspath(__file__))
+    visualization_dir = os.path.join(root_dir, '..', '..', 'visualization')
+    return send_from_directory(os.path.join(visualization_dir, 'data'), filename)
 
 
 @app.route("/facet/applications", methods=["GET"])
