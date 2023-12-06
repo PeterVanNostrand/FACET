@@ -30,7 +30,7 @@ function App() {
     // useEffect to fetch applications data when the component mounts
     useEffect(() => {
         const fetchApplications = async () => {
-            try {
+            try {   
                 const response = await axios.get('http://localhost:3001/facet/applications');
                 setApplications(response.data);
                 setSelectedApplication(response.data[0]);
@@ -51,7 +51,7 @@ function App() {
 
     // Function to fetch explanation data from the server
     const handleExplanation = async () => {
-        if (constraints == []) return;
+        if (constraints.length === 0) return;
 
         try {
             const response = await axios.post(
