@@ -1,36 +1,36 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { select } from 'd3';
-import { numberLineBuilder } from '../../js/numberLineBuilder'
+import { numberLineBuilder } from '../../js/numberLineBuilder';
 
 const NumberLine = ({ explanation }) => {
-    const numberLineRef = useRef();
+  useEffect(() => {
+    // Check if the svg element already exists
+    const svgContainer = select('#svg_container');
+    const existingSvg = svgContainer.select('svg');
 
+    // Use the existing svg or create a new one
+    const svg = existingSvg.empty()
+      ? svgContainer.append('svg')
+          .attr('width', 800)
+          .attr('height', 375)
+          .attr('fill', 'white')
+          .attr('id', 'image_svg')
+      : existingSvg;
 
-    useEffect(() => {
-        const selection = select(numberLineRef.current);
-        const visual_display = numberLineBuilder(selection);
-        selection.append('circle')
-            .attr('cx', 50)
-            .attr('cy', 50)
-            .attr('r', 20)
-            .style('fill', 'red');
-        
-        var svg = select('#svg_container').append("svg")
-            .attr('width', 800)
-            .attr('height', 375)
-            .attr("fill", "white")
-            .attr("id", "image_svg");
+    const visualDisplay = numberLineBuilder(svg);
+    svg.call(visualDisplay);
 
-        svg.call(visual_display)
+    // Clean up when the component unmounts
+    return () => {
+      svg.selectAll('*').remove();
+    };
+  }, [explanation]);
 
-    }, []);
-
-    return (
-        <div>
-            {/* <svg ref={numberLineRef} width="100" height="100"></svg> */}
-            <div id="svg_container"></div>
-        </div>
-    );
+  return (
+    <div>
+      <div id="svg_container"></div>
+    </div>
+  );
 };
 
 export default NumberLine;
