@@ -6,7 +6,7 @@ import { RangeTypes } from "./numberLineUtil.js";
 const detailsURL = "http://localhost:3001/visualization/data/dataset_details.json";
 const readableURL = "http://localhost:3001/visualization/data/human_readable_details.json";
 
-export const numberLineBuilder = (explanation) => {
+export const numberLineBuilder = (explanation, i) => {
 
     const my = async (selection) => {
         const width = 800;
@@ -132,33 +132,34 @@ export const numberLineBuilder = (explanation) => {
 
 
             // determine how to scale the numberline
-            const instance_val = unscale(instance[feature_id], feature_id, dataset_details);
-            const region_lower = unscale(region[feature_id][0], feature_id, dataset_details);
-            const region_upper = unscale(region[feature_id][1], feature_id, dataset_details);
+            const instance_val = instance[feature_id]
+            const region_lower = region[feature_id][0]
+            const region_upper = region[feature_id][1]
 
             const has_change = feature_distances[idx_order[i]] > 0;
 
 
-            let example_val = instance_val;
-            if (expl_type == ExplanationTypes.Example) {
-                if (has_change) {
-                    let offset = unscale(OFFSET_UNSCALED, feature_id, dataset_details);
-                    example_val = create_example(instance_val, region_lower, region_upper, offset);
-                }
-            }
+            // let example_val = instance_val;
+            // if (expl_type == ExplanationTypes.Example) {
+            //     if (has_change) {
+            //         let offset = unscale(OFFSET_UNSCALED, feature_id, dataset_details);
+            //         example_val = create_example(instance_val, region_lower, region_upper, offset);
+            //     }
+            // }
 
             let min_plot_value;
             let max_plot_value;
             if (expl_type == ExplanationTypes.Region) {
                 min_plot_value = Math.min(instance_val, region_lower);
                 max_plot_value = Math.max(instance_val, region_upper);
-            } else if (expl_type == ExplanationTypes.Example) {
-                min_plot_value = Math.min(instance_val, example_val);
-                max_plot_value = Math.max(instance_val, example_val);
-                if (max_plot_value == 0) {
-                    max_plot_value = 0.5 * region_upper;
-                }
-            }
+            } 
+            // else if (expl_type == ExplanationTypes.Example) {
+            //     min_plot_value = Math.min(instance_val, example_val);
+            //     max_plot_value = Math.max(instance_val, example_val);
+            //     if (max_plot_value == 0) {
+            //         max_plot_value = 0.5 * region_upper;
+            //     }
+            // }
 
             const line_min = get_line_low(min_plot_value, feature_id);
             const line_max = get_line_high(max_plot_value, feature_id);
@@ -247,28 +248,28 @@ export const numberLineBuilder = (explanation) => {
                 }
             }
             // ##### OR DRAW THE EXAMPLE CIRCLE #####
-            else if (expl_type == ExplanationTypes.Example) {
-                if (has_change) {
-                    let offset = unscale(OFFSET_UNSCALED, feature_id, dataset_details);
-                    // const example_val = create_example(instance_val, bar_lower_val, bar_upper_val, offset);
-                    const expl_circle_x = line_plot_x + pixel_scale(example_val, line_min, line_max);
-                    // draw the circle
-                    selection.append("circle")
-                        .attr("cx", expl_circle_x)
-                        .attr("cy", line_y)
-                        .attr("r", circle_radius)
-                        .attr("fill", expl_colors.altered_good);
-                    // add a text label
-                    selection.append("text")
-                        .text(pretty_value(example_val, feature_name, readable))
-                        .attr("font-size", value_font)
-                        .attr("fill", expl_colors.altered_good)
-                        .attr("x", expl_circle_x)
-                        .attr("y", line_y - bar_height)
-                        .attr("text-anchor", "middle")
-                        .attr("class", "tick-label");
-                }
-            }
+            // else if (expl_type == ExplanationTypes.Example) {
+            //     if (has_change) {
+            //         let offset = unscale(OFFSET_UNSCALED, feature_id, dataset_details);
+            //         // const example_val = create_example(instance_val, bar_lower_val, bar_upper_val, offset);
+            //         const expl_circle_x = line_plot_x + pixel_scale(example_val, line_min, line_max);
+            //         // draw the circle
+            //         selection.append("circle")
+            //             .attr("cx", expl_circle_x)
+            //             .attr("cy", line_y)
+            //             .attr("r", circle_radius)
+            //             .attr("fill", expl_colors.altered_good);
+            //         // add a text label
+            //         selection.append("text")
+            //             .text(pretty_value(example_val, feature_name, readable))
+            //             .attr("font-size", value_font)
+            //             .attr("fill", expl_colors.altered_good)
+            //             .attr("x", expl_circle_x)
+            //             .attr("y", line_y - bar_height)
+            //             .attr("text-anchor", "middle")
+            //             .attr("class", "tick-label");
+            //     }
+            // }
 
 
 
