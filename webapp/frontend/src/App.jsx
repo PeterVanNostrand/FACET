@@ -2,7 +2,6 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import webappConfig from "../../config.json";
 import { formatFeature, formatValue } from "../utilities";
-import "./css/App.css";
 
 const success = "Lime"
 const failure = "Red"
