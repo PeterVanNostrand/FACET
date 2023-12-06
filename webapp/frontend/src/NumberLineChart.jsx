@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { VictoryChart, VictoryAxis, VictoryLine, VictoryScatter, VictoryTheme, VictoryLabel} from 'victory';
-import './style.css';
 
 const NumberLineChart = ({ start, end, initialMinRange, initialMaxRange, currentValue }) => {
-  // Set up useState
+  // minRange, maxRange to be used for backEnd
   const [minRange, setMinRange] = useState(initialMinRange);
   const [maxRange, setMaxRange] = useState(initialMaxRange);
+  // temp. minRange and maxRange used for inputs
   const [tempMinRange, setTempMinRange] = useState(initialMinRange.toString());
   const [tempMaxRange, setTempMaxRange] = useState(initialMaxRange.toString());
 
@@ -18,42 +18,36 @@ const NumberLineChart = ({ start, end, initialMinRange, initialMaxRange, current
   const handleMinRangeChange = (event) => {
     setTempMinRange(event.target.value);
   };
-
-  const handleMinRangeBlur = () => {
-    const newMinRange = parseFloat(tempMinRange);
-    if (!isNaN(newMinRange) && newMinRange >= start && newMinRange < maxRange) {
-      setMinRange(newMinRange);
-    }
-    else {  
-    }
-  };
-
   const handleMaxRangeChange = (event) => {
     setTempMaxRange(event.target.value);
   };
-
+  // BLUR:
+  const handleMinRangeBlur = () => {
+    const newMinRange = parseFloat(tempMinRange);
+    // Tests if its not empty, that the min is not less than the start-val or greater than maxRange 
+    if (!isNaN(newMinRange) && newMinRange >= start && newMinRange < maxRange) {
+      setMinRange(newMinRange);
+  }
+};
   const handleMaxRangeBlur = () => {
     const newMaxRange = parseFloat(tempMaxRange);
-    if (!isNaN(newMaxRange) && newMaxRange <= end && newMaxRange > minRange) {
+    if (!isNaN(newMaxRange) && newMaxRange <= end && newMaxRange > minRange && newMaxRange !== minRange) {
       setMaxRange(newMaxRange);
     }
-    if (newMaxRange == minRange)  {
-      
-    }
   };
-
+  // KEY PRESS: 
   const handleMaxRangeKeyPress = (event) => {
     if (event.key === 'Enter') {
       handleMaxRangeBlur();
     }
   };
-
   const handleMinRangeKeyPress = (event) => {
     if (event.key === 'Enter') {
       handleMinRangeBlur();
     }
   };
-
+  // POSITION:
+  // Calculating Position of minRange/maxRange on numberline (based on %)
   const minRangePosition = {
     left: `${((minRange - start) / (end - start)) * 100}%`,
     transform: 'translateX(-50%)',
@@ -62,7 +56,6 @@ const NumberLineChart = ({ start, end, initialMinRange, initialMaxRange, current
     display: 'flex',
     transition: 'left 0.5s ease',
   };
-
   const maxRangePosition = {
     left: `${((maxRange - start) / (end - start)) * 100}%`,
     transform: 'translateX(-50%)',
@@ -75,7 +68,7 @@ const NumberLineChart = ({ start, end, initialMinRange, initialMaxRange, current
   return (
     <div className='vc-chart' style={{ position: 'relative' }}>
       <VictoryChart theme={VictoryTheme.material} height={100}>
-        {/* Rendering Number Line */}
+        {/* Set up Chart*/}
         <VictoryAxis
           tickValues={[start, end]}
           tickFormat={(tick) => tick.toFixed(2)}
@@ -86,18 +79,19 @@ const NumberLineChart = ({ start, end, initialMinRange, initialMaxRange, current
             tickLabels: { fontSize: 12, padding: 5 },
           }}
         />
-   
+           {/* Rendering Number Line */}
         <VictoryLine classname="number-line"
           data={[{ x: start, y: 0 }, { x: end, y: 0 }]}
           style={{ data: { stroke: 'grey', strokeWidth: 2 } }}
         />
-      
+              {/* Rendering Selected Range */}
            <VictoryLine className="selected-range"
           data={[{ x: minRange, y: 0 }, { x: maxRange, y: 0 }]}
           style={{ data: { stroke: 'blue', strokeWidth: 2 } }}
           animate={{ duration: 400, easing: 'linear' }}
         />
 
+        {/* Current Dot */}
         <VictoryScatter data={[{ x: parseFloat(currentValue), y: 0 }]} size={3} style={{ data: { fill: 'black' } 
           }}/>
         <VictoryScatter
@@ -109,9 +103,9 @@ const NumberLineChart = ({ start, end, initialMinRange, initialMaxRange, current
         />
 
       </VictoryChart>
-
+        {/* Inputs for Range */}
       <div className='range-inputs'>
-        <div style={minRangePosition}>
+        <div style={minRangePosition}>     {/* Sets Postion*/}
           <label></label>
           <input
             type="number"
@@ -122,7 +116,7 @@ const NumberLineChart = ({ start, end, initialMinRange, initialMaxRange, current
           />
         </div>
 
-        <div style={maxRangePosition}>
+        <div style={maxRangePosition}>   {/* Sets Postion*/}
           <label></label>
           <input
             type="number"
