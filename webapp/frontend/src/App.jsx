@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react'
 import './css/App.css'
+import './css/featurecontrolstyle.css'
+import FeatureControlTab from './FeatureControlTab';
 import NumberLine from './NumberLine';
 
 const multipleExplanations = 5
@@ -99,18 +101,10 @@ function App() {
 
             {explanations.map((item, index) => (
                 <div key={index}>
-                    <h2>Explanation {index + 1}</h2>
-                    {Object.keys(item).map((key, innerIndex) => (
-                        <div key={innerIndex}>
-                            <h3>{featureDict[key]}</h3>
-                            <p>{item[key][0]}, {item[key][1]}</p>
-                            {/* <NumberLine explanationData={item[key]} /> */}
-                        </div>
-                    ))}
-                    <p style={elementSpacer}></p>
-                </div >
-            ))
-            }
+                    <h3>{featureDict[key]}</h3>
+                    <p>{explanation[key][0]}, {explanation[key][1]}</p>
+                </div>
+            ))}
         </>
     )
 }
