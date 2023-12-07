@@ -35,20 +35,21 @@ const ExplanationList = ({ explanations, featureDict }) => {
 
                     {/* iterature thru all features  */}
                     {Object.keys(item).map((key, innerIndex) => (
-                        <div key={innerIndex}>
-                            <h3>{featureDict[key]}</h3>
-                            <p>{item[key][0]}, {item[key][1]}</p>
+                        <div key={innerIndex} style={{ display: 'flex', flexDirection: 'row', overflow: 'auto' }}>
+                            <h3 style={{ minWidth: 180, display: 'flex', justifyContent: 'flex-end' }}>{featureDict[key]}:</h3>
                             <div id={`number-line-container-${outerIndex}-${innerIndex}`}>
                                 <NumberLine key={innerIndex} explanation={explanation} i={innerIndex} id={`number-line-container-${outerIndex}-${innerIndex}`} />
                             </div>
+                            <p>{item[key][0]}, {item[key][1]}</p>
                         </div>
                     ))}
 
                     <p style={{ marginTop: 50 }}></p>
                 </div >
-            ))}
+            ))
+            }
 
-        </div>
+        </div >
     );
 };
 

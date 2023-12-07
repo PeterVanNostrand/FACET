@@ -11,8 +11,9 @@ function App() {
     const [selectedApplication, setSelectedApplication] = useState('');
     const [explanations, setExplanations] = useState([]);
     const [constraints, setConstraints] = useState([]);
-    const [showForm, setShowForm] = useState(false)
-    const [numExplanations, setNumExplanations] = useState(1)
+    const [showForm, setShowForm] = useState(false);
+    const [numExplanations, setNumExplanations] = useState(1);
+    const [totalExplanations, setTotalExplanations] = useState([]);
 
     // useEffect to fetch applications data when the component mounts
     useEffect(() => {
@@ -42,8 +43,11 @@ function App() {
     }, [selectedApplication, numExplanations, constraints]);
 
     useEffect(() => {
-        console.log("exp", explanations);
-        console.log("app", selectedApplication);
+        const instanceAndExpls = explanations.map(region => ({
+            instance: selectedApplication,
+            region
+        }));
+        setTotalExplanations(instanceAndExpls);
     }, [explanations])
 
     const featureDict = {

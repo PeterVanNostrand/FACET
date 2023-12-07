@@ -9,7 +9,7 @@ const readableURL = "http://localhost:3001/visualization/data/human_readable_det
 export const numberLineBuilder = (explanation, index) => {
 
     const my = async (selection) => {
-        const width = 100;
+        const width = 50;
         const dataset_details = await json(detailsURL);
         const readable = await json(readableURL);
         let expl_type = ExplanationTypes.Region;
@@ -28,9 +28,10 @@ export const numberLineBuilder = (explanation, index) => {
         let ebox_x = bbox_x + (sidebar_width_ratio * bbox_width) + (2 * sidebar_margin);
         let ebox_y = bbox_y + sidebar_margin;
 
-        const labels_x = ebox_x + 10;
-        const labels_width = 100;
-        const line_plot_pad_x = 10;
+        const labels_x = ebox_x + 0;
+        // const labels_width = 100;
+        const labels_width = 0
+        const line_plot_pad_x = 0;
         const line_plot_pad_y = 10;
         const line_plot_x = labels_x + labels_width + line_plot_pad_x;
         const line_plot_width = 290;
@@ -106,13 +107,13 @@ export const numberLineBuilder = (explanation, index) => {
             .attr("stroke-width", line_width);
 
         // add a text label for the line
-        selection.append("text")
-            .text(get_feature_name(idx_order[index]) + ":")
-            .attr("x", labels_x + labels_width)
-            .attr("y", line_y + (tick_height / 2))
-            .attr("class", "feature-details")
-            .attr("fill", "black")
-            .attr("text-anchor", "end");
+        // selection.append("text")
+        //     .text(get_feature_name(idx_order[index]) + ":")
+        //     .attr("x", labels_x + labels_width)
+        //     .attr("y", line_y + (tick_height / 2))
+        //     .attr("class", "feature-details")
+        //     .attr("fill", "black")
+        //     .attr("text-anchor", "end");
         // add ticks to the ends of the line and label them
         selection.append("line")
             .attr("x1", line_plot_x)
