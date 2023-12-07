@@ -28,22 +28,19 @@ const ExplanationList = ({ explanations, featureDict }) => {
 
     return (
         <div className="explanation-container" style={{ marginLeft: 40, marginRight: 40 }}>
+            {/* iterate thru all explanations */}
+            {explanations.map((item, outerIndex) => (
+                <div key={outerIndex}>
+                    <h2>Explanation {outerIndex + 1}</h2>
 
-            {explanations.map((item, index) => (
-                <div key={index}>
-                    <h2>Explanation {index + 1}</h2>
-
-                    <div id={`number-line-container-${index}`}>
-                        {[...Array(4)].map((_, i) => (
-                            <NumberLine key={i} explanation={explanation} i={i} id={`number-line-container-${index}`} />
-                        ))}
-                    </div>
-
+                    {/* iterature thru all features  */}
                     {Object.keys(item).map((key, innerIndex) => (
                         <div key={innerIndex}>
                             <h3>{featureDict[key]}</h3>
                             <p>{item[key][0]}, {item[key][1]}</p>
-                            {/* <NumberLine explanationData={item[key]} /> */}
+                            <div id={`number-line-container-${outerIndex}-${innerIndex}`}>
+                                <NumberLine key={innerIndex} explanation={explanation} i={innerIndex} id={`number-line-container-${outerIndex}-${innerIndex}`} />
+                            </div>
                         </div>
                     ))}
 

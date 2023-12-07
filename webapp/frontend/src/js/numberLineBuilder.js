@@ -6,7 +6,7 @@ import { RangeTypes } from "./numberLineUtil.js";
 const detailsURL = "http://localhost:3001/visualization/data/dataset_details.json";
 const readableURL = "http://localhost:3001/visualization/data/human_readable_details.json";
 
-export const numberLineBuilder = (explanation, i) => {
+export const numberLineBuilder = (explanation, index) => {
 
     const my = async (selection) => {
         const width = 100;
@@ -89,14 +89,14 @@ export const numberLineBuilder = (explanation, i) => {
             return ((clamped_val - min_value) / (max_value - min_value)) * line_plot_width;
         }
 
-        const feature_id = "x" + idx_order[i];
+        const feature_id = "x" + idx_order[index];
         const feature_name = dataset_details["feature_names"][feature_id];
 
 
         // ##### DRAW THE NUMBER LINE ########################################################################
 
         // draw a number line for this feature
-        const line_y = ebox_y + line_plot_pad_y + line_spacing * i;
+        const line_y = ebox_y + line_plot_pad_y + line_spacing * 0;
         selection.append("line")
             .attr("x1", line_plot_x)
             .attr("x2", line_plot_x + line_plot_width)
@@ -107,7 +107,7 @@ export const numberLineBuilder = (explanation, i) => {
 
         // add a text label for the line
         selection.append("text")
-            .text(get_feature_name(idx_order[i]) + ":")
+            .text(get_feature_name(idx_order[index]) + ":")
             .attr("x", labels_x + labels_width)
             .attr("y", line_y + (tick_height / 2))
             .attr("class", "feature-details")
@@ -135,7 +135,7 @@ export const numberLineBuilder = (explanation, i) => {
         const region_lower = region[feature_id][0]
         const region_upper = region[feature_id][1]
 
-        const has_change = feature_distances[idx_order[i]] > 0;
+        const has_change = feature_distances[idx_order[index]] > 0;
 
 
         // let example_val = instance_val;
