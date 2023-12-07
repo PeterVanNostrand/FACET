@@ -3,6 +3,8 @@ import { select } from 'd3';
 import { numberLineBuilder } from '../../js/numberLineBuilder';
 
 const NumberLine = ({ explanation, i, id }) => {
+    console.log(explanation)
+        
     useEffect(() => {
         // Check if the svg element already exists
         const svgContainer = select(`#${id}`);

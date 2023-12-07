@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import './css/App.css'
 import ExplanationSection from './components/explanation/ExplanationSection';
 
-const multipleExplanations = 5
+const multipleExplanations = 10
 
 function App() {
     const [applications, setApplications] = useState([]);
@@ -11,7 +11,6 @@ function App() {
     const [selectedApplication, setSelectedApplication] = useState('');
     const [explanations, setExplanations] = useState([]);
     const [constraints, setConstraints] = useState([]);
-    const [showForm, setShowForm] = useState(false);
     const [numExplanations, setNumExplanations] = useState(1);
     const [totalExplanations, setTotalExplanations] = useState([]);
 
