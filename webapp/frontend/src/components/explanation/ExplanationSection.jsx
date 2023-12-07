@@ -1,10 +1,10 @@
 import React from 'react';
 import ExplanationList from "./ExplanationList";
 
-const ExplanationSection = ({ explanations, featureDict }) => {
+const ExplanationSection = ({ explanations, totalExplanations, featureDict }) => {
 
     return (
-        <ExplanationList explanations={explanations} featureDict={featureDict} />
+        <ExplanationList explanations={explanations} totalExplanations={totalExplanations} featureDict={featureDict} />
     );
 };
 

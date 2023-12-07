@@ -130,7 +130,7 @@ function App() {
                 <button onClick={handleNumExplanations(multipleExplanations)}>List of Explanations</button>
             </div>
 
-            <ExplanationSection explanations={explanations} featureDict={featureDict} />
+            <ExplanationSection explanations={explanations} totalExplanations={totalExplanations} featureDict={featureDict} />
 
         </div>
     )
