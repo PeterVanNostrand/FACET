@@ -11,8 +11,8 @@ const NumberLine = ({ explanation, i, id }) => {
         // Use the existing svg or create a new one
         const svg = existingSvg.empty()
             ? svgContainer.append('svg')
-                .attr('width', 500)
-                .attr('height', 230)
+                .attr('width', 400)
+                .attr('height', 60)
                 .attr('fill', 'white')
                 .attr('id', 'image_svg')
             : existingSvg;
