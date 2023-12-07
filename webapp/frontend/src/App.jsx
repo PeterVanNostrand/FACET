@@ -1,8 +1,7 @@
 import axios from 'axios';
 import { useState, useEffect, useRef } from 'react'
 import './css/App.css'
-import NumberLine from './components/explanation/NumberLine';
-import { autoType } from 'd3';
+import ExplanationSection from './components/explanation/ExplanationSection';
 
 const multipleExplanations = 5
 
@@ -42,6 +41,10 @@ function App() {
         handleExplanation();
     }, [selectedApplication, numExplanations, constraints]);
 
+    useEffect(() => {
+        console.log("exp", explanations);
+        console.log("app", selectedApplication);
+    }, [explanations])
 
     const featureDict = {
         "x0": "Applicant Income",
@@ -94,49 +97,11 @@ function App() {
         setNumExplanations(numExplanations);
     }
 
-    // const explanation = {
-    //     "instance": {
-    //         "x0": 0.058688930117501543,
-    //         "x1": 0.0,
-    //         "x2": 0.1457142857142857,
-    //         "x3": 0.7435897435897436
-    //     },
-    //     "region": {
-    //         "x0": [
-    //             0.0032405690290033817,
-    //             0.010667903814464808
-    //         ],
-    //         "x1": [
-    //             -100000000000000.0,
-    //             0.00019343846361152828
-    //         ],
-    //         "x2": [
-    //             0.10142857208848,
-    //             0.17642857134342194
-    //         ],
-    //         "x3": [
-    //             0.0769230779260397,
-    //             0.8717948794364929
-    //         ]
-    //     }
-    // };
-
-
 
     return (
         <div className="container" style={{ display: 'flex', flexDirection: 'row', height: '95vh', overflow: 'auto' }}>
-            <div className='number-line-container'>
-                <NumberLine />
-                {}
-            </div>
 
-            <div
-                className="applicant-container"
-                style={{
-                    position: 'sticky',
-                    top: 0,
-                }}
-            >
+            <div className="applicant-container" style={{ position: 'sticky', top: 0 }}>
                 <h2>Application {count}</h2>
                 <button onClick={handlePrevApp}>Previous</button>
                 <button onClick={handleNextApp}>Next</button>
@@ -161,28 +126,10 @@ function App() {
                 <button onClick={handleNumExplanations(multipleExplanations)}>List of Explanations</button>
             </div>
 
-            <div className="explanation-container" style={{ marginLeft: 40, marginRight: 40 }}>
-                {explanations.map((item, index) => (
-                    <div key={index}>
-                        <h2>Explanation {index + 1}</h2>
-                        {Object.keys(item).map((key, innerIndex) => (
-                            <div key={innerIndex}>
-                                <h3>{featureDict[key]}</h3>
-                                <p>{item[key][0]}, {item[key][1]}</p>
-                                {/* <NumberLine explanationData={item[key]} /> */}
-                            </div>
-                        ))}
-                        <p style={elementSpacer}></p>
-                    </div >
-                ))
-                }
-            </div>
-        </div >
-    )
-}
+            <ExplanationSection explanations={explanations} featureDict={featureDict} />
 
-const elementSpacer = {
-    marginTop: 50,
+        </div>
+    )
 }
 
 
