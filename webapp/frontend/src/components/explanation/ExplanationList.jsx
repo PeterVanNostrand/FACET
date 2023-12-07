@@ -3,29 +3,6 @@ import NumberLine from './NumberLine';
 
 const ExplanationList = ({ explanations, totalExplanations, featureDict }) => {
 
-    // const explanation = {
-    //     "instance": {
-    //         "x0": 4895,
-    //         "x1": 0.0,
-    //         "x2": 10200,
-    //         "x3": 360
-    //     },
-    //     "region": {
-    //         "x0": [
-    //             412, 1013
-    //         ],
-    //         "x1": [
-    //             0, 8
-    //         ],
-    //         "x2": [
-    //             7100, 12350
-    //         ],
-    //         "x3": [
-    //             48, 420
-    //         ]
-    //     }
-    // };
-
     return (
         <div className="explanation-container" style={{ marginLeft: 40, marginRight: 40 }}>
             {/* iterate thru all explanations */}
