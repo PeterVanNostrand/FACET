@@ -6,7 +6,9 @@
     color-scheme: light dark;
     color: rgba(255, 255, 255, 0.87);
     background-color: #242424;
-
+    
+    -text-color: rgba(255, 255, 255, 0.87);
+    
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -63,6 +65,7 @@ button:focus-visible {
     :root {
         color: #213547;
         background-color: #ffffff;
+        --text-color: #213547;
     }
 
     a:hover {
@@ -130,4 +133,10 @@ button:focus-visible {
 
 .featureValue {
     color: red;
+}
+
+/* --- */
+
+.tick-label {
+    color: var(--text-color);
 }

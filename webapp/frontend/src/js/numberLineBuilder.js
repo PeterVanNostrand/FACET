@@ -171,15 +171,16 @@ export const numberLineBuilder = (explanation, index) => {
         const line_text_lower = selection.append("text")
             .text(pretty_value(line_min, feature_name, readable))
             .attr("font-size", value_font)
-            .attr("fill", "black")
+            .attr("fill", "var(--text-color)") // Use the variable for text color
             .attr("x", line_plot_x)
             .attr("y", line_y + bar_height + value_font)
             .attr("text-anchor", "middle")
             .attr("class", "tick-label");
+
         const line_text_upper = selection.append("text")
             .text(pretty_value(line_max, feature_name, readable))
             .attr("font-size", value_font)
-            .attr("fill", "black")
+            .attr("fill", "var(--text-color)") // Use the variable for text color
             .attr("x", line_plot_x + line_plot_width)
             .attr("y", line_y + bar_height + value_font)
             .attr("text-anchor", "middle")

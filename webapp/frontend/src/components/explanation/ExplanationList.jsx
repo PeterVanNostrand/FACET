@@ -44,7 +44,7 @@ const ExplanationList = ({ explanations, featureDict }) => {
                         </div>
                     ))}
 
-                    <p style={{ marginTop: 50 }}></p>
+                    <p style={{ marginTop: 40 }}></p>
                 </div >
             ))
             }
