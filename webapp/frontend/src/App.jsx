@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { useState, useEffect, useRef } from 'react'
-import './css/App.css'
-import ExplanationSection from './components/explanation/ExplanationSection';
+import ExplanationSection from './components/my-application/explanation/ExplanationSection';
+import { fetchApplications, fetchExplanations } from './js/api.js';
+import NavBar from './components/NavBar';
 
 const multipleExplanations = 10
 const featureDict = {
@@ -24,17 +25,6 @@ function App() {
 
     // useEffect to fetch applications data when the component mounts
     useEffect(() => {
-        const fetchApplications = async () => {
-            try {
-                const response = await axios.get('http://localhost:3001/facet/applications');
-                setApplications(response.data);
-                setSelectedApplication(response.data[0]);
-            } catch (error) {
-                console.error(error);
-            }
-
-        };
-        // Call the fetchApplications funtion when the component mounts
         fetchApplications();
         setConstraints([
             [1000, 1600],
@@ -43,6 +33,17 @@ function App() {
             [300, 500]
         ])
     }, []);
+
+    const fetchApplications = async () => {
+        try {
+            const response = await axios.get('http://localhost:3001/facet/applications');
+            setApplications(response.data);
+            setSelectedApplication(response.data[0]);
+        } catch (error) {
+            console.error(error);
+        }
+
+    };
 
     // Function to fetch explanation data from the server
     const handleExplanations = async () => {
@@ -80,13 +81,15 @@ function App() {
     }, [explanations])
 
     useEffect(() => {
-        if (totalExplanations.length > 0) {
+        if (totalExplanations.length > 0)
             setExplanationSection(
-                <ExplanationSection explanations={explanations} totalExplanations={totalExplanations} featureDict={featureDict} />
+                <ExplanationSection
+                    explanations={explanations}
+                    totalExplanations={totalExplanations}
+                    featureDict={featureDict}
+                />
             )
-        }
     }, [totalExplanations])
-
 
     // Function to handle displaying the previous application
     const handlePrevApp = () => {
@@ -106,41 +109,60 @@ function App() {
         handleExplanations();
     }
 
+    const handleApplicationChange = (event) => {
+        setCount(event.target.value);
+        setSelectedApplication(applications[event.target.value]);
+    };
+
     const handleNumExplanations = (numExplanations) => () => {
         setNumExplanations(numExplanations);
     }
 
 
     return (
-        <div className="app-container" style={{ display: 'flex', flexDirection: 'row', height: '95vh', overflow: 'auto' }}>
+        <div className='app-container'>
+            <div className='filter-container'></div>
+            <div className='feature-control-container'></div>
+            <div className="my-application-container" style={{ overflow: 'auto', border: 'solid 1px red' }}>
 
-            <div className="applicant-container" style={{ position: 'sticky', top: 0 }}>
-                <h2>Application {count}</h2>
-                <button onClick={handlePrevApp}>Previous</button>
-                <button onClick={handleNextApp}>Next</button>
+                <div className="applicant-container" style={{}}>
+                    <h2>My Application ({count})</h2>
+                    
+                    <select value={count} onChange={handleApplicationChange}>
+                        {applications.map((applicant, index) => (
+                            <option key={index} value={index}>
+                                Application {index}
+                            </option>
+                        ))}
+                    </select>
 
-                <p><em>Feature (Constraints): <span className="featureValue">Value</span></em></p>
-                {Object.keys(selectedApplication).map((key, index) => (
-                    <div key={index}>
-                        <Feature
-                            name={featureDict[key]}
-                            constraint={constraints[index]}
-                            value={selectedApplication[key]}
-                            updateConstraint={(i, newValue) => {
-                                const updatedConstraints = [...constraints];
-                                updatedConstraints[index][i] = newValue;
-                                setConstraints(updatedConstraints);
-                            }}
-                        />
-                    </div>
-                ))}
+                    <button onClick={handlePrevApp}>Previous</button>
+                    <button onClick={handleNextApp}>Next</button>
 
-                <button onClick={handleNumExplanations(1)}>Single Explanation</button>
-                <button onClick={handleNumExplanations(multipleExplanations)}>List of Explanations</button>
+                    <p><em>Feature (Constraints): <span className="featureValue">Value</span></em></p>
+                    {Object.keys(selectedApplication).map((key, index) => (
+                        <div key={index}>
+                            <Feature
+                                name={featureDict[key]}
+                                constraint={constraints[index]}
+                                value={selectedApplication[key]}
+                                updateConstraint={(i, newValue) => {
+                                    const updatedConstraints = [...constraints];
+                                    updatedConstraints[index][i] = newValue;
+                                    setConstraints(updatedConstraints);
+                                }}
+                            />
+                        </div>
+                    ))}
+
+                    <button onClick={handleNumExplanations(1)}>Single Explanation</button>
+                    <button onClick={handleNumExplanations(multipleExplanations)}>List of Explanations</button>
+                </div>
+
+                {explanationSection}
             </div>
-
-            {explanationSection}
         </div>
+
     )
 }
 
