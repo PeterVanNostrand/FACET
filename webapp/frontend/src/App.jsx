@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react'
-import './css/App.css'
-import './css/featurecontrolstyle.css'
-import FeatureControlTab from './FeatureControlTab';
+//import './css/App.css'
+//import './css/featurecontrolstyle.css'
+import FeatureControlTab from './FeatureControlSection';
+import './css/feature-control.css';
 import NumberLine from './NumberLine';
 
 const multipleExplanations = 5
@@ -82,8 +83,9 @@ function App() {
     }
 
     return (
-        <>
-            <div>
+        <> 
+        <FeatureControlTab />
+        {/* <div>
                 <h2>Application {count}</h2>
                 <button onClick={handlePrevApp}>Previous</button>
                 <button onClick={handleNextApp}>Next</button>
@@ -104,7 +106,7 @@ function App() {
                     <h3>{featureDict[key]}</h3>
                     <p>{explanation[key][0]}, {explanation[key][1]}</p>
                 </div>
-            ))}
+            ))} */}
         </>
     )
 }
