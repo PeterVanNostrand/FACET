@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { useState, useEffect, useRef } from 'react'
 import './css/App.css'
+import './css/featurecontrolstyle.css'
+import FeatureControlTab from './FeatureControlTab';
 import NumberLine from './NumberLine';
 import { autoType } from 'd3';
 
