@@ -66,7 +66,7 @@ def get_test_applications():
     return jsonify(json_data)
 
 
-@app.route("/facet/explanation", methods=["POST"])
+@app.route("/facet/explanations", methods=["POST"])
 def facet_explanation():
     try:
         data = request.json

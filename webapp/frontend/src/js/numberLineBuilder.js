@@ -9,6 +9,7 @@ const readableURL = "http://localhost:3001/visualization/data/human_readable_det
 export const numberLineBuilder = (explanation, index) => {
 
     const my = async (selection) => {
+
         const width = 50;
         const dataset_details = await json(detailsURL);
         const readable = await json(readableURL);

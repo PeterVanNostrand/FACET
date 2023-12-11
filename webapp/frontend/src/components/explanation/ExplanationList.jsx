@@ -14,9 +14,7 @@ const ExplanationList = ({ explanations, totalExplanations, featureDict }) => {
                     {Object.keys(item).map((key, innerIndex) => (
                         <div key={innerIndex} style={{ display: 'flex', flexDirection: 'row', overflow: 'auto' }}>
                             <h3 style={{ minWidth: 180, display: 'flex', justifyContent: 'flex-end' }}>{featureDict[key]}:</h3>
-                            <div id={`number-line-container-${outerIndex}-${innerIndex}`}>
-                                <NumberLine key={innerIndex} explanation={totalExplanations[outerIndex]} i={innerIndex} id={`number-line-container-${outerIndex}-${innerIndex}`} />
-                            </div>
+                            <NumberLine key={innerIndex} explanation={totalExplanations[outerIndex]} i={innerIndex} id={`number-line-container-${outerIndex}-${innerIndex}`} />
                             <p>{item[key][0]}, {item[key][1]}</p>
                         </div>
                     ))}

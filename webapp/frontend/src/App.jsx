@@ -4,15 +4,23 @@ import './css/App.css'
 import ExplanationSection from './components/explanation/ExplanationSection';
 
 const multipleExplanations = 10
+const featureDict = {
+    "x0": "Applicant Income",
+    "x1": "Coapplicant Income",
+    "x2": "Loan Amount",
+    "x3": "Loan Amount Term"
+}
+
 
 function App() {
     const [applications, setApplications] = useState([]);
     const [count, setCount] = useState(0);
     const [selectedApplication, setSelectedApplication] = useState('');
-    const [explanations, setExplanations] = useState([]);
     const [constraints, setConstraints] = useState([]);
     const [numExplanations, setNumExplanations] = useState(1);
+    const [explanations, setExplanations] = useState([]);
     const [totalExplanations, setTotalExplanations] = useState([]);
+    const [explanationSection, setExplanationSection] = useState(null);
 
     // useEffect to fetch applications data when the component mounts
     useEffect(() => {
@@ -36,33 +44,13 @@ function App() {
         ])
     }, []);
 
-    // useEffect to handle explanation when the selected application changes
-    useEffect(() => {
-        handleExplanation();
-    }, [selectedApplication, numExplanations, constraints]);
-
-    useEffect(() => {
-        const instanceAndExpls = explanations.map(region => ({
-            instance: selectedApplication,
-            region
-        }));
-        setTotalExplanations(instanceAndExpls);
-    }, [explanations])
-
-    const featureDict = {
-        "x0": "Applicant Income",
-        "x1": "Coapplicant Income",
-        "x2": "Loan Amount",
-        "x3": "Loan Amount Term"
-    }
-
     // Function to fetch explanation data from the server
-    const handleExplanation = async () => {
-        if (constraints.length === 0) return;
+    const handleExplanations = async () => {
+        if (constraints.length === 0 || selectedApplication.length == 0) return;
 
         try {
             const response = await axios.post(
-                'http://localhost:3001/facet/explanation',
+                'http://localhost:3001/facet/explanations',
                 {
                     "num_explanations": numExplanations,
                     "x0": selectedApplication.x0,
@@ -78,13 +66,35 @@ function App() {
         }
     }
 
+    // useEffect to handle explanation when the selected application changes
+    useEffect(() => {
+        handleExplanations();
+    }, [selectedApplication, numExplanations, constraints]);
+
+    useEffect(() => {
+        const instanceAndExpls = explanations.map(region => ({
+            instance: selectedApplication,
+            region
+        }));
+        setTotalExplanations(instanceAndExpls);
+    }, [explanations])
+
+    useEffect(() => {
+        if (totalExplanations.length > 0) {
+            setExplanationSection(
+                <ExplanationSection explanations={explanations} totalExplanations={totalExplanations} featureDict={featureDict} />
+            )
+        }
+    }, [totalExplanations])
+
+
     // Function to handle displaying the previous application
     const handlePrevApp = () => {
         if (count > 0) {
             setCount(count - 1);
             setSelectedApplication(applications[count - 1]);
         }
-        handleExplanation();
+        handleExplanations();
     }
 
     // Function to handle displaying the next application
@@ -93,7 +103,7 @@ function App() {
             setCount(count + 1);
             setSelectedApplication(applications[count + 1]);
         }
-        handleExplanation();
+        handleExplanations();
     }
 
     const handleNumExplanations = (numExplanations) => () => {
@@ -102,7 +112,7 @@ function App() {
 
 
     return (
-        <div className="container" style={{ display: 'flex', flexDirection: 'row', height: '95vh', overflow: 'auto' }}>
+        <div className="app-container" style={{ display: 'flex', flexDirection: 'row', height: '95vh', overflow: 'auto' }}>
 
             <div className="applicant-container" style={{ position: 'sticky', top: 0 }}>
                 <h2>Application {count}</h2>
@@ -129,8 +139,7 @@ function App() {
                 <button onClick={handleNumExplanations(multipleExplanations)}>List of Explanations</button>
             </div>
 
-            <ExplanationSection explanations={explanations} totalExplanations={totalExplanations} featureDict={featureDict} />
-
+            {explanationSection}
         </div>
     )
 }

@@ -1,25 +1,23 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { select } from 'd3';
 import { numberLineBuilder } from '../../js/numberLineBuilder';
 
 const NumberLine = ({ explanation, i, id }) => {
-    console.log(explanation)
-        
+    const svgRef = useRef();
+
     useEffect(() => {
         // Check if the svg element already exists
-        const svgContainer = select(`#${id}`);
-        const existingSvg = svgContainer.select('svg');
+        const existingSvg = select(svgRef.current).select('svg');
 
         // Use the existing svg or create a new one
         const svg = existingSvg.empty()
-            ? svgContainer.append('svg')
+            ? select(svgRef.current).append('svg')
                 .attr('width', 400)
                 .attr('height', 60)
                 .attr('fill', 'white')
-                .attr('id', 'image_svg')
+                .attr('id', `image_svg_${id}`)
             : existingSvg;
 
-        console.log();
         let visualDisplay = numberLineBuilder(explanation, i);
         svg.call(visualDisplay);
 
@@ -27,10 +25,10 @@ const NumberLine = ({ explanation, i, id }) => {
         return () => {
             svg.selectAll('*').remove();
         };
-    }, [explanation]);
+    }, [explanation, i, id]);
 
     return (
-        <div id="svg_container"></div>
+        <div id={`${id}`} ref={svgRef}></div>
     );
 };
 
