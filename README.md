@@ -3,7 +3,22 @@
 This repository contains all code, results, and figures for the paper [FACET: Robust Counterfactual Explanation Analytics](https://doi.org/10.1145/3626729), which was published at SIGMOD 2024. Please use the following BibTex citation when referencing our work.
 
 ```BibTeX
-Not yet availible. Please check the ACM website.
+@article{10.1145/3626729,
+    author = {VanNostrand, Peter M. and Zhang, Huayi and Hofmann, Dennis M. and Rundensteiner, Elke A.},
+    title = {FACET: Robust Counterfactual Explanation Analytics},
+    year = {2023},
+    issue_date = {December 2023},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    volume = {1},
+    number = {4},
+    url = {https://doi.org/10.1145/3626729},
+    doi = {10.1145/3626729},
+    journal = {Proc. ACM Manag. Data},
+    month = {dec},
+    articleno = {242},
+    numpages = {27},
+}
 ```
 
 ## FACET Overview
