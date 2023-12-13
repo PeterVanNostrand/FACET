@@ -17,3 +17,4 @@ results/*
 *package-lock.json*
 webapp/backend/results/*
 webapp/backend/visualization/data/explanation_paths.json
+*/node_modules/*

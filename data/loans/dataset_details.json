@@ -1,5 +1,6 @@
 {
     "dataset": "loans",
+    "n_features": 4,
     "normalized": true,
     "target_name": "Loan_Status",
     "feature_names": {

@@ -8,8 +8,7 @@ from experiments.experiments import (
     DEFAULT_PARAMS,
     FACET_TUNED_M,
     TUNED_FACET_SD,
-    execute_run,
-    flask_setup_server,
+    execute_run
 )
 from experiments.vary_enum import vary_enum
 from experiments.vary_eps import vary_eps
@@ -94,32 +93,6 @@ def simple_run(
     print(json.dumps(results, indent=4))
 
 
-def flask_run(
-    ds_name="loans",
-    explainer="FACETIndex",
-    random_state=0,
-    ntrees=10,
-    max_depth=5,
-):
-    params = DEFAULT_PARAMS
-    params["RandomForest"]["rf_ntrees"] = ntrees
-    params["RandomForest"]["rf_maxdepth"] = max_depth
-    params["RandomForest"]["rf_maxdepth"] = max_depth
-    params["FACETIndex"]["facet_sd"] = TUNED_FACET_SD[ds_name]
-    params["FACETIndex"]["rbv_num_interval"] = FACET_TUNED_M[ds_name]
-
-    print("dataset: " + ds_name)
-
-    manager, test_applicants, min_values, max_values = flask_setup_server(
-        dataset_name=ds_name,
-        explainer=explainer,
-        params=params,
-        random_state=random_state,
-    )
-
-    return manager, test_applicants, min_values, max_values
-
-
 if __name__ == "__main__":
     all_ds = ["cancer", "glass", "magic", "spambase", "vertebral"]
     all_explaiers = ["FACETIndex", "OCEAN", "RFOCSE", "AFT", "MACE"]
@@ -165,11 +138,8 @@ if __name__ == "__main__":
 
     print(args)
 
-    if args.expr == "flask":
-        flask_run()
-
     # Do a single quick run with one explaienr and one dataset
-    elif args.expr == "simple":
+    if args.expr == "simple":
         simple_run(
             ds_name=args.ds[0],
             explainer=args.method[0],
