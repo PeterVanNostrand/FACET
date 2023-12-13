@@ -26,7 +26,7 @@ from utilities.metrics import dist_euclidean
 from config import DO_VIZUALIZATION, VIZ_DATA_PATH
 
 if DO_VIZUALIZATION:
-    from visualization.viz_tools import save_instance_region_JSON, save_JSON_paths
+    from visualization.viz_tools import save_instance_region_JSON
 
 if TYPE_CHECKING:
     from manager import MethodManager
@@ -739,11 +739,11 @@ class FACETIndex(Explainer):
                     explanation = self.fit_to_rectangle(x[i], nearest_rect)
                 xprime.append(explanation)
                 if DO_VIZUALIZATION:
+                    json_path = VIZ_DATA_PATH + "explanations/explanation_{:03d}.json".format(i)
                     save_instance_region_JSON(
                         x[i],
                         nearest_rect,
-                        path=VIZ_DATA_PATH
-                        + "explanations/explanation_{:03d}.json".format(i),
+                        path=json_path,
                     )
 
         elif self.search_type == "BitVector":
@@ -782,26 +782,11 @@ class FACETIndex(Explainer):
                         explanation = self.fit_to_rectangle(x[i], nearest_rect)
                 else:
                     explanation = [np.inf for _ in range(x.shape[1])]
-                
-                # convert inf to large numbers for JSON
-                nearest_rect[nearest_rect == -np.inf] = -100000000000000
-                nearest_rect[nearest_rect == np.inf] = 100000000000000
 
-                # Generate a JSON explanation as a dictionary and add it to the explanations list
-                explanation_dict = {}
-
-                curr_instance = x[i]
-                for j in range(curr_instance.shape[0]):
-                    explanation_dict["x{:d}".format(j)] = [
-                        nearest_rect[j, 0],
-                        nearest_rect[j, 1],
-                    ]
-
-                regions.append(explanation_dict)
                 xprime.append(explanation)
+                regions.append(nearest_rect)
                 progress.update()
             progress.close()
-
 
         # swap np.inf (no explanation found) for zeros to allow for prediction on xprime
         xprime = np.array(xprime)

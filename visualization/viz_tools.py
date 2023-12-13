@@ -1,6 +1,5 @@
 import json
 import numpy as np
-from typing import List
 import os
 from functools import lru_cache
 
@@ -20,33 +19,6 @@ def check_create_directory(path):
     dir_path = os.path.dirname(path)
     if not os.path.isdir(dir_path):
         os.makedirs(dir_path)
-
-
-def save_data_dict(dataset_name: str, x: np.ndarray, y: np.ndarray, colnames: List[str], path: str, normalize: bool):
-    '''
-    Saves creates a dictionary of dataset details and saves it to JSON file
-    '''
-    check_create_directory(path)
-    min_value = np.min(x, axis=0)
-    max_value = np.max(x, axis=0)
-    dataset_details = {
-        "dataset": dataset_name,
-        "normalized": normalize,
-        "target_name": colnames[-1],
-        "feature_names": {},
-        "min_values": {},
-        "max_values": {},
-        "std_dev": {},
-    }
-    std_devs = np.std(x, axis=0)
-    for i in range(x.shape[1]):
-        feature_id = "x{:d}".format(i)
-        dataset_details["feature_names"][feature_id] = colnames[i]
-        dataset_details["min_values"][feature_id] = min_value[i]
-        dataset_details["max_values"][feature_id] = max_value[i]
-        dataset_details["std_dev"][feature_id] = std_devs[i]
-    with open(path, "w") as f:
-        json.dump(dataset_details, f, indent=4)
 
 
 def save_instance_JSON(x: np.ndarray, path: str):

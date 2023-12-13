@@ -1,39 +1,44 @@
 // utilities.js
 // Frontend Utility Functions
 
-/**
- * Takes in either a pascal case or snake case string and formats it with spaces
- * @param {String} str - Input string to format
- * @returns {String} - formatted string. (ex: BananaPudding_In_Salami -> Banana Pudding In Salami)
- */
-export function formatString(str){
-    const regex = /[A-Z][a-z]*/g;
-    const matchArray = [...str.matchAll(regex)];
-    return(matchArray.join(' '));
-}
+
 
 /**
  * Takes in some float/int and formats it to be more human readable (Thanks Peter!)
- * @param {String} featureValue - Input number as string
- * @param {String} featureName - Input name of the feature
- * @param {Object} readable - Input dictionary of units
- * @returns {String} - formatted string. (ex: BananaPudding_In_Salami -> Banana Pudding In Salami)
+ * @param {String} featureValue - Input number as string, e.g. 123.4567
+ * @param {String} colID - Input name of the feature, e.g. x1, x2, ... xN
+ * @param {Object} formatDict - Input dictionary of units
+ * @returns {String} valueText - formatted string. $123.46
  */
-export function formatNumerical(featureValue, featureName, readable) {
+export function formatValue(featureValue, colID, formatDict) {
+    const colName = formatDict["feature_names"][colID]
     var valueText = "";
-    var trimmedValue = parseFloat(featureValue).toFixed(readable["feature_decimals"][featureName])
-    if (readable["feature_units"][featureName] == "$") {
-        valueText += formatter.format(trimmedValue);
+    var trimmed_value = parseFloat(featureValue).toFixed(formatDict["feature_decimals"][colName])
+    if (formatDict["feature_units"][colName] == "$") {
+        const formatter = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: formatDict["feature_decimals"][colName],
+            maximumFractionDigits: formatDict["feature_decimals"][colName],
+        });
+        valueText += formatter.format(trimmed_value);
     }
     else {
-        valueText += trimmedValue + " " + readable["feature_units"][featureName];
+        valueText += trimmed_value + " " + formatDict["feature_units"][colName];
     }
     return valueText
 }
-  // Export the functions if using in a Node.js environment
-  if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-        formatString,
-        formatNumerical
-    };
-  }
+
+
+
+/**
+ * Takes in some column id and returns the pretty feature
+  * @param {String} colID - Input name of the feature, e.g. x1, x2, ... xN
+ * @param {Object} formatDict - Input dictionary of units
+ * @returns {String} featureText - formatted string. $123.46
+ */
+export function formatFeature(colID, formatDict) {
+    const rawFeatureName = formatDict["feature_names"][colID];
+    const featureText = formatDict["pretty_feature_names"][rawFeatureName]
+    return featureText
+}

@@ -1,11 +1,11 @@
+from dataclasses import dataclass
+import json
+from typing import List, Tuple
 import numpy as np
 import pandas as pd
 import os
-from sklearn.preprocessing import StandardScaler
-from config import DO_VIZUALIZATION, VIZ_DATA_PATH
+from pathlib import Path
 
-if DO_VIZUALIZATION:
-    from visualization.viz_tools import save_data_dict
 
 script_directory = os.path.dirname(os.path.abspath(__file__))
 
@@ -36,6 +36,120 @@ DS_DIMENSIONS = {
     "vertebral": (309, 6),
     "loans": (578, 4),
 }
+
+
+@dataclass
+class DataInfo:
+    ncols: int
+    is_normalized: bool
+    col_scales: dict
+    col_names: dict
+    col_to_idx: dict = None
+
+    def __post_init__(self):
+        '''
+        Runs once after object creation
+        '''
+        col_to_idx = dict()
+        for i in range(self.ncols):
+            col_to_idx["x{}".format(i)] = i
+        self.col_to_idx = col_to_idx
+
+    def unscale_points(self, x: np.ndarray):
+        '''
+        Unscales the given points, x must be an array/list of shape (ninstances, ncols)
+        '''
+        # if the data is not normalized, do nothing
+        if not self.is_normalized:
+            return x
+        unscaled = x.copy()
+        if len(unscaled.shape) == 1:  # if we only have one instance
+            unscaled = unscaled.reshape(-1, unscaled.shape[0])
+        # for each instace, unscale the data
+        for i in range(unscaled.shape[0]):
+            for col_id in range(self.ncols):
+                min_val, max_val = self.col_scales[col_id]
+                unscaled[i, col_id] = unscaled[i, col_id] * (max_val - min_val) + min_val
+        unscaled = unscaled.squeeze()
+        return unscaled
+
+    def scale_points(self, x: np.ndarray):
+        '''
+        Unscales the given points, x must be an array/list of shape (ninstances, ncols)
+        '''
+        # if the data is not normalized, do nothing
+        if not self.is_normalized:
+            return x
+        scaled = x.copy()
+        if len(scaled.shape) == 1:  # if we only have one instance
+            scaled = scaled.reshape(-1, scaled.shape[0])
+        # for each instace, scale the data
+        for i in range(scaled.shape[0]):
+            for col_id in range(self.ncols):
+                min_val, max_val = self.col_scales[col_id]
+                scaled[i, col_id] = (scaled[i, col_id] - min_val) / (max_val - min_val)
+        scaled = scaled.squeeze()
+        return scaled
+
+    def scale_rects(self, rects: np.ndarray):
+        '''
+        Scales the given rectangles, rects must be an array/list of shape (nrects, ncols, 2)
+        '''
+        LOWER, UPPER = 0, 1
+        scaled_rects = rects.copy()
+        for i in range(len(rects)):  # for each rectangle
+            for col_id in range(self.ncols):  # for each column
+                for end in [LOWER, UPPER]:  # for the lower and upper bound
+                    min_val, max_val = self.col_scales[col_id]
+                    scaled_rects[i][col_id][end] = (scaled_rects[i][col_id][end] - min_val) / (max_val - min_val)
+        return scaled_rects
+
+    def unscale_rects(self, rects: np.ndarray):
+        '''
+        Unscales the given rectangles, rects must be an array/list of shape (nrects, ncols, 2)
+        '''
+        LOWER, UPPER = 0, 1
+        unscaled_rects = rects.copy()
+        if len(unscaled_rects.shape) == 2:
+            unscaled_rects = unscaled_rects.reshape(-1, self.ncols, 2)
+        for i in range(len(unscaled_rects)):  # for each rectangle
+            for col_id in range(self.ncols):  # for each column
+                for end in [LOWER, UPPER]:  # for the lower and upper bound
+                    min_val, max_val = self.col_scales[col_id]
+                    unscaled_rects[i][col_id][end] = unscaled_rects[i][col_id][end] * (max_val - min_val) + min_val
+        unscaled_rects = unscaled_rects.squeeze()
+        return unscaled_rects
+
+    def rect_to_dict(self, rect: np.ndarray) -> dict:
+        '''
+        Takes a numpy array representing a rectangular counterfactual region and converts it to a dict
+        '''
+        INFTY = 100000000000000
+        LOWER, UPPER = 0, 1
+        rect_dict = dict()
+        rect[rect == -np.inf] = -INFTY
+        rect[rect == np.inf] = INFTY
+        for i in range(self.ncols):
+            rect_dict["x{:d}".format(i)] = [rect[i, LOWER], rect[i, UPPER]]
+        return rect_dict
+
+    def dict_to_point(self, point_dict: dict) -> np.ndarray:
+        '''
+        Takes a dictionary of {"xi" : <number>, ...} and converts it to a numpy array
+        '''
+        point = np.zeros(shape=(self.ncols,))
+        for col, val in point_dict.items():
+            point[self.col_to_idx[col]] = val
+        return point
+
+    def point_to_dict(self, point: np.ndarray) -> dict:
+        '''
+        Takes a a numpy array and converts it to a dictionary of the form {"xi" : <number>, ...}
+        '''
+        point_dict = dict()
+        for i in range(point.shape[0]):
+            point_dict["x{:d}".format(i)] = point[i]
+        return point_dict
 
 
 def load_data(dataset_name, preprocessing: str = "Normalize"):
@@ -69,24 +183,83 @@ def load_data(dataset_name, preprocessing: str = "Normalize"):
         print("ERROR NO SUCH DATASET")
         exit(0)
 
-    if preprocessing == "Normalize":
-        if DO_VIZUALIZATION:
-            save_data_dict(
-                dataset_name,
-                x,
-                y,
-                colnames,
-                path=VIZ_DATA_PATH + "dataset_details.json",
-                normalize=True,
-            )
-        # normalize x to [0, 1]
+    is_normalized = (preprocessing == "Normalize")
+    # save the dataset details
+    data_directory = Path(DS_PATHS[dataset_name]).parent
+    save_data_dict(
+        dataset_name,
+        x,
+        y,
+        colnames,
+        path=str(data_directory) + "/dataset_details.json",
+        normalize=is_normalized,
+    )
+
+    # normalize x to [0, 1] if requested
+    if is_normalized:
         min_value = np.min(x, axis=0)
         max_value = np.max(x, axis=0)
         x = (x - min_value) / (max_value - min_value)
-    elif preprocessing == "Scale":
-        float_transformer = StandardScaler()
-        x = float_transformer.fit_transform(x)
     return x, y, min_value, max_value
+
+
+def get_json_paths(dataset_name: str) -> Tuple[str, str]:
+    '''
+    Returns the paths the JSON files corresponding to the given dataset information
+
+    Parameters
+    ----------
+    dataset_name : the short name of a dataset from DS_NAMES
+
+    Returns
+    -------
+    json_paths : a tuple[ds_details_path, human_readable_path]
+    '''
+    # check the dataset name is valid
+    if dataset_name not in DS_NAMES:
+        print("ERROR NO SUCH DATASET")
+        exit(0)
+
+    # get the paths of the JSON files
+    data_directory = str(Path(DS_PATHS[dataset_name]).parent)
+    ds_details_path = data_directory + "/dataset_details.json"
+    human_readable_path = data_directory + "/human_readable.json"
+
+    # return them as a tuple
+    json_paths = [ds_details_path, human_readable_path]
+    return json_paths
+
+
+def save_data_dict(dataset_name: str, x: np.ndarray, y: np.ndarray, colnames: List[str], path: str, normalize: bool):
+    '''
+    Saves creates a dictionary of dataset details and saves it to JSON file
+    '''
+    # check if the directory exists, if not create it
+    dir_path = os.path.dirname(path)
+    if not os.path.isdir(dir_path):
+        os.makedirs(dir_path)
+
+    min_value = np.min(x, axis=0)
+    max_value = np.max(x, axis=0)
+    dataset_details = {
+        "dataset": dataset_name,
+        "n_features": x.shape[1],
+        "normalized": normalize,
+        "target_name": colnames[-1],
+        "feature_names": {},
+        "min_values": {},
+        "max_values": {},
+        "std_dev": {},
+    }
+    std_devs = np.std(x, axis=0)
+    for i in range(x.shape[1]):
+        feature_id = "x{:d}".format(i)
+        dataset_details["feature_names"][feature_id] = colnames[i]
+        dataset_details["min_values"][feature_id] = min_value[i]
+        dataset_details["max_values"][feature_id] = max_value[i]
+        dataset_details["std_dev"][feature_id] = std_devs[i]
+    with open(path, "w") as f:
+        json.dump(dataset_details, f, indent=4)
 
 
 def util_load_cancer():
