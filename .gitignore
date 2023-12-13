@@ -13,3 +13,6 @@ scripts/*
 visualization/node_modules/*
 # visualization/data/*
 results/*
+webapp/backend/results/*
+webapp/backend/visualization/data/explanation_paths.json
+*/node_modules/*
