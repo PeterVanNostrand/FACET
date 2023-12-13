@@ -105,7 +105,7 @@ def check_create_directory(dir_path="./results"):
     max_run_id = 0
     dir_names = os.listdir(dir_path)
     for name in dir_names:
-        x = re.match("run-(\d{3})", name)
+        x = re.match("run-(\d{3})", name)  # noqa: W605 (ignore linting from flake)
         if x is not None:
             found_run_id = int(x.group(1))
             if found_run_id > max_run_id:
@@ -163,8 +163,7 @@ def execute_run(
     config["random_state"] = random_state
     config["params"] = params
     with open(
-        output_path
-        + "{}_{}_{}{:03d}_config.json".format(
+        output_path + "{}_{}_{}{:03d}_config.json".format(
             dataset_name, explainer.lower(), run_ext, iteration
         ),
         "w",
@@ -180,14 +179,13 @@ def execute_run(
     )
     if n_explain is not None:
         x_explain = xtest[:n_explain]
-        y_explain = ytest[:n_explain]
+        # y_explain = ytest[:n_explain]
         ixd_explain = idx_test[:n_explain]
     else:
         x_explain = xtest
-        y_explain = ytest
+        # y_explain = ytest
         ixd_explain = idx_test
         n_explain = x_explain.shape[0]
-    print("x_explain", x_explain)
 
     # create the manager which handles create the RF model and explainer
     manager = MethodManager(
@@ -263,43 +261,10 @@ def execute_run(
         "n_explain": n_explain,
     }
 
-    with open(
-        output_path
-        + "{}_{}_{}{:03d}_result.json".format(
-            dataset_name, explainer.lower(), run_ext, iteration
-        ),
-        "w",
-    ) as f:
+    json_path = output_path + "{}_{}_{}{:03d}_result.json".format(dataset_name, explainer.lower(), run_ext, iteration)
+
+    with open(json_path, "w") as f:
         json_text = json.dumps(results, indent=4)
         f.write(json_text)
 
     return results
-
-
-def flask_setup_server(
-    dataset_name,
-    explainer,
-    params,
-    random_state=None,
-    preprocessing="Normalize",
-):
-    random.seed(random_state)
-    np.random.seed(random_state)
-
-    # Load and split the dataset into train/explain
-    x, y, min_value, max_value = load_data(dataset_name, preprocessing=preprocessing)
-
-    indices = np.arange(start=0, stop=x.shape[0])
-    xtrain, xtest, ytrain, ytest, idx_train, idx_test = train_test_split(
-        x, y, indices, test_size=0.1, shuffle=True, random_state=random_state
-    )
-
-    # Create the manager which handles creating the RF model and explainer
-    manager = MethodManager(
-        explainer=explainer, hyperparameters=params, random_state=random_state
-    )
-    manager.train(xtrain, ytrain)
-    manager.explainer.prepare_dataset(x, y)
-    manager.prepare(xtrain=xtrain, ytrain=xtrain)
-
-    return manager, xtest, min_value, max_value

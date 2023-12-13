@@ -61,4 +61,4 @@ Our user interface is built using JavaScript and D3 across several files and use
 
 ### Build and Launch NPM
 
-In the directory `./webapp/frontend` run `npm install` to install the required node packages. Then run `npm run dev` to launch the backend and front end 
+In the directory `./webapp` run `npm install` to install the required node packages. Then run `npm run dev` to launch the backend and front end 

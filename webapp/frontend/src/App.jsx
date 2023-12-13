@@ -1,220 +1,161 @@
-import axios from 'axios';
-import { useState, useEffect, useRef } from 'react'
-import './css/App.css'
-import './css/featurecontrolstyle.css'
-import FeatureControlTab from './FeatureControlTab';
-import NumberLine from './NumberLine';
-import { autoType } from 'd3';
+import axios from "axios";
+import { useEffect, useState } from "react";
+import webappConfig from "../../config.json";
+import { formatFeature, formatValue } from "../utilities";
+import "./css/App.css";
 
-const multipleExplanations = 5
-const initialConstraints = [
-    [1000, 1600],
-    [0, 10],
-    [6000, 10000],
-    [300, 500]
-]
-const featureDict = {
-    "x0": "Applicant Income",
-    "x1": "Coapplicant Income",
-    "x2": "Loan Amount",
-    "x3": "Loan Amount Term"
+const success = "Lime"
+const failure = "Red"
+function status_log(text, color) {
+    if (color === null) {
+        console.log(text)
+    }
+    else {
+        console.log("%c" + text, "color:" + color + ";font-weight:bold;")
+    }
 }
 
 function App() {
-    const [applications, setApplications] = useState([]);
+    const [instances, setInstances] = useState([]);
     const [count, setCount] = useState(0);
-    const [selectedApplication, setSelectedApplication] = useState('');
-    const [explanations, setExplanations] = useState([]);
-    const [constraints, setConstraints] = useState([]);
-    const [showForm, setShowForm] = useState(false)
-    const [numExplanations, setNumExplanations] = useState(1)
+    const [selectedInstance, setSelectedInstance] = useState("");
+    const [explanation, setExplanation] = useState("");
+    const [formatDict, setFormatDict] = useState(null);
+    const [featureDict, setFeatureDict] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
-    // useEffect to fetch applications data when the component mounts
+    // determine the server path
+    const SERVER_URL = webappConfig.SERVER_URL
+    const API_PORT = webappConfig.API_PORT
+    const ENDPOINT = SERVER_URL + ":" + API_PORT + "/facet"
+
+    // useEffect to fetch instances data when the component mounts
     useEffect(() => {
-        const fetchApplications = async () => {
-            try {   
-                const response = await axios.get('http://localhost:3001/facet/applications');
-                setApplications(response.data);
-                setSelectedApplication(response.data[0]);
+        status_log("Using endpoint " + ENDPOINT, success)
+
+        const pageLoad = async () => {
+            fetchInstances();
+            let dict_data = await fetchHumanFormat()
+            setFormatDict(dict_data)
+            setFeatureDict(dict_data["feature_names"]);
+            setIsLoading(false);
+        }
+
+        // get the hman formatting data instances
+        const fetchHumanFormat = async () => {
+            try {
+                const response = await axios.get(ENDPOINT + "/human_format");
+                status_log("Sucessfully loaded human format dictionary!", success)
+                return response.data
+            }
+            catch (error) {
+                status_log("Failed to load human format dictionary", failure)
+                console.error(error);
+                return
+            }
+        };
+
+        // get the sample instances
+        const fetchInstances = async () => {
+            try {
+                const response = await axios.get(ENDPOINT + "/instances");
+                setInstances(response.data);
+                setSelectedInstance(response.data[0]);
+                status_log("Sucessfully loaded instances!", success)
             } catch (error) {
+                status_log("Failed to load instances", failure)
                 console.error(error);
             }
         };
-        // Call the fetchApplications funtion when the component mounts
-        fetchApplications();
-        setConstraints(initialConstraints);
+        // Call the pageLoad function when the component mounts
+        pageLoad();
     }, []);
 
-    // useEffect to handle explanation when the selected application changes
+    // useEffect to handle explanation when the selected instances changes
     useEffect(() => {
         handleExplanation();
-    }, [selectedApplication, numExplanations, constraints]);
+    }, [selectedInstance]);
 
 
     // Function to fetch explanation data from the server
     const handleExplanation = async () => {
-        if (constraints.length === 0) return;
-
         try {
+            status_log("Generated explanation!")
             const response = await axios.post(
-                'http://localhost:3001/facet/explanation',
-                {
-                    "num_explanations": numExplanations,
-                    "x0": selectedApplication.x0,
-                    "x1": selectedApplication.x1,
-                    "x2": selectedApplication.x2,
-                    "x3": selectedApplication.x3,
-                    "constraints": constraints
-                },
+                ENDPOINT + "/explanation",
+                selectedInstance,
             );
-            setExplanations(response.data);
+            setExplanation(response.data);
         } catch (error) {
+            status_log("Explanation failed", failure)
             console.error(error);
         }
     }
 
-    // Function to handle displaying the previous application
+    // Function to handle displaying the previous instances
     const handlePrevApp = () => {
         if (count > 0) {
             setCount(count - 1);
-            setSelectedApplication(applications[count - 1]);
+            setSelectedInstance(instances[count - 1]);
         }
         handleExplanation();
     }
 
-    // Function to handle displaying the next application
+    // Function to handle displaying the next instance
     const handleNextApp = () => {
-        if (count < applications.length - 1) {
+        if (count < instances.length - 1) {
             setCount(count + 1);
-            setSelectedApplication(applications[count + 1]);
+            setSelectedInstance(instances[count + 1]);
         }
         handleExplanation();
     }
 
-    const handleNumExplanations = (numExplanations) => () => {
-        setNumExplanations(numExplanations);
-    }
 
-    return (
-        <div className="container" style={{ display: 'flex', flexDirection: 'row', height: '95vh', overflow: 'auto' }}>
-            <div className="applicant-container" style={{ position: 'sticky', top: 0 }}>
-                <h2>Application {count}</h2>
-                <button onClick={handlePrevApp}>Previous</button>
-                <button onClick={handleNextApp}>Next</button>
+    // this condition prevents the page from loading until the formatDict is availible
+    if (isLoading) {
+        return <div></div>
+    } else {
+        return (
+            <>
+                <div>
+                    <h2>Application {count}</h2>
+                    <button onClick={handlePrevApp}>Previous</button>
+                    <button onClick={handleNextApp}>Next</button>
 
-                <p><em>Feature (Constraints): <span className="featureValue">Value</span></em></p>
-                {Object.keys(selectedApplication).map((key, index) => (
+                    {Object.keys(featureDict).map((key, index) => (
+                        <div key={index}>
+                            <Feature name={formatFeature(key, formatDict)} value={formatValue(selectedInstance[key], key, formatDict)} />
+                        </div>
+                    ))}
+                </div>
+
+                <h2>Explanation</h2>
+
+
+                {Object.keys(explanation).map((key, index) => (
                     <div key={index}>
-                        <Feature
-                            name={featureDict[key]}
-                            constraint={constraints[index]}
-                            value={selectedApplication[key]}
-                            updateConstraint={(i, newValue) => {
-                                const updatedConstraints = [...constraints];
-                                updatedConstraints[index][i] = newValue;
-                                setConstraints(updatedConstraints);
-                            }}
-                        />
+                        <h3>{formatFeature(key, formatDict)}</h3>
+                        <p>{formatValue(explanation[key][0], key, formatDict)}, {formatValue(explanation[key][1], key, formatDict)}</p>
                     </div>
                 ))}
+            </>
+        )
+    }
 
-                <button onClick={handleNumExplanations(1)}>Single Explanation</button>
-                <button onClick={handleNumExplanations(multipleExplanations)}>List of Explanations</button>
-            </div>
-            
-            {console.log('exps:', explanations)}
-
-            <div className="explanation-container" style={{ marginLeft: 40, marginRight: 40 }}>
-                {explanations.map((item, index) => (
-                    <div key={index}>
-                        <h2>Explanation {index + 1}</h2>
-                        {Object.keys(item).map((key, innerIndex) => (
-                            <div key={innerIndex}>
-                                <h3>{featureDict[key]}</h3>
-                                <p>{item[key][0]}, {item[key][1]}</p>
-                                {/* <NumberLine explanationData={item[key]} /> */}
-                            </div>
-                        ))}
-                        <p style={elementSpacer}></p>
-                    </div >
-                ))
-                }
-            </div>
-        </div >
-    )
-}
-
-const elementSpacer = {
-    marginTop: 50,
 }
 
 
-function Feature({ name, constraint, value, updateConstraint }) {
+function Feature({ name, value }) {
+
     return (
         <div className="features-container">
-            <div className='feature'>
-                <div>{name}&nbsp;
-                    (<EditableText
-                        currText={constraint[0]}
-                        updateValue={(newValue) => updateConstraint(0, newValue)}
-                    />,&nbsp;
-                    <EditableText
-                        currText={constraint[1]}
-                        updateValue={(newValue) => updateConstraint(1, newValue)}
-                    />)
-                    : <span className="featureValue">{value}</span>
-                </div>
+            <div className="feature">
+                <p>{name}: <span className="featureValue">{value}</span></p>
             </div>
+            {/* Add more similar div elements for each feature */}
         </div>
     )
 }
 
-
-const EditableText = ({ currText, updateValue }) => {
-    const [isEditing, setIsEditing] = useState(false);
-    const [text, setText] = useState(currText);
-
-    const handleDoubleClick = () => {
-        setIsEditing(true);
-    };
-
-    const handleKeyPress = (e) => {
-        if (e.key === 'Enter') {
-            setIsEditing(false);
-            // Pass the updated value to the parent component
-            updateValue(parseInt(text));
-        }
-    };
-
-    const handleBlur = () => {
-        setIsEditing(false);
-        // Pass the updated value to the parent component
-        updateValue(text);
-    };
-
-    const handleChange = (e) => {
-        setText(e.target.value);
-    };
-
-    return (
-        <div style={{ display: 'inline-block' }}>
-            {isEditing ? (
-                <input
-                    style={{ width: Math.min(Math.max(text.length, 2), 20) + 'ch' }}
-                    type="text"
-                    value={text}
-                    autoFocus
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    onKeyPress={handleKeyPress}
-                />
-            ) : (
-                <p onClick={handleDoubleClick} style={{ cursor: 'pointer' }}>
-                    {text}
-                </p>
-            )}
-        </div>
-    );
-};
 
 export default App;
