@@ -15,6 +15,8 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -webkit-text-size-adjust: 100%;
+
+    padding: 20;
 }
 
 a {
@@ -38,6 +40,12 @@ body {
 h1 {
     font-size: 3.2em;
     line-height: 1.1;
+}
+
+h2 {
+    margin-top: 10;
+    margin-bottom: 10;
+    color: #e28743
 }
 
 button {
@@ -68,7 +76,6 @@ button:focus-visible {
     display: flex;
     justify-content: center;
     padding: 1rem;
-    text-align: center;
 }
 
 .logo {
@@ -113,10 +120,6 @@ button:focus-visible {
 .feature {
     margin-right: 10px;
     /* Adjust the margin as needed */
-}
-
-.featureValue {
-    color: red;
 }
 
 /* --- */

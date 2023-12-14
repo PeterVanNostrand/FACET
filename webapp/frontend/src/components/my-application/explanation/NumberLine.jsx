@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { select } from 'd3';
-import { numberLineBuilder } from '../../js/numberLineBuilder';
+import { numberLineBuilder } from '../../../js/numberLineBuilder';
 
 const NumberLine = ({ explanation, i, id }) => {
     const svgRef = useRef();
@@ -12,7 +12,7 @@ const NumberLine = ({ explanation, i, id }) => {
         // Use the existing svg or create a new one
         const svg = existingSvg.empty()
             ? select(svgRef.current).append('svg')
-                .attr('width', 400)
+                .attr('width', 370)
                 .attr('height', 60)
                 .attr('fill', 'white')
                 .attr('id', `image_svg_${id}`)

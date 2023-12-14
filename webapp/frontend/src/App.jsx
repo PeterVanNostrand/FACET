@@ -3,8 +3,12 @@ import { useState, useEffect, useRef } from 'react'
 import ExplanationSection from './components/my-application/explanation/ExplanationSection';
 import { fetchApplications, fetchExplanations } from './js/api.js';
 import NavBar from './components/NavBar';
+import FeatureControlSection from './components/feature-control/FeatureControlSection';
 
-const multipleExplanations = 10
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+
+
 const featureDict = {
     "x0": "Applicant Income",
     "x1": "Coapplicant Income",
@@ -87,6 +91,7 @@ function App() {
                     explanations={explanations}
                     totalExplanations={totalExplanations}
                     featureDict={featureDict}
+                    handleNumExplanations={handleNumExplanations}
                 />
             )
     }, [totalExplanations])
@@ -118,48 +123,86 @@ function App() {
         setNumExplanations(numExplanations);
     }
 
+    // refactorable section to handle adding a new profile
+    // ---------------------------------------------------
+    const [value, setValue] = useState(0);
+
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
+
+    const handleAddProfile = () => {
+        console.log('Add new profile logic here');
+    };
+    // ---------------------------------------------------
+
 
     return (
-        <div className='app-container'>
-            <div className='filter-container'></div>
-            <div className='feature-control-container'></div>
-            <div className="my-application-container" style={{ overflow: 'auto', border: 'solid 1px red' }}>
+        <div className='main-container' style={{maxHeight: '98vh',}}>
 
-                <div className="applicant-container" style={{}}>
-                    <h2>My Application ({count})</h2>
-                    
-                    <select value={count} onChange={handleApplicationChange}>
-                        {applications.map((applicant, index) => (
-                            <option key={index} value={index}>
-                                Application {index}
-                            </option>
-                        ))}
-                    </select>
+            <div className="nav-bar"></div>
+            <div className='app-body-container' style={{ display: 'flex', flexDirection: 'row' }}>
+                <div className='filter-container'></div>
+                <div className='feature-control-container' style={{ border: 'solid 1px black', padding: 20 }}>
+                    <div style={{ maxHeight: 40 }}>
 
-                    <button onClick={handlePrevApp}>Previous</button>
-                    <button onClick={handleNextApp}>Next</button>
-
-                    <p><em>Feature (Constraints): <span className="featureValue">Value</span></em></p>
-                    {Object.keys(selectedApplication).map((key, index) => (
-                        <div key={index}>
-                            <Feature
-                                name={featureDict[key]}
-                                constraint={constraints[index]}
-                                value={selectedApplication[key]}
-                                updateConstraint={(i, newValue) => {
-                                    const updatedConstraints = [...constraints];
-                                    updatedConstraints[index][i] = newValue;
-                                    setConstraints(updatedConstraints);
-                                }}
-                            />
-                        </div>
-                    ))}
-
-                    <button onClick={handleNumExplanations(1)}>Single Explanation</button>
-                    <button onClick={handleNumExplanations(multipleExplanations)}>List of Explanations</button>
+                        <FeatureControlSection />
+                    </div>
                 </div>
 
-                {explanationSection}
+                <div className="my-application-container" style={{ overflowY: 'auto', border: 'solid 1px black', padding: 10 }}>
+                    <div className='rhs' style={{ padding: 10 }}>
+
+                        <h2 className='applicant-header' style={{ marginTop: 10, marginBottom: 20 }}>My Application</h2>
+                        <select value={count} onChange={handleApplicationChange}>
+                            {applications.map((applicant, index) => (
+                                <option key={index} value={index}>
+                                    Application {index}
+                                </option>
+                            ))}
+                        </select>
+                        <div className='applicant-tabs' style={{ display: 'flex', flexDirection: 'row' }}>
+                            <Tabs value={1} onChange={handleChange} indicatorColor="primary">
+                                <Tab label="Default" />
+                                <Tab label={`Profile ${count}`} />
+                            </Tabs>
+
+                            <button style={{ border: '1px solid black', color: 'black', backgroundColor: 'white' }} onClick={handleAddProfile}>+</button>
+                        </div>
+
+                        <div className='applicant-info-container' style={{ margin: 10 }}>
+                            {Object.keys(selectedApplication).map((key, index) => (
+                                <div key={index} className='feature' style={{ margin: -10 }}>
+                                    <Feature
+                                        name={featureDict[key]}
+                                        constraint={constraints[index]}
+                                        value={selectedApplication[key]}
+                                        updateConstraint={(i, newValue) => {
+                                            const updatedConstraints = [...constraints];
+                                            updatedConstraints[index][i] = newValue;
+                                            setConstraints(updatedConstraints);
+                                        }}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+
+
+                    {explanationSection}
+                    <div className="suggestions-container">
+                        <div>
+                            <h2 style={{ marginTop: 10, marginBottom: 10 }}>Suggestions</h2>
+                            
+                        </div>
+                        <p>
+                            Your application would have been accepted if your income was $1,013-$1,519 instead of $4,895
+                            and your loan was $9,450-$10,000 instead of $10,200.
+                        </p>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -169,20 +212,17 @@ function App() {
 
 function Feature({ name, constraint, value, updateConstraint }) {
     return (
-        <div className="features-container">
-            <div className='feature'>
-                <div>{name}&nbsp;
-                    (<EditableText
-                        currText={constraint[0]}
-                        updateValue={(newValue) => updateConstraint(0, newValue)}
-                    />,&nbsp;
-                    <EditableText
-                        currText={constraint[1]}
-                        updateValue={(newValue) => updateConstraint(1, newValue)}
-                    />)
-                    : <span className="featureValue">{value}</span>
-                </div>
-            </div>
+        <div>
+            <strong>{name}</strong>&nbsp;
+            (<EditableText
+                currText={constraint[0]}
+                updateValue={(newValue) => updateConstraint(0, newValue)}
+            />,&nbsp;
+            <EditableText
+                currText={constraint[1]}
+                updateValue={(newValue) => updateConstraint(1, newValue)}
+            />)
+            : <span className="featureValue">{value}</span>
         </div>
     )
 }
