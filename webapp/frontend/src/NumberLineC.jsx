@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 import Draggable from 'react-draggable';
-import './NumberLineC.css';
-
 
 const NumberLineC = ({ start, end, minRange, maxRange, currentValue }) => {
     // State to keep track of the current range
     const [currentRange, setCurrentRange] = useState({ min: minRange, max: maxRange });
     const [tempMinRange, setTempMinRange] = useState(minRange.toString());
     const [tempMaxRange, setTempMaxRange] = useState(maxRange.toString());
-    const width = 350;
-    const height = 100;
+    const width = 290;
+    const calc = 185;
+    const height = 70;
 
     // Handler for dragging the Min Range Handle
     const handleMinRangeChange = (e, ui) => {
@@ -52,10 +51,10 @@ const NumberLineC = ({ start, end, minRange, maxRange, currentValue }) => {
 
 
     // MIN: INPUT LOGIC
-    
+
     // Position of minRange to for input label 
     const minRangePosition = {
-        left: `${currentRange.min - 4.5}%`,
+        left: `${calculatePositionFromValue(currentRange.min)}px`,
         transform: 'translateX(-50%)',
         position: 'absolute',
         display: 'flex',
@@ -63,14 +62,14 @@ const NumberLineC = ({ start, end, minRange, maxRange, currentValue }) => {
         //transition: 'left 0.05s ease',
     }
     // Function to handle min Range input change
-       const handleMinChange = (e) => {
+    const handleMinChange = (e) => {
         setTempMinRange(e.target.value);
     };
     // Function to handle Min Range input key press
     const handleMinRangeKeyPress = (e) => {
         if (e.key === 'Enter') {
             handleMinRangeBlur();
-          }
+        }
     };
     // Function to handle Min Range input blur
     const handleMinRangeBlur = () => {
@@ -83,13 +82,12 @@ const NumberLineC = ({ start, end, minRange, maxRange, currentValue }) => {
 
     // MAX: INPUT LOGIC
     // Position of maxRange to for input label 
-      const maxRangePosition = {
-        left: `${currentRange.max + 2.5}%`,
+    const maxRangePosition = {
+        left: `${calculatePositionFromValue(currentRange.max)}px`,
         transform: 'translateX(-50%)',
         position: 'absolute',
         display: 'flex',
         top: '70%',
-        marginLeft: '5px',
         //transition: 'left 0.05s ease',
     }
     // Function to handle Max Range input change
@@ -100,7 +98,7 @@ const NumberLineC = ({ start, end, minRange, maxRange, currentValue }) => {
     const handleMaxRangeKeyPress = (e) => {
         if (e.key === 'Enter') {
             handleMaxRangeBlur();
-          }
+        }
     };
     // Function to handle Max Range input blur
     const handleMaxRangeBlur = () => {
@@ -111,9 +109,9 @@ const NumberLineC = ({ start, end, minRange, maxRange, currentValue }) => {
     };
 
     return (
-        <div className='number-line-container' style={{ position: 'relative', width: '360px', height: '100px', margin: '20px 0' }}>
+        <div className='number-line-container' style={{ width: `100%`, height: `100%` }}>
             {/* SVG Number Line */}
-            <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`}>
+            <svg className='svg-num' width="100%" height="100%" viewBox={`-10 0 ${width+20} ${height}`}>
                 {/* Number Line */}
                 <line
                     x1={`${calculatePositionFromValue(start)}px`}
@@ -126,11 +124,11 @@ const NumberLineC = ({ start, end, minRange, maxRange, currentValue }) => {
                 {/* Highlighted Range */}
                 <rect
                     x={`${calculatePositionFromValue(currentRange.min)}px`}
-                    y="40%"
+                    y="45%"
                     width={`${calculatePositionFromValue(currentRange.max - currentRange.min)}px`}
-                    height="20%"
+                    height="10%"
                     fill="#7fc3ff"
-                    //style={{ transition: 'width 0.3s ease' }} 
+                //style={{ transition: 'width 0.3s ease' }} 
                 />
 
                 {/* NumberLine Ticks */}
@@ -155,95 +153,80 @@ const NumberLineC = ({ start, end, minRange, maxRange, currentValue }) => {
                     cx={`${calculatePositionFromValue(currentValue)}px`}
                     cy="50%"
                     r="5"
-                    fill="#ff5733"
+                    fill="black"
                 />
 
                 {/* Labels at Start and End */}
-            <text
-                x={`${calculatePositionFromValue(start)}px`}
-                y="80%"
-                fontSize="12"
-                fill="#333"
-                textAnchor="middle"
-            >
-                {start}
-            </text>
+                <text
+                    x={`${calculatePositionFromValue(start)}px`}
+                    y="80%"
+                    fontSize="12"
+                    fill="#333"
+                    textAnchor="middle"
+                >
+                    {start}
+                </text>
 
-            <text
-                x={`${calculatePositionFromValue(end)}px`}
-                y="80%"
-                fontSize="12"
-                fill="#333"
-                textAnchor="middle"
-            >
-                {end}
-            </text>
+                <text
+                    x={`${calculatePositionFromValue(end)}px`}
+                    y="80%"
+                    fontSize="12"
+                    fill="#333"
+                    textAnchor="middle"
+                >
+                    {end}
+                </text>
             </svg>
-
-            {/* Min Range Handle */}
-            <Draggable
-                axis="x"
-                bounds={{ left: 0, right: calculatePositionFromValue(currentRange.max) }}
-                onDrag={handleMinRangeChange}
-                position={{ x: calculatePositionFromValue(currentRange.min), y: 0 }}
-            >
-                <div
-                    style={{
-                        position: 'absolute',
-                        x: `${calculatePositionFromValue(currentRange.min)}px`,
-                        top: '40%',
-                        cursor: 'ew-resize',
-                    }}
+            <div className='interact-line'>
+                {/* Min Range Handle */}
+                <Draggable
+                    axis="x"
+                    bounds={{ left: calculatePositionFromValue(start), right: calculatePositionFromValue(currentRange.max) }}
+                    onDrag={handleMinRangeChange}
+                    position={{ x: calculatePositionFromValue(currentRange.min), y: 0 }}
+            
                 >
-                    <div style={{ width: '5px', height: '20px', backgroundColor: '#333', cursor: 'ew-resize' }} />
-                </div>
-            </Draggable>
+                    <div style={{ position: 'absolute', top: '43%', width: '3px', height: '16px', backgroundColor: '#333', cursor: 'ew-resize' }} />
+                </Draggable>
 
-            {/* Input for Min Range */}
-            <div className='range-inputs'>
-                <div style={minRangePosition}>   {/* Sets Postion*/}
-                    <input
-                        type="number"
-                        value={tempMinRange}
-                        onChange={handleMinChange}
-                        onBlur={handleMinRangeBlur}
-                        onKeyDown={handleMinRangeKeyPress}
-                        style={{ position: 'absolute', x: `${calculatePositionFromValue(currentRange.min)}px`, top: '-50px' }}
-                    />
+                {/* Input for Min Range */}
+                <div className='range-inputs'>
+                    <div style={minRangePosition}>   {/* Sets Postion*/}
+                        <input
+                            type="number"
+                            value={tempMinRange}
+                            onChange={handleMinChange}
+                            onBlur={handleMinRangeBlur}
+                            onKeyDown={handleMinRangeKeyPress}
+                            style={{ position: 'absolute', top: '-50px' }}
+                        />
+                    </div>
                 </div>
-            </div>
 
-            {/* Max Range Handle */}
-            <Draggable
-                axis="x"
-                bounds={{ left: calculatePositionFromValue(currentRange.min), right: 350 }}
-                onDrag={handleMaxRangeChange}
-                position={{ x: calculatePositionFromValue(currentRange.max), y: 0 }}
-            >
-                <div
-                    style={{
-                        position: 'absolute',
-                        top: '40%',
-                        x: `${calculatePositionFromValue(currentRange.max)}px`,
-                        cursor: 'ew-resize',
-                    }}
+                {/* Max Range Handle */}
+                <Draggable
+                    axis="x"
+                    bounds={{ left: calculatePositionFromValue(currentRange.min), right: calculatePositionFromValue(end) }}
+                    onDrag={handleMaxRangeChange}
+                    position={{ x: calculatePositionFromValue(currentRange.max), y: 0 }}
+              
                 >
-                    <div style={{ width: '5px', height: '20px', backgroundColor: '#333', cursor: 'ew-resize' }} />
-                </div>
-            </Draggable>
+                    <div style={{ position: 'absolute', top: '43%', width: '3px', height: '16px', backgroundColor: '#333', cursor: 'ew-resize' }} />
+                </Draggable>
 
-            {/* Input for Max Range */}
+                {/* Input for Max Range */}
 
-            <div className='range-inputs'>
-                <div style={maxRangePosition}>   {/* Sets Postion*/}
-                    <input
-                        type="number"
-                        value={tempMaxRange}
-                        onChange={handleMaxChange}
-                        onBlur={handleMaxRangeBlur}
-                        onKeyDown={handleMaxRangeKeyPress}
-                        style={{ position: 'absolute', x: `${calculatePositionFromValue(currentRange.max)}px`, transform: 'translateX(-100%)', top: '-50px' }}
-                    />
+                <div className='range-inputs'>
+                    <div style={maxRangePosition}>   {/* Sets Postion*/}
+                        <input
+                            type="number"
+                            value={tempMaxRange}
+                            onChange={handleMaxChange}
+                            onBlur={handleMaxRangeBlur}
+                            onKeyDown={handleMaxRangeKeyPress}
+                            style={{ position: 'absolute', transform: 'translateX(-100%)', top: '-50px' }}
+                        />
+                    </div>
                 </div>
             </div>
         </div>

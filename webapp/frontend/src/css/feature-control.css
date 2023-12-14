@@ -3,6 +3,7 @@ body {
     background: transparent; /* Make it white if you need */
     padding: 0 24px;
     margin: 0;
+    display: flex;
     height: 100vh;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     background: #101E2A
@@ -17,17 +18,18 @@ body {
   /* FeatureControlTab */
   
   .feature-control-tab {
-
+    position: relative;
   }
   
   .feature-control-tab-title {
     background: #f0f0f0;  
+    height: 40px;
     font-size: 30px;
     font-weight: bold;
     border-bottom: 2px solid black;
     text-align: center;
     color: #e28743;
-
+    grid-area: mTitle;
   }
   
   .information {
@@ -38,20 +40,21 @@ body {
   
   .feature-control-box {
     display: grid;
-    width: 400px;
-    height: 150px;
+    width: 393px;
+    height: 170px;
     background-color: #f0f0f0;
     border-bottom: 2px solid black;
-    grid-template-columns: 1fr 300px 1fr;
-    grid-template-rows: 1px 200fr 1fr;  
-    grid-gap: 1px;
+    grid-template-columns: 30px 42px 251px 41px 29px;
+    grid-template-rows: 28px 43px 31px 52px 15px;  
     grid-template-areas: 
-    "arrow-up title title"
-    "priority place2 lock"
-    "arrow-down numberline place"
+    " a b c d e "
+    " f g h i j "
+    " k l numberLine numberLine o "
+    " p q numberLine numberLine t "
+    " u v w x y"
   }
   
-  .feature-control-box.locked {
+  /* .feature-control-box.locked {
     filter: grayscale(100%);
     width: 400px;
     height: 150px;
@@ -67,61 +70,59 @@ body {
     "arrow-up title title"
     "priority place2 lock"
     "arrow-down numberline place"
-  }
+  } */
   .feature-title {
     font-size: 20px;
+    width: 251px;
+    align-self: center;
+    height: 25px;
     color: black; 
-    text-align: center;
-    background-color: #101E2A;
-    grid-area: title;
+    grid-area: h;
   }
   
   .lock {
-    grid-area: lock;
-    top: 10px;
-    right: 10px;
+    height: 30px;
+    width: 30px;
+    grid-area: j;
+    align-self: center;
   }
   
-  .lock-button {
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-  }
-  
-  .lock-button img {
-    width: 20px; 
-    height: 20px; 
-  }
-  
-  .arrow-button {
-    border: none;
-    background: none;
-    padding: 0;
-  }
-  
-  .arrow-text {
-    font-size: 12px; 
-    margin-top: 5px; 
+  .lock img {
+    width: 30px; 
+    height: 30px; 
   }
   
   .arrow-up {
     width: 30px; 
     height: 30px;
-    grid-area: arrow-up;
+    grid-area: g;
+    margin-left: 8px;
+    align-self: center;
+  }
+
+  .arrow-up button{
+    width: 30px; 
+    height: 30px;
+    margin: 20px;
+    grid-area: g;
+    align-self: center;
   }
   .arrow-down {
     width: 30px; 
     height: 30px; 
-    grid-area: arrow-down;
+    grid-area: q;
+    margin-top: -5px;
+    margin-left: 8px;
+    align-self: center;
+    transform: rotate(180deg);
   }
 
-  .pin img {
-    position: absolute;
-    top: 36px;
-    right: 60px;
-    height: 27px;
-    width: 48px;
+
+  .pin{
+    grid-area: i;
+    align-self: center;
+    height: 28px;
+    width: 30px;
   }
   
   .priority-value {
@@ -129,54 +130,74 @@ body {
     color: black;
     font-family: 'Nimbus Sans', sans-serif;
     font-weight: bold;
-    grid-area: place;
+    grid-area: l;
+    align-self: center;
   }
   
   
   .number-line {
-   grid-area: numberline;
-    height: 100%; 
-    transform: scale(1.2); 
+    grid-area: numberLine;
+    align-self: strech;
+    /* transform: scale(1.2); */
   }
-  
-  /* Additional styles for specific conditions */
+
   
   .rotate180 {
     transform: rotate(180deg);
   }
   
+
+  
+.number-line-container {
+  background-color: #f0f0f0;
+  position: relative;
+}
+
+.svg-num {
+  align-self: center;
+}
+
+/* RANGE INPUT STYLING */
+
+.range-inputs input {
+    width: auto; 
+    min-width: 30px; 
+    height: 10px;
+    padding: 22px  ;     /* Add padding for spacing inside the input box */
+    font-size: 12px;
+    color: #2596be; 
+    border-radius: 5px;
+    text-align: center;
+    transition: color 0.5s ease, background-color 0.5s ease; 
+  }
+  .range-inputs input:focus {
+    color: white;
+    background-color: #3498db;
+}
+  .range-inputs input[type="number"]::-webkit-inner-spin-button,
+  .range-inputs input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .range-inputs div:hover input {
+    color: white;
+    background-color: #3498db;
+    transition: color 0.5s ease, background-color 0.5s ease;
+  }
+  
+
+
   /* NumberLineChart.jsx */
-  .number-line-container {
+  /* .number-line-container {
     margin-top: 20px;
     position: relative;
-  }
+  /* } */
   
-  .current-value-dot {
-    color: black;
-    fill: black; 
-  }
-  .text-label {
-    position: absolute;
-    top: -18px; /* Adjust the distance above the marker */
-    left: 50%; /* Center the label horizontally */
-    transform: translateX(-50%);
-    color: #636363;
-    font-weight: bold;
-    font-size: 12px;
-  }
-  
-  .NumberLineChart {
-    width: 300px;
-    height: 100px;  
-  }
-  
+
   .range-inputs input {
     width: 30px;
-    /* Set the width as per your requirements */
     height: 10px;
-    /* Set the height as per your requirements */
     padding: 1px  ;
-    /* Add padding for spacing inside the input box */
     font-size: 12px;
     color: #2596be;
     border: none;

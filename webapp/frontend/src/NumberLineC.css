@@ -1,11 +1,12 @@
 
 .number-line-container {
-  background-color: aliceblue;
+  background-color: #f0f0f0;
   position: relative;
-  border-style: solid;
-  border-color: red;
 }
 
+.svg-num {
+  align-self: center;
+}
 
 /* RANGE INPUT STYLING */
 
