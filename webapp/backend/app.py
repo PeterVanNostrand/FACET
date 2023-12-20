@@ -87,34 +87,5 @@ def facet_explanation():
     except Exception as e:
         return jsonify({"error": str(e)})
 
-@app.route("/facet/explanation", methods=["GET"])
-def get_weights():
-    dummy_ordering = []
-    try:
-        current_weight = 0
-        increment = APP_CONFIG["WEIGHT_INCREMENTS"]
-        is_exponent = APP_CONFIG["WEIGHT_POWERS"]
-        weights = []
-    except Exception as e:
-        return jsonify({"error": str(e)})
-
-    try:
-        for feature in dummy_ordering:
-            if(feature["lock_state"]):
-                weights.append(1)
-            elif(is_exponent):
-                weights.append(pow(current_weight, increment))
-                current_weight = weights[-1]
-            else:
-                weights.append(current_weight + increment)
-                current_weight += increment
-
-            return jsonify({"weights":np.vectorize(weights)})
-    except Exception as e:
-        return jsonify({"error": str(e)})
-    
-    
-
-
 if __name__ == "__main__":
     app.run(port=API_PORT, debug=True)
