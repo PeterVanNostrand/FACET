@@ -4,5 +4,5 @@
     "UI_PORT": 5175,
     "DATASET": "loans",
     "WEIGHT_INCREMENTS": 1,
-    "WEIGHT_MULTIPLIER": 1
+    "WEIGHT_POWERS": false
 }

@@ -87,24 +87,31 @@ def facet_explanation():
     except Exception as e:
         return jsonify({"error": str(e)})
 
-@app.route("/facet/explanation", methods=["POST"])
-def apply_weights():
-    '''
-    Sorts the found explanations by their weights.
-    If default weights are provided in human_readable.json, they will be used.
-    Otherwise the weights are set to default of 1.
-    '''
+@app.route("/facet/explanation", methods=["GET"])
+def get_weights():
+    dummy_ordering = []
     try:
+        current_weight = 0
+        increment = APP_CONFIG["WEIGHT_INCREMENTS"]
+        is_exponent = APP_CONFIG["WEIGHT_POWERS"]
         weights = []
-        weights_raw = HUMAN_FORMAT["feature_weights"]
-        if(weights_raw["use_defaults"]):
-            for feature in weights_raw:
-                weights.append(weights_raw[feature])
-        else:
-            for feature in HUMAN_FORMAT["feature_names"]: #if weights_raw[use_defaults] is false, we cannot guarantee the feature names are repeated here.
-                weights.append(1)
     except Exception as e:
-        return jsonify({'error': str(e)})
+        return jsonify({"error": str(e)})
+
+    try:
+        for feature in dummy_ordering:
+            if(feature["locked"]):
+                weights.append(1e-7) #value should be very close to 0
+            elif(is_exponent):
+                weights.append(pow(current_weight, increment))
+                current_weight = weights[-1]
+            else:
+                weights.append(current_weight + increment)
+                current_weight += increment
+
+            return jsonify({"weights":np.vectorize(weights)})
+    except Exception as e:
+        return jsonify({"error": str(e)})
     
     
 
