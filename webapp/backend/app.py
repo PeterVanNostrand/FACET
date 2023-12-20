@@ -100,7 +100,7 @@ def get_weights():
 
     try:
         for feature in dummy_ordering:
-            if(feature["locked"]):
+            if(feature["lock_state"]):
                 weights.append(1e-7) #value should be very close to 0
             elif(is_exponent):
                 weights.append(pow(current_weight, increment))
