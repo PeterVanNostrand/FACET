@@ -87,6 +87,25 @@ def facet_explanation():
     except Exception as e:
         return jsonify({"error": str(e)})
 
+@app.route("/facet/explanation", methods=["POST"])
+def apply_weights():
+    '''
+    Sorts the found explanations by their weights.
+    If default weights are provided in human_readable.json, they will be used.
+    Otherwise the weights are set to default of 1.
+    '''
+    try:
+        weights = []
+        weights_raw = HUMAN_FORMAT["feature_weights"]
+        if(weights_raw["use_defaults"]):
+            for feature in weights_raw:
+                weights.append(weights_raw[feature])
+        else:
+            for feature in HUMAN_FORMAT["feature_names"]: #if weights_raw[use_defaults] is false, we cannot guarantee the feature names are repeated here.
+                weights.append(1)
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
 
 if __name__ == "__main__":
     app.run(port=API_PORT, debug=True)
