@@ -105,6 +105,8 @@ def apply_weights():
                 weights.append(1)
     except Exception as e:
         return jsonify({'error': str(e)})
+    
+    
 
 
 if __name__ == "__main__":

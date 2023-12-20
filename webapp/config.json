@@ -2,5 +2,7 @@
     "SERVER_URL": "http://localhost",
     "API_PORT": 3001,
     "UI_PORT": 5175,
-    "DATASET": "loans"
+    "DATASET": "loans",
+    "WEIGHT_INCREMENTS": 1,
+    "WEIGHT_MULTIPLIER": 1
 }
