@@ -19,6 +19,13 @@
         "LoanAmount": 0,
         "Loan_Amount_Term": 0
     },
+    "feature_weights": {
+        "use_defaults": true,
+        "ApplicantIncome": 1,
+        "CoapplicantIncome": 1,
+        "LoanAmount": 2,
+        "Loan_Amount_Term": 2
+    },
     "scenario_terms": {
         "desired_outcome": "Approved",
         "undesired_outcome": "Rejected",
