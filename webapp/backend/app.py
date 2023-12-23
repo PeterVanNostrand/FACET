@@ -67,9 +67,11 @@ def get_human_format():
 def facet_explanation():
     try:
         data = request.json
-        instance = DS_INFO.dict_to_point(data)
+        instance = DS_INFO.dict_to_point(data)[0:-1] #gets the x0...xi points w/o weights
         instance = DS_INFO.scale_points(instance)
+        weights = np.vectorize(data["weights"]) #get vector
         print("input_data", instance)  # debug
+        print(f"weights: {weights}")
 
         if len(instance.shape) == 1:  # if we only have one instance
             instance = instance.reshape(-1, instance.shape[0])
@@ -77,7 +79,7 @@ def facet_explanation():
         # Perform explanations using manager explain
         explain_pred = FACET_CORE.predict(instance)
         # get the counterfactual points and regions from FACET
-        points, regions = FACET_CORE.explain(instance, explain_pred)
+        points, regions = FACET_CORE.explain(instance, explain_pred, weights=weights)
 
         region = DS_INFO.unscale_rects(regions[0])
         region_dict = DS_INFO.rect_to_dict(region)

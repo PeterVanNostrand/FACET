@@ -76,14 +76,30 @@ function App() {
         handleExplanation();
     }, [selectedInstance]);
 
-
+    //fetches the weights of the features
+    const getWeights = () =>{
+        const weights = [];
+        for(feature of featureDict){
+            let priority = featureDict[feature]["currPriority"];
+            let w = 1; //the weight for this feature
+            if(formatDict["weight_values"]["IsExponent"]){
+                w = Math.pow(priority, formatDict["weight_values"]["Increment"]);
+            }
+            else{
+                //if feature is locked, w = 1; else increment the weight appropriately
+                w = featureDict[feature]["locked"] ? 1 : (1 + (priority-1)*formatDict["weight_values"]["Increment"]);
+            }
+            weights.push(w);
+        }
+        return (',"weights":[' + weights.toString() + ']');
+    }
     // Function to fetch explanation data from the server
     const handleExplanation = async () => {
         try {
             status_log("Generated explanation!")
             const response = await axios.post(
                 ENDPOINT + "/explanation",
-                selectedInstance,
+                selectedInstance + getWeights(),
             );
             setExplanation(response.data);
         } catch (error) {
