@@ -4,6 +4,12 @@ This repository contains prototype code for the paper *FACET: Robust Counterfact
 
 FACET (Fast Actionable Counterfactuals for Ensembles of Trees) generates a novel type of explanation which we call *counterfactual regions* for decisions made by ensembles of trees. For an instance `x` a counterfactual region `R` defines a portions of the feature space where all points `x' in R` are guaranteed to be counterfactual to `x`, e.g. if `y=f(x)=A` then `y=f(x')=B`. We design FACET to be highly performant and support a wide variety of user parameters such that explanations can be interactively personalized to meet real users needs.
 
+## UI State
+
+The current state of the UI is a shown
+
+![UIState](webapp/ui_state.jpg)
+
 ## Requirements
 
 The code in this repository was developed using Python 3.8.13, [requirements.txt](./requirements.txt) contains a list of required packages and is formatted for use with [Anaconda](https://www.anaconda.com/). To run experiments with OCEAN, a state-of-the-art method we compare to, you will need a license for the Gurobi optimizer. Free academic licenses are available [here](https://www.gurobi.com/academia/academic-program-and-licenses/). Setup can be done as follow
