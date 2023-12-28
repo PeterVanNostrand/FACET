@@ -13,3 +13,5 @@ scripts/*
 visualization/node_modules/*
 # visualization/data/*
 results/*
+*node_modules*
+*package-lock.json*
