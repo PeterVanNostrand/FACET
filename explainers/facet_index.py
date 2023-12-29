@@ -711,7 +711,7 @@ class FACETIndex(Explainer):
 
         Returns
         -------
-        `explanations` : a list of JSON explanations for each instance
+        `regions` : a list of JSON explanations for each instance
         """
         xprime = []
         regions = []
@@ -739,11 +739,11 @@ class FACETIndex(Explainer):
                     explanation = self.fit_to_rectangle(x[i], nearest_rect)
                 xprime.append(explanation)
                 if DO_VIZUALIZATION:
-                    json_path = VIZ_DATA_PATH + "explanations/explanation_{:03d}.json".format(i)
                     save_instance_region_JSON(
                         x[i],
                         nearest_rect,
-                        path=json_path,
+                        path=VIZ_DATA_PATH
+                        + "explanations/explanation_{:03d}.json".format(i),
                     )
 
         elif self.search_type == "BitVector":
@@ -759,6 +759,7 @@ class FACETIndex(Explainer):
                     min_robust=min_robust,
                     min_widths=min_widths,
                 )
+
                 if k == 1 and result is not None:
                     nearest_rect = result
                     if opt_robust:
@@ -774,6 +775,7 @@ class FACETIndex(Explainer):
                             )
                         )
                         print(x[i])
+
                 elif k > 1 and len(result) > 0:
                     nearest_rect = result[0]
                     if opt_robust:
@@ -783,9 +785,19 @@ class FACETIndex(Explainer):
                 else:
                     explanation = [np.inf for _ in range(x.shape[1])]
 
+                if k == 1:
+                    curr_instance = x[i]
+                    regions.append(nearest_rect)
+
+                elif k > 1:
+                    for nearest_rect in result:
+                        curr_instance = x[i]
+                        regions.append(nearest_rect)
+
+
                 xprime.append(explanation)
-                regions.append(nearest_rect)
                 progress.update()
+
             progress.close()
 
         # swap np.inf (no explanation found) for zeros to allow for prediction on xprime

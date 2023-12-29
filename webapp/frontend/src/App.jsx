@@ -1,9 +1,17 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import webappConfig from "../../config.json";
 import { formatFeature, formatValue } from "../utilities";
 
-const success = "Lime"
+import ExplanationSection from './components/my-application/explanation/ExplanationSection';
+import NavBar from './components/NavBar';
+import FeatureControlSection from './components/feature-control/FeatureControlSection';
+
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import { autoType, select } from "d3";
+
+const success = "LimeGreen"
 const failure = "Red"
 function status_log(text, color) {
     if (color === null) {
@@ -18,10 +26,16 @@ function App() {
     const [instances, setInstances] = useState([]);
     const [count, setCount] = useState(0);
     const [selectedInstance, setSelectedInstance] = useState("");
-    const [explanation, setExplanation] = useState("");
+    const [explanations, setExplanations] = useState("");
+    const [constraints, setConstraints] = useState([]);
+    const [numExplanations, setNumExplanations] = useState(1);
     const [formatDict, setFormatDict] = useState(null);
     const [featureDict, setFeatureDict] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+
+    const [totalExplanations, setTotalExplanations] = useState([]);
+    const [explanationSection, setExplanationSection] = useState(null);
+
 
     // determine the server path
     const SERVER_URL = webappConfig.SERVER_URL
@@ -31,6 +45,13 @@ function App() {
     // useEffect to fetch instances data when the component mounts
     useEffect(() => {
         status_log("Using endpoint " + ENDPOINT, success)
+
+        setConstraints([
+            [1000, 1600],
+            [0, 10],
+            [6000, 10000],
+            [300, 500]
+        ])
 
         const pageLoad = async () => {
             fetchInstances();
@@ -72,19 +93,22 @@ function App() {
 
     // useEffect to handle explanation when the selected instances changes
     useEffect(() => {
-        handleExplanation();
-    }, [selectedInstance]);
+        handleExplanations();
+    }, [selectedInstance, numExplanations, constraints]);
 
 
     // Function to fetch explanation data from the server
-    const handleExplanation = async () => {
+    const handleExplanations = async () => {
+        if (constraints.length === 0 || selectedInstance.length == 0) return;
+
         try {
             status_log("Generated explanation!")
             const response = await axios.post(
-                ENDPOINT + "/explanation",
-                selectedInstance,
+                ENDPOINT + "/explanations",
+                { selectedInstance, constraints, numExplanations },
             );
-            setExplanation(response.data);
+            console.log(response.data)
+            setExplanations(response.data);
         } catch (error) {
             status_log("Explanation failed", failure)
             console.error(error);
@@ -97,7 +121,7 @@ function App() {
             setCount(count - 1);
             setSelectedInstance(instances[count - 1]);
         }
-        handleExplanation();
+        handleExplanations();
     }
 
     // Function to handle displaying the next instance
@@ -106,7 +130,11 @@ function App() {
             setCount(count + 1);
             setSelectedInstance(instances[count + 1]);
         }
-        handleExplanation();
+        handleExplanations();
+    }
+
+    const handleNumExplanations = (numExplanations) => () => {
+        setNumExplanations(numExplanations);
     }
 
 
@@ -115,7 +143,7 @@ function App() {
         return <div></div>
     } else {
         return (
-            <>
+            <div>
                 <div>
                     <h2>Application {count}</h2>
                     <button onClick={handlePrevApp}>Previous</button>
@@ -129,15 +157,28 @@ function App() {
                 </div>
 
                 <h2>Explanation</h2>
+                <button onClick={handleNumExplanations(1)}>Top Explanation</button>
+                <button onClick={handleNumExplanations(10)}>List</button>
 
+                <div style={{ display: 'flex' }}>
 
-                {Object.keys(explanation).map((key, index) => (
-                    <div key={index}>
-                        <h3>{formatFeature(key, formatDict)}</h3>
-                        <p>{formatValue(explanation[key][0], key, formatDict)}, {formatValue(explanation[key][1], key, formatDict)}</p>
-                    </div>
-                ))}
-            </>
+                    {explanations.length !== 0 && explanations.map((explanation, index) => (
+                        <div key={index}>
+                            {Object.keys(explanation).map((key, subIndex) => (
+                                <div key={subIndex}>
+                                    <h3>{formatFeature(key, formatDict)}</h3>
+                                    <p>
+                                        {formatValue(explanation[key][0], key, formatDict)},{' '}
+                                        {formatValue(explanation[key][1], key, formatDict)}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    ))}
+                    
+                </div>
+
+            </div>
         )
     }
 

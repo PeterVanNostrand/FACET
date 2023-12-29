@@ -65,26 +65,30 @@ def get_human_format():
     return jsonify(HUMAN_FORMAT)
 
 
-@app.route("/facet/explanation", methods=["POST"])
+@app.route("/facet/explanations", methods=["POST"])
 def facet_explanation():
     try:
         data = request.json
-        instance = DS_INFO.dict_to_point(data)
+        instance = DS_INFO.dict_to_point(data.get("selectedInstance"))
         instance = DS_INFO.scale_points(instance)
-        print("input_data", instance)  # debug
+        constraints = np.array(data.get("constraints", None)).astype(float)
+        constraints = DS_INFO.scale_rects(constraints)[0]
+        num_explanations = data.get("numExplanations", 1)
 
         if len(instance.shape) == 1:  # if we only have one instance
             instance = instance.reshape(-1, instance.shape[0])
 
         # Perform explanations using manager explain
-        explain_pred = FACET_CORE.predict(instance)
+        explain_prediction = FACET_CORE.predict(instance)
         # get the counterfactual points and regions from FACET
-        points, regions = FACET_CORE.explain(instance, explain_pred)
+        points, regions = FACET_CORE.explain(
+            instance, explain_prediction, num_explanations, constraints
+        )
 
-        region = DS_INFO.unscale_rects(regions[0])
-        region_dict = DS_INFO.rect_to_dict(region)
+        unscaled_regions = [DS_INFO.unscale_rects(region) for region in regions]
+        region_dicts = [DS_INFO.rect_to_dict(region) for region in unscaled_regions]
 
-        return jsonify(region_dict)
+        return jsonify(region_dicts)
 
     except Exception as e:
         return jsonify({"error": str(e)})
