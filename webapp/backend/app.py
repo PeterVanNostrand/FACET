@@ -1,7 +1,7 @@
 import numpy as np
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-import json
+import json, os, sys
 from webapp.app_utilities import run_facet, parse_dataset_info
 from dataset import get_json_paths, DataInfo
 
@@ -63,6 +63,14 @@ def get_test_instances():
 @app.route("/facet/human_format", methods=["GET"])
 def get_human_format():
     return jsonify(HUMAN_FORMAT)
+
+
+@app.route("/data/loans/<path:filename>")
+def serve_file(filename):
+    root_dir = os.path.dirname(os.path.abspath(__file__))
+    visualization_dir = os.path.join(root_dir, "..", "..", "data")
+    print(visualization_dir)
+    return send_from_directory(os.path.join(visualization_dir, "loans"), filename)
 
 
 @app.route("/facet/explanations", methods=["POST"])

@@ -97,6 +97,27 @@ function App() {
     }, [selectedInstance, numExplanations, constraints]);
 
 
+    useEffect(() => {
+        if (explanations.length === 0) return;
+        const instanceAndExpls = explanations.map(region => ({
+            instance: selectedInstance,
+            region
+        }));
+        setTotalExplanations(instanceAndExpls);
+    }, [explanations])
+
+    useEffect(() => {
+        if (totalExplanations.length > 0)
+            setExplanationSection(
+                <ExplanationSection
+                    explanations={explanations}
+                    totalExplanations={totalExplanations}
+                    featureDict={featureDict}
+                    handleNumExplanations={handleNumExplanations}
+                />
+            )
+    }, [totalExplanations])
+
     // Function to fetch explanation data from the server
     const handleExplanations = async () => {
         if (constraints.length === 0 || selectedInstance.length == 0) return;
@@ -156,27 +177,7 @@ function App() {
                     ))}
                 </div>
 
-                <h2>Explanation</h2>
-                <button onClick={handleNumExplanations(1)}>Top Explanation</button>
-                <button onClick={handleNumExplanations(10)}>List</button>
-
-                <div style={{ display: 'flex' }}>
-
-                    {explanations.length !== 0 && explanations.map((explanation, index) => (
-                        <div key={index}>
-                            {Object.keys(explanation).map((key, subIndex) => (
-                                <div key={subIndex}>
-                                    <h3>{formatFeature(key, formatDict)}</h3>
-                                    <p>
-                                        {formatValue(explanation[key][0], key, formatDict)},{' '}
-                                        {formatValue(explanation[key][1], key, formatDict)}
-                                    </p>
-                                </div>
-                            ))}
-                        </div>
-                    ))}
-                    
-                </div>
+                {explanationSection}
 
             </div>
         )

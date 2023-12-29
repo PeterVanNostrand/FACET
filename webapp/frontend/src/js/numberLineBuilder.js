@@ -3,8 +3,8 @@ import { ExplanationTypes, OFFSET_UNSCALED, expl_colors, rect_values } from "../
 import { json, select } from "d3";
 import { RangeTypes } from "./numberLineUtil.js";
 
-const detailsURL = "http://localhost:3001/visualization/data/dataset_details.json";
-const readableURL = "http://localhost:3001/visualization/data/human_readable_details.json";
+const detailsURL = "http://localhost:3001/data/loans/dataset_details.json";
+const readableURL = "http://localhost:3001/data/loans/human_readable.json";
 
 export const numberLineBuilder = (explanation, index) => {
 
