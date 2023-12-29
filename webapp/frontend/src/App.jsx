@@ -255,12 +255,12 @@ function App() {
 }
 
 
-function Feature({ name, constraint, value, updateConstraint }) {
+function Feature({ name, value }) {
     return (
-        <div>
-            <strong>{name}</strong>&nbsp;
+        <p>
+            <strong>{name}</strong>
             : <span className="featureValue">{value}</span>
-        </div>
+        </p>
     )
 }
 
