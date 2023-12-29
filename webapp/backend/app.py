@@ -47,7 +47,7 @@ init_app()
 
 
 @app.route("/facet/instances", methods=["GET"])
-def get_test_instances():
+def get_instances():
     num_arrays, array_length = SAMPLE_DATA.shape
     json_data = []
 
