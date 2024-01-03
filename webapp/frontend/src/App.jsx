@@ -79,7 +79,8 @@ function App() {
     //fetches the weights of the features
     const getWeights = () =>{
         const weights = [];
-        for(feature of featureDict){
+        console.log(featureDict);
+        for(let feature in featureDict){
             let priority = featureDict[feature]["currPriority"];
             let w = 1; //the weight for this feature
             if(formatDict["weight_values"]["IsExponent"]){
@@ -91,16 +92,20 @@ function App() {
             }
             weights.push(w);
         }
-        return (',"weights":[' + weights.toString() + ']');
+        return (weights);
     }
     // Function to fetch explanation data from the server
     const handleExplanation = async () => {
         try {
             status_log("Generated explanation!")
+            if(selectedInstance != ""){
+                selectedInstance.weights = getWeights();
+            }
             const response = await axios.post(
                 ENDPOINT + "/explanation",
-                selectedInstance + getWeights(),
+                selectedInstance,
             );
+            console.log(selectedInstance);
             setExplanation(response.data);
         } catch (error) {
             status_log("Explanation failed", failure)
