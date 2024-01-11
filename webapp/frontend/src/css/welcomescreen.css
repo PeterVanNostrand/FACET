@@ -74,3 +74,40 @@
     border-width: 1px;
     color: black;
 }
+
+.ApplicationDropDown{
+    width: 300px;
+    height: 40px;
+    background-color: #DDDDDD;
+    border-style: solid;
+    border-color: black;
+    border-width: 1px;
+    color: black;
+    text-align: center;
+    font-size: 16px;
+}
+
+.Application-Window{
+    width: 650px;
+    height: 250px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: #EEEEEE;
+    border-style: solid;
+    border-color: #000000;
+    border-width: 2px;
+    color: black;
+}
+
+.Selection-Details{
+    position: absolute;
+    bottom: 0px;
+}
+
+.Button-Div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
