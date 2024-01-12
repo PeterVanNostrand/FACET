@@ -84,7 +84,8 @@ function App() {
             let priority = featureDict[feature]["currPriority"];
             let w = 1; //the weight for this feature
             if(formatDict["weight_values"]["IsExponent"]){
-                w = Math.pow(priority, formatDict["weight_values"]["Increment"]);
+                //if feature is locked, w = 1; else increment the weight appropriately
+                w = featureDict[feature]["locked"] ? 1 : Math.pow(priority, formatDict["weight_values"]["Increment"]);
             }
             else{
                 //if feature is locked, w = 1; else increment the weight appropriately
