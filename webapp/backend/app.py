@@ -65,31 +65,52 @@ def get_human_format():
 
 @app.route("/facet/explanation", methods=["POST"])
 def facet_explanation():
-    try:
-        data = request.json
-        print(data)
-        instance = DS_INFO.dict_to_point(data)[0:-1] #gets the x0...xi points w/o weights
-        instance = DS_INFO.scale_points(instance)
-        weights = np.vectorize(data["weights"]) #get vector
-        print("input_data", instance)  # debug
-        print(f"weights: {weights}\n")
+    '''
+    This is the main API endpoint for explaining instances. It expects a request JSON object containing the following entries
 
-        if len(instance.shape) == 1:  # if we only have one instance
+    Parameters
+    ----------
+    `instance`: a dictionary with the instance values like {x0: value, ..., xn: value}
+    `weights`: a dictionary with the weights values like {x0: weight, ..., xn: weight}
+    `k`: TODO an integer for the number of explantions to generate
+    `constraints`: TODO a dictionary with the constaints values like {x0: [lower, upper], ..., xn: [lower, upper]}
+
+    Returns
+    -------
+    `regions`
+    '''
+    try:
+        query = request.json
+        print("query: " + str(query))
+
+        # get the instance to explain
+        instance = DS_INFO.dict_to_point(query["instance"])
+        instance = DS_INFO.scale_points(instance)
+        print("instance: " + str(instance))
+
+        # get the weights to use
+        weights = DS_INFO.dict_to_point(query["weights"])  # get vector
+        weights = np.nan_to_num(weights, nan=1.0)
+        print("weights: " + str(weights))
+
+        # if we only have one instance, reshape the arary correctly
+        if len(instance.shape) == 1:
             instance = instance.reshape(-1, instance.shape[0])
 
-        # Perform explanations using manager explain
-        explain_pred = FACET_CORE.predict(instance)
-        # get the counterfactual points and regions from FACET
-        points, regions = FACET_CORE.explain(instance, explain_pred)
+        # Perform explanations using FACET explain
+        pred = FACET_CORE.predict(instance)
+        points, regions = FACET_CORE.explain(x=instance, y=pred, k=1, constraints=None, weights=weights)
 
+        # unscale the counterfactual region explanations
         region = DS_INFO.unscale_rects(regions[0])
         region_dict = DS_INFO.rect_to_dict(region)
 
         return jsonify(region_dict)
 
+    # if Python throws an error, return code 500 (Internal Server Error) and the error message
     except Exception as e:
         print(e)
-        return jsonify({"error": str(e)})
+        return "PYTHON ERROR\n" + str(e), 500
 
 
 if __name__ == "__main__":

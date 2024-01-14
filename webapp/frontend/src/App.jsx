@@ -1,17 +1,29 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import webappConfig from "../../config.json";
 import { formatFeature, formatValue } from "../utilities";
 import "./css/App.css";
 
-const success = "Lime"
-const failure = "Red"
+const SUCCESS = "Lime"
+const FAILURE = "Red"
+const DEBUG = "White"
+/**
+ * A simple function for neat logging
+ * @param {string} text     The status message text
+ * @param {string} color    The CSS color to display the message in, affects console output
+ */
 function status_log(text, color) {
     if (color === null) {
         console.log(text)
     }
+    else if (color == FAILURE) {
+        console.error("%c" + text, "color:" + color + ";font-weight:bold;");
+    }
+    else if (color == DEBUG) {
+        console.debug("%c" + text, "color:" + color + ";font-weight:bold;");
+    }
     else {
-        console.log("%c" + text, "color:" + color + ";font-weight:bold;")
+        console.log("%c" + text, "color:" + color + ";font-weight:bold;");
     }
 }
 
@@ -31,7 +43,7 @@ function App() {
 
     // useEffect to fetch instances data when the component mounts
     useEffect(() => {
-        status_log("Using endpoint " + ENDPOINT, success)
+        status_log("Using endpoint " + ENDPOINT, SUCCESS)
 
         const pageLoad = async () => {
             fetchInstances();
@@ -45,11 +57,11 @@ function App() {
         const fetchHumanFormat = async () => {
             try {
                 const response = await axios.get(ENDPOINT + "/human_format");
-                status_log("Sucessfully loaded human format dictionary!", success)
+                status_log("Sucessfully loaded human format dictionary!", SUCCESS)
                 return response.data
             }
             catch (error) {
-                status_log("Failed to load human format dictionary", failure)
+                status_log("Failed to load human format dictionary", FAILURE)
                 console.error(error);
                 return
             }
@@ -61,9 +73,9 @@ function App() {
                 const response = await axios.get(ENDPOINT + "/instances");
                 setInstances(response.data);
                 setSelectedInstance(response.data[0]);
-                status_log("Sucessfully loaded instances!", success)
+                status_log("Sucessfully loaded instances!", SUCCESS)
             } catch (error) {
-                status_log("Failed to load instances", failure)
+                status_log("Failed to load instances", FAILURE)
                 console.error(error);
             }
         };
@@ -77,40 +89,63 @@ function App() {
     }, [selectedInstance]);
 
     //fetches the weights of the features
-    const getWeights = () =>{
-        const weights = [];
-        console.log(featureDict);
-        for(let feature in featureDict){
+    const getWeights = () => {
+        let weights = {};
+        for (let feature in featureDict) {
             let priority = featureDict[feature]["currPriority"];
             let w = 1; //the weight for this feature
-            if(formatDict["weight_values"]["IsExponent"]){
+            if (formatDict["weight_values"]["IsExponent"]) {
                 //if feature is locked, w = 1; else increment the weight appropriately
                 w = featureDict[feature]["locked"] ? 1 : Math.pow(priority, formatDict["weight_values"]["Increment"]);
             }
-            else{
+            else {
                 //if feature is locked, w = 1; else increment the weight appropriately
-                w = featureDict[feature]["locked"] ? 1 : (1 + (priority-1)*formatDict["weight_values"]["Increment"]);
+                w = featureDict[feature]["locked"] ? 1 : (1 + (priority - 1) * formatDict["weight_values"]["Increment"]);
             }
-            weights.push(w);
+            weights[feature] = w;
         }
         return (weights);
     }
-    // Function to fetch explanation data from the server
+    /**
+     * Function to explain the selected instance using the backend server
+     * @returns None
+     */
     const handleExplanation = async () => {
         try {
-            status_log("Generated explanation!")
-            if(selectedInstance != ""){
-                selectedInstance.weights = getWeights();
-            }
+            // if we have no instance to explain, there's nothing to do
+            if (selectedInstance == "")
+                return;
+            // build the explanation query, should hold the instance, weights, constraints, etc
+            let query_data = {};
+            query_data["instance"] = selectedInstance
+            query_data["weights"] = getWeights();
+            // console.debug("query data is:")
+            // console.debug(query_data)
+            status_log("query data is:", DEBUG)
+            console.debug(query_data)
+
+
+            // make the explanation request
             const response = await axios.post(
                 ENDPOINT + "/explanation",
-                selectedInstance,
+                query_data,
             );
-            console.log(selectedInstance);
+            // update the explanation content
             setExplanation(response.data);
-        } catch (error) {
-            status_log("Explanation failed", failure)
-            console.error(error);
+            status_log("Successfully generated explanation!", SUCCESS)
+            console.debug(response.data)
+
+        }
+        catch (error) {
+            if (error.code != AxiosError.ECONNABORTED) { // If the error is not a front end reload
+                let error_text = "Failed to generate explanation (" + error.code + ")"
+                error_text += "\n" + error.message
+                if (error.response) {
+                    error_text += "\n" + error.response.data;
+                }
+                status_log(error_text, FAILURE)
+            }
+            return;
         }
     }
 
