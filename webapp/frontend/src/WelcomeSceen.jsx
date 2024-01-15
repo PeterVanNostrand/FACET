@@ -11,9 +11,9 @@ import { SelectionHelpers } from 'victory';
 import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
 
-
 const success = "Lime"
 const failure = "Red"
+
 function status_log(text, color) {
     if (color === null) {
         console.log(text)
@@ -45,6 +45,10 @@ const WelcomeScreen = ({applicationList, scenarioList}) => {
     let dropDownApplicaitons = [];
 
     console.log("Hello World! This is running")
+
+    //Kepe the Selected Application between tabs
+    //Add a close button that doesn't change the state
+    //randy-b.3-constarints -> App Line 99
 
     // Loading the need instances for the component
     useEffect(() => {
