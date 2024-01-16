@@ -23,7 +23,7 @@ function status_log(text, color) {
     }
 }
 
-const WelcomeScreen = ({applicationList, scenarioList}) => {
+const WelcomeScreen = ({ applicationList, scenarioList }) => {
     const [currentTab, setCurrentTab] = useState(0)
     const [selected, setsSelected] = useState(false)
     const [dropdownvalue, setDropdownvalue] = useState(null)
@@ -44,7 +44,6 @@ const WelcomeScreen = ({applicationList, scenarioList}) => {
     let applications = new Map();
     let dropDownApplicaitons = [];
 
-    console.log("Hello World! This is running")
 
     //Kepe the Selected Application between tabs
     //Add a close button that doesn't change the state
@@ -59,7 +58,7 @@ const WelcomeScreen = ({applicationList, scenarioList}) => {
             let dict_data = await fetchHumanFormat()
             setFormatDict(dict_data)
             setFeatureDict(dict_data["feature_names"]);
-            setIsLoading(false);    
+            setIsLoading(false);
         }
 
         // get the hman formatting data instances
@@ -80,7 +79,7 @@ const WelcomeScreen = ({applicationList, scenarioList}) => {
         const fetchInstances = async () => {
             try {
                 const response = await axios.get(ENDPOINT + "/instances");
-                setInstances(response .data);
+                setInstances(response.data);
                 setSelectedInstance(response.data[0]);
                 status_log("Sucessfully loaded instances!", success)
             } catch (error) {
@@ -94,13 +93,13 @@ const WelcomeScreen = ({applicationList, scenarioList}) => {
         // Call the pageLoad function when the component mounts
         pageLoad();
     }, []);
-      
+
     const validTabNumber = (number) => {
         // TODO: Code that checks to see whether the given tab 
         //number is valid and has a corresponding tab
 
-        if (number == 0 || number == 1){
-            return true 
+        if (number == 0 || number == 1) {
+            return true
         } else {
             return false
         }
@@ -111,7 +110,7 @@ const WelcomeScreen = ({applicationList, scenarioList}) => {
     // - Check to make sure that the number has a corresponding tab
     // - Set the Current Tab to the new tab and update
     const handleTabControl = (number) => {
-        if (currentTab != number && validTabNumber(number)){
+        if (currentTab != number && validTabNumber(number)) {
             setCurrentTab(number)
             setSelectedInstance(instances[0]);
             setDropdownvalue(dropDownApplicaitons[0])
@@ -151,28 +150,26 @@ const WelcomeScreen = ({applicationList, scenarioList}) => {
 
     const FeatureInputs = () => {
 
-       return <div>{Object.keys(featureDict).map((key, index) => (
+        return <div>{Object.keys(featureDict).map((key, index) => (
             <div key={index}>
                 <FeatureInput name={formatFeature(key, formatDict)} />
             </div>
-            ))}</div>
-        }
+        ))}</div>
+    }
 
-    if(isLoading){
+    if (isLoading) {
         // If the files are still loading
         return <div></div>
-    } else if (selected){
+    } else if (selected) {
         // If a valid application has been selected
         return getDetailedFeaturesOfSelected();
 
     } else {
         //If an application is still being selected
 
-        //console.log(instances)
-        console.log(formatDict)
-    
+
         let applicantDetails = "";
-            
+
         for (let i = 0; i < instances.length; i++) {
             applications.set("Application " + (i + 1), instances[i]);
             dropDownApplicaitons.push("Application " + (i + 1));
@@ -182,29 +179,29 @@ const WelcomeScreen = ({applicationList, scenarioList}) => {
         //setDropdownvalue(applications[0])
 
         let theDropDown = <select className="ApplicationDropDown" onChange={(e) => handleDropDownChange(e.target.value)} defaultValue={dropdownvalue}>
-                {dropDownApplicaitons.map((option, idx) => (
-                    <option key={idx}>{option}</option>))}
-            </select>;
+            {dropDownApplicaitons.map((option, idx) => (
+                <option key={idx}>{option}</option>))}
+        </select>;
 
-        if(currentTab == 0) {
+        if (currentTab == 0) {
             // Pre-loaded Applications
             applicantDetails = (
-                <div className="Application-Window"><b>Please choose one of the applicants in the drop down menu to use for FACET</b>
-                
-                {theDropDown}
+                <div className="Application-Window"><b>Applicants</b>
 
-                {getDetailedFeaturesOfSelected()}
-            </div>
+                    {theDropDown}
+
+                    {getDetailedFeaturesOfSelected()}
+                </div>
             )
         } else {
             //Custome Application 
 
             applicantDetails = (
-                <div className="Application-Window"><b>Kindly provide the neccessary information in the given field below and ensure that all the details are completely filled out</b>
+                <div className="Application-Window"><b>Custom Applicant</b>
 
-                {FeatureInputs()}
+                    {FeatureInputs()}
 
-            </div>
+                </div>
             )
         }
 
@@ -215,22 +212,22 @@ const WelcomeScreen = ({applicationList, scenarioList}) => {
                     src={InformationSVG}
                     onClick={() => handleInformationClick()}
                 /></div>
-            <h1><b><u>Welcome to FACET!</u></b></h1>
+            <h1>Welcome to FACET</h1>
             <div className='Selection-Box'>
                 <table className="DirectionTable">
                     <tr><tbody>
-                    <td><button className={currentTab == 0 ? 'SelectedApplicant' : 'UnselectedApplicant'} onClick={() => handleTabControl(0)}>{formatDict["dataset"].charAt(0).toUpperCase() + formatDict["dataset"].slice(1) + " Applicant"}</button></td>
-                    <td><button className={currentTab == 1 ? 'SelectedApplicant' : 'UnselectedApplicant'} onClick={() => handleTabControl(1)}> Custom Application</button></td>
+                        <td><button className={currentTab == 0 ? 'SelectedApplicant' : 'UnselectedApplicant'} onClick={() => handleTabControl(0)}>{formatDict["dataset"].charAt(0).toUpperCase() + formatDict["dataset"].slice(1) + " Applicant"}</button></td>
+                        <td><button className={currentTab == 1 ? 'SelectedApplicant' : 'UnselectedApplicant'} onClick={() => handleTabControl(1)}> Custom Application</button></td>
                     </tbody></tr></table>
 
-                    <div className="Selection-Details">{applicantDetails}
+                <div className="Selection-Details">{applicantDetails}
                     <br></br>
                     <div className="Button-Div"><button className='Confirm-Button' onClick={() => handleConfirmButton()}>Confirm</button></div>
                     <br></br>
-                    </div>
                 </div>
+            </div>
 
-            
+
         </div>;
     }
 };
@@ -254,7 +251,9 @@ function FeatureInput({ name }) {
     return (
         <div className="features-container">
             <div className="feature">
-                <p>{name}: <input onChange={() => (alert("Throwing an error for input misvalidation"))}>{}</input></p>
+                <p>{name}: <input 
+                // onChange={() => (alert("Throwing an error for input misvalidation"))}
+                >{ }</input></p>
             </div>
             {/* Add more similar div elements for each feature */}
         </div>
