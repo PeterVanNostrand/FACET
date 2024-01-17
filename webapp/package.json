@@ -4,9 +4,9 @@
     "version": "0.0.0",
     "type": "module",
     "scripts": {
-        "dev": "npm-run-all -p dev:frontend dev:backend",
+        "dev": "npm-run-all --parallel dev:backend dev:frontend",
         "dev:frontend": "vite",
-        "dev:backend": "cd ../backend && python app.py",
+        "dev:backend": "cd ../ && python -m webapp.backend.app",
         "build": "vite build",
         "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
         "preview": "vite preview"
