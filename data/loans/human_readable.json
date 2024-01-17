@@ -35,5 +35,9 @@
         "CoapplicantIncome": null,
         "LoanAmount": null,
         "Loan_Amount_Term": null
+    },
+    "weight_values":{
+        "Increment":1,
+        "IsExponent":false
     }
 }
