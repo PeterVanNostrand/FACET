@@ -127,6 +127,8 @@ function App() {
 
     useEffect(() => {
         if (explanations.length === 0) return;
+
+        console.log('expl', explanations)
         const instanceAndExpls = explanations.map(region => ({
             instance: selectedInstance,
             region
@@ -156,20 +158,18 @@ function App() {
 
         try {
             // build the explanation query, should hold the instance, weights, constraints, etc
-            let query_data = {};
-            query_data["instance"] = selectedInstance
-            query_data["weights"] = getWeights();
-            query_data["constraints"] = constraints;
-            query_data["num_explanations"] = numExplanations;
-            status_log("query data is:", DEBUG)
-            console.debug(query_data)
-
+            let request = {};
+            request["instance"] = selectedInstance
+            request["weights"] = getWeights();
+            request["constraints"] = constraints;
+            request["num_explanations"] = numExplanations;
 
             // make the explanation request
             const response = await axios.post(
                 ENDPOINT + "/explanations",
-                query_data,
+                request,
             );
+
             // update the explanation content
             setExplanations(response.data);
             status_log("Successfully generated explanation!", SUCCESS)
@@ -209,35 +209,95 @@ function App() {
         setNumExplanations(numExplanations);
     }
 
+    const handleApplicationChange = (event) => {
+        setCount(event.target.value);
+        setSelectedInstance(instances[event.target.value]);
+    };
+
+    // refactorable section to handle adding a new profile
+    // ---------------------------------------------------
+    const [value, setValue] = useState(0);
+
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
+
+    const handleAddProfile = () => {
+        console.log('Add new profile logic here');
+    };
+    // ---------------------------------------------------
+
 
     // this condition prevents the page from loading until the formatDict is availible
     if (isLoading) {
         return <div></div>
     } else {
         return (
-            <>
-                <div>
-                    <h2>Application {count}</h2>
-                    <button onClick={handlePrevApp}>Previous</button>
-                    <button onClick={handleNextApp}>Next</button>
+            <div className='main-container' style={{ maxHeight: '98vh', }}>
 
-                    {Object.keys(featureDict).map((key, index) => (
-                        <div key={index}>
-                            <Feature name={formatFeature(key, formatDict)} value={formatValue(selectedInstance[key], key, formatDict)} />
+                <div className="nav-bar"></div>
+                <div className='app-body-container' style={{ display: 'flex', flexDirection: 'row' }}>
+                    <div className='filter-container'></div>
+                    <div className='feature-control-container' style={{ border: 'solid 1px black', padding: 20 }}>
+                        <div style={{ maxHeight: 40 }}>
+                            <FeatureControlSection />
                         </div>
-                    ))}
-                </div>
-
-                <h2>Explanation</h2>
-
-
-                {Object.keys(explanations).map((key, index) => (
-                    <div key={index}>
-                        <h3>{formatFeature(key, formatDict)}</h3>
-                        <p>{formatValue(explanations[key][0], key, formatDict)}, {formatValue(explanations[key][1], key, formatDict)}</p>
                     </div>
-                ))}
-            </>
+
+                    <div className="my-application-container" style={{ overflowY: 'auto', border: 'solid 1px black', padding: 10 }}>
+                        <div className='rhs' style={{ padding: 10 }}>
+
+                            <h2 className='applicant-header' style={{ marginTop: 10, marginBottom: 20 }}>My Application</h2>
+                            <select value={count} onChange={handleApplicationChange}>
+                                {instances.map((applicant, index) => (
+                                    <option key={index} value={index}>
+                                        Application {index}
+                                    </option>
+                                ))}
+                            </select>
+                            <div className='applicant-tabs' style={{ display: 'flex', flexDirection: 'row' }}>
+                                <Tabs value={1} onChange={handleChange} indicatorColor="primary">
+                                    <Tab label="Default" />
+                                    <Tab label={`Profile ${count}`} />
+                                </Tabs>
+
+                                <button style={{ border: '1px solid black', color: 'black', backgroundColor: 'white' }} onClick={handleAddProfile}>+</button>
+                            </div>
+
+                            <div className='applicant-info-container' style={{ margin: 10 }}>
+                                {Object.keys(selectedInstance).map((key, index) => (
+                                    <div key={index} className='feature' style={{ margin: -10 }}>
+                                        <Feature
+                                            name={featureDict[key]}
+                                            constraint={constraints[index]}
+                                            value={selectedInstance[key]}
+                                            updateConstraint={(i, newValue) => {
+                                                const updatedConstraints = [...constraints];
+                                                updatedConstraints[index][i] = newValue;
+                                                setConstraints(updatedConstraints);
+                                            }}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+
+                        {explanationSection}
+                        <div className="suggestions-container">
+                            <div>
+                                <h2 style={{ marginTop: 10, marginBottom: 10 }}>Suggestions</h2>
+
+                            </div>
+                            <p>
+                                Your application would have been accepted if your income was $1,013-$1,519 instead of $4,895
+                                and your loan was $9,450-$10,000 instead of $10,200.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
         )
     }
 

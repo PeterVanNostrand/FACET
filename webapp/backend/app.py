@@ -87,8 +87,9 @@ def facet_explanation():
 
     Returns
     -------
-    `regions`
+    `regions: TODO an array of regions dictionaries`
     """
+
     try:
         data = request.json
         print("request: " + str(data))
@@ -99,12 +100,13 @@ def facet_explanation():
         weights = np.nan_to_num(weights, nan=1.0)
         constraints = np.array(data.get("constraints", None)).astype(float)
         constraints = DS_INFO.scale_rects(constraints)[0]
-        num_explanations = data.get("numExplanations", 1)
+        num_explanations = data.get("num_explanations", 1)
 
         # if we only have one instance, reshape the arary correctly
         if len(instance.shape) == 1:
             instance = instance.reshape(-1, instance.shape[0])
 
+        print('k', num_explanations)
         # Perform explanations using FACET explain
         prediction = FACET_CORE.predict(instance)
         points, regions = FACET_CORE.explain(
@@ -116,10 +118,10 @@ def facet_explanation():
 
         return jsonify(region_dicts)
 
-    # if Python throws an error, return code 500 (Internal Server Error) and the error message
     except Exception as e:
         print(e)
-        return "Server Error: \n" + str(e), 500
+        return "\nError: " + str(e), 500
+
 
 
 if __name__ == "__main__":

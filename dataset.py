@@ -47,18 +47,18 @@ class DataInfo:
     col_to_idx: dict = None
 
     def __post_init__(self):
-        '''
+        """
         Runs once after object creation
-        '''
+        """
         col_to_idx = dict()
         for i in range(self.ncols):
             col_to_idx["x{}".format(i)] = i
         self.col_to_idx = col_to_idx
 
     def unscale_points(self, x: np.ndarray):
-        '''
+        """
         Unscales the given points, x must be an array/list of shape (ninstances, ncols)
-        '''
+        """
         # if the data is not normalized, do nothing
         if not self.is_normalized:
             return x
@@ -69,14 +69,16 @@ class DataInfo:
         for i in range(unscaled.shape[0]):
             for col_id in range(self.ncols):
                 min_val, max_val = self.col_scales[col_id]
-                unscaled[i, col_id] = unscaled[i, col_id] * (max_val - min_val) + min_val
+                unscaled[i, col_id] = (
+                    unscaled[i, col_id] * (max_val - min_val) + min_val
+                )
         unscaled = unscaled.squeeze()
         return unscaled
 
     def scale_points(self, x: np.ndarray):
-        '''
+        """
         Unscales the given points, x must be an array/list of shape (ninstances, ncols)
-        '''
+        """
         # if the data is not normalized, do nothing
         if not self.is_normalized:
             return x
@@ -92,22 +94,29 @@ class DataInfo:
         return scaled
 
     def scale_rects(self, rects: np.ndarray):
-        '''
+        """
         Scales the given rectangles, rects must be an array/list of shape (nrects, ncols, 2)
-        '''
+        """
         LOWER, UPPER = 0, 1
         scaled_rects = rects.copy()
-        for i in range(len(rects)):  # for each rectangle
+
+        if len(scaled_rects.shape) == 2:
+            scaled_rects = scaled_rects.reshape(-1, self.ncols, 2)
+
+        for i in range(len(scaled_rects)):  # for each rectangle
             for col_id in range(self.ncols):  # for each column
+                min_val, max_val = self.col_scales[col_id]
                 for end in [LOWER, UPPER]:  # for the lower and upper bound
-                    min_val, max_val = self.col_scales[col_id]
-                    scaled_rects[i][col_id][end] = (scaled_rects[i][col_id][end] - min_val) / (max_val - min_val)
+                    scaled_rects[i][col_id][end] = (
+                        scaled_rects[i][col_id][end] - min_val
+                    ) / (max_val - min_val)
+
         return scaled_rects
 
     def unscale_rects(self, rects: np.ndarray):
-        '''
+        """
         Unscales the given rectangles, rects must be an array/list of shape (nrects, ncols, 2)
-        '''
+        """
         LOWER, UPPER = 0, 1
         unscaled_rects = rects.copy()
         if len(unscaled_rects.shape) == 2:
@@ -116,14 +125,16 @@ class DataInfo:
             for col_id in range(self.ncols):  # for each column
                 for end in [LOWER, UPPER]:  # for the lower and upper bound
                     min_val, max_val = self.col_scales[col_id]
-                    unscaled_rects[i][col_id][end] = unscaled_rects[i][col_id][end] * (max_val - min_val) + min_val
+                    unscaled_rects[i][col_id][end] = (
+                        unscaled_rects[i][col_id][end] * (max_val - min_val) + min_val
+                    )
         unscaled_rects = unscaled_rects.squeeze()
         return unscaled_rects
 
     def rect_to_dict(self, rect: np.ndarray) -> dict:
-        '''
+        """
         Takes a numpy array representing a rectangular counterfactual region and converts it to a dict
-        '''
+        """
         INFTY = 100000000000000
         LOWER, UPPER = 0, 1
         rect_dict = dict()
@@ -133,19 +144,20 @@ class DataInfo:
             rect_dict["x{:d}".format(i)] = [rect[i, LOWER], rect[i, UPPER]]
         return rect_dict
 
+
     def dict_to_point(self, point_dict: dict) -> np.ndarray:
-        '''
+        """
         Takes a dictionary of {"xi" : <number>, ...} and converts it to a numpy array
-        '''
+        """
         point = np.zeros(shape=(self.ncols,))
         for col, val in point_dict.items():
             point[self.col_to_idx[col]] = val
         return point
 
     def point_to_dict(self, point: np.ndarray) -> dict:
-        '''
+        """
         Takes a a numpy array and converts it to a dictionary of the form {"xi" : <number>, ...}
-        '''
+        """
         point_dict = dict()
         for i in range(point.shape[0]):
             point_dict["x{:d}".format(i)] = point[i]
@@ -183,7 +195,7 @@ def load_data(dataset_name, preprocessing: str = "Normalize"):
         print("ERROR NO SUCH DATASET")
         exit(0)
 
-    is_normalized = (preprocessing == "Normalize")
+    is_normalized = preprocessing == "Normalize"
     # save the dataset details
     data_directory = Path(DS_PATHS[dataset_name]).parent
     save_data_dict(
@@ -204,7 +216,7 @@ def load_data(dataset_name, preprocessing: str = "Normalize"):
 
 
 def get_json_paths(dataset_name: str) -> Tuple[str, str]:
-    '''
+    """
     Returns the paths the JSON files corresponding to the given dataset information
 
     Parameters
@@ -214,7 +226,7 @@ def get_json_paths(dataset_name: str) -> Tuple[str, str]:
     Returns
     -------
     json_paths : a tuple[ds_details_path, human_readable_path]
-    '''
+    """
     # check the dataset name is valid
     if dataset_name not in DS_NAMES:
         print("ERROR NO SUCH DATASET")
@@ -230,10 +242,17 @@ def get_json_paths(dataset_name: str) -> Tuple[str, str]:
     return json_paths
 
 
-def save_data_dict(dataset_name: str, x: np.ndarray, y: np.ndarray, colnames: List[str], path: str, normalize: bool):
-    '''
+def save_data_dict(
+    dataset_name: str,
+    x: np.ndarray,
+    y: np.ndarray,
+    colnames: List[str],
+    path: str,
+    normalize: bool,
+):
+    """
     Saves creates a dictionary of dataset details and saves it to JSON file
-    '''
+    """
     # check if the directory exists, if not create it
     dir_path = os.path.dirname(path)
     if not os.path.isdir(dir_path):
