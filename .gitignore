@@ -10,10 +10,8 @@ mace_temp.log
 ./baselines/ocean-err/*
 rf.lp
 scripts/*
-visualization/node_modules/*
-# visualization/data/*
 results/*
-*node_modules*
+node_modules
 package-lock.json
 webapp/backend/results/*
 webapp/backend/visualization/data/explanation_paths.json

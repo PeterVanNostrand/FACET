@@ -47,7 +47,7 @@ init_app()
 
 
 @app.route("/facet/instances", methods=["GET"])
-def get_instances():
+def get_test_instances():
     num_arrays, array_length = SAMPLE_DATA.shape
     json_data = []
 
@@ -75,22 +75,40 @@ def serve_file(filename):
 
 @app.route("/facet/explanations", methods=["POST"])
 def facet_explanation():
+    """
+    This is the main API endpoint for explaining instances. It expects a request JSON object containing the following entries
+
+    Parameters
+    ----------
+    `instance`: a dictionary with the instance values like {x0: value, ..., xn: value}
+    `weights`: a dictionary with the weights values like {x0: weight, ..., xn: weight}
+    `k`: TODO an integer for the number of explantions to generate
+    `constraints`: TODO a dictionary with the constaints values like {x0: [lower, upper], ..., xn: [lower, upper]}
+
+    Returns
+    -------
+    `regions`
+    """
     try:
         data = request.json
-        instance = DS_INFO.dict_to_point(data.get("selectedInstance"))
+        print("request: " + str(data))
+
+        instance = DS_INFO.dict_to_point(data["instance"])
         instance = DS_INFO.scale_points(instance)
+        weights = DS_INFO.dict_to_point(data["weights"])  # get vector
+        weights = np.nan_to_num(weights, nan=1.0)
         constraints = np.array(data.get("constraints", None)).astype(float)
         constraints = DS_INFO.scale_rects(constraints)[0]
         num_explanations = data.get("numExplanations", 1)
 
-        if len(instance.shape) == 1:  # if we only have one instance
+        # if we only have one instance, reshape the arary correctly
+        if len(instance.shape) == 1:
             instance = instance.reshape(-1, instance.shape[0])
 
-        # Perform explanations using manager explain
-        explain_prediction = FACET_CORE.predict(instance)
-        # get the counterfactual points and regions from FACET
+        # Perform explanations using FACET explain
+        prediction = FACET_CORE.predict(instance)
         points, regions = FACET_CORE.explain(
-            instance, explain_prediction, num_explanations, constraints
+            x=instance, y=prediction, k=num_explanations, constraints=None, weights=weights
         )
 
         unscaled_regions = [DS_INFO.unscale_rects(region) for region in regions]
@@ -98,8 +116,10 @@ def facet_explanation():
 
         return jsonify(region_dicts)
 
+    # if Python throws an error, return code 500 (Internal Server Error) and the error message
     except Exception as e:
-        return jsonify({"error": str(e)})
+        print(e)
+        return "Server Error: \n" + str(e), 500
 
 
 if __name__ == "__main__":

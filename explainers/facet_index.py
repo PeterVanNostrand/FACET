@@ -739,11 +739,11 @@ class FACETIndex(Explainer):
                     explanation = self.fit_to_rectangle(x[i], nearest_rect)
                 xprime.append(explanation)
                 if DO_VIZUALIZATION:
+                    json_path = VIZ_DATA_PATH + "explanations/explanation_{:03d}.json".format(i)
                     save_instance_region_JSON(
                         x[i],
                         nearest_rect,
-                        path=VIZ_DATA_PATH
-                        + "explanations/explanation_{:03d}.json".format(i),
+                        path=json_path,
                     )
 
         elif self.search_type == "BitVector":
@@ -785,17 +785,8 @@ class FACETIndex(Explainer):
                 else:
                     explanation = [np.inf for _ in range(x.shape[1])]
 
-                if k == 1:
-                    curr_instance = x[i]
-                    regions.append(nearest_rect)
-
-                elif k > 1:
-                    for nearest_rect in result:
-                        curr_instance = x[i]
-                        regions.append(nearest_rect)
-
-
                 xprime.append(explanation)
+                regions.append(nearest_rect)
                 progress.update()
 
             progress.close()

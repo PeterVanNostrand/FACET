@@ -97,18 +97,12 @@ class DataInfo:
         '''
         LOWER, UPPER = 0, 1
         scaled_rects = rects.copy()
-
-        if len(scaled_rects.shape) == 2:
-            scaled_rects = scaled_rects.reshape(-1, self.ncols, 2)
-            
-        for i in range(len(scaled_rects)):  # for each rectangle
+        for i in range(len(rects)):  # for each rectangle
             for col_id in range(self.ncols):  # for each column
-                min_val, max_val = self.col_scales[col_id]
                 for end in [LOWER, UPPER]:  # for the lower and upper bound
+                    min_val, max_val = self.col_scales[col_id]
                     scaled_rects[i][col_id][end] = (scaled_rects[i][col_id][end] - min_val) / (max_val - min_val)
-
         return scaled_rects
-
 
     def unscale_rects(self, rects: np.ndarray):
         '''
@@ -120,13 +114,11 @@ class DataInfo:
             unscaled_rects = unscaled_rects.reshape(-1, self.ncols, 2)
         for i in range(len(unscaled_rects)):  # for each rectangle
             for col_id in range(self.ncols):  # for each column
-                min_val, max_val = self.col_scales[col_id]
                 for end in [LOWER, UPPER]:  # for the lower and upper bound
+                    min_val, max_val = self.col_scales[col_id]
                     unscaled_rects[i][col_id][end] = unscaled_rects[i][col_id][end] * (max_val - min_val) + min_val
         unscaled_rects = unscaled_rects.squeeze()
         return unscaled_rects
-    
-    
 
     def rect_to_dict(self, rect: np.ndarray) -> dict:
         '''
