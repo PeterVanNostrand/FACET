@@ -14,9 +14,7 @@ visualization/node_modules/*
 # visualization/data/*
 results/*
 *node_modules*
-*package-lock.json*
+package-lock.json
 webapp/backend/results/*
 webapp/backend/visualization/data/explanation_paths.json
-*node_modules*
-*package-lock.json
 *.vite*
