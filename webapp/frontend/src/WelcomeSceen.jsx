@@ -4,6 +4,7 @@ import * as d3 from 'd3'
 import { json } from 'd3';
 import './css/welcomescreen.css'
 import InformationSVG from './SVG/Information.svg'
+import CloseSVG from './SVG/XClose.svg'
 import webappConfig from "../../config.json";
 import axios from "axios";
 import { formatFeature, formatValue } from "../utilities";
@@ -112,8 +113,8 @@ const WelcomeScreen = ({ applicationList, scenarioList }) => {
     const handleTabControl = (number) => {
         if (currentTab != number && validTabNumber(number)) {
             setCurrentTab(number)
-            setSelectedInstance(instances[0]);
-            setDropdownvalue(dropDownApplicaitons[0])
+            //setSelectedInstance(instances[0]);
+            //setDropdownvalue(dropDownApplicaitons[0])
         }
     }
 
@@ -121,23 +122,46 @@ const WelcomeScreen = ({ applicationList, scenarioList }) => {
         console.log("Information Now!");
     }
 
+    const handleCloseClick = () => {
+        setsSelected(true) //Have it pull from previous applicant before this tab was open
+    }
+
     const handleConfirmButton = () => {
         // TODO: Pass either current applicant or custom applicant and scenario (from tab number)
         // and start the visualization
 
         //If cusstom applicant, make sure all field are filled with valid inputs before continuing 
+        let finalizedInstance = ""
+
+        if (currentTab == 1){
+            //If on custom applicant tab
+
+            let customInstance = {}
+
+            let names = Object.getOwnPropertyNames(featureDict)
+
+            for (let prop in names){
+                let featureName = names[prop]
+                console.log("FeatureInput" + featureName + " " + document.getElementById("FeatureInput" + featureName).textContent)
+                customInstance[featureName] = document.getElementById("FeatureInput" + featureName).textContent   
+            }
+
+            console.log(customInstance)
+
+            finalizedInstance = customInstance
+
+        } else {
+            finalizedInstance = selectedInstance
+        }
+
+        setSelectedInstance(finalizedInstance)
 
         setsSelected(true);
     }
 
     const handleDropDownChange = (value) => {
-        console.log(value)
-        console.log(applications)
-        console.log(applications.get(value))
         setDropdownvalue(value)
         setSelectedInstance(applications.get(value))
-        console.log(dropdownvalue)
-        console.log(selectedInstance)
     }
 
     const getDetailedFeaturesOfSelected = () => {
@@ -149,12 +173,20 @@ const WelcomeScreen = ({ applicationList, scenarioList }) => {
     }
 
     const FeatureInputs = () => {
-
         return <div>{Object.keys(featureDict).map((key, index) => (
             <div key={index}>
-                <FeatureInput name={formatFeature(key, formatDict)} />
+                <FeatureInputTest 
+                prettyName={formatFeature(key, formatDict)} 
+                name={key}
+                updateValue={(newValue) => (console.log(name + " has been changed to the value " + newValue))} />
             </div>
         ))}</div>
+
+    }
+
+    for (let i = 0; i < instances.length; i++) {
+        applications.set("Application " + (i + 1), instances[i]);
+        dropDownApplicaitons.push("Application " + (i + 1));
     }
 
     if (isLoading) {
@@ -165,15 +197,9 @@ const WelcomeScreen = ({ applicationList, scenarioList }) => {
         return getDetailedFeaturesOfSelected();
 
     } else {
+        console.log(featureDict)
+        console.log(selectedInstance)
         //If an application is still being selected
-
-
-        let applicantDetails = "";
-
-        for (let i = 0; i < instances.length; i++) {
-            applications.set("Application " + (i + 1), instances[i]);
-            dropDownApplicaitons.push("Application " + (i + 1));
-        }
 
         //Suppose to set this, however, it doesn't matter since SelectedInstances changes with DropDownValue anyways
         //setDropdownvalue(applications[0])
@@ -183,30 +209,14 @@ const WelcomeScreen = ({ applicationList, scenarioList }) => {
                 <option key={idx}>{option}</option>))}
         </select>;
 
-        if (currentTab == 0) {
-            // Pre-loaded Applications
-            applicantDetails = (
-                <div className="Application-Window"><b>Applicants</b>
-
-                    {theDropDown}
-
-                    {getDetailedFeaturesOfSelected()}
-                </div>
-            )
-        } else {
-            //Custome Application 
-
-            applicantDetails = (
-                <div className="Application-Window"><b>Custom Applicant</b>
-
-                    {FeatureInputs()}
-
-                </div>
-            )
-        }
-
         // references a varible in html with "{varible}"
         return <div className='Full-Welcome'>
+            <div className='Close'>
+                <img
+                    className='CloseImage'
+                    src={CloseSVG}
+                    onClick={() => handleCloseClick()}
+                /></div>
             <div className='Information'>
                 <img
                     src={InformationSVG}
@@ -220,7 +230,18 @@ const WelcomeScreen = ({ applicationList, scenarioList }) => {
                         <td><button className={currentTab == 1 ? 'SelectedApplicant' : 'UnselectedApplicant'} onClick={() => handleTabControl(1)}> Custom Application</button></td>
                     </tbody></tr></table>
 
-                <div className="Selection-Details">{applicantDetails}
+                <div className="Selection-Details">
+
+                    <div className="Application-Window" id="DivForDropDown" style={{display: currentTab == 1 ? 'none' : 'flex'}}><b>Applicants</b>
+                        {theDropDown}
+                        {getDetailedFeaturesOfSelected()}
+                    </div>
+
+                    <div className="Application-Window" id="DivForCustomApplicant" style={{display: currentTab == 0 ? 'none' : 'flex'}}><b>Custom Applicant</b>
+                        {FeatureInputs()}
+
+                    </div>
+
                     <br></br>
                     <div className="Button-Div"><button className='Confirm-Button' onClick={() => handleConfirmButton()}>Confirm</button></div>
                     <br></br>
@@ -228,11 +249,11 @@ const WelcomeScreen = ({ applicationList, scenarioList }) => {
             </div>
 
 
+
+
         </div>;
     }
 };
-
-export default WelcomeScreen;
 
 function Feature({ name, value }) {
 
@@ -246,18 +267,69 @@ function Feature({ name, value }) {
     )
 }
 
-function FeatureInput({ name }) {
+function FeatureInputTest({prettyName, name, updateValue}) {
+    console.log("FeatureInput" + name)
 
     return (
         <div className="features-container">
-            <div className="feature">
-                <p>{name}: <input 
-                // onChange={() => (alert("Throwing an error for input misvalidation"))}
-                >{ }</input></p>
+            <div className='feature'>
+                <div className="InlineTextFeature">{prettyName}&nbsp;</div>
+                <div id={"FeatureInput" + name} className="InlineTextFeature">
+                    <EditableText
+                        currText={0}
+                        updateValue={updateValue}
+                    />
+                </div>
             </div>
-            {/* Add more similar div elements for each feature */}
         </div>
     )
 }
 
-// <Dropdown options={applications} value={dropdownvalue} onChange={() => handleDropDownChange()} placeholder="Select an application" /> 
+const EditableText = ({ currText, updateValue }) => {
+    const [isEditing, setIsEditing] = useState(false);
+    const [text, setText] = useState(currText);
+
+    const handleDoubleClick = () => {
+        setIsEditing(true);
+    };
+
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            setIsEditing(false);
+            // Pass the updated value to the parent component
+            updateValue(parseInt(text));
+        }
+    };
+
+    const handleBlur = () => {
+        setIsEditing(false);
+        // Pass the updated value to the parent component
+        updateValue(text);
+    };
+
+    const handleChange = (e) => {
+        setText(e.target.value);
+    };
+
+    return (
+        <div style={{ display: 'inline-block' }}>
+            {isEditing ? (
+                <input
+                    style={{ width: Math.min(Math.max(text.length, 2), 20) + 'ch' }}
+                    type="text"
+                    value={text}
+                    autoFocus
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    onKeyPress={handleKeyPress}
+                />
+            ) : (
+                <p onClick={handleDoubleClick} style={{ cursor: 'pointer' }}>
+                    {text}
+                </p>
+            )}
+        </div>
+    );
+};
+
+export default WelcomeScreen;

@@ -111,3 +111,22 @@
     justify-content: center;
     align-items: center;
 }
+
+.Close{
+    position: absolute;
+    top: 36px;
+    left: 60px;
+    height: 27px;
+    width: 48px;
+}
+
+.CloseImage{
+    position: absolute;
+    height: 50px;
+    width: 50px;
+}
+
+.InlineTextFeature{
+    display: inline-block;
+    vertical-align: middle;
+}
