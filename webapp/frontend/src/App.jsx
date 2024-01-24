@@ -69,7 +69,12 @@ function App() {
             try {
                 const response = await axios.get(ENDPOINT + "/instances");
                 setInstances(response.data);
-                status_log("Sucessfully loaded instances!", SUCCESS)
+                if(instances.length > 0){
+                    status_log("Sucessfully loaded instances!", SUCCESS)
+                }
+                else{
+                    status_log("Failed to load instances (length 0)", FAILURE);
+                }
             } catch (error) {
                 status_log("Failed to load instances", FAILURE)
                 console.error(error);
@@ -77,31 +82,32 @@ function App() {
         };
         // Call the pageLoad function when the component mounts
         pageLoad();
-    }, []);
+    }, [instances]);
+
+    //fetches the weights of the features
+    const getWeights = () => {
+        let weights = {};
+        for (let feature in masterObj["feature_names"]) {
+            let priority = masterObj["feature_names"][feature]["currPriority"];
+            let w = 1; //the weight for this feature
+            if (masterObj["weight_values"]["IsExponent"]) {
+                //if feature is locked, w = 1; else increment the weight appropriately
+                w = masterObj["feature_names"][feature]["locked"] ? 1 : Math.pow(priority, masterObj["weight_values"]["Increment"]);
+            }
+            else {
+                //if feature is locked, w = 1; else increment the weight appropriately
+                w = masterObj["feature_names"][feature]["locked"] ? 1 : (1 + (priority - 1) * masterObj["weight_values"]["Increment"]);
+            }
+            weights[feature] = w;
+        }
+        return (weights);
+    }
 
     // useEffect to handle explanation when the selected instances changes
     useEffect(() => {
         handleExplanation();
     }, [index]);
 
-    //fetches the weights of the features
-    const getWeights = () => {
-        let weights = {};
-        for (let feature in featureDict) {
-            let priority = featureDict[feature]["currPriority"];
-            let w = 1; //the weight for this feature
-            if (formatDict["weight_values"]["IsExponent"]) {
-                //if feature is locked, w = 1; else increment the weight appropriately
-                w = featureDict[feature]["locked"] ? 1 : Math.pow(priority, formatDict["weight_values"]["Increment"]);
-            }
-            else {
-                //if feature is locked, w = 1; else increment the weight appropriately
-                w = featureDict[feature]["locked"] ? 1 : (1 + (priority - 1) * formatDict["weight_values"]["Increment"]);
-            }
-            weights[feature] = w;
-        }
-        return (weights);
-    }
     /**
      * Function to explain the selected instance using the backend server
      * @returns None
@@ -109,7 +115,7 @@ function App() {
     const handleExplanation = async () => {
         try {
             // if we have no instance to explain, there's nothing to do
-            if (selectedInstance == "")
+            if (instances[index] == "")
                 return;
             // build the explanation query, should hold the instance, weights, constraints, etc
             let query_data = {};
@@ -175,7 +181,7 @@ function App() {
         return (
             <>
                 <div>
-                    <h2>Application {count}</h2>
+                    <h2>Application {index}</h2>
                     <button onClick={handlePrevApp}>Previous</button>
                     <button onClick={handleNextApp}>Next</button>
 
