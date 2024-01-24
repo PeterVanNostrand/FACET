@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resizable Popup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .popup {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 20px;
+            max-width: 400px;
+            width: 100%;
+            max-height: 300px;
+            overflow: auto;
+            resize: both;
+            overflow: auto;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div class="popup" id="resizablePopup">
+        <p>This is a resizable popup window. Drag the bottom-right corner to resize.</p>
+    </div>
+
+    <script>
+        const popup = document.getElementById('resizablePopup');
+
+        let isResizing = false;
+
+        popup.addEventListener('mousedown', (e) => {
+            if (e.target === popup) {
+                isResizing = true;
+                document.addEventListener('mousemove', handleMouseMove);
+                document.addEventListener('mouseup', () => {
+                    isResizing = false;
+                    document.removeEventListener('mousemove', handleMouseMove);
+                });
+            }
+        });
+
+        function handleMouseMove(e) {
+            if (isResizing) {
+                popup.style.width = e.clientX - popup.getBoundingClientRect().left + 'px';
+                popup.style.height = e.clientY - popup.getBoundingClientRect().top + 'px';
+            }
+        }
+    </script>
+</body>
+</html>
