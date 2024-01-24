@@ -2,6 +2,7 @@ import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import webappConfig from "../../config.json";
 import { formatFeature, formatValue } from "../utilities";
+import WelcomeScreen from './WelcomeSceen.jsx'
 import "./css/App.css";
 
 const SUCCESS = "Lime"
@@ -35,6 +36,8 @@ function App() {
     const [formatDict, setFormatDict] = useState(null);
     const [featureDict, setFeatureDict] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+
+    const [showWelcomeScreen, setShowWelcomeScreen] = useState(true);
 
     // determine the server path
     const SERVER_URL = webappConfig.SERVER_URL
@@ -167,16 +170,41 @@ function App() {
         handleExplanation();
     }
 
+    const backToWelcomeScreen = () => {
+        console.log("Welcome SCreen is back!")
+        setShowWelcomeScreen(true);
+    }
+
+    const welcome = WelcomeScreen();
 
     // this condition prevents the page from loading until the formatDict is availible
     if (isLoading) {
         return <div></div>
+    } else if (showWelcomeScreen){
+        console.log("App: welcome")
+
+        let welcomeContent = welcome
+
+        if (welcomeContent["status"] == "Display"){
+            return welcomeContent["content"]
+        } else {
+            console.log("The content changed!")
+            setShowWelcomeScreen(false)
+
+            if (welcomeContent["content"] != null){
+                setSelectedInstance(welcomeContent["content"])
+            }
+        }
+        
+    //    <WelcomeScreen />
+    
     } else {
         return (
             <>
                 <div>
                     <h2>Application {count}</h2>
                     <button onClick={handlePrevApp}>Previous</button>
+                    <button onClick={backToWelcomeScreen}>Welcome Screen</button>
                     <button onClick={handleNextApp}>Next</button>
 
                     {Object.keys(featureDict).map((key, index) => (

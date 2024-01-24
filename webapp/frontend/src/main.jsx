@@ -8,6 +8,6 @@ import FeatureControl from './FeatureControlTab.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
-        <WelcomeScreen/>
+        <App/>
     </React.StrictMode>,
 )
