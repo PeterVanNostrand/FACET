@@ -1,0 +1,132 @@
+.Full-Welcome {
+    width: 800px;
+    height: 600px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: #FFFFFF;
+    border-style: solid;
+    border-color: black;
+    border-width: 8px;
+    border-radius: 5px;
+    position: relative; 
+    color: black;
+}
+
+.Selection-Box{
+    width: 700px;
+    height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: #EEEEEE;
+    border-style: solid;
+    border-color: #DDDDDD;
+    border-width: 2px;
+    position: relative; 
+    color: black;
+}
+
+.Information{
+    position: absolute;
+    top: 36px;
+    right: 60px;
+    height: 27px;
+    width: 48px;
+}
+
+.Confirm-Button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #0000EE;
+    border-style: solid;
+    border-color: #0000FF;
+    border-width: 2px;
+    border-radius: 5px;
+    color: white;
+}
+
+.DirectionTable{
+    position: absolute;
+    top: 0%;
+    left: 0%;
+}
+
+.SelectedApplicant{
+    width: 200px;
+    height: 40px;
+    background-color: #DDDDDD;
+    border-style: solid;
+    border-color: black;
+    border-width: 1px;
+    color: black;
+}
+
+.UnselectedApplicant{
+    width: 200px;
+    height: 40px;
+    background-color: #AAAAAA;
+    border-style: solid;
+    border-color: black;
+    border-width: 1px;
+    color: black;
+}
+
+.ApplicationDropDown{
+    width: 300px;
+    height: 40px;
+    background-color: #DDDDDD;
+    border-style: solid;
+    border-color: black;
+    border-width: 1px;
+    color: black;
+    text-align: center;
+    font-size: 16px;
+}
+
+.Application-Window{
+    width: 650px;
+    height: 250px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: #EEEEEE;
+    border-style: solid;
+    border-color: #000000;
+    border-width: 2px;
+    color: black;
+}
+
+.Selection-Details{
+    position: absolute;
+    bottom: 0px;
+}
+
+.Button-Div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.Close{
+    position: absolute;
+    top: 36px;
+    left: 60px;
+    height: 27px;
+    width: 48px;
+}
+
+.CloseImage{
+    position: absolute;
+    height: 50px;
+    width: 50px;
+}
+
+.InlineTextFeature{
+    display: inline-block;
+    vertical-align: middle;
+}

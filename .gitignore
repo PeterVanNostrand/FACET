@@ -15,4 +15,6 @@ node_modules
 package-lock.json
 webapp/backend/results/*
 webapp/backend/visualization/data/explanation_paths.json
-*.vite*
+node_modules
+*/package-lock.json
+.vite
