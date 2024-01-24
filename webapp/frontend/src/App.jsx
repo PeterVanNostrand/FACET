@@ -28,12 +28,10 @@ function status_log(text, color) {
 }
 
 function App() {
+    const [savedInstanceList, setSavedInstanceList] = useState([]);
+    const [masterObj, setMasterObj] = useState({});
     const [instances, setInstances] = useState([]);
-    const [count, setCount] = useState(0);
-    const [selectedInstance, setSelectedInstance] = useState("");
-    const [explanation, setExplanation] = useState("");
-    const [formatDict, setFormatDict] = useState(null);
-    const [featureDict, setFeatureDict] = useState(null);
+    const [index, setIndex] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
 
     // determine the server path
@@ -48,12 +46,11 @@ function App() {
         const pageLoad = async () => {
             fetchInstances();
             let dict_data = await fetchHumanFormat()
-            setFormatDict(dict_data)
-            setFeatureDict(dict_data["feature_names"]);
+            setMasterObj(dict_data);
             setIsLoading(false);
         }
 
-        // get the hman formatting data instances
+        // get the human formatting data instances
         const fetchHumanFormat = async () => {
             try {
                 const response = await axios.get(ENDPOINT + "/human_format");
@@ -72,7 +69,6 @@ function App() {
             try {
                 const response = await axios.get(ENDPOINT + "/instances");
                 setInstances(response.data);
-                setSelectedInstance(response.data[0]);
                 status_log("Sucessfully loaded instances!", SUCCESS)
             } catch (error) {
                 status_log("Failed to load instances", FAILURE)
@@ -86,7 +82,7 @@ function App() {
     // useEffect to handle explanation when the selected instances changes
     useEffect(() => {
         handleExplanation();
-    }, [selectedInstance]);
+    }, [index]);
 
     //fetches the weights of the features
     const getWeights = () => {
@@ -117,7 +113,7 @@ function App() {
                 return;
             // build the explanation query, should hold the instance, weights, constraints, etc
             let query_data = {};
-            query_data["instance"] = selectedInstance
+            query_data["instance"] = instances[index]
             query_data["weights"] = getWeights();
             // console.debug("query data is:")
             // console.debug(query_data)
@@ -131,7 +127,7 @@ function App() {
                 query_data,
             );
             // update the explanation content
-            setExplanation(response.data);
+            instances[index]["explanation"] = response.data;
             status_log("Successfully generated explanation!", SUCCESS)
             console.debug(response.data)
 
@@ -151,18 +147,22 @@ function App() {
 
     // Function to handle displaying the previous instances
     const handlePrevApp = () => {
-        if (count > 0) {
-            setCount(count - 1);
-            setSelectedInstance(instances[count - 1]);
+        if (index > 0) {
+            setIndex(index - 1);
+        }
+        else{ //cycle back to the top
+            setIndex(instances.length - 1);
         }
         handleExplanation();
     }
 
     // Function to handle displaying the next instance
     const handleNextApp = () => {
-        if (count < instances.length - 1) {
-            setCount(count + 1);
-            setSelectedInstance(instances[count + 1]);
+        if (index < instances.length - 1) {
+            setIndex(index + 1);
+        }
+        else{ //cycle back to beginning
+            setIndex(0);
         }
         handleExplanation();
     }
@@ -179,9 +179,9 @@ function App() {
                     <button onClick={handlePrevApp}>Previous</button>
                     <button onClick={handleNextApp}>Next</button>
 
-                    {Object.keys(featureDict).map((key, index) => (
+                    {Object.keys(masterObj["feature_names"]).map((key, index) => (
                         <div key={index}>
-                            <Feature name={formatFeature(key, formatDict)} value={formatValue(selectedInstance[key], key, formatDict)} />
+                            <Feature name={masterObj["pretty_feature_names"][masterObj["feature_names"][key]]} value={formatValue(instances[index][key], key, masterObj)} />
                         </div>
                     ))}
                 </div>
@@ -189,10 +189,10 @@ function App() {
                 <h2>Explanation</h2>
 
 
-                {Object.keys(explanation).map((key, index) => (
+                {Object.keys(instances[index]["explanation"]).map((key, index) => (
                     <div key={index}>
-                        <h3>{formatFeature(key, formatDict)}</h3>
-                        <p>{formatValue(explanation[key][0], key, formatDict)}, {formatValue(explanation[key][1], key, formatDict)}</p>
+                        <h3>{masterObj["pretty_feature_names"][masterObj["feature_names"][key]]}</h3>
+                        <p>{formatValue(instances[index]["explanation"][key][0], key, masterObj)}, {formatValue(instances[index]["explanation"][key][1], key, masterObj)}</p>
                     </div>
                 ))}
             </>
