@@ -6,6 +6,7 @@ import { formatFeature, formatValue } from "../utilities";
 import ExplanationSection from './components/my-application/explanation/ExplanationSection';
 import NavBar from './components/NavBar';
 import FeatureControlSection from './components/feature-control/FeatureControlSection';
+import TempWelcome from './TempWelcome.jsx'
 
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -51,7 +52,7 @@ function App() {
     const [numExplanations, setNumExplanations] = useState(1);
     const [totalExplanations, setTotalExplanations] = useState([]);
     const [explanationSection, setExplanationSection] = useState(null);
-
+    const [isWelcome, setIsWelcome] = useState(true);
 
     // initialize the page
     useEffect(() => {
@@ -231,10 +232,21 @@ function App() {
     // this condition prevents the page from loading until the formatDict is availible
     if (isLoading) {
         return <div></div>
+    } else if (isWelcome) {
+        return <TempWelcome
+            setIsWelcome={setIsWelcome}
+            instances={instances}
+            handleApplicationChange={handleApplicationChange}
+            count={count}
+        />
     } else {
         return (
             <div className='main-container' style={{ maxHeight: '98vh', }}>
-
+                <button
+                    onClick={() => setIsWelcome(true)}
+                >
+                    Back to Welcome Page
+                </button>
                 <div className="nav-bar"></div>
                 <div className='app-body-container' style={{ display: 'flex', flexDirection: 'row' }}>
                     <div className='filter-container'></div>
