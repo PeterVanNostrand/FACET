@@ -1,16 +1,12 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { visualDisplay } from '../../../visualization/src/visualDisplay.js';
-import * as d3 from 'd3'
-import { json } from 'd3';
-import './css/welcomescreen.css'
-import InformationSVG from './SVG/Information.svg'
-import CloseSVG from './SVG/XClose.svg'
-import webappConfig from "../../config.json";
 import axios from "axios";
+import React, { useEffect, useState } from 'react';
+import webappConfig from "../../config.json";
 import { formatFeature, formatValue } from "../utilities";
-import { SelectionHelpers } from 'victory';
-import Dropdown from 'react-dropdown';
-import 'react-dropdown/style.css';
+import InformationSVG from './SVG/Information.svg';
+import CloseSVG from './SVG/XClose.svg';
+import './css/welcomescreen.css';
+// import Dropdown from 'react-dropdown';
+// import 'react-dropdown/style.css';
 
 const success = "Lime"
 const failure = "Red"
@@ -133,17 +129,17 @@ const WelcomeScreen = ({ applicationList, scenarioList }) => {
         //If cusstom applicant, make sure all field are filled with valid inputs before continuing 
         let finalizedInstance = ""
 
-        if (currentTab == 1){
+        if (currentTab == 1) {
             //If on custom applicant tab
 
             let customInstance = {}
 
             let names = Object.getOwnPropertyNames(featureDict)
 
-            for (let prop in names){
+            for (let prop in names) {
                 let featureName = names[prop]
                 console.log("FeatureInput" + featureName + " " + document.getElementById("FeatureInput" + featureName).textContent)
-                customInstance[featureName] = document.getElementById("FeatureInput" + featureName).textContent   
+                customInstance[featureName] = document.getElementById("FeatureInput" + featureName).textContent
             }
 
             console.log(customInstance)
@@ -175,10 +171,10 @@ const WelcomeScreen = ({ applicationList, scenarioList }) => {
     const FeatureInputs = () => {
         return <div>{Object.keys(featureDict).map((key, index) => (
             <div key={index}>
-                <FeatureInputTest 
-                prettyName={formatFeature(key, formatDict)} 
-                name={key}
-                updateValue={(newValue) => (console.log(name + " has been changed to the value " + newValue))} />
+                <FeatureInputTest
+                    prettyName={formatFeature(key, formatDict)}
+                    name={key}
+                    updateValue={(newValue) => (console.log(name + " has been changed to the value " + newValue))} />
             </div>
         ))}</div>
 
@@ -232,12 +228,12 @@ const WelcomeScreen = ({ applicationList, scenarioList }) => {
 
                 <div className="Selection-Details">
 
-                    <div className="Application-Window" id="DivForDropDown" style={{display: currentTab == 1 ? 'none' : 'flex'}}><b>Applicants</b>
+                    <div className="Application-Window" id="DivForDropDown" style={{ display: currentTab == 1 ? 'none' : 'flex' }}><b>Applicants</b>
                         {theDropDown}
                         {getDetailedFeaturesOfSelected()}
                     </div>
 
-                    <div className="Application-Window" id="DivForCustomApplicant" style={{display: currentTab == 0 ? 'none' : 'flex'}}><b>Custom Applicant</b>
+                    <div className="Application-Window" id="DivForCustomApplicant" style={{ display: currentTab == 0 ? 'none' : 'flex' }}><b>Custom Applicant</b>
                         {FeatureInputs()}
 
                     </div>
@@ -267,7 +263,7 @@ function Feature({ name, value }) {
     )
 }
 
-function FeatureInputTest({prettyName, name, updateValue}) {
+function FeatureInputTest({ prettyName, name, updateValue }) {
     console.log("FeatureInput" + name)
 
     return (

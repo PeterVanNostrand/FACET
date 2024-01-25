@@ -52,7 +52,7 @@ function App() {
     const [numExplanations, setNumExplanations] = useState(1);
     const [totalExplanations, setTotalExplanations] = useState([]);
     const [explanationSection, setExplanationSection] = useState(null);
-    const [isWelcome, setIsWelcome] = useState(true);
+    const [isWelcome, setIsWelcome] = useState(false);
 
     // initialize the page
     useEffect(() => {
@@ -232,8 +232,14 @@ function App() {
     // this condition prevents the page from loading until the formatDict is availible
     if (isLoading) {
         return <div></div>
-    } 
-    else {
+    } else if (isWelcome) {
+        return <TempWelcome
+            setIsWelcome={setIsWelcome}
+            instances={instances}
+            handleApplicationChange={handleApplicationChange}
+            count={count}
+        />
+    } else {
         return (
             <div className='main-container' style={{ maxHeight: '98vh', }}>
                 <button
