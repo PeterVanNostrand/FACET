@@ -14,7 +14,7 @@ const NumberLineC = ({ start, end, minRange, maxRange, currentValue }) => {
     const handleMinRangeChange = (e, ui) => {
         // Calculate the new value based on the drag position
         const newMinRange = calculateValueFromPosition(ui.x); // Takes x cord. of cursor
-        console.log({ newMinRange })
+        //console.log({ newMinRange })
         setTempMinRange(newMinRange);
         // Update the state with the new value
         setCurrentRange({ ...currentRange, min: newMinRange });
@@ -24,7 +24,7 @@ const NumberLineC = ({ start, end, minRange, maxRange, currentValue }) => {
     const handleMaxRangeChange = (e, ui) => {
         // Calculate the new value based on the drag position
         const newMaxRange = calculateValueFromPosition(ui.x);  // Takes x cord. of cursor
-        console.log({ newMaxRange })
+        //console.log({ newMaxRange })
         setTempMaxRange(newMaxRange);
         // Update the state with the new value
         setCurrentRange({ ...currentRange, max: newMaxRange });
@@ -32,7 +32,7 @@ const NumberLineC = ({ start, end, minRange, maxRange, currentValue }) => {
 
     // Function to calculate the value based on the drag position 
     const calculateValueFromPosition = (x) => {
-        console.log({ x });
+        //console.log({ x });
         // Calculate the percentage of the drag position relative to the window width
         const percent = (x / width) * 100; // Adjusted scaling factor for width
         // Calculate the corresponding value based on the percentage and round to the nearest integer

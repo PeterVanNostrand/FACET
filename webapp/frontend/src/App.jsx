@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import webappConfig from "../../config.json";
 import { formatFeature, formatValue } from "../utilities";
 import "./css/App.css";
+import FeatureControlSection from "./FeatureControlSection";
+import "./css/feature-control.css";
 
 const SUCCESS = "Lime"
 const FAILURE = "Red"
@@ -195,6 +197,7 @@ function App() {
                         <p>{formatValue(explanation[key][0], key, formatDict)}, {formatValue(explanation[key][1], key, formatDict)}</p>
                     </div>
                 ))}
+                < FeatureControlSection applicantInfo={selectedInstance} fDict={formatDict}/>
             </>
         )
     }
