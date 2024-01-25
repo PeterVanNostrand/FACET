@@ -232,14 +232,8 @@ function App() {
     // this condition prevents the page from loading until the formatDict is availible
     if (isLoading) {
         return <div></div>
-    } else if (isWelcome) {
-        return <TempWelcome
-            setIsWelcome={setIsWelcome}
-            instances={instances}
-            handleApplicationChange={handleApplicationChange}
-            count={count}
-        />
-    } else {
+    } 
+    else {
         return (
             <div className='main-container' style={{ maxHeight: '98vh', }}>
                 <button
