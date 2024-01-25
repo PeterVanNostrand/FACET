@@ -24,7 +24,10 @@ function status_log(text, color) {
     }
 }
 
-const WelcomeScreen = () => {
+const WelcomeScreen = (display, setDisplay) => {
+    // console.log("display")
+    // console.log(display)
+    // console.log(setDisplay)
     const [currentTab, setCurrentTab] = useState(0)
     const [hasInstanceBeenSelected, sethasInstanceBeenSelected] = useState(false)
     const [dropdownvalue, setDropdownvalue] = useState(null)
@@ -46,6 +49,9 @@ const WelcomeScreen = () => {
     let applications = new Map();
     let dropDownApplicaitons = [];
 
+    // if (display) {
+    //     hasInstanceBeenSelected(false)
+    // }
 
     useEffect(() => {
         status_log("Using endpoint " + ENDPOINT, success)
@@ -93,6 +99,11 @@ const WelcomeScreen = () => {
         // Call the pageLoad function when the component mounts
         pageLoad();
     }, []);
+
+    useEffect(() => {
+        sethasInstanceBeenSelected(false);
+        setPreviousInstance(false);
+    }, [display]);
 
     const validTabNumber = (number) => {
         // TODO: Code that checks to see whether the given tab 
@@ -162,7 +173,6 @@ const WelcomeScreen = () => {
 
         //setPreviousInstance(finalizedInstance);
         sethasInstanceBeenSelected(true);
-
         // let returnDict = {}
         // returnDict["status"] = "Instance" 
         // returnDict["content"] = (previousInstance ? null : selectedInstance) 
@@ -188,6 +198,8 @@ const WelcomeScreen = () => {
             {dropDownApplicaitons.map((option, idx) => (
                 <option key={idx}>{option}</option>))}
         </select>;
+
+        let customApplicant = FeatureInputs()
 
         // references a varible in html with "{varible}"
         return <div className='Full-Welcome'>
@@ -218,7 +230,7 @@ const WelcomeScreen = () => {
                     </div>
 
                     <div className="Application-Window" id="DivForCustomApplicant" style={{display: currentTab == 0 ? 'none' : 'flex'}}><b>Custom Applicant</b>
-                        {FeatureInputs()}
+                        {customApplicant}
 
                     </div>
 
@@ -261,8 +273,8 @@ const WelcomeScreen = () => {
 
         //sethasInstanceBeenSelected(false);
         
-        // console.log('return dict', returnDict)
-        console.log('selected', hasInstanceBeenSelected)
+        console.log('return dict', returnDict)
+        //console.log('selected', hasInstanceBeenSelected)
     }
 
     return returnDict
@@ -340,6 +352,15 @@ const EditableText = ({ currText, updateValue }) => {
 
     return (
         <div style={{ display: 'inline-block' }}>
+            {/* <input
+                    //style={{ width: Math.min(Math.max(text.length, 2), 20) + 'ch' }}
+                    type="text"
+                    value={text}
+                    autoFocus
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    onKeyPress={handleKeyPress}
+                /> */}
             {isEditing ? (
                 <input
                     style={{ width: Math.min(Math.max(text.length, 2), 20) + 'ch' }}

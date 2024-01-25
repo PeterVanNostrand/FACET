@@ -175,13 +175,13 @@ function App() {
         setShowWelcomeScreen(true);
     }
 
-    const welcome = WelcomeScreen();
+    const welcome = WelcomeScreen(showWelcomeScreen, setShowWelcomeScreen)
 
     // this condition prevents the page from loading until the formatDict is availible
     if (isLoading) {
         return <div></div>
     } else if (showWelcomeScreen){
-        console.log("App: welcome")
+        //console.log("App: welcome")
 
         let welcomeContent = welcome
 
