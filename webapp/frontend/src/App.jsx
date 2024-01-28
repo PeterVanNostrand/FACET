@@ -183,7 +183,6 @@ function App() {
 
     // useEffect to handle explanation when the selected instances changes
     useEffect(() => {
-        console.debug("Instance:\n", selectedInstance);
         handleExplanation();
     }, [selectedInstance]);
 
@@ -218,11 +217,7 @@ function App() {
             let query_data = {};
             query_data["instance"] = selectedInstance
             query_data["weights"] = getWeights();
-            // console.debug("query data is:")
-            // console.debug(query_data)
             status_log("query data is:", DEBUG)
-            console.debug(query_data)
-
 
             // make the explanation request
             const response = await axios.post(
