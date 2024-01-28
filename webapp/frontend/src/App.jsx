@@ -29,39 +29,107 @@ function status_log(text, color) {
 
 function App() {
     /**
-     * savedScenarios: List of scenarios user has saved to tabs
-     * Structure:
-     * [{}]
-     * 
      * applications: List of applications loaded from JSON data
      * Structure:
-     * [{}]
+     * [{"x0": <feature value>, ... "x<n>": <feature value>}, {"x0": <feature value>, ... "x<n>": <feature value>}, ...]
      * 
      * index: index of where we are in applications; an int in range [0, applications.length - 1]
      * 
      * selectedInstance: the current application/scenario the user is viewing. This variable is what the app displays
      * Structure:
-     * {}
+     * {
+        "x0": <feature value>,
+                ⋮
+        "x<n>": <feature value>
+       }
      * 
      * explanation: FACET's counterfactual explanation on what to change user's feature values to to get a desired outcome
      * Structure:
-     * {}
+     * {
+        "x0": [
+            <Region Min (float)>,
+            <Region Max (float)>
+        ],
+                    ⋮
+        "x<n>": [
+            <Region Min (float),
+            <Region Max (float)
+        ]
+        }
+     *}
      * 
-     * formatDict: JSON instance that contains formatting instructions for feature names and values
+     * savedScenarios: List of scenarios user has saved to tabs
      * Structure:
-     * {}
+     * [{
+     *   "scenario"   : <int>,
+     *   "values"     : <selectedInstance>,
+     *   "explanation": <explanation>
+     * }]
      * 
-     * featureDict: JSON instance mapping the feature index to a pretty name (i.e. x0 -> Income, x1 -> Debt, ...)
+     * formatDict: JSON instance that contains information regarding formatting and dataset handling
      * Structure:
-     * {}
+     * {
+            "dataset": <dataset>,
+            "feature_decimals": {
+                <featureName>: <val>,
+                <featureName>: <val>,
+                        ⋮
+                <featureName>:<val>
+            },
+            "feature_names": {
+                "x0": <featureName>.
+                        ⋮
+                "x<n>":<featureName>
+            },
+            "feature_units": {
+                <featureName>: <unit, i.e. "$", "ms", "km">,
+                        ⋮
+                <featureName>:<unit>
+            },
+            "pretty_feature_names": {
+                <featureName>: <Pretty Feature Name, i.e. "Applicant Income" rather than "ApplicantIncome">,
+                            ⋮
+                <featureName>:<Pretty Feature Name>
+            },
+            "scenario_terms": {
+                "desired_outcome": <Val, i.e. "Approved">,
+                "instance_name": "<Val, i.e. "Application">,
+                "undesired_outcome":<Val, i.e. "Rejected">
+            },
+            "semantic_max": {
+                <FeatureName>: <Real Number or null>,
+                                ⋮
+                <FeatureName>:<Real Number or null>
+            },
+            "semantic_min": {
+                <FeatureName>: <Real Number or null>,
+                                ⋮
+                <FeatureName>:<Real Number or null>
+            },
+            "target_name": <Val, i.e. "Loan_Status">,
+            "weight_values": {
+                "Increment": <int>,
+                "IsExponent": <true or false, determines if we increase weights by the increment or by the power of increment>
+            }
+        }
+     * 
+     * featureDict: JSON instance mapping the feature index to a feature name (i.e. x0 -> Apllicant_Income, x1 -> Debt, ...)
+     * Structure:
+     * {
+            "feature_names": {
+                "x0": <featureName>.
+                        ⋮
+                "x<n>":<featureName>
+            },
+        }
      * 
      * isLoading: Boolean value that helps with managing async operations. Prevents webapp from trying to display stuff before formatDict is loaded
      */
-    const [savedScenarios, setSavedScenarios] = useState([]);
     const [applications, setApplications] = useState([]);
     const [index, setIndex] = useState(0);
     const [selectedInstance, setSelectedInstance] = useState("");
     const [explanation, setExplanation] = useState("");
+    const [savedScenarios, setSavedScenarios] = useState([]);
     const [formatDict, setFormatDict] = useState(null);
     const [featureDict, setFeatureDict] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -115,6 +183,7 @@ function App() {
 
     // useEffect to handle explanation when the selected instances changes
     useEffect(() => {
+        console.debug("Instance:\n", selectedInstance);
         handleExplanation();
     }, [selectedInstance]);
 
@@ -163,7 +232,6 @@ function App() {
             // update the explanation content
             setExplanation(response.data);
             status_log("Successfully generated explanation!", SUCCESS)
-            console.debug(response.data)
 
         }
         catch (error) {
@@ -183,12 +251,12 @@ function App() {
     const handlePrevApp = () => {
         if (index > 0) {
             setIndex(index - 1);
-            document.getElementById("title").innerHTML = "Application " + (index - 1);
+            document.getElementById("title").innerHTML = "Application " + (index - 1); //Need to change back to application if a saved scenario was visited
             setSelectedInstance(applications[index - 1]);
         }
-        else{
+        else{ //Cycle back to last application in instance list
             setIndex(applications.length -1);
-            document.getElementById("title").innerHTML = "Application " + (applications.length - 1);
+            document.getElementById("title").innerHTML = "Application " + (applications.length - 1); //Need to change back to application if a saved scenario was visited
             setSelectedInstance(applications[applications.length - 1]);
         }
         handleExplanation();
@@ -198,36 +266,34 @@ function App() {
     const handleNextApp = () => {
         if (index < applications.length - 1) {
             setIndex(index + 1);
-            document.getElementById("title").innerHTML = "Application " + (index + 1);
+            document.getElementById("title").innerHTML = "Application " + (index + 1); //Need to change back to application if a saved scenario was visited
             setSelectedInstance(applications[index + 1]);
         }
-        else{
+        else{ //cycle back to first application in instance list
             setIndex(0);
             setSelectedInstance(applications[0]);
-            document.getElementById("title").innerHTML = "Application 0";
+            document.getElementById("title").innerHTML = "Application 0"; //Need to change back to application if a saved scenario was visited
         }
         handleExplanation();
     }
 
-    useEffect(() => {
-        console.debug(savedScenarios);
-    }, [savedScenarios]);
     /**
      * Saves a scenario to savedScenarios, and creates a tab
      */
     const saveScenario = () => {
         let scenario = {}; //made this way for programmer's convenience
-        scenario["scenario"] = savedScenarios.length + 1;
+        scenario["scenario"] = savedScenarios.length + 1; //ID the scenario indexing at 1
         scenario["values"] = selectedInstance; //store feature values
         scenario["explanation"] = explanation; //store explanation
         scenario["featureControls"] = {}; //TODO: store priorities of features, lock states, etc.
         
         setSavedScenarios([...savedScenarios, scenario]); //append scenario to savedScenarios        
-        //Create new tab
+        //Create new tab and add it to HTML
         let tab = document.createElement("button");
-        tab.innerHTML = "Scenario " + (savedScenarios.length + 1);
+        tab.innerHTML = "Scenario " + (savedScenarios.length + 1); //Name the tab
+        //set onclick method to load the scenario, and display the ID
         tab.onclick = function() {setSelectedInstance(scenario["values"]), document.getElementById("title").innerHTML = "Scenario " + scenario["scenario"]};
-        document.getElementById("tabSection").appendChild(tab);
+        document.getElementById("tabSection").appendChild(tab); //add element to HTML
     }
 
 
