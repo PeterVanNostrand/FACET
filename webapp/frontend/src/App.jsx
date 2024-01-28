@@ -183,10 +183,12 @@ function App() {
     const handlePrevApp = () => {
         if (index > 0) {
             setIndex(index - 1);
+            document.getElementById("title").innerHTML = "Application " + (index - 1);
             setSelectedInstance(applications[index - 1]);
         }
         else{
             setIndex(applications.length -1);
+            document.getElementById("title").innerHTML = "Application " + (applications.length - 1);
             setSelectedInstance(applications[applications.length - 1]);
         }
         handleExplanation();
@@ -196,11 +198,13 @@ function App() {
     const handleNextApp = () => {
         if (index < applications.length - 1) {
             setIndex(index + 1);
+            document.getElementById("title").innerHTML = "Application " + (index + 1);
             setSelectedInstance(applications[index + 1]);
         }
         else{
             setIndex(0);
             setSelectedInstance(applications[0]);
+            document.getElementById("title").innerHTML = "Application 0";
         }
         handleExplanation();
     }
@@ -213,14 +217,17 @@ function App() {
      */
     const saveScenario = () => {
         let scenario = {}; //made this way for programmer's convenience
+        scenario["scenario"] = savedScenarios.length + 1;
         scenario["values"] = selectedInstance; //store feature values
         scenario["explanation"] = explanation; //store explanation
         scenario["featureControls"] = {}; //TODO: store priorities of features, lock states, etc.
         
-        setSavedScenarios([...savedScenarios, scenario]); //append scenario to savedScenarios
-        
+        setSavedScenarios([...savedScenarios, scenario]); //append scenario to savedScenarios        
         //Create new tab
-        //TODO
+        let tab = document.createElement("button");
+        tab.innerHTML = "Scenario " + (savedScenarios.length + 1);
+        tab.onclick = function() {setSelectedInstance(scenario["values"]), document.getElementById("title").innerHTML = "Scenario " + scenario["scenario"]};
+        document.getElementById("tabSection").appendChild(tab);
     }
 
 
@@ -231,7 +238,12 @@ function App() {
         return (
             <>
                 <div>
-                    <h2>Application {index}</h2>
+                    <div id="tabSection" style={{
+                        display:"flex", 
+                        flexDirection:"row",
+                        }}>
+                    </div>
+                    <h2 id="title">Application {index}</h2>
                     <button onClick={handlePrevApp}>Previous</button>
                     <button onClick={handleNextApp}>Next</button>
                     <button onClick={saveScenario}>Save Scenario</button>
