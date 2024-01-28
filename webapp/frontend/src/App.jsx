@@ -1,9 +1,9 @@
-import axios, { AxiosError } from "axios";
-import { useEffect, useState } from "react";
-import webappConfig from "../../config.json";
-import { formatFeature, formatValue } from "../utilities";
-import WelcomeScreen from './WelcomeSceen.jsx'
-import "./css/App.css";
+import axios, { AxiosError } from 'axios';
+import { useEffect, useState } from 'react';
+import webappConfig from '../../config.json';
+import { formatFeature, formatValue } from '../utilities';
+import WelcomeScreen from './WelcomeSceen.jsx';
+import './css/App.css';
 
 const SUCCESS = "Lime"
 const FAILURE = "Red"
@@ -29,10 +29,108 @@ function status_log(text, color) {
 }
 
 function App() {
-    const [instances, setInstances] = useState([]);
-    const [count, setCount] = useState(0);
+    /**
+     * applications: List of applications loaded from JSON data
+     * Structure:
+     * [{"x0": <feature value>, ... "x<n>": <feature value>}, {"x0": <feature value>, ... "x<n>": <feature value>}, ...]
+     * 
+     * index: index of where we are in applications; an int in range [0, applications.length - 1]
+     * 
+     * selectedInstance: the current application/scenario the user is viewing. This variable is what the app displays
+     * Structure:
+     * {
+        "x0": <feature value>,
+                ⋮
+        "x<n>": <feature value>
+       }
+     * 
+     * explanation: FACET's counterfactual explanation on what to change user's feature values to to get a desired outcome
+     * Structure:
+     * {
+        "x0": [
+            <Region Min (float)>,
+            <Region Max (float)>
+        ],
+                    ⋮
+        "x<n>": [
+            <Region Min (float),
+            <Region Max (float)
+        ]
+        }
+     *}
+     * 
+     * savedScenarios: List of scenarios user has saved to tabs
+     * Structure:
+     * [{
+     *   "scenario"   : <int>,
+     *   "values"     : <selectedInstance>,
+     *   "explanation": <explanation>
+     * }]
+     * 
+     * formatDict: JSON instance that contains information regarding formatting and dataset handling
+     * Structure:
+     * {
+            "dataset": <dataset>,
+            "feature_decimals": {
+                <featureName>: <val>,
+                <featureName>: <val>,
+                        ⋮
+                <featureName>:<val>
+            },
+            "feature_names": {
+                "x0": <featureName>.
+                        ⋮
+                "x<n>":<featureName>
+            },
+            "feature_units": {
+                <featureName>: <unit, i.e. "$", "ms", "km">,
+                        ⋮
+                <featureName>:<unit>
+            },
+            "pretty_feature_names": {
+                <featureName>: <Pretty Feature Name, i.e. "Applicant Income" rather than "ApplicantIncome">,
+                            ⋮
+                <featureName>:<Pretty Feature Name>
+            },
+            "scenario_terms": {
+                "desired_outcome": <Val, i.e. "Approved">,
+                "instance_name": "<Val, i.e. "Application">,
+                "undesired_outcome":<Val, i.e. "Rejected">
+            },
+            "semantic_max": {
+                <FeatureName>: <Real Number or null>,
+                                ⋮
+                <FeatureName>:<Real Number or null>
+            },
+            "semantic_min": {
+                <FeatureName>: <Real Number or null>,
+                                ⋮
+                <FeatureName>:<Real Number or null>
+            },
+            "target_name": <Val, i.e. "Loan_Status">,
+            "weight_values": {
+                "Increment": <int>,
+                "IsExponent": <true or false, determines if we increase weights by the increment or by the power of increment>
+            }
+        }
+     * 
+     * featureDict: JSON instance mapping the feature index to a feature name (i.e. x0 -> Apllicant_Income, x1 -> Debt, ...)
+     * Structure:
+     * {
+            "feature_names": {
+                "x0": <featureName>.
+                        ⋮
+                "x<n>":<featureName>
+            },
+        }
+     * 
+     * isLoading: Boolean value that helps with managing async operations. Prevents webapp from trying to display stuff before formatDict is loaded
+     */
+    const [applications, setApplications] = useState([]);
+    const [index, setIndex] = useState(0);
     const [selectedInstance, setSelectedInstance] = useState("");
     const [explanation, setExplanation] = useState("");
+    const [savedScenarios, setSavedScenarios] = useState([]);
     const [formatDict, setFormatDict] = useState(null);
     const [featureDict, setFeatureDict] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -74,7 +172,7 @@ function App() {
         const fetchInstances = async () => {
             try {
                 const response = await axios.get(ENDPOINT + "/instances");
-                setInstances(response.data);
+                setApplications(response.data);
                 setSelectedInstance(response.data[0]);
                 status_log("Sucessfully loaded instances!", SUCCESS)
             } catch (error) {
@@ -122,11 +220,7 @@ function App() {
             let query_data = {};
             query_data["instance"] = selectedInstance
             query_data["weights"] = getWeights();
-            // console.debug("query data is:")
-            // console.debug(query_data)
             status_log("query data is:", DEBUG)
-            console.debug(query_data)
-
 
             // make the explanation request
             const response = await axios.post(
@@ -136,7 +230,6 @@ function App() {
             // update the explanation content
             setExplanation(response.data);
             status_log("Successfully generated explanation!", SUCCESS)
-            console.debug(response.data)
 
         }
         catch (error) {
@@ -154,18 +247,30 @@ function App() {
 
     // Function to handle displaying the previous instances
     const handlePrevApp = () => {
-        if (count > 0) {
-            setCount(count - 1);
-            setSelectedInstance(instances[count - 1]);
+        if (index > 0) {
+            setIndex(index - 1);
+            document.getElementById("title").innerHTML = "Application " + (index - 1); //Need to change back to application if a saved scenario was visited
+            setSelectedInstance(applications[index - 1]);
+        }
+        else { //Cycle back to last application in instance list
+            setIndex(applications.length - 1);
+            document.getElementById("title").innerHTML = "Application " + (applications.length - 1); //Need to change back to application if a saved scenario was visited
+            setSelectedInstance(applications[applications.length - 1]);
         }
         handleExplanation();
     }
 
     // Function to handle displaying the next instance
     const handleNextApp = () => {
-        if (count < instances.length - 1) {
-            setCount(count + 1);
-            setSelectedInstance(instances[count + 1]);
+        if (index < applications.length - 1) {
+            setIndex(index + 1);
+            document.getElementById("title").innerHTML = "Application " + (index + 1); //Need to change back to application if a saved scenario was visited
+            setSelectedInstance(applications[index + 1]);
+        }
+        else { //cycle back to first application in instance list
+            setIndex(0);
+            setSelectedInstance(applications[0]);
+            document.getElementById("title").innerHTML = "Application 0"; //Need to change back to application if a saved scenario was visited
         }
         handleExplanation();
     }
@@ -176,36 +281,61 @@ function App() {
     }
 
     const welcome = WelcomeScreen(showWelcomeScreen, setShowWelcomeScreen)
+    /**
+     * Saves a scenario to savedScenarios, and creates a tab
+     */
+    const saveScenario = () => {
+        let scenario = {}; //made this way for programmer's convenience
+        scenario["scenario"] = savedScenarios.length + 1; //ID the scenario indexing at 1
+        scenario["values"] = selectedInstance; //store feature values
+        scenario["explanation"] = explanation; //store explanation
+        scenario["featureControls"] = {}; //TODO: store priorities of features, lock states, etc.
+
+        setSavedScenarios([...savedScenarios, scenario]); //append scenario to savedScenarios        
+        //Create new tab and add it to HTML
+        let tab = document.createElement("button");
+        tab.innerHTML = "Scenario " + (savedScenarios.length + 1); //Name the tab
+        //set onclick method to load the scenario, and display the ID
+        tab.onclick = function () { setSelectedInstance(scenario["values"]), document.getElementById("title").innerHTML = "Scenario " + scenario["scenario"] };
+        document.getElementById("tabSection").appendChild(tab); //add element to HTML
+    }
+
 
     // this condition prevents the page from loading until the formatDict is availible
     if (isLoading) {
         return <div></div>
-    } else if (showWelcomeScreen){
+    } else if (showWelcomeScreen) {
         //console.log("App: welcome")
 
         let welcomeContent = welcome
 
-        if (welcomeContent["status"] == "Display"){
+        if (welcomeContent["status"] == "Display") {
             return welcomeContent["content"]
         } else {
             console.log("The content changed!")
             setShowWelcomeScreen(false)
 
-            if (welcomeContent["content"] != null){
+            if (welcomeContent["content"] != null) {
                 setSelectedInstance(welcomeContent["content"])
             }
         }
-        
-    //    <WelcomeScreen />
-    
+
+        //    <WelcomeScreen />
+
     } else {
         return (
             <>
                 <div>
-                    <h2>Application {count}</h2>
+                    <div id="tabSection" style={{
+                        display: "flex",
+                        flexDirection: "row",
+                    }}>
+                    </div>
+                    <h2 id="title">Application {index}</h2>
                     <button onClick={handlePrevApp}>Previous</button>
                     <button onClick={backToWelcomeScreen}>Welcome Screen</button>
                     <button onClick={handleNextApp}>Next</button>
+                    <button onClick={saveScenario}>Save Scenario</button>
 
                     {Object.keys(featureDict).map((key, index) => (
                         <div key={index}>
