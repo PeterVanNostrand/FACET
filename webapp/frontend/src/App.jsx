@@ -205,6 +205,24 @@ function App() {
         handleExplanation();
     }
 
+    useEffect(() => {
+        console.debug(savedScenarios);
+    }, [savedScenarios]);
+    /**
+     * Saves a scenario to savedScenarios, and creates a tab
+     */
+    const saveScenario = () => {
+        let scenario = {}; //made this way for programmer's convenience
+        scenario["values"] = selectedInstance; //store feature values
+        scenario["explanation"] = explanation; //store explanation
+        scenario["featureControls"] = {}; //TODO: store priorities of features, lock states, etc.
+        
+        setSavedScenarios([...savedScenarios, scenario]); //append scenario to savedScenarios
+        
+        //Create new tab
+        //TODO
+    }
+
 
     // this condition prevents the page from loading until the formatDict is availible
     if (isLoading) {
@@ -216,6 +234,7 @@ function App() {
                     <h2>Application {index}</h2>
                     <button onClick={handlePrevApp}>Previous</button>
                     <button onClick={handleNextApp}>Next</button>
+                    <button onClick={saveScenario}>Save Scenario</button>
 
                     {Object.keys(featureDict).map((key, index) => (
                         <div key={index}>
