@@ -174,7 +174,29 @@ function App() {
     } else {
         return (
             <>
-                <div>
+                <div id="feature-control-filter" class="feature-control-filter">
+
+                </div>
+                <div id="feature-controls" class="feature-controls">
+
+                </div>
+                <div id="status-section" class="status-section">
+
+                </div>
+                <div id="explanation" class="explanation">
+
+                </div>
+                <div id="suggestion" class="suggestion">
+
+                </div>
+            </>
+        )
+    }
+
+}
+
+/**
+ * <div>
                     <h2>Application {count}</h2>
                     <button onClick={handlePrevApp}>Previous</button>
                     <button onClick={handleNextApp}>Next</button>
@@ -195,12 +217,7 @@ function App() {
                         <p>{formatValue(explanation[key][0], key, formatDict)}, {formatValue(explanation[key][1], key, formatDict)}</p>
                     </div>
                 ))}
-            </>
-        )
-    }
-
-}
-
+ */
 
 function Feature({ name, value }) {
 
