@@ -185,6 +185,10 @@ function App() {
             setIndex(index - 1);
             setSelectedInstance(applications[index - 1]);
         }
+        else{
+            setIndex(applications.length -1);
+            setSelectedInstance(applications[applications.length - 1]);
+        }
         handleExplanation();
     }
 
@@ -193,6 +197,10 @@ function App() {
         if (index < applications.length - 1) {
             setIndex(index + 1);
             setSelectedInstance(applications[index + 1]);
+        }
+        else{
+            setIndex(0);
+            setSelectedInstance(applications[0]);
         }
         handleExplanation();
     }
