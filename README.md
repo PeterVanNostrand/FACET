@@ -8,7 +8,7 @@ FACET (Fast Actionable Counterfactuals for Ensembles of Trees) generates a novel
 
 The current state of the UI is a shown
 
-![UIState](webapp/ui_state.jpg)
+![Screenshot 2024-01-28 153702](https://github.com/PeterVanNostrand/FACETMQP/assets/125506520/c8e556eb-438a-4e97-802e-4b20bee14074)
 
 ## Requirements
 
