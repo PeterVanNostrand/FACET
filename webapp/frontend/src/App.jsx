@@ -1,7 +1,8 @@
 import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import webappConfig from "../../config.json";
-import { formatFeature, formatValue } from "../utilities";
+import ExplanationDisplay from "./ExplanationDisplay.jsx";
+import StatusDisplay from './StatusDisplay.jsx';
 import "./css/style.css";
 
 const SUCCESS = "Lime"
@@ -119,11 +120,8 @@ function App() {
             let query_data = {};
             query_data["instance"] = selectedInstance
             query_data["weights"] = getWeights();
-            // console.debug("query data is:")
-            // console.debug(query_data)
             status_log("query data is:", DEBUG)
             console.debug(query_data)
-
 
             // make the explanation request
             const response = await axios.post(
@@ -174,29 +172,27 @@ function App() {
     } else {
         return (
             <>
-                <div id="super-div" class="super-div">
-                    <div id="logo-section" class="logo-section">
-                        <p>Logo</p>
-                    </div>
-                    <div id="tab-section" class="tab-section">
-                        <p>tabs</p>
-                    </div>
-                    <div id="settings-profile-section" class="settings-profile-section">
+                <div id="super-div" className="super-div">
+                    <div id="settings-profile-section" className="settings-profile-section">
                         <p>settings profile stuff</p>
                     </div>
-                    <div id="feature-control-filter" class="feature-control-filter">
-                        <p>feature control filter</p>
+                    <div id="tab-section" className="tab-section">
+                        <p>tabs</p>
                     </div>
-                    <div id="feature-controls" class="feature-controls">
+                    <div id="feature-controls" className="feature-controls">
                         <p>feature  controls</p>
                     </div>
-                    <div id="status-section" class="status-section">
-                        <p>status section</p>
+                    <div id="status-section" className="status-section">
+                        <h2>Application {count}</h2>
+                        <button onClick={handlePrevApp}>Previous</button>
+                        <button onClick={handleNextApp}>Next</button>
+                        <StatusDisplay featureDict={featureDict} formatDict={formatDict} selectedInstance={selectedInstance} />
                     </div>
-                    <div id="explanation" class="explanation">
-                        <p>explanations</p>
+                    <div id="explanation" className="explanation">
+                        <h2>Explanation</h2>
+                        <ExplanationDisplay explanation={explanation} formatDict={formatDict} />
                     </div>
-                    <div id="suggestion" class="suggestion">
+                    <div id="suggestion" className="suggestion">
                         <p>suggestions box thing</p>
                     </div>
                 </div>
@@ -205,42 +201,5 @@ function App() {
     }
 
 }
-
-/**
- * <div>
-                    <h2>Application {count}</h2>
-                    <button onClick={handlePrevApp}>Previous</button>
-                    <button onClick={handleNextApp}>Next</button>
-
-                    {Object.keys(featureDict).map((key, index) => (
-                        <div key={index}>
-                            <Feature name={formatFeature(key, formatDict)} value={formatValue(selectedInstance[key], key, formatDict)} />
-                        </div>
-                    ))}
-                </div>
-
-                <h2>Explanation</h2>
-
-
-                {Object.keys(explanation).map((key, index) => (
-                    <div key={index}>
-                        <h3>{formatFeature(key, formatDict)}</h3>
-                        <p>{formatValue(explanation[key][0], key, formatDict)}, {formatValue(explanation[key][1], key, formatDict)}</p>
-                    </div>
-                ))}
- */
-
-function Feature({ name, value }) {
-
-    return (
-        <div className="features-container">
-            <div className="feature">
-                <p>{name}: <span className="featureValue">{value}</span></p>
-            </div>
-            {/* Add more similar div elements for each feature */}
-        </div>
-    )
-}
-
 
 export default App;
