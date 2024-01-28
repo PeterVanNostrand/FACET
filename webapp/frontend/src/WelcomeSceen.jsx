@@ -213,10 +213,11 @@ const WelcomeScreen = (display, setDisplay) => {
             <h1>Welcome to FACET</h1>
             <div className='Selection-Box'>
                 <table className="DirectionTable">
-                    <tr><tbody>
+                    <tbody><tr>
                         <td><button className={currentTab == 0 ? 'SelectedApplicant' : 'UnselectedApplicant'} onClick={() => handleTabControl(0)}>{formatDict["dataset"].charAt(0).toUpperCase() + formatDict["dataset"].slice(1) + " Applicant"}</button></td>
                         <td><button className={currentTab == 1 ? 'SelectedApplicant' : 'UnselectedApplicant'} onClick={() => handleTabControl(1)}> Custom Application</button></td>
-                    </tbody></tr></table>
+                    </tr>
+                    </tbody></table>
 
                 <div className="Selection-Details">
 

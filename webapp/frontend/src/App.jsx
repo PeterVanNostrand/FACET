@@ -1,9 +1,10 @@
 import axios, { AxiosError } from 'axios';
 import { useEffect, useState } from 'react';
 import webappConfig from '../../config.json';
-import { formatFeature, formatValue } from '../utilities';
+import ExplanationDisplay from './ExplanationDisplay.jsx';
+import StatusDisplay from './StatusDisplay.jsx';
 import WelcomeScreen from './WelcomeSceen.jsx';
-import './css/App.css';
+import './css/style.css';
 
 const SUCCESS = "Lime"
 const FAILURE = "Red"
@@ -221,6 +222,7 @@ function App() {
             query_data["instance"] = selectedInstance
             query_data["weights"] = getWeights();
             status_log("query data is:", DEBUG)
+            console.debug(query_data)
 
             // make the explanation request
             const response = await axios.post(
@@ -325,52 +327,45 @@ function App() {
     } else {
         return (
             <>
-                <div>
-                    <div id="tabSection" style={{
-                        display: "flex",
-                        flexDirection: "row",
-                    }}>
+                <div id="super-div" className="super-div">
+                    <div id="settings-profile-section" className="settings-profile-section">
+                        <button onClick={backToWelcomeScreen}>Welcome Screen</button>
                     </div>
-                    <h2 id="title">Application {index}</h2>
-                    <button onClick={handlePrevApp}>Previous</button>
-                    <button onClick={backToWelcomeScreen}>Welcome Screen</button>
-                    <button onClick={handleNextApp}>Next</button>
-                    <button onClick={saveScenario}>Save Scenario</button>
 
-                    {Object.keys(featureDict).map((key, index) => (
-                        <div key={index}>
-                            <Feature name={formatFeature(key, formatDict)} value={formatValue(selectedInstance[key], key, formatDict)} />
+                    <div id="feature-controls" className="feature-controls">
+                        <p>feature  controls</p>
+                    </div>
+
+                    <div id="tab-section" className="tab-section">
+                        <h2>Tabs</h2>
+                        <div id="tabSection" style={{
+                            display: "flex",
+                            flexDirection: "row",
+                        }}>
                         </div>
-                    ))}
-                </div>
-
-                <h2>Explanation</h2>
-
-
-                {Object.keys(explanation).map((key, index) => (
-                    <div key={index}>
-                        <h3>{formatFeature(key, formatDict)}</h3>
-                        <p>{formatValue(explanation[key][0], key, formatDict)}, {formatValue(explanation[key][1], key, formatDict)}</p>
                     </div>
-                ))}
+
+                    <div id="status-section" className="status-section">
+                        <h2 id="title">Application {index}</h2>
+                        <button onClick={handlePrevApp}>Previous</button>
+                        <button onClick={handleNextApp}>Next</button>
+                        <StatusDisplay featureDict={featureDict} formatDict={formatDict} selectedInstance={selectedInstance} />
+                    </div>
+
+                    <div id="explanation" className="explanation">
+                        <h2>Explanation</h2>
+                        <ExplanationDisplay explanation={explanation} formatDict={formatDict} />
+                        <button onClick={saveScenario}>Save Scenario</button>
+                    </div>
+
+                    <div id="suggestion" className="suggestion">
+                        <p>suggestions box thing</p>
+                    </div>
+                </div >
             </>
         )
     }
 
 }
-
-
-function Feature({ name, value }) {
-
-    return (
-        <div className="features-container">
-            <div className="feature">
-                <p>{name}: <span className="featureValue">{value}</span></p>
-            </div>
-            {/* Add more similar div elements for each feature */}
-        </div>
-    )
-}
-
 
 export default App;
