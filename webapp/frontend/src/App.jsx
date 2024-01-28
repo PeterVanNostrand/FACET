@@ -2,7 +2,7 @@ import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import webappConfig from "../../config.json";
 import { formatFeature, formatValue } from "../utilities";
-import "./css/App.css";
+import "./css/style.css";
 
 const SUCCESS = "Lime"
 const FAILURE = "Red"
@@ -174,20 +174,31 @@ function App() {
     } else {
         return (
             <>
-                <div id="feature-control-filter" class="feature-control-filter">
-
-                </div>
-                <div id="feature-controls" class="feature-controls">
-
-                </div>
-                <div id="status-section" class="status-section">
-
-                </div>
-                <div id="explanation" class="explanation">
-
-                </div>
-                <div id="suggestion" class="suggestion">
-
+                <div id="super-div" class="super-div">
+                    <div id="logo-section" class="logo-section">
+                        <p>Logo</p>
+                    </div>
+                    <div id="tab-section" class="tab-section">
+                        <p>tabs</p>
+                    </div>
+                    <div id="settings-profile-section" class="settings-profile-section">
+                        <p>settings profile stuff</p>
+                    </div>
+                    <div id="feature-control-filter" class="feature-control-filter">
+                        <p>feature control filter</p>
+                    </div>
+                    <div id="feature-controls" class="feature-controls">
+                        <p>feature  controls</p>
+                    </div>
+                    <div id="status-section" class="status-section">
+                        <p>status section</p>
+                    </div>
+                    <div id="explanation" class="explanation">
+                        <p>explanations</p>
+                    </div>
+                    <div id="suggestion" class="suggestion">
+                        <p>suggestions box thing</p>
+                    </div>
                 </div>
             </>
         )
