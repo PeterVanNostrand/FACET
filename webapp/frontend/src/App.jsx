@@ -28,10 +28,42 @@ function status_log(text, color) {
 }
 
 function App() {
-    const [savedInstanceList, setSavedInstanceList] = useState([]);
-    const [masterObj, setMasterObj] = useState({});
-    const [instances, setInstances] = useState([]);
+    /**
+     * savedScenarios: List of scenarios user has saved to tabs
+     * Structure:
+     * [{}]
+     * 
+     * applications: List of applications loaded from JSON data
+     * Structure:
+     * [{}]
+     * 
+     * index: index of where we are in applications; an int in range [0, applications.length - 1]
+     * 
+     * selectedInstance: the current application/scenario the user is viewing. This variable is what the app displays
+     * Structure:
+     * {}
+     * 
+     * explanation: FACET's counterfactual explanation on what to change user's feature values to to get a desired outcome
+     * Structure:
+     * {}
+     * 
+     * formatDict: JSON instance that contains formatting instructions for feature names and values
+     * Structure:
+     * {}
+     * 
+     * featureDict: JSON instance mapping the feature index to a pretty name (i.e. x0 -> Income, x1 -> Debt, ...)
+     * Structure:
+     * {}
+     * 
+     * isLoading: Boolean value that helps with managing async operations. Prevents webapp from trying to display stuff before formatDict is loaded
+     */
+    const [savedScenarios, setSavedScenarios] = useState([]);
+    const [applications, setApplications] = useState([]);
     const [index, setIndex] = useState(0);
+    const [selectedInstance, setSelectedInstance] = useState("");
+    const [explanation, setExplanation] = useState("");
+    const [formatDict, setFormatDict] = useState(null);
+    const [featureDict, setFeatureDict] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
     // determine the server path
@@ -46,11 +78,12 @@ function App() {
         const pageLoad = async () => {
             fetchInstances();
             let dict_data = await fetchHumanFormat()
-            setMasterObj(dict_data);
+            setFormatDict(dict_data)
+            setFeatureDict(dict_data["feature_names"]);
             setIsLoading(false);
         }
 
-        // get the human formatting data instances
+        // get the hman formatting data instances
         const fetchHumanFormat = async () => {
             try {
                 const response = await axios.get(ENDPOINT + "/human_format");
@@ -68,13 +101,9 @@ function App() {
         const fetchInstances = async () => {
             try {
                 const response = await axios.get(ENDPOINT + "/instances");
-                setInstances(response.data);
-                if(instances.length > 0){
-                    status_log("Sucessfully loaded instances!", SUCCESS)
-                }
-                else{
-                    status_log("Failed to load instances (length 0)", FAILURE);
-                }
+                setApplications(response.data);
+                setSelectedInstance(response.data[0]);
+                status_log("Sucessfully loaded instances!", SUCCESS)
             } catch (error) {
                 status_log("Failed to load instances", FAILURE)
                 console.error(error);
@@ -82,32 +111,31 @@ function App() {
         };
         // Call the pageLoad function when the component mounts
         pageLoad();
-    }, [instances]);
+    }, []);
+
+    // useEffect to handle explanation when the selected instances changes
+    useEffect(() => {
+        handleExplanation();
+    }, [selectedInstance]);
 
     //fetches the weights of the features
     const getWeights = () => {
         let weights = {};
-        for (let feature in masterObj["feature_names"]) {
-            let priority = masterObj["feature_names"][feature]["currPriority"];
+        for (let feature in featureDict) {
+            let priority = featureDict[feature]["currPriority"];
             let w = 1; //the weight for this feature
-            if (masterObj["weight_values"]["IsExponent"]) {
+            if (formatDict["weight_values"]["IsExponent"]) {
                 //if feature is locked, w = 1; else increment the weight appropriately
-                w = masterObj["feature_names"][feature]["locked"] ? 1 : Math.pow(priority, masterObj["weight_values"]["Increment"]);
+                w = featureDict[feature]["locked"] ? 1 : Math.pow(priority, formatDict["weight_values"]["Increment"]);
             }
             else {
                 //if feature is locked, w = 1; else increment the weight appropriately
-                w = masterObj["feature_names"][feature]["locked"] ? 1 : (1 + (priority - 1) * masterObj["weight_values"]["Increment"]);
+                w = featureDict[feature]["locked"] ? 1 : (1 + (priority - 1) * formatDict["weight_values"]["Increment"]);
             }
             weights[feature] = w;
         }
         return (weights);
     }
-
-    // useEffect to handle explanation when the selected instances changes
-    useEffect(() => {
-        handleExplanation();
-    }, [index]);
-
     /**
      * Function to explain the selected instance using the backend server
      * @returns None
@@ -115,11 +143,11 @@ function App() {
     const handleExplanation = async () => {
         try {
             // if we have no instance to explain, there's nothing to do
-            if (instances[index] == "")
+            if (selectedInstance == "")
                 return;
             // build the explanation query, should hold the instance, weights, constraints, etc
             let query_data = {};
-            query_data["instance"] = instances[index]
+            query_data["instance"] = selectedInstance
             query_data["weights"] = getWeights();
             // console.debug("query data is:")
             // console.debug(query_data)
@@ -133,7 +161,7 @@ function App() {
                 query_data,
             );
             // update the explanation content
-            instances[index]["explanation"] = response.data;
+            setExplanation(response.data);
             status_log("Successfully generated explanation!", SUCCESS)
             console.debug(response.data)
 
@@ -155,20 +183,16 @@ function App() {
     const handlePrevApp = () => {
         if (index > 0) {
             setIndex(index - 1);
-        }
-        else{ //cycle back to the top
-            setIndex(instances.length - 1);
+            setSelectedInstance(applications[index - 1]);
         }
         handleExplanation();
     }
 
     // Function to handle displaying the next instance
     const handleNextApp = () => {
-        if (index < instances.length - 1) {
+        if (index < applications.length - 1) {
             setIndex(index + 1);
-        }
-        else{ //cycle back to beginning
-            setIndex(0);
+            setSelectedInstance(applications[index + 1]);
         }
         handleExplanation();
     }
@@ -185,9 +209,9 @@ function App() {
                     <button onClick={handlePrevApp}>Previous</button>
                     <button onClick={handleNextApp}>Next</button>
 
-                    {Object.keys(masterObj["feature_names"]).map((key, index) => (
+                    {Object.keys(featureDict).map((key, index) => (
                         <div key={index}>
-                            <Feature name={masterObj["pretty_feature_names"][masterObj["feature_names"][key]]} value={formatValue(instances[index][key], key, masterObj)} />
+                            <Feature name={formatFeature(key, formatDict)} value={formatValue(selectedInstance[key], key, formatDict)} />
                         </div>
                     ))}
                 </div>
@@ -195,10 +219,10 @@ function App() {
                 <h2>Explanation</h2>
 
 
-                {Object.keys(instances[index]["explanation"]).map((key, index) => (
+                {Object.keys(explanation).map((key, index) => (
                     <div key={index}>
-                        <h3>{masterObj["pretty_feature_names"][masterObj["feature_names"][key]]}</h3>
-                        <p>{formatValue(instances[index]["explanation"][key][0], key, masterObj)}, {formatValue(instances[index]["explanation"][key][1], key, masterObj)}</p>
+                        <h3>{formatFeature(key, formatDict)}</h3>
+                        <p>{formatValue(explanation[key][0], key, formatDict)}, {formatValue(explanation[key][1], key, formatDict)}</p>
                     </div>
                 ))}
             </>
