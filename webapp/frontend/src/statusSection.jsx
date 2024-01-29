@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import './styles.css'; // Import your styles.css file
+import React, { useEffect, useState } from 'react';
+import './css/status-section.css'; // Import your styles.css file
 
 function StatusSection({ instance, status, formatDict, featureDict }) {
     console.log(instance);
@@ -21,7 +21,7 @@ function StatusSection({ instance, status, formatDict, featureDict }) {
 
     const updateData = () => {
         const dataRow = Object.keys(instance)//instance[currentIndex];
-        
+
         console.log(dataRow)
         console.log(instance)
         const rowContainer = document.getElementById('rowContainer');
@@ -32,17 +32,17 @@ function StatusSection({ instance, status, formatDict, featureDict }) {
 
         for (let key of dataRow) {
             console.log(instance[key]); // Logging the value for debugging purposes
-        
+
             if (instance.hasOwnProperty(key)) {
                 console.log("Trying to make a value appear");
-        
+
                 const div1 = document.createElement('div');
                 const div2 = document.createElement('div');
                 const dataValue = instance[key] ? instance[key] : '0';
-        
+
                 div1.innerHTML = `<strong>${key}:</strong>`;
                 div2.textContent = dataValue;
-        
+
                 rowContainer.appendChild(div1);
                 rowContainer.appendChild(div2);
             }
@@ -50,17 +50,17 @@ function StatusSection({ instance, status, formatDict, featureDict }) {
 
         for (let key of dataRow) {
             console.log(instance[key]); // Logging the value for debugging purposes
-        
+
             if (instance.hasOwnProperty(key)) {
                 console.log("Trying to make a value appear");
-        
+
                 const div1 = document.createElement('div');
                 const div2 = document.createElement('div');
                 const dataValue = instance[key] ? instance[key] : '0';
-        
+
                 div1.innerHTML = `<strong>${key}:</strong>`;
                 div2.textContent = dataValue;
-        
+
                 rowContainer2.appendChild(div1);
                 rowContainer2.appendChild(div2);
             }

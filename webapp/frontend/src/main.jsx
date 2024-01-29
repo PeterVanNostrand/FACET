@@ -2,7 +2,6 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import StatusSection from './StatusSection.jsx'
 import './css/index.css'
-import './styles.css'
 
 let myInstance = {}
 
