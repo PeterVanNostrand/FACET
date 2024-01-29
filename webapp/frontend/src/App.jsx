@@ -221,8 +221,6 @@ function App() {
             let query_data = {};
             query_data["instance"] = selectedInstance
             query_data["weights"] = getWeights();
-            status_log("query data is:", DEBUG)
-            console.debug(query_data)
 
             // make the explanation request
             const response = await axios.post(
@@ -321,8 +319,6 @@ function App() {
                 setSelectedInstance(welcomeContent["content"])
             }
         }
-
-        //    <WelcomeScreen />
 
     } else {
         return (

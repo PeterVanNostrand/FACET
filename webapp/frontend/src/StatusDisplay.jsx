@@ -1,5 +1,5 @@
-import { formatFeature, formatValue } from "../utilities.js";
 import Feature from './FeatureDisplay.jsx';
+import { formatFeature, formatValue } from "./utilities.js";
 
 export const StatusDisplay = ({ featureDict, formatDict, selectedInstance }) => {
     return (

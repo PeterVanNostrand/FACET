@@ -1,10 +1,10 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import webappConfig from '../../config.json';
-import { formatFeature, formatValue } from '../utilities';
 import InformationSVG from './SVG/Information.svg';
 import CloseSVG from './SVG/XClose.svg';
 import './css/welcomescreen.css';
+import { formatFeature, formatValue } from './utilities';
 // import Dropdown from 'react-dropdown';
 // import 'react-dropdown/style.css';
 

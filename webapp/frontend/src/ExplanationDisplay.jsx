@@ -1,4 +1,4 @@
-import { formatFeature, formatValue } from "../utilities.js";
+import { formatFeature, formatValue } from "./utilities.js";
 
 export const ExplanationDisplay = ({ explanation, formatDict }) => {
     return (
