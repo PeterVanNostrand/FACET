@@ -12,14 +12,15 @@ div{
  cursor: pointer;
  width: 100px;
  padding: 10px;
+ text-align: center;
  margin: 5px;
  background-color: #747474;
  color: white;
  border: none;
  border-radius: 5px;
  margin-top: -10px;
- margin-left: 120px;
- margin-right: -40px;
+ margin-left: 40px;
+ margin-right: 50px;
 }
 
 table {
@@ -39,7 +40,7 @@ th {
 
 .approvedBox{
   width:400px;
-  height:40px;
+  height:20px;
   margin-left: 75px;
   border-radius: 10px;
   color: #1b74c6;
@@ -53,7 +54,7 @@ th {
 }
 .deniedBox{
   width:475px;
-  height:40px;
+  height:20px;
   margin-left: 35px;
   border-radius: 10px;
   color: #C1251B;
@@ -67,15 +68,17 @@ th {
 }
 
 .statusApp{
-   color:#1b74c6; 
-   margin-left: 250px;
+   color:#1b74c6;
    white-space: nowrap;
+   margin-left: 225px;
+   margin-top: 3px;
 }
 
 .statusDenied{
-   color:#C1251B; 
-   margin-left: 250px;   
+   color:#C1251B;   
    white-space: nowrap;
+   margin-left: 225px;
+   margin-top: 3px;
 }
 
 
@@ -83,28 +86,44 @@ th {
   display: flex;
   flex-wrap: wrap;
   margin-bottom: 20px;
-  margin-left: -30px;
+  text-indent: 5px;
+  padding: 10px;
+}
+
+.row-container div {
+  flex: 0 0 auto;
+  padding: 1px;
+  white-space: nowrap;
+}
+
+.row-container strong {
+  margin-right: -30px; /* Adjust margin-right to create space between key and colon */
+}
+
+.row-container div:not(:last-child) {
+  margin-right: 30px; /* Adjust margin-right to create space between key-value pairs */
 }
 
 .row-container2 {
   display: flex;
   flex-wrap: wrap;
   margin-bottom: 20px;
-  margin-left: -30px;
-}
-
-.row-container div {
-  flex: 1;
-  padding: 3px;
-  text-indent: 65px;
-  white-space: nowrap;
+  text-indent: 5px;
+  padding: 10px;
 }
 
 .row-container2 div {
-  flex: 1;
-  padding: 3px;
-  text-indent: 65px;
+  flex: 0 0 auto;
+  padding: 1px;
   white-space: nowrap;
+}
+
+.row-container2 strong {
+  margin-right: -30px; /* Adjust margin-right to create space between key and colon */
+}
+
+.row-container2 div:not(:last-child) {
+  margin-right: 30px; /* Adjust margin-right to create space between key-value pairs */
 }
 
 
@@ -113,7 +132,7 @@ button {
     border: none;
     outline: none;
     cursor: pointer;
-    margin-left: 2px;
+    margin-left: 0px;
   }
 
 .myApplicationFlex{
@@ -133,22 +152,22 @@ button {
   .info{
     display: flex;
     justify-content: center;
-    white-space: nowrap;
     align-items: center;
-    background-color: #D9D9D9;
-    width: 25px;
-    height: 21px;
-    margin-right: 10px;
-    border-radius: 25px;
-    font-size: 25px;
+    margin-top: 1px;
+    margin-left: -5px;
+    border-radius: 50%;
+    font-size: 30px;
+    padding: 0vw 0vh;
   }
   .expand{
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #ffffff;
+    background-color: #ffffff00;
     width: 25px;
     height: 23px;
+    margin-left: -15px;
+    margin-top: 1px;
     border-radius: 50px;
     font-size: 25px;
     color: black;
@@ -166,8 +185,8 @@ button {
         font-size: 13px;
         padding: 1px 15px;
         /* Position the tooltip */
-        margin-top: 19px;
-        margin-left: 465px;
+        margin-top: 20px;
+        margin-left: -50px;
         opacity: 0;
         visibility: hidden;
         transition: opacity 0.3s ease 0.9s, visibility 0.1s ease;
@@ -234,19 +253,19 @@ button {
     width: 100vw;
     height: 100vh;
     background: rgba(0, 0, 0, 0.7);
-    z-index: 1;
+    z-index: 10;
     display: none;
 }
 .popup .content {
     position: absolute;
-    top: 175px;
-    left: 235px;
+    top: 370px;
+    left: 282px;
     transform: translate(-50%, -50%) scale(0);
     background: #fff;
     width: 450px;
     height: 110px;
     z-index: 2;
-    padding: 30px;
+    padding: 15px;
     box-sizing: border-box;
     border: 1px solid black;
 }

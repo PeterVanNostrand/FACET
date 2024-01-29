@@ -172,6 +172,7 @@ function App() {
     if (isLoading) {
         return <div></div>
     } else {
+        console.log(instances)
         return (
             <>
                 <div>
