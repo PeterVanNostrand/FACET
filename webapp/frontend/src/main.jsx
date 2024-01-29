@@ -1,10 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import StatusSection from '../../../Kate/statusSection.jsx'
-import App from './App.jsx'
+import StatusSection from './StatusSection.jsx'
 import './css/index.css'
-// import FeatureControl from './FeatureControlTab.jsx'
-
+import './styles.css'
 
 let myInstance = {}
 
@@ -14,9 +12,9 @@ myInstance["x2"] = 10200
 myInstance["x3"] = 360
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-    <React.StrictMode>
-      <StatusSection instance={myInstance} status="Y"/>
-    </React.StrictMode>,
+  <React.StrictMode>
+    <StatusSection instance={myInstance} status="Y" />
+  </React.StrictMode>,
 )
 
 //{instance, status, formatDict, featureDict}
