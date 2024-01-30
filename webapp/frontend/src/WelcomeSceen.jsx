@@ -1,12 +1,11 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import webappConfig from '../../config.json';
+import { InstanceDropdown } from './InstanceDropdown';
 import InformationSVG from './SVG/Information.svg';
 import CloseSVG from './SVG/XClose.svg';
 import './css/welcomescreen.css';
 import { formatFeature, formatValue } from './utilities';
-// import Dropdown from 'react-dropdown';
-// import 'react-dropdown/style.css';
 
 const success = "Lime"
 const failure = "Red"
@@ -20,7 +19,7 @@ function status_log(text, color) {
     }
 }
 
-const WelcomeScreen = (display, setDisplay) => {
+const WelcomeScreen = (display, setDisplay, selectedInstance, setSelectedInstance) => {
     // console.log("display")
     // console.log(display)
     // console.log(setDisplay)
@@ -32,7 +31,7 @@ const WelcomeScreen = (display, setDisplay) => {
 
     const [instances, setInstances] = useState([]);
     const [count, setCount] = useState(0);
-    const [selectedInstance, setSelectedInstance] = useState("");
+    // const [selectedInstance, setSelectedInstance] = useState("");
     const [explanation, setExplanation] = useState("");
     const [formatDict, setFormatDict] = useState(null);
     const [featureDict, setFeatureDict] = useState(null);
@@ -43,7 +42,7 @@ const WelcomeScreen = (display, setDisplay) => {
     const ENDPOINT = SERVER_URL + ":" + API_PORT + "/facet"
 
     let applications = new Map();
-    let dropDownApplicaitons = [];
+    let dropDownApplications = [];
 
     // if (display) {
     //     hasInstanceBeenSelected(false)
@@ -176,10 +175,10 @@ const WelcomeScreen = (display, setDisplay) => {
         // return returnDict
     }
 
-    const handleDropDownChange = (value) => {
-        setDropdownvalue(value)
-        setSelectedInstance(applications.get(value))
-    }
+    // const handleDropDownChange = (value) => {
+    //     setDropdownvalue(value)
+    //     setSelectedInstance(applications.get(value))
+    // }
 
     const getDetailedFeaturesOfSelected = () => {
         return <div>{Object.keys(featureDict).map((key, index) => (
@@ -190,10 +189,10 @@ const WelcomeScreen = (display, setDisplay) => {
     }
 
     const makeDisplay = () => {
-        let theDropDown = <select className="ApplicationDropDown" onChange={(e) => handleDropDownChange(e.target.value)} defaultValue={dropdownvalue}>
-            {dropDownApplicaitons.map((option, idx) => (
-                <option key={idx}>{option}</option>))}
-        </select>;
+        // let theDropDown = <select className="ApplicationDropDown" onChange={(e) => handleDropDownChange(e.target.value)} defaultValue={dropdownvalue}>
+        //     {dropDownApplications.map((option, idx) => (
+        //         <option key={idx}>{option}</option>))}
+        // </select>;
 
         let customApplicant = FeatureInputs()
 
@@ -222,7 +221,7 @@ const WelcomeScreen = (display, setDisplay) => {
                 <div className="Selection-Details">
 
                     <div className="Application-Window" id="DivForDropDown" style={{ display: currentTab == 1 ? 'none' : 'flex' }}><b>Applicants</b>
-                        {theDropDown}
+                        <InstanceDropdown instances={instances} setSelectedInstance={setSelectedInstance} />
                         {getDetailedFeaturesOfSelected()}
                     </div>
 
@@ -251,10 +250,10 @@ const WelcomeScreen = (display, setDisplay) => {
 
     }
 
-    for (let i = 0; i < instances.length; i++) {
-        applications.set("Application " + (i + 1), instances[i]);
-        dropDownApplicaitons.push("Application " + (i + 1));
-    }
+    // for (let i = 0; i < instances.length; i++) {
+    //     applications.set("Application " + (i + 1), instances[i]);
+    //     dropDownApplications.push("Application " + (i + 1));
+    // }
 
     let returnDict = {}
 
