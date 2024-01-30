@@ -398,6 +398,12 @@ function App() {
 
                 <div id="feature-controls" className="feature-controls">
                     <p>feature controls</p>
+                    <p>constraints</p>
+                    {constraints.map((constraint, index) => (
+                        <div key={index}>
+                            {constraint[0]}, {constraint[1]}
+                        </div>
+                    ))}
                 </div>
 
                 <div id="tab-section" className="tab-section">

@@ -112,7 +112,7 @@ def facet_explanation():
             x=instance,
             y=prediction,
             k=num_explanations,
-            constraints=None,
+            constraints=constraints,
             weights=weights,
         )
 
