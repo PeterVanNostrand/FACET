@@ -22,6 +22,7 @@ CORS(app)
 FACET_CORE = None  # the core facet system which generated explanations
 SAMPLE_DATA: np.ndarray = None  # teh set of sample instances we populate for the demo
 
+
 def init_app():
     global FACET_CORE, SAMPLE_DATA, DS_INFO, HUMAN_FORMAT
 
@@ -108,8 +109,14 @@ def facet_explanation():
         # Perform explanations using FACET explain
         prediction = FACET_CORE.predict(instance)
         points, regions = FACET_CORE.explain(
-            x=instance, y=prediction, k=num_explanations, constraints=None, weights=weights
+            x=instance,
+            y=prediction,
+            k=num_explanations,
+            constraints=None,
+            weights=weights,
         )
+
+        print("regions: ", regions)
 
         unscaled_regions = [DS_INFO.unscale_rects(region) for region in regions]
         region_dicts = [DS_INFO.rect_to_dict(region) for region in unscaled_regions]
@@ -119,7 +126,6 @@ def facet_explanation():
     except Exception as e:
         print(e)
         return "\nError: " + str(e), 500
-
 
 
 if __name__ == "__main__":
