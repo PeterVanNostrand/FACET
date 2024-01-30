@@ -22,7 +22,6 @@ CORS(app)
 FACET_CORE = None  # the core facet system which generated explanations
 SAMPLE_DATA: np.ndarray = None  # teh set of sample instances we populate for the demo
 
-
 def init_app():
     global FACET_CORE, SAMPLE_DATA, DS_INFO, HUMAN_FORMAT
 
@@ -106,7 +105,6 @@ def facet_explanation():
         if len(instance.shape) == 1:
             instance = instance.reshape(-1, instance.shape[0])
 
-        print('k', num_explanations)
         # Perform explanations using FACET explain
         prediction = FACET_CORE.predict(instance)
         points, regions = FACET_CORE.explain(

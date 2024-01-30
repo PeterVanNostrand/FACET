@@ -123,7 +123,7 @@ function App() {
             }
             weights[feature] = w;
         }
-        return (weights);
+        return weights;
     }
 
     useEffect(() => {
