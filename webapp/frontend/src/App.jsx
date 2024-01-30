@@ -9,11 +9,7 @@ import './css/style.css';
 import ExplanationSection from './components/my-application/explanation/ExplanationSection';
 import NavBar from './components/NavBar';
 import FeatureControlSection from './components/feature-control/FeatureControlSection';
-import TempWelcome from './TempWelcome.jsx'
-
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import { autoType, select } from "d3";
+import { format } from 'd3';
 
 const SERVER_URL = webappConfig.SERVER_URL
 const API_PORT = webappConfig.API_PORT
@@ -155,7 +151,7 @@ function App() {
     const [totalExplanations, setTotalExplanations] = useState([]);
     const [explanationSection, setExplanationSection] = useState(null);
     const [isWelcome, setIsWelcome] = useState(false);
-    const [showWelcomeScreen, setShowWelcomeScreen] = useState(true);
+    const [showWelcomeScreen, setShowWelcomeScreen] = useState(false);
 
 
     // useEffect to fetch instances data when the component mounts
@@ -331,25 +327,13 @@ function App() {
         setSelectedInstance(applications[event.target.value]);
     };
 
-    // refactorable section to handle adding a new profile
-    // ---------------------------------------------------
-    const [value, setValue] = useState(0);
-
-    const handleChange = (event, newValue) => {
-        setValue(newValue);
-    };
-
-    const handleAddProfile = () => {
-        console.log('Add new profile logic here');
-    };
-    // ---------------------------------------------------
-
     const backToWelcomeScreen = () => {
         console.log("Welcome SCreen is back!")
         setShowWelcomeScreen(true);
     }
 
     const welcome = WelcomeScreen(showWelcomeScreen, setShowWelcomeScreen)
+
     /**
      * Saves a scenario to savedScenarios, and creates a tab
      */
@@ -370,12 +354,29 @@ function App() {
     }
 
 
+    // useEffect(() => {
+    //     if (formatDict && featureDict && showWelcomeScreen) {
+    //         setWelcomeScreenContent(
+    //             <WelcomeScreen
+    //                 applications={applications}
+    //                 handleApplicationChange={handleApplicationChange}
+    //                 selectedInstance={selectedInstance}
+    //                 featureDict={{ ...featureDict }}
+    //                 formatDict={{ ...formatDict }}
+    //                 setSelectedInstance={{ ...setSelectedInstance }}
+    //                 index={index}
+    //                 setShowWelcomeScreen={setShowWelcomeScreen}
+    //             />
+    //         )
+    //     }
+    // }, [formatDict, featureDict, showWelcomeScreen])
+
+
     // this condition prevents the page from loading until the formatDict is availible
     if (isLoading) {
         return <div></div>
-    } else if (showWelcomeScreen) {
-        //console.log("App: welcome")
-
+    }
+    else if (showWelcomeScreen) {
         let welcomeContent = welcome
 
         if (welcomeContent["status"] == "Display") {
@@ -388,46 +389,50 @@ function App() {
                 setSelectedInstance(welcomeContent["content"])
             }
         }
-
     } else {
         return (
-            <>
-                <div id="super-div" className="super-div">
-                    <div id="settings-profile-section" className="settings-profile-section">
-                        <button onClick={backToWelcomeScreen}>Welcome Screen</button>
-                    </div>
+            <div id="super-div" className="super-div">
+                <div id="settings-profile-section" className="settings-profile-section">
+                    <button onClick={backToWelcomeScreen}>Welcome Screen</button>
+                </div>
 
-                    <div id="feature-controls" className="feature-controls">
-                        <p>feature  controls</p>
-                    </div>
+                <div id="feature-controls" className="feature-controls">
+                    <p>feature controls</p>
+                </div>
 
-                    <div id="tab-section" className="tab-section">
-                        <h2>Tabs</h2>
-                        <div id="tabSection" style={{
-                            display: "flex",
-                            flexDirection: "row",
-                        }}>
-                        </div>
+                <div id="tab-section" className="tab-section">
+                    <h2>Tabs</h2>
+                    <div id="tabSection" style={{
+                        display: "flex",
+                        flexDirection: "row",
+                    }}>
                     </div>
+                </div>
 
-                    <div id="status-section" className="status-section">
-                        <h2 id="title">Application {index}</h2>
-                        <button onClick={handlePrevApp}>Previous</button>
-                        <button onClick={handleNextApp}>Next</button>
-                        <StatusDisplay featureDict={featureDict} formatDict={formatDict} selectedInstance={selectedInstance} />
-                    </div>
+                <div id="status-section" className="status-section">
+                    <h2 id="title">Application {index}</h2>
+                    <select value={index} onChange={handleApplicationChange}>
+                        {applications.map((applicant, index) => (
+                            <option key={index} value={index}>
+                                Application {index}
+                            </option>
+                        ))}
+                    </select>
+                    <StatusDisplay featureDict={featureDict} formatDict={formatDict} selectedInstance={selectedInstance} />
+                </div>
 
-                    <div id="explanation" className="explanation">
-                        <h2>Explanation</h2>
-                        <ExplanationDisplay explanation={explanations} formatDict={formatDict} />
-                        <button onClick={saveScenario}>Save Scenario</button>
-                    </div>
+                <div id="explanation" className="explanation">
+                    <h2 className='explanation-header' style={{ marginTop: 10, marginBottom: 10 }}>
+                        Explanation(s)
+                    </h2>
+                    {explanationSection}
+                    <button onClick={saveScenario}>Save Scenario</button>
+                </div>
 
-                    <div id="suggestion" className="suggestion">
-                        <p>suggestions box thing</p>
-                    </div>
-                </div >
-            </>
+                <div id="suggestion" className="suggestion">
+                    <p>suggestions box thing</p>
+                </div>
+            </div>
         )
     }
 

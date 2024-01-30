@@ -8,9 +8,7 @@ const ExplanationSection = ({ explanations, totalExplanations, featureDict, hand
         <div className="explanation-section" style={{ padding: 10, borderTop: '3px solid #aaaaaa', display: 'flex', flexDirection: 'column' }}>
             <div className="unscrollable" style={{ flex: '0 0 auto' }}>
 
-                <h2 className='explanation-header' style={{marginTop: 10, marginBottom: 10 }}>
-                    Explanation(s)
-                </h2>
+                
 
                 <div className='explanation-sort' style={{ display: 'flex' }}>
                     <p>Sort by:</p>

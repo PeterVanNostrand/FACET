@@ -14,7 +14,7 @@
 
 .super-div {
     display: grid;
-    grid-template-columns: 200px 500px;
+    /* grid-template-columns: 200px 500px; */
     grid-template-rows: auto;
     grid-template-areas:
         "settings tabs"
