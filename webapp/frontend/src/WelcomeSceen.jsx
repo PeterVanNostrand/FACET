@@ -1,10 +1,10 @@
-import axios from "axios";
+import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import webappConfig from "../../config.json";
-import { formatFeature, formatValue } from "../utilities";
+import webappConfig from '../../config.json';
 import InformationSVG from './SVG/Information.svg';
 import CloseSVG from './SVG/XClose.svg';
 import './css/welcomescreen.css';
+import { formatFeature, formatValue } from './utilities';
 // import Dropdown from 'react-dropdown';
 // import 'react-dropdown/style.css';
 
@@ -20,10 +20,15 @@ function status_log(text, color) {
     }
 }
 
-const WelcomeScreen = ({ applicationList, scenarioList }) => {
+const WelcomeScreen = (display, setDisplay) => {
+    // console.log("display")
+    // console.log(display)
+    // console.log(setDisplay)
     const [currentTab, setCurrentTab] = useState(0)
-    const [selected, setsSelected] = useState(false)
+    const [hasInstanceBeenSelected, sethasInstanceBeenSelected] = useState(false)
     const [dropdownvalue, setDropdownvalue] = useState(null)
+    const [previousInstance, setPreviousInstance] = useState(false);
+
 
     const [instances, setInstances] = useState([]);
     const [count, setCount] = useState(0);
@@ -37,18 +42,18 @@ const WelcomeScreen = ({ applicationList, scenarioList }) => {
     const API_PORT = webappConfig.API_PORT
     const ENDPOINT = SERVER_URL + ":" + API_PORT + "/facet"
 
-
     let applications = new Map();
     let dropDownApplicaitons = [];
 
+    // if (display) {
+    //     hasInstanceBeenSelected(false)
+    // }
 
-    //Kepe the Selected Application between tabs
-    //Add a close button that doesn't change the state
-    //randy-b.3-constarints -> App Line 99
-
-    // Loading the need instances for the component
     useEffect(() => {
         status_log("Using endpoint " + ENDPOINT, success)
+        // setPreviousInstance(givenPreviousInstance);
+        // console.log("Previous Selected")
+        // console.log(previousInstance)
 
         const pageLoad = async () => {
             fetchInstances();
@@ -91,6 +96,11 @@ const WelcomeScreen = ({ applicationList, scenarioList }) => {
         pageLoad();
     }, []);
 
+    useEffect(() => {
+        sethasInstanceBeenSelected(false);
+        setPreviousInstance(false);
+    }, [display]);
+
     const validTabNumber = (number) => {
         // TODO: Code that checks to see whether the given tab 
         //number is valid and has a corresponding tab
@@ -119,7 +129,12 @@ const WelcomeScreen = ({ applicationList, scenarioList }) => {
     }
 
     const handleCloseClick = () => {
-        setsSelected(true) //Have it pull from previous applicant before this tab was open
+        //setsSelected(true) //Have it pull from previous applicant before this tab was open
+        //Set previous
+
+        setPreviousInstance(true);
+        sethasInstanceBeenSelected(true);
+
     }
 
     const handleConfirmButton = () => {
@@ -138,21 +153,27 @@ const WelcomeScreen = ({ applicationList, scenarioList }) => {
 
             for (let prop in names) {
                 let featureName = names[prop]
-                console.log("FeatureInput" + featureName + " " + document.getElementById("FeatureInput" + featureName).textContent)
+                //console.log("FeatureInput" + featureName + " " + document.getElementById("FeatureInput" + featureName).textContent)
                 customInstance[featureName] = document.getElementById("FeatureInput" + featureName).textContent
             }
 
             console.log(customInstance)
 
             finalizedInstance = customInstance
-
+            //If this is a dropdown applicaiotn
         } else {
             finalizedInstance = selectedInstance
         }
 
         setSelectedInstance(finalizedInstance)
 
-        setsSelected(true);
+        //setPreviousInstance(finalizedInstance);
+        sethasInstanceBeenSelected(true);
+        // let returnDict = {}
+        // returnDict["status"] = "Instance" 
+        // returnDict["content"] = (previousInstance ? null : selectedInstance) 
+
+        // return returnDict
     }
 
     const handleDropDownChange = (value) => {
@@ -166,6 +187,56 @@ const WelcomeScreen = ({ applicationList, scenarioList }) => {
                 <Feature name={formatFeature(key, formatDict)} value={formatValue(selectedInstance[key], key, formatDict)} />
             </div>
         ))}</div>
+    }
+
+    const makeDisplay = () => {
+        let theDropDown = <select className="ApplicationDropDown" onChange={(e) => handleDropDownChange(e.target.value)} defaultValue={dropdownvalue}>
+            {dropDownApplicaitons.map((option, idx) => (
+                <option key={idx}>{option}</option>))}
+        </select>;
+
+        let customApplicant = FeatureInputs()
+
+        // references a varible in html with "{varible}"
+        return <div className='Full-Welcome'>
+            <div className='Close'>
+                <img
+                    className='CloseImage'
+                    src={CloseSVG}
+                    onClick={() => handleCloseClick()}
+                /></div>
+            <div className='Information'>
+                <img
+                    src={InformationSVG}
+                    onClick={() => handleInformationClick()}
+                /></div>
+            <h1>Welcome to FACET</h1>
+            <div className='Selection-Box'>
+                <table className="DirectionTable">
+                    <tbody><tr>
+                        <td><button className={currentTab == 0 ? 'SelectedApplicant' : 'UnselectedApplicant'} onClick={() => handleTabControl(0)}>{formatDict["dataset"].charAt(0).toUpperCase() + formatDict["dataset"].slice(1) + " Applicant"}</button></td>
+                        <td><button className={currentTab == 1 ? 'SelectedApplicant' : 'UnselectedApplicant'} onClick={() => handleTabControl(1)}> Custom Application</button></td>
+                    </tr>
+                    </tbody></table>
+
+                <div className="Selection-Details">
+
+                    <div className="Application-Window" id="DivForDropDown" style={{ display: currentTab == 1 ? 'none' : 'flex' }}><b>Applicants</b>
+                        {theDropDown}
+                        {getDetailedFeaturesOfSelected()}
+                    </div>
+
+                    <div className="Application-Window" id="DivForCustomApplicant" style={{ display: currentTab == 0 ? 'none' : 'flex' }}><b>Custom Applicant</b>
+                        {customApplicant}
+
+                    </div>
+
+                    <br></br>
+                    <div className="Button-Div"><button className='Confirm-Button' onClick={() => handleConfirmButton()}>Confirm</button></div>
+                    <br></br>
+                </div>
+            </div>
+        </div>;
     }
 
     const FeatureInputs = () => {
@@ -185,70 +256,39 @@ const WelcomeScreen = ({ applicationList, scenarioList }) => {
         dropDownApplicaitons.push("Application " + (i + 1));
     }
 
+    let returnDict = {}
+
     if (isLoading) {
         // If the files are still loading
-        return <div></div>
-    } else if (selected) {
-        // If a valid application has been selected
-        return getDetailedFeaturesOfSelected();
+        returnDict["status"] = "Display"
+        returnDict["content"] = <div></div>
 
     } else {
-        console.log(featureDict)
-        console.log(selectedInstance)
-        //If an application is still being selected
+        // console.log('selected',selected)
+        returnDict["status"] = hasInstanceBeenSelected ? "Instance" : "Display"
+        returnDict["content"] = hasInstanceBeenSelected ? (previousInstance ? null : selectedInstance) : makeDisplay()
 
-        //Suppose to set this, however, it doesn't matter since SelectedInstances changes with DropDownValue anyways
-        //setDropdownvalue(applications[0])
+        //sethasInstanceBeenSelected(false);
 
-        let theDropDown = <select className="ApplicationDropDown" onChange={(e) => handleDropDownChange(e.target.value)} defaultValue={dropdownvalue}>
-            {dropDownApplicaitons.map((option, idx) => (
-                <option key={idx}>{option}</option>))}
-        </select>;
-
-        // references a varible in html with "{varible}"
-        return <div className='Full-Welcome'>
-            <div className='Close'>
-                <img
-                    className='CloseImage'
-                    src={CloseSVG}
-                    onClick={() => handleCloseClick()}
-                /></div>
-            <div className='Information'>
-                <img
-                    src={InformationSVG}
-                    onClick={() => handleInformationClick()}
-                /></div>
-            <h1>Welcome to FACET</h1>
-            <div className='Selection-Box'>
-                <table className="DirectionTable">
-                    <tr><tbody>
-                        <td><button className={currentTab == 0 ? 'SelectedApplicant' : 'UnselectedApplicant'} onClick={() => handleTabControl(0)}>{formatDict["dataset"].charAt(0).toUpperCase() + formatDict["dataset"].slice(1) + " Applicant"}</button></td>
-                        <td><button className={currentTab == 1 ? 'SelectedApplicant' : 'UnselectedApplicant'} onClick={() => handleTabControl(1)}> Custom Application</button></td>
-                    </tbody></tr></table>
-
-                <div className="Selection-Details">
-
-                    <div className="Application-Window" id="DivForDropDown" style={{ display: currentTab == 1 ? 'none' : 'flex' }}><b>Applicants</b>
-                        {theDropDown}
-                        {getDetailedFeaturesOfSelected()}
-                    </div>
-
-                    <div className="Application-Window" id="DivForCustomApplicant" style={{ display: currentTab == 0 ? 'none' : 'flex' }}><b>Custom Applicant</b>
-                        {FeatureInputs()}
-
-                    </div>
-
-                    <br></br>
-                    <div className="Button-Div"><button className='Confirm-Button' onClick={() => handleConfirmButton()}>Confirm</button></div>
-                    <br></br>
-                </div>
-            </div>
-
-
-
-
-        </div>;
+        console.log('return dict', returnDict)
+        //console.log('selected', hasInstanceBeenSelected)
     }
+
+    return returnDict
+    // if (selected) {
+    //     // If a valid application has been selected
+    //     return getDetailedFeaturesOfSelected();
+
+    // } else {
+    //     // console.log(featureDict)
+    //     // console.log(selectedInstance)
+    //     // console.log(formatDict)
+    //     //If an application is still being selected
+
+    //     //Suppose to set this, however, it doesn't matter since SelectedInstances changes with DropDownValue anyways
+    //     //setDropdownvalue(applications[0])
+
+    //     return makeDisplay()
 };
 
 function Feature({ name, value }) {
@@ -264,7 +304,7 @@ function Feature({ name, value }) {
 }
 
 function FeatureInputTest({ prettyName, name, updateValue }) {
-    console.log("FeatureInput" + name)
+    //console.log("FeatureInput" + name)
 
     return (
         <div className="features-container">
@@ -309,6 +349,15 @@ const EditableText = ({ currText, updateValue }) => {
 
     return (
         <div style={{ display: 'inline-block' }}>
+            {/* <input
+                    //style={{ width: Math.min(Math.max(text.length, 2), 20) + 'ch' }}
+                    type="text"
+                    value={text}
+                    autoFocus
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    onKeyPress={handleKeyPress}
+                /> */}
             {isEditing ? (
                 <input
                     style={{ width: Math.min(Math.max(text.length, 2), 20) + 'ch' }}

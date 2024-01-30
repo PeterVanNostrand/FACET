@@ -1,7 +1,10 @@
-import axios, { AxiosError } from "axios";
-import { useEffect, useState } from "react";
-import webappConfig from "../../config.json";
-import { formatFeature, formatValue } from "../utilities";
+import axios, { AxiosError } from 'axios';
+import { useEffect, useState } from 'react';
+import webappConfig from '../../config.json';
+import ExplanationDisplay from './ExplanationDisplay.jsx';
+import StatusDisplay from './StatusDisplay.jsx';
+import WelcomeScreen from './WelcomeSceen.jsx';
+import './css/style.css';
 
 import ExplanationSection from './components/my-application/explanation/ExplanationSection';
 import NavBar from './components/NavBar';
@@ -41,20 +44,121 @@ function status_log(text, color) {
 }
 
 function App() {
-    const [instances, setInstances] = useState([]);
-    const [count, setCount] = useState(0);
+    /**
+     * applications: List of applications loaded from JSON data
+     * Structure:
+     * [{"x0": <feature value>, ... "x<n>": <feature value>}, {"x0": <feature value>, ... "x<n>": <feature value>}, ...]
+     * 
+     * index: index of where we are in applications; an int in range [0, applications.length - 1]
+     * 
+     * selectedInstance: the current application/scenario the user is viewing. This variable is what the app displays
+     * Structure:
+     * {
+        "x0": <feature value>,
+                ⋮
+        "x<n>": <feature value>
+       }
+     * 
+     * explanation: FACET's counterfactual explanation on what to change user's feature values to to get a desired outcome
+     * Structure:
+     * {
+        "x0": [
+            <Region Min (float)>,
+            <Region Max (float)>
+        ],
+                    ⋮
+        "x<n>": [
+            <Region Min (float),
+            <Region Max (float)
+        ]
+        }
+     *}
+     * 
+     * savedScenarios: List of scenarios user has saved to tabs
+     * Structure:
+     * [{
+     *   "scenario"   : <int>,
+     *   "values"     : <selectedInstance>,
+     *   "explanation": <explanation>
+     * }]
+     * 
+     * formatDict: JSON instance that contains information regarding formatting and dataset handling
+     * Structure:
+     * {
+            "dataset": <dataset>,
+            "feature_decimals": {
+                <featureName>: <val>,
+                <featureName>: <val>,
+                        ⋮
+                <featureName>:<val>
+            },
+            "feature_names": {
+                "x0": <featureName>.
+                        ⋮
+                "x<n>":<featureName>
+            },
+            "feature_units": {
+                <featureName>: <unit, i.e. "$", "ms", "km">,
+                        ⋮
+                <featureName>:<unit>
+            },
+            "pretty_feature_names": {
+                <featureName>: <Pretty Feature Name, i.e. "Applicant Income" rather than "ApplicantIncome">,
+                            ⋮
+                <featureName>:<Pretty Feature Name>
+            },
+            "scenario_terms": {
+                "desired_outcome": <Val, i.e. "Approved">,
+                "instance_name": "<Val, i.e. "Application">,
+                "undesired_outcome":<Val, i.e. "Rejected">
+            },
+            "semantic_max": {
+                <FeatureName>: <Real Number or null>,
+                                ⋮
+                <FeatureName>:<Real Number or null>
+            },
+            "semantic_min": {
+                <FeatureName>: <Real Number or null>,
+                                ⋮
+                <FeatureName>:<Real Number or null>
+            },
+            "target_name": <Val, i.e. "Loan_Status">,
+            "weight_values": {
+                "Increment": <int>,
+                "IsExponent": <true or false, determines if we increase weights by the increment or by the power of increment>
+            }
+        }
+     * 
+     * featureDict: JSON instance mapping the feature index to a feature name (i.e. x0 -> Apllicant_Income, x1 -> Debt, ...)
+     * Structure:
+     * {
+            "feature_names": {
+                "x0": <featureName>.
+                        ⋮
+                "x<n>":<featureName>
+            },
+        }
+     * 
+     * isLoading: Boolean value that helps with managing async operations. Prevents webapp from trying to display stuff before formatDict is loaded
+     */
+    const [applications, setApplications] = useState([]);
+    const [index, setIndex] = useState(0);
     const [selectedInstance, setSelectedInstance] = useState("");
     const [explanations, setExplanations] = useState("");
+    const [savedScenarios, setSavedScenarios] = useState([]);
     const [formatDict, setFormatDict] = useState(null);
     const [featureDict, setFeatureDict] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+
     const [constraints, setConstraints] = useState([]);
     const [numExplanations, setNumExplanations] = useState(1);
     const [totalExplanations, setTotalExplanations] = useState([]);
     const [explanationSection, setExplanationSection] = useState(null);
     const [isWelcome, setIsWelcome] = useState(false);
+    const [showWelcomeScreen, setShowWelcomeScreen] = useState(true);
 
-    // initialize the page
+
+    // useEffect to fetch instances data when the component mounts
     useEffect(() => {
         status_log("Using endpoint " + ENDPOINT, SUCCESS)
 
@@ -91,7 +195,7 @@ function App() {
         const fetchInstances = async () => {
             try {
                 const response = await axios.get(ENDPOINT + "/instances");
-                setInstances(response.data);
+                setApplications(response.data);
                 setSelectedInstance(response.data[0]);
                 status_log("Sucessfully loaded instances!", SUCCESS)
             } catch (error) {
@@ -190,18 +294,30 @@ function App() {
 
     // Function to handle displaying the previous instances
     const handlePrevApp = () => {
-        if (count > 0) {
-            setCount(count - 1);
-            setSelectedInstance(instances[count - 1]);
+        if (index > 0) {
+            setIndex(index - 1);
+            document.getElementById("title").innerHTML = "Application " + (index - 1); //Need to change back to application if a saved scenario was visited
+            setSelectedInstance(applications[index - 1]);
+        }
+        else { //Cycle back to last application in instance list
+            setIndex(applications.length - 1);
+            document.getElementById("title").innerHTML = "Application " + (applications.length - 1); //Need to change back to application if a saved scenario was visited
+            setSelectedInstance(applications[applications.length - 1]);
         }
         handleExplanations();
     }
 
     // Function to handle displaying the next instance
     const handleNextApp = () => {
-        if (count < instances.length - 1) {
-            setCount(count + 1);
-            setSelectedInstance(instances[count + 1]);
+        if (index < applications.length - 1) {
+            setIndex(index + 1);
+            document.getElementById("title").innerHTML = "Application " + (index + 1); //Need to change back to application if a saved scenario was visited
+            setSelectedInstance(applications[index + 1]);
+        }
+        else { //cycle back to first application in instance list
+            setIndex(0);
+            setSelectedInstance(applications[0]);
+            document.getElementById("title").innerHTML = "Application 0"; //Need to change back to application if a saved scenario was visited
         }
         handleExplanations();
     }
@@ -211,8 +327,8 @@ function App() {
     }
 
     const handleApplicationChange = (event) => {
-        setCount(event.target.value);
-        setSelectedInstance(instances[event.target.value]);
+        setIndex(event.target.value);
+        setSelectedInstance(applications[event.target.value]);
     };
 
     // refactorable section to handle adding a new profile
@@ -228,105 +344,93 @@ function App() {
     };
     // ---------------------------------------------------
 
+    const backToWelcomeScreen = () => {
+        console.log("Welcome SCreen is back!")
+        setShowWelcomeScreen(true);
+    }
+
+    const welcome = WelcomeScreen(showWelcomeScreen, setShowWelcomeScreen)
+    /**
+     * Saves a scenario to savedScenarios, and creates a tab
+     */
+    const saveScenario = () => {
+        let scenario = {}; //made this way for programmer's convenience
+        scenario["scenario"] = savedScenarios.length + 1; //ID the scenario indexing at 1
+        scenario["values"] = selectedInstance; //store feature values
+        scenario["explanation"] = explanations; //store explanation
+        scenario["featureControls"] = {}; //TODO: store priorities of features, lock states, etc.
+
+        setSavedScenarios([...savedScenarios, scenario]); //append scenario to savedScenarios        
+        //Create new tab and add it to HTML
+        let tab = document.createElement("button");
+        tab.innerHTML = "Scenario " + (savedScenarios.length + 1); //Name the tab
+        //set onclick method to load the scenario, and display the ID
+        tab.onclick = function () { setSelectedInstance(scenario["values"]), document.getElementById("title").innerHTML = "Scenario " + scenario["scenario"] };
+        document.getElementById("tabSection").appendChild(tab); //add element to HTML
+    }
+
 
     // this condition prevents the page from loading until the formatDict is availible
     if (isLoading) {
         return <div></div>
-    } else if (isWelcome) {
-        return <TempWelcome
-            setIsWelcome={setIsWelcome}
-            instances={instances}
-            handleApplicationChange={handleApplicationChange}
-            count={count}
-        />
+    } else if (showWelcomeScreen) {
+        //console.log("App: welcome")
+
+        let welcomeContent = welcome
+
+        if (welcomeContent["status"] == "Display") {
+            return welcomeContent["content"]
+        } else {
+            console.log("The content changed!")
+            setShowWelcomeScreen(false)
+
+            if (welcomeContent["content"] != null) {
+                setSelectedInstance(welcomeContent["content"])
+            }
+        }
+
     } else {
         return (
-            <div className='main-container' style={{ maxHeight: '98vh', }}>
-                <button
-                    onClick={() => setIsWelcome(true)}
-                >
-                    Back to Welcome Page
-                </button>
-                <div className="nav-bar"></div>
-                <div className='app-body-container' style={{ display: 'flex', flexDirection: 'row' }}>
-                    <div className='filter-container'></div>
-                    <div className='feature-control-container' style={{ border: 'solid 1px black', padding: 20 }}>
-                        <div style={{ maxHeight: 40 }}>
-                            <FeatureControlSection />
+            <>
+                <div id="super-div" className="super-div">
+                    <div id="settings-profile-section" className="settings-profile-section">
+                        <button onClick={backToWelcomeScreen}>Welcome Screen</button>
+                    </div>
+
+                    <div id="feature-controls" className="feature-controls">
+                        <p>feature  controls</p>
+                    </div>
+
+                    <div id="tab-section" className="tab-section">
+                        <h2>Tabs</h2>
+                        <div id="tabSection" style={{
+                            display: "flex",
+                            flexDirection: "row",
+                        }}>
                         </div>
                     </div>
 
-                    <div className="my-application-container" style={{ overflowY: 'auto', border: 'solid 1px black', padding: 10 }}>
-                        <div className='rhs' style={{ padding: 10 }}>
-
-                            <h2 className='applicant-header' style={{ marginTop: 10, marginBottom: 20 }}>My Application</h2>
-                            <select value={count} onChange={handleApplicationChange}>
-                                {instances.map((applicant, index) => (
-                                    <option key={index} value={index}>
-                                        Application {index}
-                                    </option>
-                                ))}
-                            </select>
-                            <div className='applicant-tabs' style={{ display: 'flex', flexDirection: 'row' }}>
-                                <Tabs value={1} onChange={handleChange} indicatorColor="primary">
-                                    <Tab label="Default" />
-                                    <Tab label={`Profile ${count}`} />
-                                </Tabs>
-
-                                <button style={{ border: '1px solid black', color: 'black', backgroundColor: 'white' }} onClick={handleAddProfile}>+</button>
-                            </div>
-
-                            <div className='applicant-info-container' style={{ margin: 10 }}>
-                                {Object.keys(selectedInstance).map((key, index) => (
-                                    <div key={index} className='feature' style={{ margin: -10 }}>
-                                        <Feature
-                                            name={featureDict[key]}
-                                            constraint={constraints[index]}
-                                            value={selectedInstance[key]}
-                                            updateConstraint={(i, newValue) => {
-                                                const updatedConstraints = [...constraints];
-                                                updatedConstraints[index][i] = newValue;
-                                                setConstraints(updatedConstraints);
-                                            }}
-                                        />
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-
-                        {explanationSection}
-                        <div className="suggestions-container">
-                            <div>
-                                <h2 style={{ marginTop: 10, marginBottom: 10 }}>Suggestions</h2>
-
-                            </div>
-                            <p>
-                                Your application would have been accepted if your income was $1,013-$1,519 instead of $4,895
-                                and your loan was $9,450-$10,000 instead of $10,200.
-                            </p>
-                        </div>
+                    <div id="status-section" className="status-section">
+                        <h2 id="title">Application {index}</h2>
+                        <button onClick={handlePrevApp}>Previous</button>
+                        <button onClick={handleNextApp}>Next</button>
+                        <StatusDisplay featureDict={featureDict} formatDict={formatDict} selectedInstance={selectedInstance} />
                     </div>
 
-                </div>
-            </div>
+                    <div id="explanation" className="explanation">
+                        <h2>Explanation</h2>
+                        <ExplanationDisplay explanation={explanations} formatDict={formatDict} />
+                        <button onClick={saveScenario}>Save Scenario</button>
+                    </div>
+
+                    <div id="suggestion" className="suggestion">
+                        <p>suggestions box thing</p>
+                    </div>
+                </div >
+            </>
         )
     }
 
 }
-
-
-function Feature({ name, value }) {
-
-    return (
-        <div className="features-container">
-            <div className="feature">
-                <p>{name}: <span className="featureValue">{value}</span></p>
-            </div>
-            {/* Add more similar div elements for each feature */}
-        </div>
-    )
-}
-
 
 export default App;
