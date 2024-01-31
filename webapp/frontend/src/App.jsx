@@ -346,20 +346,23 @@ function App() {
         tab.innerHTML = "Scenario " + (savedScenarios.length + 1); //Name the tab
         //set onclick method to load the scenario, and display the ID
         tab.onclick = function () { setSelectedInstance(scenario["values"]), document.getElementById("title").innerHTML = "Scenario " + scenario["scenario"] };
+        tab.id = "tab" + (savedScenarios.length + 1);
         document.getElementById("tabSection").appendChild(tab); //add element to HTML
     }
 
     const deleteScenario = (index) => {
-        setSavedScenarios(savedScenarios.splice(index, 1));
+        setSavedScenarios(savedScenarios.splice(index-1, 1));
+        let tab = document.getElementById("tab" + index);
+        document.getElementById("tabSection").removeChild(tab);
     }
 
     const clearScenarios = () =>{
         setSavedScenarios([]);
+        document.getElementById("tabSection").innerHTML = "";
     }
 
-    const toggleTabs = () =>{
-        let isVisable = document.getElementById("tabSection").style.display;
-        document.getElementById("tabSection").style.display = (isVisable == "none")?"flex":"none";
+    const toggleTabs = (isVisable) =>{
+        document.getElementById("tabSection").style.display = (isVisable)?"flex":"none";
     }
 
 
@@ -386,13 +389,15 @@ function App() {
         return <div></div>
     }
     else if (showWelcomeScreen) {
+        toggleTabs(0);
         let welcomeContent = welcome
 
         if (welcomeContent["status"] == "Display") {
             return welcomeContent["content"]
         } else {
             console.log("The content changed!")
-            setShowWelcomeScreen(false)
+            setShowWelcomeScreen(false);
+            toggleTabs(1);
 
             if (welcomeContent["content"] != null) {
                 setSelectedInstance(welcomeContent["content"])
