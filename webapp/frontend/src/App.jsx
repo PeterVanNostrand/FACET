@@ -357,6 +357,11 @@ function App() {
         setSavedScenarios([]);
     }
 
+    const toggleTabs = () =>{
+        let isVisable = document.getElementById("tabSection").style.display;
+        document.getElementById("tabSection").style.display = (isVisable == "none")?"flex":"none";
+    }
+
 
     // useEffect(() => {
     //     if (formatDict && featureDict && showWelcomeScreen) {
