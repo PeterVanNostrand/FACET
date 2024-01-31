@@ -349,6 +349,14 @@ function App() {
         document.getElementById("tabSection").appendChild(tab); //add element to HTML
     }
 
+    const deleteScenario = (index) => {
+        setSavedScenarios(savedScenarios.splice(index, 1));
+    }
+
+    const clearScenarios = () =>{
+        setSavedScenarios([]);
+    }
+
 
     // useEffect(() => {
     //     if (formatDict && featureDict && showWelcomeScreen) {
