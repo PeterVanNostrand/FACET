@@ -54,23 +54,10 @@ body {
     " u v w x y"
   }
   
-  /* .feature-control-box.locked {
+ .feature-control-box.locked {
     filter: grayscale(100%);
-    width: 400px;
-    height: 150px;
-    display: flex;
-    flex-direction: column;
-    background-color:   #dbd7d7; 
-    border-bottom: 2px solid black;
-    position: relative;
-    grid-template-columns: 1fr 300px 1fr;
-    grid-template-rows: 1px 200fr 1fr;    
-    grid-gap: 1px;
-    grid-template-areas: 
-    "arrow-up title title"
-    "priority place2 lock"
-    "arrow-down numberline place"
-  } */
+  
+  } 
   .feature-title {
     font-size: 20px;
     width: 251px;
@@ -134,7 +121,7 @@ body {
     align-self: center;
   }
   
-  
+ 
   .number-line {
     grid-area: numberLine;
     align-self: strech;

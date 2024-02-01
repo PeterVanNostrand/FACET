@@ -2,77 +2,74 @@ import React, { useState, useEffect } from 'react';
 import NumberLineC from './NumberLineC.jsx';
 import './NumberLineC.css';
 import arrowSVG from './svg/Arrow.svg';
-import fillArrowSVG from './SVG/FillArrow.svg'
 import lockSVG from './svg/Lock.svg';
 import unlockSVG from './svg/UnLocked.svg';
 import pinSVG from './svg/Pinned.svg';
 import unpinSVG from './svg/UnPinned.svg';
 import informationSVG from './svg/Information.svg';
-const FeatureControlSection = ({ applicantInfo, fDict}) => {
 
-    //console.log("Applicant Info", applicantInfo);
-    //onsole.log("feauture Dict", fDict);
 
-    const featureTabTitle = 'Feature Controls';
-    const [feats, setFeats] = useState([]);
+const FeatureControlSection = ({ applicantInfo, fDict }) => {
+    const feature_tab_title = 'Feature Controls';
+    const [features, setFeatures] = useState([]);
 
     useEffect(() => {
         console.log('Effect is running');
-        console.log('fDict:', fDict);
-        console.log('applicantInfo:', applicantInfo);
 
         if (fDict) {
             // populate features
             let priorityValue = 1;
+
+            const newFeatures = Object.entries(fDict.feature_names).map(([key, value]) => {
+                const currentValue = applicantInfo[key];
+                const isZero = currentValue === 0; // checks if current feature value is zero
+
+                const default_max = 1000;
+                const default_max_range = 500; 
+                const default_min_range = 0;
+
+                return {
+                    id: value,
+                    x: key,
+                    units: fDict.feature_units[value] || '',
+                    title: fDict.pretty_feature_names[value] || '',
+                    current_value: currentValue,
+                    min: fDict.semantic_min[value] ?? 0, 
+                    max: fDict.semantic_max[value] ?? (isZero ? default_max : currentValue * 2), // set 1 if null or double current_val if income is not 0
+                    priority: priorityValue++,
+                    lock_state: false,
+                    pin_state: false,
+                    min_range: isZero ? default_min_range  : currentValue - (currentValue / 2),
+                    max_range: isZero ? default_max_range  : currentValue + (currentValue / 2),
+                };
+            });
     
-            const newFeats = Object.entries(fDict.feature_names).map(([key, value]) => ({
-                id: value,
-                x: key,
-                units: fDict.feature_units[value] || '',
-                title: fDict.pretty_feature_names[value] || '',
-                current_value: applicantInfo[key],
-                min: fDict.semantic_min[value] ?? 0, // set 0 if null 
-                max: fDict.semantic_max[value] ?? ((applicantInfo[key])*2), // set double current_val if null
-                // Following Values not given in initial 
-                priority: priorityValue++,
-                lock_state: false,
-                min_range: (applicantInfo[key])-((applicantInfo[key])/2),
-                max_range: (applicantInfo[key])+((applicantInfo[key])/2),  // this will have bug out depending on ma; fix kater
-            }));
-            console.log('Feats:', newFeats); 
-            setFeats(newFeats);
+            console.log('Feats:', newFeatures);
+            setFeatures(newFeatures);
         }
     }, [fDict, applicantInfo]);
 
 
-    // const [features, setFeatures] = useState([
-    //     { id: 1, name: 'Income ($)', priority: 1, lock_state: false, numberLine: numLine1 },
-    //     { id: 2, name: 'Rent ($)', priority: 2, lock_state: false, numberLine: numLine2 },
-    //     { id: 3, name: 'Debt ($)', priority: 3, lock_state: false, numberLine: numLine1 },
-    // ]);
-
     // Function to update the priority of a feature 
-    const updatePriority = (featureID, priority_val, change) => {
-        // featureID: ID of the Feature (that has its priority modified by user)
-        // priority_val: priority value of featureID (can be changed later, not necessary to pass)
+    const updatePriority = (id, change) => {
+        // id: ID of the Feature (that has its priority modified by user)
         // change: +1/-1 depending on if traversing down list (+1) or up list (-1) priority
 
         // Find the feature to be updated based on given feature ID
-        const updatedFeature = feats.find((feature) => feature.id === featureID);
-
+        const updatedFeature = features.find((feature) => feature.id === id);
         // Check if the feature exists
         if (updatedFeature) {
             // Calculate the newPriority
+            const oldPriority = updatedFeature.priority;
             const newPriority = updatedFeature.priority + change;
-
             // Map over the features array to create a new array with updated priorities
-            const updatedFeatures = feats.map((feature) => {
-                if (feature.id === featureID) {
+            const updatedFeatures = features.map((feature) => {
+                if (feature.id === id) {
                     // Update the priority and lock_state of the targeted feature (remaining legacy lock_state @FIX)
                     return { ...feature, priority: newPriority, lock_state: feature.lock_state };
                 } else if (feature.priority === newPriority) {
                     // If another feature has the same priority as the updated feature, adjust its priority
-                    return { ...feature, priority: priority_val };
+                    return { ...feature, priority: oldPriority };
                 } else {
                     // If the feature is not the one being updated or doesn't have the same priority, keep it unchanged
                     return feature;
@@ -83,24 +80,113 @@ const FeatureControlSection = ({ applicantInfo, fDict}) => {
             updatedFeatures.sort((a, b) => a.priority - b.priority);
 
             // Reset the features array
-            setFeats(updatedFeats);
+            setFeatures(updatedFeatures);
         }
     };
 
+    const changePriority = (id, target_value) => {
+        // id: ID of the Feature (that has its priority modified by the user)
+        // target_value: new value 
+    
+        // Find the feature to be updated based on the given feature ID
+        const updatedFeature = features.find((feature) => feature.id === id);
+        console.log("feature to be updated: ", updatedFeature);
+    
+        // Check if the feature exists
+        if (updatedFeature) {
+            // Calculate the newPriority
+            const current_priority = updatedFeature.priority;
+            console.log("feature's current priority: ", current_priority);
+            let change = 1; 
+            // Calculate change
+            const direction = current_priority - target_value; // +++ value means current priority goes up, --- value means current priority goes down 
+            console.log("Change == ", change);
+            // Map over the features array to create a new array with updated priorities
+            if (direction < 0) { // Feature moves DOWN
+                const updatedFeatures = features.map((feature) => {
+                    if (feature.id === id) {
+                        console.log("feature priority changed ", feature.id, target_value);
+                        // Update the feature's priority to the target_value 
+                        return { ...feature, priority: target_value };
+                    } 
+                    else if (feature.pin_state) {
+                        change++;
+                    } else if (feature.priority > current_priority && feature.priority <= target_value) { // if priority is greater than current_priority and lesser than target_value, change priorty by -1 
+                        // If another feature has the same priority as the updated feature, adjust its priority
+                        console.log("feature priority changed ", feature.id, feature.priority - change);
+                        return { ...feature, priority: feature.priority - 1 };
+                    } else {
+                        // Features that don't need to be changed
+                        return feature;
+                    }
+                });
+    
+                // Sort the updated features based on priority
+                updatedFeatures.sort((a, b) => a.priority - b.priority);
+                console.log(updatedFeatures);
+                // Reset the features array
+                setFeatures(updatedFeatures);
+            } else { // Featu
+                re moves UP
+                const updatedFeatures = features.map((feature) => {
+                    console.log("iterating over id...", feature.id);
+                    console.log("Priority: ", feature.priority)
+                    if (feature.id === id) {
+                        // Update the priority and lock_state of the targeted feature (remaining legacy lock_state @FIX)
+                        console.log("feature switching to target value: ", feature.id, target_value);
+                        return { ...feature, priority: target_value };
+                    } else if (feature.pin_state) {
+                        change++;
+                    }
+        
+                        else if (feature.priority < current_priority && feature.priority >= target_value) { // if priority is greater than current_priority and lesser than target_value, change priorty by +1 
+                        // If another feature has the same priority as the updated feature, adjust its priority
+                        console.log("feature priority changed ", feature.id, feature.priority + change);
+                        return { ...feature, priority: feature.priority + 1 };
+                    } else {
+                        // Features that don't need to be changed
+                        return feature;
+                    }
+                });
+    
+                // Sort the updated features based on priority
+                updatedFeatures.sort((a, b) => a.priority - b.priority);
+                console.log(updatedFeatures);
+                // Reset the features array
+                setFeatures(updatedFeatures);
+            }
+        }
+    };
 
-    const FeatureControl = ({ id, x, units, title, current_value, min, max, priority, lockState, min_range, max_range}) => {
-        const [currPriority, setNewPriority] = useState(priority);
-        const [isLocked, setIsLocked] = useState(lockState || false);
-        const [isPinned, setIsPinned] = useState(false);
+    const updateLockState = (id, newLockState) => {
+        const updatedFeatures = features.map((feature) =>
+          feature.id === id ? { ...feature, lock_state: newLockState } : feature
+        );
+        setFeatures(updatedFeatures);
+      };
+
+    const updatePinState = (id, newPinState) => {
+        const updatedFeatures = features.map((feature) =>
+          feature.id === id ? { ...feature, pin_state: newPinState } : feature
+        );
+        setFeatures(updatedFeatures);
+      };
+      
+      
+    const FeatureControl = ({ id, x, units, title, current_value, min, max, priority, lock_state, pin_state, min_range, max_range }) => {
+        const [currentPriority, setNewPriority] = useState(priority);
+        const [isLocked, setIsLocked] = useState(lock_state);
+        const [isPinned, setIsPinned] = useState(pin_state);
+        const [editedPriority, setEditedPriority] = useState(priority);
 
         // ARROW: Priority List Traversal 
 
         const handleArrowDownClick = () => {
             if (isLocked) {
-                console.log(`${name}: is Locked`);
+                console.log(`${title}: is Locked`);
             } else {
-                if (currPriority < feats.length) {
-                    updatePriority(id, currPriority, 1);
+                if (currentPriority < features.length) {
+                    updatePriority(id, 1);
                 } else {
                     console.log('Exceeded List');
                 }
@@ -109,10 +195,10 @@ const FeatureControlSection = ({ applicantInfo, fDict}) => {
 
         const handleArrowUpClick = () => {
             if (isLocked) {
-                console.log(`${name}: is Locked`);
+                console.log(`${title}: is Locked`);
             } else {
-                if (currPriority > 1) {
-                    updatePriority(id, currPriority, -1);
+                if (currentPriority > 1) {
+                    updatePriority(id, -1);
                 } else {
                     console.log('No Greater Priority');
                 }
@@ -120,29 +206,45 @@ const FeatureControlSection = ({ applicantInfo, fDict}) => {
         };
 
         //  LOCK:
-
         const handleLockClick = () => {
-            //console.log('Before Lock Click:', isLocked);
             setIsLocked((prevIsLocked) => !prevIsLocked);
-            //console.log('After Lock Click:', isLocked);
-            console.log(name);
+            updateLockState(id, !isLocked);
+            console.log("Feature: ", id, "is Locked? ",  !lock_state);
         };
 
-        // Debug use: 
+        // Switch VIS state: 
         useEffect(() => {
-            // console.log('isLocked state changed:', isLocked);
         }, [isLocked]);
 
         // PIN:
-
         const handlePinClick = () => {
-            setIsPinned((prevIsLocked) => !prevIsLocked);
-            console.log('Pin Clicked!');
+            setIsPinned((prevIsPinned) => !prevIsPinned);
+            updatePinState(id, !isPinned);
+            console.log("Feature: ", id, "is Pinned? ",  !pin_state);
+        };
+        // PRIORITY (inputs): 
+        const handlePriorityBlur = () => {
+            // Check if the edited priority is different from the current priority
+            if (editedPriority !== priority) {
+                // Call the function to update the priority
+                changePriority(id, editedPriority);
+            }
+        };
+
+        const handlePriorityChange = (event) => {
+            const newValue = parseInt(event.target.value, 10);
+            // Check if the new value is within valid range and different from the current priority
+            if (!isNaN(newValue) && newValue >= 1 && newValue <= features.length && newValue !== priority) {
+                setEditedPriority(newValue);
+                // Call the function to update the priority
+                changePriority(id, newValue);
+            }
         };
 
         return (
             <div className={`feature-control-box ${isLocked ? 'locked' : ''}`}>
                 <h1 className='feature-title'>{title} {units && `(${units})`}</h1>
+                {/* Locks*/}
                 <div className='lock'>
                     <img
                         onClick={handleLockClick}
@@ -159,7 +261,7 @@ const FeatureControlSection = ({ applicantInfo, fDict}) => {
                         className={isPinned ? 'pinned' : ''}
                     />
                 </div>
-                {/* Arrow SVGS commented out bc of bugs*/}
+                {/* Arrows */}
                 <img className='arrow-up' onClick={handleArrowUpClick}
                     src={arrowSVG}
                     alt='arrow up'
@@ -168,12 +270,26 @@ const FeatureControlSection = ({ applicantInfo, fDict}) => {
                     src={arrowSVG}
                     alt='arrow down'
                 />
-                <div className='priority-value'>{currPriority}</div>
+                {/* Priority Value*/}
+                <input className='priority-value'
+                    type="number"
+                    value={editedPriority}
+                    onChange={handlePriorityChange}
+                    onBlur={handlePriorityBlur}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            handlePriorityBlur();
+                        }
+                    }}
+                    style={{
+                        WebkitAppearance: 'none',
+                        margin: 0,
+                    }}
+                />
+                {/* Sliders */}
                 <div className='number-line'>
                     <NumberLineC start={min} end={max} minRange={min_range} maxRange={max_range} currentValue={current_value} />
-                    {/* <NumberLineChart start={0} end={100} initialMinRange={30} initialMaxRange={50} currentValue={40} />  */}
                 </div>
-                <h1 className='feature-title'>{name}</h1>
             </div>
         );
     };
@@ -183,8 +299,8 @@ const FeatureControlSection = ({ applicantInfo, fDict}) => {
             <div className="information">
                 <img src={informationSVG} />
             </div>
-            <div className="feature-control-tab-title">{featureTabTitle}</div>
-            {feats.map((feature) => (
+            <div className="feature-control-tab-title">{feature_tab_title}</div>
+            {features.map((feature) => (
                 <FeatureControl key={feature.id} {...feature} />
             ))}
         </div>
