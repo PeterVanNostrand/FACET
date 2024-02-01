@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Draggable from 'react-draggable';
 
-const NumberLineC = ({ start, end, minRange, maxRange, currentValue }) => {
+const NumberLineC = ({ id, start, end, minRange, maxRange, currentValue, onNumberLineChange }) => {
     // State to keep track of the current range
     const [currentRange, setCurrentRange] = useState({ min: minRange, max: maxRange });
     const [tempMinRange, setTempMinRange] = useState(minRange.toString());
     const [tempMaxRange, setTempMaxRange] = useState(maxRange.toString());
     const width = 290;
-    const calc = 185;
     const height = 70;
+
 
     // Handler for dragging the Min Range Handle
     const handleMinRangeChange = (e, ui) => {
@@ -18,6 +18,7 @@ const NumberLineC = ({ start, end, minRange, maxRange, currentValue }) => {
         setTempMinRange(newMinRange);
         // Update the state with the new value
         setCurrentRange({ ...currentRange, min: newMinRange });
+        // onNumberLineChange(id, currentRange.min, currentRange.max);
     };
 
     // Handler for dragging the Max Range Handle
@@ -28,6 +29,8 @@ const NumberLineC = ({ start, end, minRange, maxRange, currentValue }) => {
         setTempMaxRange(newMaxRange);
         // Update the state with the new value
         setCurrentRange({ ...currentRange, max: newMaxRange });
+        // onNumberLineChange(id, currentRange.min, currentRange.max);
+
     };
 
     // Function to calculate the value based on the drag position 

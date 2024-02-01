@@ -9,24 +9,39 @@ import unpinSVG from './svg/UnPinned.svg';
 import informationSVG from './svg/Information.svg';
 
 
-const FeatureControlSection = ({ applicantInfo, fDict }) => {
+const FeatureControlSection = ({ applicantInfo, fDict, constraints, setConstraints }) => {
     const feature_tab_title = 'Feature Controls';
     const [features, setFeatures] = useState([]);
 
-    useEffect(() => {
-        console.log('Effect is running');
+    const handleNumberLineChange = (id, minRange, maxRange) => {
+        // Find the index of the feature in constraints array
+        const index = features.findIndex((feature) => feature.id === id);
+        if (index !== -1) {
+            // Update the constraints state
+            const updatedConstraints = [...constraints];
+            updatedConstraints[index] = [minRange, maxRange];
+            console.log('updated', updatedConstraints)
+            setConstraints(updatedConstraints);
+        }
+    };
 
+
+    useEffect(() => {
         if (fDict) {
             // populate features
             let priorityValue = 1;
 
-            const newFeatures = Object.entries(fDict.feature_names).map(([key, value]) => {
+            const newFeatures = Object.entries(fDict.feature_names).map(([key, value], index) => {
                 const currentValue = applicantInfo[key];
                 const isZero = currentValue === 0; // checks if current feature value is zero
 
                 const default_max = 1000;
-                const default_max_range = 500; 
+                const default_max_range = 500;
                 const default_min_range = 0;
+
+                const lowerConstraint = constraints[index][0]
+                const upperConstraint = constraints[index][1]
+                console.log('lower', lowerConstraint, 'upper', upperConstraint)
 
                 return {
                     id: value,
@@ -34,16 +49,16 @@ const FeatureControlSection = ({ applicantInfo, fDict }) => {
                     units: fDict.feature_units[value] || '',
                     title: fDict.pretty_feature_names[value] || '',
                     current_value: currentValue,
-                    min: fDict.semantic_min[value] ?? 0, 
+                    min: fDict.semantic_min[value] ?? 0,
                     max: fDict.semantic_max[value] ?? (isZero ? default_max : currentValue * 2), // set 1 if null or double current_val if income is not 0
                     priority: priorityValue++,
                     lock_state: false,
                     pin_state: false,
-                    min_range: isZero ? default_min_range  : currentValue - (currentValue / 2),
-                    max_range: isZero ? default_max_range  : currentValue + (currentValue / 2),
+                    min_range: lowerConstraint,
+                    max_range: upperConstraint,
                 };
             });
-    
+
             console.log('Feats:', newFeatures);
             setFeatures(newFeatures);
         }
@@ -87,17 +102,17 @@ const FeatureControlSection = ({ applicantInfo, fDict }) => {
     const changePriority = (id, target_value) => {
         // id: ID of the Feature (that has its priority modified by the user)
         // target_value: new value 
-    
+
         // Find the feature to be updated based on the given feature ID
         const updatedFeature = features.find((feature) => feature.id === id);
         console.log("feature to be updated: ", updatedFeature);
-    
+
         // Check if the feature exists
         if (updatedFeature) {
             // Calculate the newPriority
             const current_priority = updatedFeature.priority;
             console.log("feature's current priority: ", current_priority);
-            let change = 1; 
+            let change = 1;
             // Calculate change
             const direction = current_priority - target_value; // +++ value means current priority goes up, --- value means current priority goes down 
             console.log("Change == ", change);
@@ -108,7 +123,7 @@ const FeatureControlSection = ({ applicantInfo, fDict }) => {
                         console.log("feature priority changed ", feature.id, target_value);
                         // Update the feature's priority to the target_value 
                         return { ...feature, priority: target_value };
-                    } 
+                    }
                     else if (feature.pin_state) {
                         change++;
                     } else if (feature.priority > current_priority && feature.priority <= target_value) { // if priority is greater than current_priority and lesser than target_value, change priorty by -1 
@@ -120,7 +135,7 @@ const FeatureControlSection = ({ applicantInfo, fDict }) => {
                         return feature;
                     }
                 });
-    
+
                 // Sort the updated features based on priority
                 updatedFeatures.sort((a, b) => a.priority - b.priority);
                 console.log(updatedFeatures);
@@ -137,8 +152,8 @@ const FeatureControlSection = ({ applicantInfo, fDict }) => {
                     } else if (feature.pin_state) {
                         change++;
                     }
-        
-                        else if (feature.priority < current_priority && feature.priority >= target_value) { // if priority is greater than current_priority and lesser than target_value, change priorty by +1 
+
+                    else if (feature.priority < current_priority && feature.priority >= target_value) { // if priority is greater than current_priority and lesser than target_value, change priorty by +1 
                         // If another feature has the same priority as the updated feature, adjust its priority
                         console.log("feature priority changed ", feature.id, feature.priority + change);
                         return { ...feature, priority: feature.priority + 1 };
@@ -147,7 +162,7 @@ const FeatureControlSection = ({ applicantInfo, fDict }) => {
                         return feature;
                     }
                 });
-    
+
                 // Sort the updated features based on priority
                 updatedFeatures.sort((a, b) => a.priority - b.priority);
                 console.log(updatedFeatures);
@@ -159,20 +174,20 @@ const FeatureControlSection = ({ applicantInfo, fDict }) => {
 
     const updateLockState = (id, newLockState) => {
         const updatedFeatures = features.map((feature) =>
-          feature.id === id ? { ...feature, lock_state: newLockState } : feature
+            feature.id === id ? { ...feature, lock_state: newLockState } : feature
         );
         setFeatures(updatedFeatures);
-      };
+    };
 
     const updatePinState = (id, newPinState) => {
         const updatedFeatures = features.map((feature) =>
-          feature.id === id ? { ...feature, pin_state: newPinState } : feature
+            feature.id === id ? { ...feature, pin_state: newPinState } : feature
         );
         setFeatures(updatedFeatures);
-      };
-      
-      
-    const FeatureControl = ({ id, x, units, title, current_value, min, max, priority, lock_state, pin_state, min_range, max_range }) => {
+    };
+
+
+    const FeatureControl = ({ id, x, units, title, current_value, min, max, priority, lock_state, pin_state, min_range, max_range, onNumberLineChange }) => {
         const [currentPriority, setNewPriority] = useState(priority);
         const [isLocked, setIsLocked] = useState(lock_state);
         const [isPinned, setIsPinned] = useState(pin_state);
@@ -208,7 +223,7 @@ const FeatureControlSection = ({ applicantInfo, fDict }) => {
         const handleLockClick = () => {
             setIsLocked((prevIsLocked) => !prevIsLocked);
             updateLockState(id, !isLocked);
-            console.log("Feature: ", id, "is Locked? ",  !lock_state);
+            console.log("Feature: ", id, "is Locked? ", !lock_state);
         };
 
         // Switch VIS state: 
@@ -219,7 +234,7 @@ const FeatureControlSection = ({ applicantInfo, fDict }) => {
         const handlePinClick = () => {
             setIsPinned((prevIsPinned) => !prevIsPinned);
             updatePinState(id, !isPinned);
-            console.log("Feature: ", id, "is Pinned? ",  !pin_state);
+            console.log("Feature: ", id, "is Pinned? ", !pin_state);
         };
         // PRIORITY (inputs): 
         const handlePriorityBlur = () => {
@@ -287,7 +302,7 @@ const FeatureControlSection = ({ applicantInfo, fDict }) => {
                 />
                 {/* Sliders */}
                 <div className='number-line'>
-                    <NumberLineC start={min} end={max} minRange={min_range} maxRange={max_range} currentValue={current_value} />
+                    <NumberLineC id={id} start={min} end={max} minRange={min_range} maxRange={max_range} currentValue={current_value} onNumberLineChange={onNumberLineChange} />
                 </div>
             </div>
         );
@@ -295,12 +310,9 @@ const FeatureControlSection = ({ applicantInfo, fDict }) => {
 
     return (
         <div className="feature-control-tab">
-            <div className="information">
-                <img src={informationSVG} />
-            </div>
             <div className="feature-control-tab-title">{feature_tab_title}</div>
             {features.map((feature) => (
-                <FeatureControl key={feature.id} {...feature} />
+                <FeatureControl key={feature.id} {...feature} onNumberLineChange={handleNumberLineChange} />
             ))}
         </div>
     );

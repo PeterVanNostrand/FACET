@@ -4,7 +4,9 @@ import webappConfig from '../../config.json';
 import StatusDisplay from './StatusDisplay.jsx';
 import WelcomeScreen from './WelcomeSceen.jsx';
 import './css/style.css';
+import './css/feature-control.css'
 
+import FeatureControlSection from './FeatureControlSection.jsx';
 import ExplanationSection from './components/my-application/explanation/ExplanationSection';
 
 const SERVER_URL = webappConfig.SERVER_URL
@@ -147,8 +149,12 @@ function App() {
     const [totalExplanations, setTotalExplanations] = useState([]);
     const [explanationSection, setExplanationSection] = useState(null);
     const [isWelcome, setIsWelcome] = useState(false);
-    const [showWelcomeScreen, setShowWelcomeScreen] = useState(true);
+    const [showWelcomeScreen, setShowWelcomeScreen] = useState(false);
 
+
+    useEffect(() => {
+        console.log('constraints', constraints)
+    }, [constraints])
 
     // useEffect to fetch instances data when the component mounts
     useEffect(() => {
@@ -284,44 +290,10 @@ function App() {
         }
     }
 
-    // Function to handle displaying the previous instances
-    // const handlePrevApp = () => {
-    //     if (index > 0) {
-    //         setIndex(index - 1);
-    //         document.getElementById("title").innerHTML = "Application " + (index - 1); //Need to change back to application if a saved scenario was visited
-    //         setSelectedInstance(applications[index - 1]);
-    //     }
-    //     else { //Cycle back to last application in instance list
-    //         setIndex(applications.length - 1);
-    //         document.getElementById("title").innerHTML = "Application " + (applications.length - 1); //Need to change back to application if a saved scenario was visited
-    //         setSelectedInstance(applications[applications.length - 1]);
-    //     }
-    //     handleExplanations();
-    // }
-
-    // Function to handle displaying the next instance
-    // const handleNextApp = () => {
-    //     if (index < applications.length - 1) {
-    //         setIndex(index + 1);
-    //         document.getElementById("title").innerHTML = "Application " + (index + 1); //Need to change back to application if a saved scenario was visited
-    //         setSelectedInstance(applications[index + 1]);
-    //     }
-    //     else { //cycle back to first application in instance list
-    //         setIndex(0);
-    //         setSelectedInstance(applications[0]);
-    //         document.getElementById("title").innerHTML = "Application 0"; //Need to change back to application if a saved scenario was visited
-    //     }
-    //     handleExplanations();
-    // }
 
     const handleNumExplanations = (numExplanations) => () => {
         setNumExplanations(numExplanations);
     }
-
-    // const handleApplicationChange = (event) => {
-    //     setIndex(event.target.value);
-    //     setSelectedInstance(applications[event.target.value]);
-    // };
 
     const backToWelcomeScreen = () => {
         console.log("Welcome SCreen is back!")
@@ -393,13 +365,12 @@ function App() {
                 </div>
 
                 <div id="feature-controls" className="feature-controls">
-                    <p>feature controls</p>
-                    <p>constraints</p>
-                    {constraints.map((constraint, index) => (
-                        <div key={index}>
-                            {constraint[0]}, {constraint[1]}
-                        </div>
-                    ))}
+                    <FeatureControlSection
+                        applicantInfo={selectedInstance}
+                        fDict={formatDict}
+                        constraints={constraints}
+                        setConstraints={setConstraints}
+                    />
                 </div>
 
                 <div id="tab-section" className="tab-section">
@@ -413,13 +384,6 @@ function App() {
 
                 <div id="status-section" className="status-section">
                     <h2 id="title">Application</h2>
-                    {/* <select value={index} onChange={handleApplicationChange}>
-                        {applications.map((applicant, index) => (
-                            <option key={index} value={index}>
-                                Application {index}
-                            </option>
-                        ))}
-                    </select> */}
                     <StatusDisplay featureDict={featureDict} formatDict={formatDict} selectedInstance={selectedInstance} />
                 </div>
 

@@ -269,8 +269,6 @@ const WelcomeScreen = (display, setDisplay, selectedInstance, setSelectedInstanc
 
         //sethasInstanceBeenSelected(false);
 
-        console.log('return dict', returnDict)
-        //console.log('selected', hasInstanceBeenSelected)
     }
 
     return returnDict
