@@ -26,11 +26,13 @@
 .tab-section {
     grid-area: tabs;
     border: 1pt solid;
+    width:75vw;
 }
 
 .tabSection{
     display:flex;
     flex-direction: row;
+    overflow-x: auto;
 }
 
 .tab{
@@ -63,6 +65,7 @@
 
 .feature-controls {
     grid-area: featurecontrols;
+    width:25vw;
     border: 1pt solid;
 }
 
