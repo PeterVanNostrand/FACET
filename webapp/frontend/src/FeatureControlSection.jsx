@@ -20,7 +20,6 @@ const FeatureControlSection = ({ applicantInfo, fDict, constraints, setConstrain
             // Update the constraints state
             const updatedConstraints = [...constraints];
             updatedConstraints[index] = [minRange, maxRange];
-            console.log('updated', updatedConstraints)
             setConstraints(updatedConstraints);
         }
     };
@@ -41,7 +40,6 @@ const FeatureControlSection = ({ applicantInfo, fDict, constraints, setConstrain
 
                 const lowerConstraint = constraints[index][0]
                 const upperConstraint = constraints[index][1]
-                console.log('lower', lowerConstraint, 'upper', upperConstraint)
 
                 return {
                     id: value,

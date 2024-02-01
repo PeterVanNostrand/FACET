@@ -142,17 +142,7 @@ body {
 
 /* RANGE INPUT STYLING */
 
-.range-inputs input {
-    width: auto; 
-    min-width: 30px; 
-    height: 10px;
-    padding: 22px  ;     /* Add padding for spacing inside the input box */
-    font-size: 12px;
-    color: #2596be; 
-    border-radius: 5px;
-    text-align: center;
-    transition: color 0.5s ease, background-color 0.5s ease; 
-  }
+
   .range-inputs input:focus {
     color: white;
     background-color: #3498db;

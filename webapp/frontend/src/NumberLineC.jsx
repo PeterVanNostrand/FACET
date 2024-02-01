@@ -10,27 +10,32 @@ const NumberLineC = ({ id, start, end, minRange, maxRange, currentValue, onNumbe
     const height = 70;
 
 
-    // Handler for dragging the Min Range Handle
+    // console.log('min', minRange, 'max', maxRange);
+
     const handleMinRangeChange = (e, ui) => {
         // Calculate the new value based on the drag position
-        const newMinRange = calculateValueFromPosition(ui.x); // Takes x cord. of cursor
-        //console.log({ newMinRange })
-        setTempMinRange(newMinRange);
-        // Update the state with the new value
-        setCurrentRange({ ...currentRange, min: newMinRange });
-        // onNumberLineChange(id, currentRange.min, currentRange.max);
+        const newMinRange = calculateValueFromPosition(ui.x);
+        // Update the state
+        setCurrentRange(prevRange => ({ ...prevRange, min: newMinRange }));
     };
 
     // Handler for dragging the Max Range Handle
     const handleMaxRangeChange = (e, ui) => {
         // Calculate the new value based on the drag position
-        const newMaxRange = calculateValueFromPosition(ui.x);  // Takes x cord. of cursor
-        //console.log({ newMaxRange })
-        setTempMaxRange(newMaxRange);
-        // Update the state with the new value
-        setCurrentRange({ ...currentRange, max: newMaxRange });
-        // onNumberLineChange(id, currentRange.min, currentRange.max);
+        const newMaxRange = calculateValueFromPosition(ui.x);
+        // Update the state
+        setCurrentRange(prevRange => ({ ...prevRange, max: newMaxRange }));
+    };
 
+    const handleMinRangeStop = () => {
+        // Call onNumberLineChange with the final range values
+        onNumberLineChange(id, currentRange.min, currentRange.max);
+    };
+
+    // Handler for Max Range Handle mouse release
+    const handleMaxRangeStop = () => {
+        // Call onNumberLineChange with the final range values
+        onNumberLineChange(id, currentRange.min, currentRange.max);
     };
 
     // Function to calculate the value based on the drag position 
@@ -103,6 +108,7 @@ const NumberLineC = ({ id, start, end, minRange, maxRange, currentValue, onNumbe
             handleMaxRangeBlur();
         }
     };
+
     // Function to handle Max Range input blur
     const handleMaxRangeBlur = () => {
         const newValue = parseFloat(tempMaxRange);
@@ -114,7 +120,7 @@ const NumberLineC = ({ id, start, end, minRange, maxRange, currentValue, onNumbe
     return (
         <div className='number-line-container' style={{ width: `100%`, height: `100%` }}>
             {/* SVG Number Line */}
-            <svg className='svg-num' width="100%" height="100%" viewBox={`-10 0 ${width+20} ${height}`}>
+            <svg className='svg-num' width="100%" height="100%" viewBox={`-10 0 ${width + 20} ${height}`}>
                 {/* Number Line */}
                 <line
                     x1={`${calculatePositionFromValue(start)}px`}
@@ -186,8 +192,8 @@ const NumberLineC = ({ id, start, end, minRange, maxRange, currentValue, onNumbe
                     axis="x"
                     bounds={{ left: calculatePositionFromValue(start), right: calculatePositionFromValue(currentRange.max) }}
                     onDrag={handleMinRangeChange}
+                    onStop={handleMinRangeStop}
                     position={{ x: calculatePositionFromValue(currentRange.min), y: 0 }}
-            
                 >
                     <div style={{ position: 'absolute', top: '43%', width: '3px', height: '16px', backgroundColor: '#333', cursor: 'ew-resize' }} />
                 </Draggable>
@@ -211,8 +217,9 @@ const NumberLineC = ({ id, start, end, minRange, maxRange, currentValue, onNumbe
                     axis="x"
                     bounds={{ left: calculatePositionFromValue(currentRange.min), right: calculatePositionFromValue(end) }}
                     onDrag={handleMaxRangeChange}
+                    onStop={handleMaxRangeStop}
                     position={{ x: calculatePositionFromValue(currentRange.max), y: 0 }}
-              
+
                 >
                     <div style={{ position: 'absolute', top: '43%', width: '3px', height: '16px', backgroundColor: '#333', cursor: 'ew-resize' }} />
                 </Draggable>
