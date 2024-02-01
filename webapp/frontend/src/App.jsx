@@ -150,7 +150,7 @@ function App() {
     const [totalExplanations, setTotalExplanations] = useState([]);
     const [explanationSection, setExplanationSection] = useState(null);
     const [isWelcome, setIsWelcome] = useState(false);
-    const [showWelcomeScreen, setShowWelcomeScreen] = useState(true);
+    const [showWelcomeScreen, setShowWelcomeScreen] = useState(false);
 
 
     // useEffect to fetch instances data when the component mounts
@@ -228,7 +228,6 @@ function App() {
     useEffect(() => {
         if (explanations.length === 0) return;
 
-        console.log('expl', explanations)
         const instanceAndExpls = explanations.map(region => ({
             instance: selectedInstance,
             region
@@ -332,7 +331,6 @@ function App() {
         setShowWelcomeScreen(true);
     }
 
-    const welcome = WelcomeScreen(showWelcomeScreen, setShowWelcomeScreen, selectedInstance, setSelectedInstance)
 
     /**
      * Saves a scenario to savedScenarios, and creates a tab
@@ -405,6 +403,8 @@ function App() {
     //     }
     // }, [formatDict, featureDict, showWelcomeScreen])
 
+
+    const welcome = WelcomeScreen(showWelcomeScreen, setShowWelcomeScreen, selectedInstance, setSelectedInstance)
 
     // this condition prevents the page from loading until the formatDict is availible
     if (isLoading) {
