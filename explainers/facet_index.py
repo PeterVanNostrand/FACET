@@ -6,7 +6,6 @@ import bisect
 # core python packages
 import math
 from typing import TYPE_CHECKING, Dict, List, Tuple
-import copy
 
 # graph packages
 import networkx as nx
@@ -786,8 +785,13 @@ class FACETIndex(Explainer):
                 else:
                     explanation = [np.inf for _ in range(x.shape[1])]
 
+                if k == 1:
+                    regions.append(nearest_rect)
+                elif k > 1:
+                    for nearest_rect in result:
+                        regions.append(nearest_rect)
+
                 xprime.append(explanation)
-                regions.append(nearest_rect)
                 progress.update()
 
             progress.close()

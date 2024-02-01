@@ -1,17 +1,22 @@
 :root {
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-    line-height: 1.5;
+    line-height: 1;
     font-weight: 400;
 
-    color-scheme: light dark;
-    color: rgba(255, 255, 255, 0.87);
-    background-color: #242424;
+    color: #213547;
+    /* Set the default text color for light mode */
+    background-color: #ffffff;
+    /* Set the default background color for light mode */
+
+    --text-color: #213547;
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -webkit-text-size-adjust: 100%;
+
+    padding: 20;
 }
 
 a {
@@ -21,7 +26,7 @@ a {
 }
 
 a:hover {
-    color: #535bf2;
+    color: #747bff;
 }
 
 body {
@@ -37,6 +42,12 @@ h1 {
     line-height: 1.1;
 }
 
+h2 {
+    margin-top: 10;
+    margin-bottom: 10;
+    color: #e28743
+}
+
 button {
     border-radius: 8px;
     border: 1px solid transparent;
@@ -44,7 +55,7 @@ button {
     font-size: 1em;
     font-weight: 500;
     font-family: inherit;
-    background-color: #1a1a1a;
+    background-color: #f9f9f9;
     cursor: pointer;
     transition: border-color 0.25s;
 }
@@ -58,27 +69,13 @@ button:focus-visible {
     outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-    :root {
-        color: #213547;
-        background-color: #ffffff;
-    }
-
-    a:hover {
-        color: #747bff;
-    }
-
-    button {
-        background-color: #f9f9f9;
-    }
-}
-
-
 #root {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 2rem;
-    text-align: center;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
 }
 
 .logo {
@@ -121,9 +118,12 @@ button:focus-visible {
 }
 
 .feature {
-    margin-right: 10px; /* Adjust the margin as needed */
+    margin-right: 10px;
+    /* Adjust the margin as needed */
 }
 
-.featureValue {
-    color: red;
+/* --- */
+
+.tick-label {
+    color: var(--text-color);
 }

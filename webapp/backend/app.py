@@ -1,23 +1,25 @@
 import numpy as np
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-import json
+import json, os, sys
 from webapp.app_utilities import run_facet, parse_dataset_info
 from dataset import get_json_paths, DataInfo
 
 # load app confiuration parameters
 with open("./webapp/config.json", "r") as config_file:
-    APP_CONFIG: dict = json.load(config_file)          # config file with app parameters
-API_PORT: int = APP_CONFIG["API_PORT"]                 # specified port for RESTful explanation API
-DS_NAME: str = APP_CONFIG["DATASET"]                   # the dataset we're explaining
-DETAILS_PATH, HUMAN_PATH = get_json_paths(DS_NAME)     # the paths to the ds_details, and human_readible info
+    APP_CONFIG: dict = json.load(config_file)  # config file with app parameters
+API_PORT: int = APP_CONFIG["API_PORT"]  # specified port for RESTful explanation API
+DS_NAME: str = APP_CONFIG["DATASET"]  # the dataset we're explaining
+DETAILS_PATH, HUMAN_PATH = get_json_paths(
+    DS_NAME
+)  # the paths to the ds_details, and human_readible info
 DS_INFO: DataInfo = None
 HUMAN_FORMAT: dict = None
 
 # configure the app
 app = Flask(__name__)
 CORS(app)
-FACET_CORE = None               # the core facet system which generated explanations
+FACET_CORE = None  # the core facet system which generated explanations
 SAMPLE_DATA: np.ndarray = None  # teh set of sample instances we populate for the demo
 
 
@@ -63,9 +65,17 @@ def get_human_format():
     return jsonify(HUMAN_FORMAT)
 
 
-@app.route("/facet/explanation", methods=["POST"])
+@app.route("/data/loans/<path:filename>")
+def serve_file(filename):
+    root_dir = os.path.dirname(os.path.abspath(__file__))
+    visualization_dir = os.path.join(root_dir, "..", "..", "data")
+    print(visualization_dir)
+    return send_from_directory(os.path.join(visualization_dir, "loans"), filename)
+
+
+@app.route("/facet/explanations", methods=["POST"])
 def facet_explanation():
-    '''
+    """
     This is the main API endpoint for explaining instances. It expects a request JSON object containing the following entries
 
     Parameters
@@ -77,40 +87,45 @@ def facet_explanation():
 
     Returns
     -------
-    `regions`
-    '''
+    `regions: TODO an array of regions dictionaries`
+    """
+
     try:
-        query = request.json
-        print("query: " + str(query))
+        data = request.json
+        print("request: " + str(data))
 
-        # get the instance to explain
-        instance = DS_INFO.dict_to_point(query["instance"])
+        instance = DS_INFO.dict_to_point(data["instance"])
         instance = DS_INFO.scale_points(instance)
-        print("instance: " + str(instance))
-
-        # get the weights to use
-        weights = DS_INFO.dict_to_point(query["weights"])  # get vector
+        weights = DS_INFO.dict_to_point(data["weights"])  # get vector
         weights = np.nan_to_num(weights, nan=1.0)
-        print("weights: " + str(weights))
+        constraints = np.array(data.get("constraints", None)).astype(float)
+        constraints = DS_INFO.scale_rects(constraints)[0]
+        num_explanations = data.get("num_explanations", 1)
 
         # if we only have one instance, reshape the arary correctly
         if len(instance.shape) == 1:
             instance = instance.reshape(-1, instance.shape[0])
 
         # Perform explanations using FACET explain
-        pred = FACET_CORE.predict(instance)
-        points, regions = FACET_CORE.explain(x=instance, y=pred, k=1, constraints=None, weights=weights)
+        prediction = FACET_CORE.predict(instance)
+        points, regions = FACET_CORE.explain(
+            x=instance,
+            y=prediction,
+            k=num_explanations,
+            constraints=constraints,
+            weights=weights,
+        )
 
-        # unscale the counterfactual region explanations
-        region = DS_INFO.unscale_rects(regions[0])
-        region_dict = DS_INFO.rect_to_dict(region)
+        print("regions: ", regions)
 
-        return jsonify(region_dict)
+        unscaled_regions = [DS_INFO.unscale_rects(region) for region in regions]
+        region_dicts = [DS_INFO.rect_to_dict(region) for region in unscaled_regions]
 
-    # if Python throws an error, return code 500 (Internal Server Error) and the error message
+        return jsonify(region_dicts)
+
     except Exception as e:
         print(e)
-        return "PYTHON ERROR\n" + str(e), 500
+        return "\nError: " + str(e), 500
 
 
 if __name__ == "__main__":

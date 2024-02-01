@@ -1,0 +1,66 @@
+.section-title {
+    font-family: Arial Helvetica, sans-serif;
+    font-weight: bold;
+    color: orange;
+}
+
+.feature-name {
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    color: black;
+}
+
+/* MAIN APP SCREEN LAYOUR */
+
+.super-div {
+    display: grid;
+    /* grid-template-columns: 200px 500px; */
+    grid-template-rows: auto;
+    grid-template-areas:
+        "settings tabs"
+        "featurecontrols status"
+        "featurecontrols explanation"
+        "featurecontrols suggestion";
+}
+
+.tab-section {
+    grid-area: tabs;
+    border: 1pt solid;
+}
+
+.settings-profile-section {
+    grid-area: settings;
+    border: 1pt solid;
+}
+
+.feature-controls {
+    grid-area: featurecontrols;
+    border: 1pt solid;
+}
+
+.status-section {
+    grid-area: status;
+    border: 1pt solid;
+}
+
+.explanation {
+    grid-area: explanation;
+    border: 1pt solid;
+}
+
+.suggestion {
+    grid-area: suggestion;
+    border: 1pt solid;
+}
+
+/* EXPLANATION AREA */
+.explanation-feature {
+    font-weight: bold;
+    margin-top: 5px;
+    margin-bottom: 0px;
+}
+
+.explanation-value {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
