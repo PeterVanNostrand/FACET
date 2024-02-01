@@ -26,13 +26,14 @@
 .tab-section {
     grid-area: tabs;
     border: 1pt solid;
-    width:75vw;
+    width:60vw;
 }
 
 .tabSection{
     display:flex;
     flex-direction: row;
     overflow-x: auto;
+    padding-bottom:2vh;
 }
 
 .tab{
@@ -53,7 +54,7 @@
 .tab button{
     background-color: rgba(0,0,0,0);
     border:none;
-    height: 10vh;
+    height: 5vh;
     width:auto;
     padding:0;
 }
@@ -65,7 +66,7 @@
 
 .feature-controls {
     grid-area: featurecontrols;
-    width:25vw;
+    width:20vw;
     border: 1pt solid;
 }
 
