@@ -126,8 +126,7 @@ const FeatureControlSection = ({ applicantInfo, fDict }) => {
                 console.log(updatedFeatures);
                 // Reset the features array
                 setFeatures(updatedFeatures);
-            } else { // Featu
-                re moves UP
+            } else { // Feature moves UP
                 const updatedFeatures = features.map((feature) => {
                     console.log("iterating over id...", feature.id);
                     console.log("Priority: ", feature.priority)
