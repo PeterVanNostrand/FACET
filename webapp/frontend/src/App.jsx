@@ -360,7 +360,7 @@ function App() {
         let closeImg = document.createElement("img");
         closeImg.src = close;
         deleteButton.appendChild(closeImg);
-        deleteButton.onclick = function () {deleteScenario(savedScenarios.length)} //since length indexes at 1, this value is the last index after the scenario is saved
+        deleteButton.onclick = function () { deleteScenario(savedScenarios.length) } //since length indexes at 1, this value is the last index after the scenario is saved
         tab.appendChild(deleteButton); //add to tab
 
         document.getElementById("tabSection").appendChild(tab); //add element to HTML
@@ -372,17 +372,17 @@ function App() {
         document.getElementById("tabSection").removeChild(tab);
     }
 
-    const clearScenarios = () =>{
+    const clearScenarios = () => {
         setSavedScenarios([]);
         document.getElementById("tabSection").innerHTML = "";
     }
 
-    const toggleTabs = (isVisable) =>{
-        try{
+    const toggleTabs = (isVisable) => {
+        try {
             console.log("Tabs visible: " + isVisable);
-            document.getElementById("tabSection").style.display = (isVisable)?"flex":"none";
+            document.getElementById("tabSection").style.display = (isVisable) ? "flex" : "none";
         }
-        catch{
+        catch {
             console.log("Tabs do not exist yet");
         }
     }
@@ -443,8 +443,6 @@ function App() {
 
                 <div id="tab-section" className="tab-section">
                     <h2>Tabs</h2>
-                    <div id="tabSection" class = "tabSection">
-                    </div>
                 </div>
 
                 <div id="status-section" className="status-section">
