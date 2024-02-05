@@ -7,10 +7,10 @@ export const rect_values = {
 }
 
 export const expl_colors = {
-    desired: "blue",
-    undesired: "red",
-    altered_bad: "red",
-    altered_good: "blue",
+    desired: "#006eff",
+    undesired: "#e73b3c",
+    altered_bad: "#e73b3c",
+    altered_good: "#006eff",
     unaltered: "#939393"
 }
 

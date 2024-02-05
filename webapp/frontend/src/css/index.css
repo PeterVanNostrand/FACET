@@ -4,11 +4,7 @@
     font-weight: 400;
 
     color: #213547;
-    /* Set the default text color for light mode */
-    background-color: #ffffff;
-    /* Set the default background color for light mode */
-
-    --text-color: #213547;
+    background-color: #eeeeee;
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;
@@ -45,7 +41,6 @@ h1 {
 h2 {
     margin-top: 10;
     margin-bottom: 10;
-    color: #e28743
 }
 
 button {
@@ -55,13 +50,13 @@ button {
     font-size: 1em;
     font-weight: 500;
     font-family: inherit;
-    background-color: #f9f9f9;
+    background-color: #FFFFFF;
     cursor: pointer;
     transition: border-color 0.25s;
 }
 
 button:hover {
-    border-color: #646cff;
+    background-color: #eeeeee;
 }
 
 button:focus,
@@ -76,6 +71,14 @@ button:focus-visible {
     display: flex;
     justify-content: center;
     padding: 1rem;
+}
+
+.card {
+    background-color: white;
+    box-shadow: 0 0 1em #00000022;
+    border-radius: 8px;
+    padding: 1em;
+    margin: 1em 0 0 1em;
 }
 
 .logo {
@@ -107,10 +110,6 @@ button:focus-visible {
     a:nth-of-type(2) .logo {
         animation: logo-spin infinite 20s linear;
     }
-}
-
-.card {
-    padding: 2em;
 }
 
 .read-the-docs {

@@ -15,7 +15,6 @@ export const numberLineBuilder = (explanation, index) => {
         const readable = await json(readableURL);
         let expl_type = ExplanationTypes.Region;
 
-        const n_features = Object.keys(dataset_details["feature_names"]).length;
         const instance = explanation["instance"];
         const region = explanation["region"];
         const [feature_distances, idx_order] = feature_dists_order(instance, region);
@@ -30,7 +29,6 @@ export const numberLineBuilder = (explanation, index) => {
         let ebox_y = bbox_y + sidebar_margin;
 
         const labels_x = ebox_x + 0;
-        // const labels_width = 100;
         const labels_width = 0
         const line_plot_pad_x = 0;
         const line_plot_pad_y = 10;
@@ -48,12 +46,12 @@ export const numberLineBuilder = (explanation, index) => {
         const percent_val = 0.25;
 
 
-        function get_feature_name(feature_i) {
-            const feature_id = "x" + feature_i;
-            const feature_name = dataset_details["feature_names"][feature_id];
-            const pretty_feature_name = readable["pretty_feature_names"][feature_name];
-            return pretty_feature_name
-        }
+        // function get_feature_name(feature_i) {
+        //     const feature_id = "x" + feature_i;
+        //     const feature_name = dataset_details["feature_names"][feature_id];
+        //     const pretty_feature_name = readable["pretty_feature_names"][feature_name];
+        //     return pretty_feature_name
+        // }
 
         function get_line_low(value, feature_id) {
             // select the bar min value
@@ -116,6 +114,7 @@ export const numberLineBuilder = (explanation, index) => {
         //     .attr("fill", "black")
         //     .attr("text-anchor", "end");
         // add ticks to the ends of the line and label them
+
         selection.append("line")
             .attr("x1", line_plot_x)
             .attr("x2", line_plot_x)
@@ -177,6 +176,7 @@ export const numberLineBuilder = (explanation, index) => {
             .attr("y", line_y + bar_height + value_font)
             .attr("text-anchor", "middle")
             .attr("class", "tick-label");
+            
         const line_text_upper = selection.append("text")
             .text(pretty_value(line_max, feature_name, readable))
             .attr("font-size", value_font)

@@ -296,7 +296,6 @@ function App() {
     }
 
     const backToWelcomeScreen = () => {
-        console.log("Welcome SCreen is back!")
         setShowWelcomeScreen(true);
     }
 
@@ -361,10 +360,10 @@ function App() {
         return (
             <div id="super-div" className="super-div">
                 <div id="settings-profile-section" className="settings-profile-section">
-                    <button onClick={backToWelcomeScreen}>Welcome Screen</button>
+                    <button onClick={backToWelcomeScreen}>← Welcome Screen</button>
                 </div>
 
-                <div id="feature-controls" className="feature-controls">
+                <div id="feature-controls" className="card feature-controls">
                     <FeatureControlSection
                         applicantInfo={selectedInstance}
                         fDict={formatDict}
@@ -382,20 +381,20 @@ function App() {
                     </div>
                 </div>
 
-                <div id="status-section" className="status-section">
+                <div id="status-section" className="card status-section">
                     <h2 id="title">Application</h2>
                     <StatusDisplay featureDict={featureDict} formatDict={formatDict} selectedInstance={selectedInstance} />
                 </div>
 
-                <div id="explanation" className="explanation">
-                    <h2 className='explanation-header' style={{ marginTop: 10, marginBottom: 10 }}>
-                        Explanation(s)
+                <div id="explanation" className="card explanation">
+                    <h2 className='explanation-header' style={{}}>
+                        Explanation
                     </h2>
                     {explanationSection}
                     <button onClick={saveScenario}>Save Scenario</button>
                 </div>
 
-                <div id="suggestion" className="suggestion">
+                <div id="suggestion" className="card suggestion">
                     <p>suggestions box thing</p>
                 </div>
             </div>
