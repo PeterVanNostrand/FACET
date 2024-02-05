@@ -151,7 +151,7 @@ function App() {
     const [isWelcome, setIsWelcome] = useState(false);
     const [showWelcomeScreen, setShowWelcomeScreen] = useState(false);
 
-    console.log('const', constraints)
+    console.log('app constraints', constraints)
 
     useEffect(() => {
         console.log('constraints', constraints)
@@ -232,7 +232,6 @@ function App() {
     useEffect(() => {
         if (explanations.length === 0) return;
 
-        console.log('expl', explanations)
         const instanceAndExpls = explanations.map(region => ({
             instance: selectedInstance,
             region

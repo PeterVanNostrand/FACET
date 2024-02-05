@@ -9,33 +9,26 @@ const NumberLineC = ({ id, start, end, minRange, maxRange, currentValue, onNumbe
     const width = 290;
     const height = 70;
 
-
-    // console.log('min', minRange, 'max', maxRange);
-
-    const handleMinRangeChange = (e, ui) => {
-        // Calculate the new value based on the drag position
+    // setting the handlebar values (without setting constraints)
+    const handleMinRangeDrag = (e, ui) => {
         const newMinRange = calculateValueFromPosition(ui.x);
-        // Update the state
         setCurrentRange(prevRange => ({ ...prevRange, min: newMinRange }));
     };
 
-    // Handler for dragging the Max Range Handle
-    const handleMaxRangeChange = (e, ui) => {
-        // Calculate the new value based on the drag position
+    const handleMaxRangeDrag = (e, ui) => {
         const newMaxRange = calculateValueFromPosition(ui.x);
-        // Update the state
         setCurrentRange(prevRange => ({ ...prevRange, max: newMaxRange }));
     };
 
+    // update constraints when drag stops
     const handleMinRangeStop = () => {
-        // Call onNumberLineChange with the final range values
         onNumberLineChange(id, currentRange.min, currentRange.max);
+        console.log('min range stop', currentRange.min, currentRange.max)
     };
 
-    // Handler for Max Range Handle mouse release
     const handleMaxRangeStop = () => {
-        // Call onNumberLineChange with the final range values
         onNumberLineChange(id, currentRange.min, currentRange.max);
+        console.log('max range stop', currentRange.min, currentRange.max)
     };
 
     // Function to calculate the value based on the drag position 
@@ -191,7 +184,7 @@ const NumberLineC = ({ id, start, end, minRange, maxRange, currentValue, onNumbe
                 <Draggable
                     axis="x"
                     bounds={{ left: calculatePositionFromValue(start), right: calculatePositionFromValue(currentRange.max) }}
-                    onDrag={handleMinRangeChange}
+                    onDrag={handleMinRangeDrag}
                     onStop={handleMinRangeStop}
                     position={{ x: calculatePositionFromValue(currentRange.min), y: 0 }}
                 >
@@ -216,7 +209,7 @@ const NumberLineC = ({ id, start, end, minRange, maxRange, currentValue, onNumbe
                 <Draggable
                     axis="x"
                     bounds={{ left: calculatePositionFromValue(currentRange.min), right: calculatePositionFromValue(end) }}
-                    onDrag={handleMaxRangeChange}
+                    onDrag={handleMaxRangeDrag}
                     onStop={handleMaxRangeStop}
                     position={{ x: calculatePositionFromValue(currentRange.max), y: 0 }}
 

@@ -25,6 +25,7 @@ const FeatureControlSection = ({ applicantInfo, fDict, constraints, setConstrain
     };
 
 
+
     useEffect(() => {
         if (fDict) {
             // populate features
@@ -57,7 +58,6 @@ const FeatureControlSection = ({ applicantInfo, fDict, constraints, setConstrain
                 };
             });
 
-            console.log('Feats:', newFeatures);
             setFeatures(newFeatures);
         }
     }, [fDict, applicantInfo]);
