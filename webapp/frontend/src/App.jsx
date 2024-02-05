@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import webappConfig from '../../config.json';
 import StatusDisplay from './StatusDisplay.jsx';
 import WelcomeScreen from './WelcomeSceen.jsx';
+import './css/feature-control.css';
 import './css/style.css';
-import './css/feature-control.css'
 
 import FeatureControlSection from './FeatureControlSection.jsx';
 import ExplanationSection from './components/my-application/explanation/ExplanationSection';
@@ -412,6 +412,7 @@ function App() {
 
                 <div id="tab-section" className="tab-section">
                     <h2>Tabs</h2>
+                    <div id="tabSection" className="tabSection"></div>
                 </div>
 
                 <div id="status-section" className="card status-section">
