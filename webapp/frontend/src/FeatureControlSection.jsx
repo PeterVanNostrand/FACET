@@ -6,7 +6,6 @@ import lockSVG from './svg/Lock.svg';
 import unlockSVG from './svg/UnLocked.svg';
 import pinSVG from './svg/Pinned.svg';
 import unpinSVG from './svg/UnPinned.svg';
-import informationSVG from './svg/Information.svg';
 
 
 const FeatureControlSection = ({ applicantInfo, fDict, constraints, setConstraints }) => {
@@ -254,7 +253,7 @@ const FeatureControlSection = ({ applicantInfo, fDict, constraints, setConstrain
         };
 
         return (
-            <div className={`feature-control-box ${isLocked ? 'locked' : ''}`}>
+            <div className={`feature-control-card ${isLocked ? 'locked' : ''}`}>
                 <h1 className='feature-title'>{title} {units && `(${units})`}</h1>
                 {/* Locks*/}
                 <div className='lock'>

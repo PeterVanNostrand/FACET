@@ -16,6 +16,7 @@ const NumberLine = ({ explanation, i, id }) => {
                 .attr('height', 60)
                 .attr('fill', 'white')
                 .attr('id', `image_svg_${id}`)
+                
             : existingSvg;
 
         let visualDisplay = numberLineBuilder(explanation, i);

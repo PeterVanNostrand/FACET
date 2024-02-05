@@ -26,7 +26,6 @@ body {
     height: 40px;
     font-size: 30px;
     font-weight: bold;
-    border-bottom: 2px solid black;
     text-align: center;
     grid-area: mTitle;
 }
@@ -38,11 +37,14 @@ body {
 
 /* FeatureControl */
 
-.feature-control-box {
+.feature-control-card {
     display: grid;
+    box-shadow: 0 0 1em #00000030;
+    border-radius: 8px;
+    padding-right: 30px;
+    margin-top: 10px;
     width: 393px;
     height: 170px;
-    border-bottom: 2px solid black;
     grid-template-columns: 30px 42px 251px 41px 29px;
     grid-template-rows: 28px 43px 31px 52px 15px;
     grid-template-areas:
@@ -53,7 +55,7 @@ body {
         " u v w x y"
 }
 
-.feature-control-box.locked {
+.feature-control-card.locked {
     filter: grayscale(100%);
 
 }

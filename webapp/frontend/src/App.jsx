@@ -356,24 +356,6 @@ function App() {
     }
 
 
-    // useEffect(() => {
-    //     if (formatDict && featureDict && showWelcomeScreen) {
-    //         setWelcomeScreenContent(
-    //             <WelcomeScreen
-    //                 applications={applications}
-    //                 handleApplicationChange={handleApplicationChange}
-    //                 selectedInstance={selectedInstance}
-    //                 featureDict={{ ...featureDict }}
-    //                 formatDict={{ ...formatDict }}
-    //                 setSelectedInstance={{ ...setSelectedInstance }}
-    //                 index={index}
-    //                 setShowWelcomeScreen={setShowWelcomeScreen}
-    //             />
-    //         )
-    //     }
-    // }, [formatDict, featureDict, showWelcomeScreen])
-
-
     const welcome = WelcomeScreen(showWelcomeScreen, setShowWelcomeScreen, selectedInstance, setSelectedInstance)
 
     // this condition prevents the page from loading until the formatDict is availible

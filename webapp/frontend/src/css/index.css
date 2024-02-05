@@ -78,7 +78,7 @@ button:focus-visible {
     box-shadow: 0 0 1em #00000022;
     border-radius: 8px;
     padding: 1em;
-    margin: 1em 0 0 1em;
+    margin: 1em 1em 0 0;
 }
 
 .logo {

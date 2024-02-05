@@ -28,7 +28,6 @@ const WelcomeScreen = (display, setDisplay, selectedInstance, setSelectedInstanc
     const [instances, setInstances] = useState([]);
     const [count, setCount] = useState(0);
     // const [selectedInstance, setSelectedInstance] = useState("");
-    const [explanation, setExplanation] = useState("");
     const [formatDict, setFormatDict] = useState(null);
     const [featureDict, setFeatureDict] = useState(null);
     const [isLoading, setIsLoading] = useState(true);

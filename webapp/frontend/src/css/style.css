@@ -24,8 +24,6 @@
 /*TABS SECTION*/
 .tab-section {
     grid-area: tabs;
-    border: 1pt solid;
-    width:60vw;
 }
 
 .tabSection{

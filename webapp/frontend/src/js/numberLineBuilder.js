@@ -2,6 +2,7 @@ import { clamp_value, create_example, feature_dists_order, pretty_value, unscale
 import { ExplanationTypes, OFFSET_UNSCALED, expl_colors, rect_values } from "../../../../visualization/src/values.js";
 import { json, select } from "d3";
 import { RangeTypes } from "./numberLineUtil.js";
+import '../css/explanation-line.css'
 
 const detailsURL = "http://localhost:3001/data/loans/dataset_details.json";
 const readableURL = "http://localhost:3001/data/loans/human_readable.json";
@@ -35,23 +36,16 @@ export const numberLineBuilder = (explanation, index) => {
         const line_plot_x = labels_x + labels_width + line_plot_pad_x;
         const line_plot_width = 290;
         const line_spacing = 55;
-        const line_width = 1;
-        const tick_height = 10;
-        const bar_height = tick_height - 2;
-        const circle_radius = bar_height / 2;
+        const line_width = 2.5;
+        const tick_height = 15;
+        const bar_height = tick_height - 3;
+        const circle_radius = tick_height / 2 - 1;
         const value_font = 12;
 
         const range_type_min = RangeTypes.Percent;
         const range_type_max = RangeTypes.Percent;
         const percent_val = 0.25;
 
-
-        // function get_feature_name(feature_i) {
-        //     const feature_id = "x" + feature_i;
-        //     const feature_name = dataset_details["feature_names"][feature_id];
-        //     const pretty_feature_name = readable["pretty_feature_names"][feature_name];
-        //     return pretty_feature_name
-        // }
 
         function get_line_low(value, feature_id) {
             // select the bar min value
@@ -104,17 +98,7 @@ export const numberLineBuilder = (explanation, index) => {
             .attr("y2", line_y)
             .attr("stroke", rect_values.stroke)
             .attr("stroke-width", line_width);
-
-        // add a text label for the line
-        // selection.append("text")
-        //     .text(get_feature_name(idx_order[index]) + ":")
-        //     .attr("x", labels_x + labels_width)
-        //     .attr("y", line_y + (tick_height / 2))
-        //     .attr("class", "feature-details")
-        //     .attr("fill", "black")
-        //     .attr("text-anchor", "end");
-        // add ticks to the ends of the line and label them
-
+        //left and right ticks
         selection.append("line")
             .attr("x1", line_plot_x)
             .attr("x2", line_plot_x)
@@ -139,27 +123,12 @@ export const numberLineBuilder = (explanation, index) => {
         const has_change = feature_distances[idx_order[index]] > 0;
 
 
-        // let example_val = instance_val;
-        // if (expl_type == ExplanationTypes.Example) {
-        //     if (has_change) {
-        //         let offset = unscale(OFFSET_UNSCALED, feature_id, dataset_details);
-        //         example_val = create_example(instance_val, region_lower, region_upper, offset);
-        //     }
-        // }
-
         let min_plot_value;
         let max_plot_value;
         if (expl_type == ExplanationTypes.Region) {
             min_plot_value = Math.min(instance_val, region_lower);
             max_plot_value = Math.max(instance_val, region_upper);
         }
-        // else if (expl_type == ExplanationTypes.Example) {
-        //     min_plot_value = Math.min(instance_val, example_val);
-        //     max_plot_value = Math.max(instance_val, example_val);
-        //     if (max_plot_value == 0) {
-        //         max_plot_value = 0.5 * region_upper;
-        //     }
-        // }
 
         const line_min = get_line_low(min_plot_value, feature_id);
         const line_max = get_line_high(max_plot_value, feature_id);
@@ -167,19 +136,24 @@ export const numberLineBuilder = (explanation, index) => {
         const bar_lower_val = Math.max(region_lower, line_min);
         const bar_upper_val = Math.min(region_upper, line_max);
 
-        // label the ends of the line
+        // TEXT LABEL the ends of the explanation bar
         const line_text_lower = selection.append("text")
             .text(pretty_value(line_min, feature_name, readable))
+            .attr("class", "")
             .attr("font-size", value_font)
+            .attr("font-family", "Inter, sans-serif") // Use Inter font family
+            .attr("font-weight", 600) // Set font weight to 600
             .attr("fill", "black")
             .attr("x", line_plot_x)
             .attr("y", line_y + bar_height + value_font)
             .attr("text-anchor", "middle")
             .attr("class", "tick-label");
-            
+
         const line_text_upper = selection.append("text")
             .text(pretty_value(line_max, feature_name, readable))
             .attr("font-size", value_font)
+            .attr("font-family", "Inter, sans-serif") // Use Inter font family
+            .attr("font-weight", 600) // Set font weight to 600
             .attr("fill", "black")
             .attr("x", line_plot_x + line_plot_width)
             .attr("y", line_y + bar_height + value_font)
@@ -222,10 +196,11 @@ export const numberLineBuilder = (explanation, index) => {
                 .attr("stroke", rect_values.stroke)
                 .attr("stroke-width", line_width);
 
-            // label the ends of the bar
+            // TEXT LABELS for min/max of the region
             const bar_text_lower = selection.append("text")
                 .text(pretty_value(bar_lower_val, feature_name, readable))
                 .attr("font-size", value_font)
+                .attr("font-weight", "bold")
                 .attr("fill", bar_color)
                 .attr("x", bar_start_px)
                 .attr("y", line_y - bar_height)
@@ -234,6 +209,7 @@ export const numberLineBuilder = (explanation, index) => {
             const bar_text_upper = selection.append("text")
                 .text(pretty_value(bar_upper_val, feature_name, readable))
                 .attr("font-size", value_font)
+                .attr("font-weight", "bold")
                 .attr("fill", bar_color)
                 .attr("x", bar_end_px)
                 .attr("y", line_y - bar_height)
