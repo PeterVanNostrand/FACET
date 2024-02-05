@@ -20,12 +20,8 @@ function status_log(text, color) {
 }
 
 const WelcomeScreen = (display, setDisplay, selectedInstance, setSelectedInstance) => {
-    // console.log("display")
-    // console.log(display)
-    // console.log(setDisplay)
     const [currentTab, setCurrentTab] = useState(0)
     const [hasInstanceBeenSelected, sethasInstanceBeenSelected] = useState(false)
-    const [dropdownvalue, setDropdownvalue] = useState(null)
     const [previousInstance, setPreviousInstance] = useState(false);
 
 
@@ -266,8 +262,6 @@ const WelcomeScreen = (display, setDisplay, selectedInstance, setSelectedInstanc
         // console.log('selected',selected)
         returnDict["status"] = hasInstanceBeenSelected ? "Instance" : "Display"
         returnDict["content"] = hasInstanceBeenSelected ? (previousInstance ? null : selectedInstance) : makeDisplay()
-
-        //sethasInstanceBeenSelected(false);
 
     }
 

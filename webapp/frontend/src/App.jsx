@@ -8,6 +8,7 @@ import './css/feature-control.css'
 
 import FeatureControlSection from './FeatureControlSection.jsx';
 import ExplanationSection from './components/my-application/explanation/ExplanationSection';
+import close from './icons/close.svg';
 
 const SERVER_URL = webappConfig.SERVER_URL
 const API_PORT = webappConfig.API_PORT
@@ -16,6 +17,8 @@ const ENDPOINT = SERVER_URL + ":" + API_PORT + "/facet"
 const SUCCESS = "Lime"
 const FAILURE = "Red"
 const DEBUG = "White"
+
+const ICONS = "./icons/"
 
 /**
  * A simple function for neat logging
@@ -150,8 +153,6 @@ function App() {
     const [explanationSection, setExplanationSection] = useState(null);
     const [isWelcome, setIsWelcome] = useState(false);
     const [showWelcomeScreen, setShowWelcomeScreen] = useState(false);
-
-    console.log('app constraints', constraints)
 
     useEffect(() => {
         console.log('constraints', constraints)
@@ -296,10 +297,10 @@ function App() {
     }
 
     const backToWelcomeScreen = () => {
+        toggleTabs(true);
         setShowWelcomeScreen(true);
     }
 
-    const welcome = WelcomeScreen(showWelcomeScreen, setShowWelcomeScreen, selectedInstance, setSelectedInstance)
 
     /**
      * Saves a scenario to savedScenarios, and creates a tab
@@ -312,12 +313,46 @@ function App() {
         scenario["featureControls"] = {}; //TODO: store priorities of features, lock states, etc.
 
         setSavedScenarios([...savedScenarios, scenario]); //append scenario to savedScenarios        
-        //Create new tab and add it to HTML
-        let tab = document.createElement("button");
-        tab.innerHTML = "Scenario " + (savedScenarios.length + 1); //Name the tab
+        //Create new tab
+        let tab = document.createElement("div");
+        tab.id = "tab" + (savedScenarios.length + 1);
+        tab.className = "tab";
+        //scenario button
+        let scenarioButton = document.createElement("button"); //create button
+        scenarioButton.innerHTML = "Scenario " + (savedScenarios.length + 1); //Name the tab
         //set onclick method to load the scenario, and display the ID
-        tab.onclick = function () { setSelectedInstance(scenario["values"]), document.getElementById("title").innerHTML = "Scenario " + scenario["scenario"] };
+        scenarioButton.onclick = function () { setSelectedInstance(scenario["values"]), document.getElementById("title").innerHTML = "Scenario " + scenario["scenario"] };
+        tab.appendChild(scenarioButton); //add to tab
+        //include a close button to delete the tab
+        let deleteButton = document.createElement("button");
+        let closeImg = document.createElement("img");
+        closeImg.src = close;
+        deleteButton.appendChild(closeImg);
+        deleteButton.onclick = function () { deleteScenario(savedScenarios.length) } //since length indexes at 1, this value is the last index after the scenario is saved
+        tab.appendChild(deleteButton); //add to tab
+
         document.getElementById("tabSection").appendChild(tab); //add element to HTML
+    }
+
+    const deleteScenario = (index) => {
+        setSavedScenarios(savedScenarios.splice(index, 1));
+        let tab = document.getElementById("tab" + (index + 1));
+        document.getElementById("tabSection").removeChild(tab);
+    }
+
+    const clearScenarios = () => {
+        setSavedScenarios([]);
+        document.getElementById("tabSection").innerHTML = "";
+    }
+
+    const toggleTabs = (isVisable) => {
+        try {
+            console.log("Tabs visible: " + isVisable);
+            document.getElementById("tabSection").style.display = (isVisable) ? "flex" : "none";
+        }
+        catch {
+            console.log("Tabs do not exist yet");
+        }
     }
 
 
@@ -339,18 +374,21 @@ function App() {
     // }, [formatDict, featureDict, showWelcomeScreen])
 
 
+    const welcome = WelcomeScreen(showWelcomeScreen, setShowWelcomeScreen, selectedInstance, setSelectedInstance)
+
     // this condition prevents the page from loading until the formatDict is availible
     if (isLoading) {
         return <div></div>
     }
     else if (showWelcomeScreen) {
+        toggleTabs(false);
         let welcomeContent = welcome
 
         if (welcomeContent["status"] == "Display") {
             return welcomeContent["content"]
         } else {
             console.log("The content changed!")
-            setShowWelcomeScreen(false)
+            setShowWelcomeScreen(false);
 
             if (welcomeContent["content"] != null) {
                 setSelectedInstance(welcomeContent["content"])
@@ -374,11 +412,6 @@ function App() {
 
                 <div id="tab-section" className="tab-section">
                     <h2>Tabs</h2>
-                    <div id="tabSection" style={{
-                        display: "flex",
-                        flexDirection: "row",
-                    }}>
-                    </div>
                 </div>
 
                 <div id="status-section" className="card status-section">

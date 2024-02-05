@@ -111,14 +111,23 @@ def facet_explanation():
         points, regions = FACET_CORE.explain(
             x=instance,
             y=prediction,
-            k=num_explanations,
+            k=2*num_explanations,
             constraints=constraints,
             weights=weights,
         )
 
-        print("regions: ", regions)
+        # facet generates a lot of duplicate regions, so we get the first k unique regions
+        unique_regions = []
+        for arr in regions:
+            if arr.tolist() not in unique_regions:
+                unique_regions.append(arr.tolist())
 
-        unscaled_regions = [DS_INFO.unscale_rects(region) for region in regions]
+            if len(unique_regions) == num_explanations:
+                break
+        
+        unique_regions = [np.array(arr) for arr in unique_regions]
+
+        unscaled_regions = [DS_INFO.unscale_rects(region) for region in unique_regions]
         region_dicts = [DS_INFO.rect_to_dict(region) for region in unscaled_regions]
 
         return jsonify(region_dicts)
