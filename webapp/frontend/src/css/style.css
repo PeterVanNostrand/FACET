@@ -26,17 +26,14 @@
     grid-area: tabs;
 }
 
-.tabSection {
+.tab-list {
     display: flex;
     flex-direction: row;
     overflow-x: auto;
-    padding-bottom: 2vh;
 }
 
 .tab {
     border-style: inset;
-    border-width: 1pt;
-    border-radius: 15px;
     display: flex;
     flex-direction: row;
     margin-right: 0.3vw;

@@ -9,18 +9,10 @@ const ExplanationSection = (
         <div className="explanation-section" style={{
             display: 'flex', flexDirection: 'column'
         }}>
-            <h2 className='explanation-header'>
+            <h2 className='explanation-header' style={{marginBottom: 10}}>
                 Explanations
             </h2>
-            <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                boxShadow: "inset 0 0 10px 5px rgba(0, 0, 0, 0.03)",
-                marginBottom: "15px",
-                paddingLeft: "15px",
-                paddingRight: "10px",
-                borderRadius: "10px",
-            }}>
+            <div className="explanation-list">
                 <ExplanationList
                     explanations={explanations}
                     totalExplanations={totalExplanations}

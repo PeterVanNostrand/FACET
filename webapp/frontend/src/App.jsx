@@ -377,7 +377,7 @@ function App() {
 
                 <div id="tab-section" className="card tab-section">
                     <h2>Tabs</h2>
-                    <div id="tabSection" className="tabSection">
+                    <div id="tab-list" className="tab-list">
                     </div>
                 </div>
 
