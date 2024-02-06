@@ -4,7 +4,6 @@ import webappConfig from '../../config.json';
 import StatusDisplay from './components/StatusDisplay.jsx';
 import WelcomeScreen from './components/welcome/WelcomeSceen.jsx';
 import './css/style.css';
-import './css/feature-control.css'
 
 import FeatureControlSection from './components/feature-control/FeatureControlSection.jsx';
 import ExplanationSection from './components/explanations/ExplanationSection';
@@ -377,6 +376,7 @@ function App() {
 
                 <div id="tab-section" className="tab-section">
                     <h2>Tabs</h2>
+                    <div id="tabSection" className="tabSection"></div>
                 </div>
 
                 <div id="status-section" className="card status-section">
