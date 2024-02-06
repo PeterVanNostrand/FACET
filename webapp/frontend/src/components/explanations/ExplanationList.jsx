@@ -17,7 +17,7 @@ const ExplanationList = ({ explanations, totalExplanations, featureDict, formatD
     return (
         <div
             className="explanations-container"
-            style={{ marginBottom: 10, marginTop: 15 }}
+            style={{ marginBottom: 15, marginTop: 15 }}
         >
             <div>
                 {Object.keys(

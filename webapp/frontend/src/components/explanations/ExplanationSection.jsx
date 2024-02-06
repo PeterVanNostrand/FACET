@@ -17,7 +17,7 @@ const ExplanationSection = (
                 display: 'flex', 
                 flexDirection: 'column', 
                 boxShadow: "inset 0 0 10px 5px rgba(0, 0, 0, 0.03)",
-                marginBottom: "10px",
+                marginBottom: "15px",
                 marginTop: "10px",
                 paddingLeft: "15px",
                 paddingRight: "10px",

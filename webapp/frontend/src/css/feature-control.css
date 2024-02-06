@@ -39,7 +39,7 @@ body {
 
 .feature-control-card {
     display: grid;
-    box-shadow: 0 0 1em #00000030;
+    box-shadow: 0 0 1em #00000020;
     border-radius: 8px;
     padding-right: 30px;
     margin-top: 10px;

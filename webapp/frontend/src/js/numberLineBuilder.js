@@ -195,7 +195,7 @@ export const numberLineBuilder = (explanation, index) => {
                 .attr("stroke", rect_values.stroke)
                 .attr("stroke-width", line_width);
 
-            // TEXT LABELS for min/max of the region
+            // TEXT LABELS for min/max of the region explanation
             const bar_text_lower = selection.append("text")
                 .text(pretty_value(bar_lower_val, feature_name, readable))
                 .attr("font-size", value_font)
@@ -223,34 +223,6 @@ export const numberLineBuilder = (explanation, index) => {
                 bar_text_upper.attr("text-anchor", "middle");
             }
         }
-        // ##### OR DRAW THE EXAMPLE CIRCLE #####
-        // else if (expl_type == ExplanationTypes.Example) {
-        //     if (has_change) {
-        //         let offset = unscale(OFFSET_UNSCALED, feature_id, dataset_details);
-        //         // const example_val = create_example(instance_val, bar_lower_val, bar_upper_val, offset);
-        //         const expl_circle_x = line_plot_x + pixel_scale(example_val, line_min, line_max);
-        //         // draw the circle
-        //         selection.append("circle")
-        //             .attr("cx", expl_circle_x)
-        //             .attr("cy", line_y)
-        //             .attr("r", circle_radius)
-        //             .attr("fill", expl_colors.altered_good);
-        //         // add a text label
-        //         selection.append("text")
-        //             .text(pretty_value(example_val, feature_name, readable))
-        //             .attr("font-size", value_font)
-        //             .attr("fill", expl_colors.altered_good)
-        //             .attr("x", expl_circle_x)
-        //             .attr("y", line_y - bar_height)
-        //             .attr("text-anchor", "middle")
-        //             .attr("class", "tick-label");
-        //     }
-        // }
-
-
-
-
-
 
         // ##### DRAW THE INSTANCE CIRCLE #####
 
@@ -268,6 +240,7 @@ export const numberLineBuilder = (explanation, index) => {
         const circle_text = selection.append("text")
             .text(pretty_value(instance_val, feature_name, readable))
             .attr("font-size", value_font)
+            .attr("font-weight", "bold")
             .attr("fill", circle_color)
             .attr("x", circle_x)
             .attr("y", line_y + bar_height + value_font)

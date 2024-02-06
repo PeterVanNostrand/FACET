@@ -361,8 +361,9 @@ function App() {
     } else {
         return (
             <div id="super-div" className="super-div">
-                <div id="back-welcome" className="card welcome">
+                <div id="back-welcome" className="card welcome" style={{diplay: 'flex'}}>
                     <button className="back-welcome-button" onClick={backToWelcomeScreen}>← Welcome Screen</button>
+                    <h1 style={{marginTop: 0, marginBottom: 0, fontSize: "2.5em"}}>FACET</h1>
                 </div>
 
                 <div id="feature-controls" className="card feature-controls">
