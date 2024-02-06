@@ -23,7 +23,7 @@ const ExplanationList = ({ explanations, totalExplanations, featureDict, formatD
                 {Object.keys(
                     explanations[explanations.length === 1 ? 0 : currentExplanationIndex]
                 ).map((key, innerIndex) => (
-                    <div key={innerIndex} style={{ display: 'flex', flexDirection: 'row', overflow: 'auto' }}>
+                    <div key={innerIndex} style={{ display: 'flex', flexDirection: 'row' }}>
                         <h3 style={{ minWidth: 180 }}>
                             {formatFeature(key, formatDict)}
                         </h3>
