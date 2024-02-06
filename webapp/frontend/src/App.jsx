@@ -146,7 +146,7 @@ function App() {
     const [isLoading, setIsLoading] = useState(true);
 
     const [constraints, setConstraints] = useState([]);
-    const [numExplanations, setNumExplanations] = useState(1);
+    const [numExplanations, setNumExplanations] = useState(10);
     const [totalExplanations, setTotalExplanations] = useState([]);
     const [explanationSection, setExplanationSection] = useState(null);
     const [isWelcome, setIsWelcome] = useState(false);
@@ -391,9 +391,6 @@ function App() {
                 </div>
 
                 <div id="explanation" className="card explanation">
-                    <h2 className='explanation-header'>
-                        Explanation
-                    </h2>
                     {totalExplanations.length > 0 &&
                         <ExplanationSection
                             explanations={explanations}

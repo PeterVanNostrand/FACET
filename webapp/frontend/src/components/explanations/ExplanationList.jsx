@@ -47,6 +47,7 @@ const ExplanationList = ({ explanations, totalExplanations, featureDict, formatD
                     >
                         Previous
                     </button>
+                    <p>{currentExplanationIndex+1}</p>
                     <button
                         className="cycle-button"
                         onClick={handleNext}
