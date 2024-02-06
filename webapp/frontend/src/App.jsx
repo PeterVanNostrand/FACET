@@ -289,13 +289,14 @@ function App() {
      * Saves a scenario to savedScenarios, and creates a tab
      */
     const saveScenario = () => {
-        let scenario = {}; //made this way for programmer's convenience
+        let scenario = {};
         scenario["scenario"] = savedScenarios.length + 1; //ID the scenario indexing at 1
         scenario["values"] = selectedInstance; //store feature values
         scenario["explanation"] = explanations; //store explanation
         scenario["featureControls"] = {}; //TODO: store priorities of features, lock states, etc.
 
-        setSavedScenarios([...savedScenarios, scenario]); //append scenario to savedScenarios        
+        setSavedScenarios([...savedScenarios, scenario]); //append scenario to savedScenarios   
+
         //Create new tab
         let tab = document.createElement("div");
         tab.id = "tab" + (savedScenarios.length + 1);
@@ -314,24 +315,24 @@ function App() {
         deleteButton.onclick = function () { deleteScenario(savedScenarios.length) } //since length indexes at 1, this value is the last index after the scenario is saved
         tab.appendChild(deleteButton); //add to tab
 
-        document.getElementById("tabSection").appendChild(tab); //add element to HTML
+        document.getElementById("tab-list").appendChild(tab); //add element to HTML
     }
 
     const deleteScenario = (index) => {
         setSavedScenarios(savedScenarios.splice(index, 1));
         let tab = document.getElementById("tab" + (index + 1));
-        document.getElementById("tabSection").removeChild(tab);
+        document.getElementById("tab-list").removeChild(tab);
     }
 
     const clearScenarios = () => {
         setSavedScenarios([]);
-        document.getElementById("tabSection").innerHTML = "";
+        document.getElementById("tab-list").innerHTML = "";
     }
 
     const toggleTabs = (isVisable) => {
         try {
             console.log("Tabs visible: " + isVisable);
-            document.getElementById("tabSection").style.display = (isVisable) ? "flex" : "none";
+            document.getElementById("tab-list").style.display = (isVisable) ? "flex" : "none";
         }
         catch {
             console.log("Tabs do not exist yet");
@@ -361,9 +362,9 @@ function App() {
     } else {
         return (
             <div id="super-div" className="super-div">
-                <div id="back-welcome" className="card welcome" style={{diplay: 'flex'}}>
+                <div id="back-welcome" className="card welcome" style={{ diplay: 'flex' }}>
                     <button className="back-welcome-button" onClick={backToWelcomeScreen}>← Welcome Screen</button>
-                    <h1 style={{marginTop: 0, marginBottom: 0, fontSize: "2.5em"}}>FACET</h1>
+                    <h1 style={{ marginTop: 0, marginBottom: 0, fontSize: "2.5em" }}>FACET</h1>
                 </div>
 
                 <div id="feature-controls" className="card feature-controls">
