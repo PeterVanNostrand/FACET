@@ -9,7 +9,6 @@ import unpinSVG from '../../../icons/UnPinned.svg';
 
 
 const FeatureControlSection = ({ applicantInfo, fDict, constraints, setConstraints }) => {
-    const feature_tab_title = 'Feature Controls';
     const [features, setFeatures] = useState([]);
 
     const handleNumberLineChange = (id, minRange, maxRange) => {
@@ -307,7 +306,7 @@ const FeatureControlSection = ({ applicantInfo, fDict, constraints, setConstrain
 
     return (
         <div className="feature-control-tab">
-            <div className="feature-control-tab-title">{feature_tab_title}</div>
+            <h2 style={{ textAlign: "center", fontSize: "2em" }}>Feature Controls</h2>
             {features.map((feature) => (
                 <FeatureControl key={feature.id} {...feature} onNumberLineChange={handleNumberLineChange} />
             ))}

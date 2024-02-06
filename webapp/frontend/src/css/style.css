@@ -13,10 +13,9 @@
 
 .super-div {
     display: grid;
-    /* grid-template-columns: 200px 500px; */
     grid-template-rows: auto;
     grid-template-areas:
-        "settings tabs"
+        "welcome tabs"
         "featurecontrols status"
         "featurecontrols explanation"
         "featurecontrols suggestion";
@@ -56,8 +55,8 @@
     padding:0;
 }
 
-.settings-profile-section {
-    grid-area: settings;
+.welcome {
+    grid-area: welcome;
 }
 
 .feature-controls {
@@ -74,4 +73,5 @@
 
 .suggestion {
     grid-area: suggestion;
+    margin-bottom: 0px;
 }

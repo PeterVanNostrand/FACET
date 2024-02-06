@@ -1,17 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ExplanationList from "./ExplanationList";
 
-const ExplanationSection = ({ explanations, totalExplanations, featureDict, formatDict, handleNumExplanations }) => {
+const ExplanationSection = (
+    { explanations, totalExplanations, featureDict, formatDict, numExplanations, handleNumExplanations }
+) => {
 
     return (
         <div className="explanation-section" style={{ display: 'flex', flexDirection: 'column' }}>
-            <div className="unscrollable" style={{ flex: '0 0 auto' }}>
-
-                <div className='explanation-sort' style={{ display: 'flex' }}>
-                    <button onClick={handleNumExplanations(1)}>Top Explanation</button>
-                    <button onClick={handleNumExplanations(10)}>Multiple Explanations</button>
-                </div>
-
+            <div className='explanation-sort' style={{ display: 'flex' }}>
+                <button className={numExplanations === 1 ? "selected toggle" : "toggle"} onClick={handleNumExplanations(1)}>Top Explanation</button>
+                <button className={numExplanations === 10 ? "selected toggle" : "toggle"} onClick={handleNumExplanations(10)}>Multiple Explanations</button>
             </div>
 
             <ExplanationList

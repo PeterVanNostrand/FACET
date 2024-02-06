@@ -236,19 +236,6 @@ function App() {
         setTotalExplanations(instanceAndExpls);
     }, [explanations])
 
-    useEffect(() => {
-        if (totalExplanations.length > 0)
-            setExplanationSection(
-                <ExplanationSection
-                    explanations={explanations}
-                    totalExplanations={totalExplanations}
-                    featureDict={featureDict}
-                    formatDict={formatDict}
-                    handleNumExplanations={handleNumExplanations}
-                />
-            )
-    }, [totalExplanations])
-
 
     /**
      * Function to explain the selected instance using the backend server
@@ -375,8 +362,8 @@ function App() {
     } else {
         return (
             <div id="super-div" className="super-div">
-                <div id="settings-profile-section" className="settings-profile-section">
-                    <button onClick={backToWelcomeScreen}>← Welcome Screen</button>
+                <div id="back-welcome" className="welcome">
+                    <button className="back-welcome-button" onClick={backToWelcomeScreen}>← Welcome Screen</button>
                 </div>
 
                 <div id="feature-controls" className="card feature-controls">
@@ -393,15 +380,28 @@ function App() {
                 </div>
 
                 <div id="status-section" className="card status-section">
-                    <h2 id="title">Application</h2>
-                    <StatusDisplay featureDict={featureDict} formatDict={formatDict} selectedInstance={selectedInstance} />
+                    <h2>Application</h2>
+                    <StatusDisplay
+                        featureDict={featureDict}
+                        formatDict={formatDict}
+                        selectedInstance={selectedInstance}
+                    />
                 </div>
 
                 <div id="explanation" className="card explanation">
                     <h2 className='explanation-header'>
                         Explanation
                     </h2>
-                    {explanationSection}
+                    {totalExplanations.length > 0 &&
+                        <ExplanationSection
+                            explanations={explanations}
+                            totalExplanations={totalExplanations}
+                            featureDict={featureDict}
+                            formatDict={formatDict}
+                            numExplanations={numExplanations}
+                            handleNumExplanations={handleNumExplanations}
+                        />
+                    }
                     <button onClick={saveScenario}>Save Scenario</button>
                 </div>
 
