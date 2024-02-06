@@ -20,39 +20,41 @@
         "featurecontrols explanation"
         "featurecontrols suggestion";
 }
+
 /*TABS SECTION*/
 .tab-section {
     grid-area: tabs;
 }
 
-.tabSection{
-    display:flex;
+.tabSection {
+    display: flex;
     flex-direction: row;
     overflow-x: auto;
-    padding-bottom:2vh;
+    padding-bottom: 2vh;
 }
 
-.tab{
+.tab {
     border-style: inset;
     border-width: 1pt;
     border-radius: 15px;
-    display:flex;
+    display: flex;
     flex-direction: row;
     margin-right: 0.3vw;
-    padding-left:5pt;
-    padding-right:5pt;
+    padding-left: 5pt;
+    padding-right: 5pt;
 }
 
-.tab:hover{
-    border-color: rgb(0, 72, 255);
+.tab:hover {
+    border-color: #eeeeee;
+    background-color: #eeeeee;
 }
 
-.tab button{
-    background-color: rgba(0,0,0,0);
-    border:none;
+.tab button {
+    background-color: white;
+    border: none;
     height: 5vh;
-    width:auto;
-    padding:0;
+    width: auto;
+    padding: 0;
 }
 
 .welcome {

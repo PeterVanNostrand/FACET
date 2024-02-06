@@ -361,7 +361,7 @@ function App() {
     } else {
         return (
             <div id="super-div" className="super-div">
-                <div id="back-welcome" className="welcome">
+                <div id="back-welcome" className="card welcome">
                     <button className="back-welcome-button" onClick={backToWelcomeScreen}>← Welcome Screen</button>
                 </div>
 
@@ -374,9 +374,10 @@ function App() {
                     />
                 </div>
 
-                <div id="tab-section" className="tab-section">
+                <div id="tab-section" className="card tab-section">
                     <h2>Tabs</h2>
-                    <div id="tabSection" className="tabSection"></div>
+                    <div id="tabSection" className="tabSection">
+                    </div>
                 </div>
 
                 <div id="status-section" className="card status-section">

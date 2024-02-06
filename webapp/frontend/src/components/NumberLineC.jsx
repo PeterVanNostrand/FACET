@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Draggable from 'react-draggable';
+import '../css/number-line-c.css';
+
 
 const NumberLineC = ({ id, start, end, minRange, maxRange, currentValue, onNumberLineChange }) => {
     // State to keep track of the current range

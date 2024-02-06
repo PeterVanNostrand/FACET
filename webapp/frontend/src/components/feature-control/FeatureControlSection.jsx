@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import NumberLineC from '../NumberLineC.jsx';
-import '../../css/NumberLineC.css';
 import arrowSVG from '../../../icons/Arrow.svg';
 import lockSVG from '../../../icons/Lock.svg';
 import unlockSVG from '../../../icons/UnLocked.svg';
 import pinSVG from '../../../icons/Pinned.svg';
 import unpinSVG from '../../../icons/UnPinned.svg';
 
+import '../../css/feature-control.css';
 
 const FeatureControlSection = ({ applicantInfo, fDict, constraints, setConstraints }) => {
     const [features, setFeatures] = useState([]);
@@ -21,7 +21,6 @@ const FeatureControlSection = ({ applicantInfo, fDict, constraints, setConstrain
             setConstraints(updatedConstraints);
         }
     };
-
 
 
     useEffect(() => {

@@ -99,10 +99,10 @@ button:hover {
 }
 
 .back-welcome-button {
-    background-color: #eeeeee;
+    background-color: #ffffff;
     color: black;
 }
 
 .back-welcome-button:hover {
-    background-color: #dddddd;
+    background-color: #eeeeee;
 }
