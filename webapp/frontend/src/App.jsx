@@ -5,9 +5,9 @@ import StatusDisplay from './components/StatusDisplay.jsx';
 import WelcomeScreen from './components/welcome/WelcomeSceen.jsx';
 import './css/style.css';
 
-import FeatureControlSection from './components/feature-control/FeatureControlSection.jsx';
-import ExplanationSection from './components/explanations/ExplanationSection';
 import close from '../icons/close.svg';
+import ExplanationSection from './components/explanations/ExplanationSection';
+import FeatureControlSection from './components/feature-control/FeatureControlSection.jsx';
 
 const SERVER_URL = webappConfig.SERVER_URL
 const API_PORT = webappConfig.API_PORT
@@ -304,7 +304,7 @@ function App() {
         let scenarioButton = document.createElement("button"); //create button
         scenarioButton.innerHTML = "Scenario " + (savedScenarios.length + 1); //Name the tab
         //set onclick method to load the scenario, and display the ID
-        scenarioButton.onclick = function () { setSelectedInstance(scenario["values"]), document.getElementById("title").innerHTML = "Scenario " + scenario["scenario"] };
+        scenarioButton.onclick = function () { setSelectedInstance(scenario["values"]) };
         tab.appendChild(scenarioButton); //add to tab
         //include a close button to delete the tab
         let deleteButton = document.createElement("button");
