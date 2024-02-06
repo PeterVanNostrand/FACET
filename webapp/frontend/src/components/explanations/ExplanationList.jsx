@@ -40,8 +40,20 @@ const ExplanationList = ({ explanations, totalExplanations, featureDict, formatD
             {/* Next and Previous buttons */}
             {explanations.length > 1 && (
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 10 }}>
-                    <button className="cycle-button" onClick={handlePrevious} disabled={currentExplanationIndex === 0}>Previous</button>
-                    <button className="cycle-button" onClick={handleNext} disabled={currentExplanationIndex === explanations.length - 1}>Next</button>
+                    <button
+                        className="cycle-button"
+                        onClick={handlePrevious}
+                        disabled={currentExplanationIndex === 0}
+                    >
+                        Previous
+                    </button>
+                    <button
+                        className="cycle-button"
+                        onClick={handleNext}
+                        disabled={currentExplanationIndex === explanations.length - 1}
+                    >
+                        Next
+                    </button>
                 </div>
             )}
         </div>

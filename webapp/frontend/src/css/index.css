@@ -48,6 +48,12 @@ button:hover {
     background-color: #007ede;
 }
 
+button:disabled {
+    opacity: 0.5; 
+    pointer-events: none;
+}
+
+
 .cycle-button {
     background-color: #ffffff;
     color: black;
