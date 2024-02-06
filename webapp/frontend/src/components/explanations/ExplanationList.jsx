@@ -39,21 +39,21 @@ const ExplanationList = ({ explanations, totalExplanations, featureDict, formatD
 
             {/* Next and Previous buttons */}
             {explanations.length > 1 && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 10 }}>
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>
                     <button
                         className="cycle-button"
                         onClick={handlePrevious}
                         disabled={currentExplanationIndex === 0}
                     >
-                        Previous
+                        &lt;
                     </button>
-                    <p>{currentExplanationIndex+1}</p>
+                    <p>{'\u00A0'}{'\u00A0'}{currentExplanationIndex+1}{'\u00A0'}{'\u00A0'}</p>
                     <button
                         className="cycle-button"
                         onClick={handleNext}
                         disabled={currentExplanationIndex === explanations.length - 1}
                     >
-                        Next
+                        &gt;
                     </button>
                 </div>
             )}

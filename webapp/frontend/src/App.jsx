@@ -6,6 +6,7 @@ import WelcomeScreen from './components/welcome/WelcomeSceen.jsx';
 import './css/style.css';
 
 import close from '../icons/close.svg';
+import TabSection from './components/TabSection.jsx';
 import ExplanationSection from './components/explanations/ExplanationSection';
 import FeatureControlSection from './components/feature-control/FeatureControlSection.jsx';
 
@@ -16,8 +17,6 @@ const ENDPOINT = SERVER_URL + ":" + API_PORT + "/facet"
 const SUCCESS = "Lime"
 const FAILURE = "Red"
 const DEBUG = "White"
-
-const ICONS = "./icons/"
 
 /**
  * A simple function for neat logging
@@ -145,10 +144,11 @@ function App() {
     const [featureDict, setFeatureDict] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    const [constraints, setConstraints] = useState([]);
+    const [constraints, setConstraints] = useState([
+        [1000, 1600], [0, 10], [6000, 10000], [300, 500]
+    ]);
     const [numExplanations, setNumExplanations] = useState(10);
     const [totalExplanations, setTotalExplanations] = useState([]);
-    const [explanationSection, setExplanationSection] = useState(null);
     const [isWelcome, setIsWelcome] = useState(false);
     const [showWelcomeScreen, setShowWelcomeScreen] = useState(false);
 
@@ -156,13 +156,6 @@ function App() {
     // useEffect to fetch instances data when the component mounts
     useEffect(() => {
         status_log("Using endpoint " + ENDPOINT, SUCCESS)
-
-        setConstraints([
-            [1000, 1600],
-            [0, 10],
-            [6000, 10000],
-            [300, 500]
-        ])
 
         const pageLoad = async () => {
             fetchInstances();
@@ -198,7 +191,6 @@ function App() {
                 console.error(error);
             }
         };
-        // Call the pageLoad function when the component mounts
         pageLoad();
     }, []);
 
@@ -284,44 +276,19 @@ function App() {
         setShowWelcomeScreen(true);
     }
 
-
-    /**
-     * Saves a scenario to savedScenarios, and creates a tab
-     */
     const saveScenario = () => {
-        let scenario = {};
-        scenario["scenario"] = savedScenarios.length + 1; //ID the scenario indexing at 1
-        scenario["values"] = selectedInstance; //store feature values
-        scenario["explanation"] = explanations; //store explanation
-        scenario["featureControls"] = {}; //TODO: store priorities of features, lock states, etc.
+        const newScenario = {
+            scenarioID: savedScenarios.length + 1,
+            values: selectedInstance,
+            // explanation: explanations,
+            // featureControls: {}
+        };
 
-        setSavedScenarios([...savedScenarios, scenario]); //append scenario to savedScenarios   
-
-        //Create new tab
-        let tab = document.createElement("div");
-        tab.id = "tab" + (savedScenarios.length + 1);
-        tab.className = "tab";
-        //scenario button
-        let scenarioButton = document.createElement("button"); //create button
-        scenarioButton.innerHTML = "Scenario " + (savedScenarios.length + 1); //Name the tab
-        //set onclick method to load the scenario, and display the ID
-        scenarioButton.onclick = function () { setSelectedInstance(scenario["values"]) };
-        tab.appendChild(scenarioButton); //add to tab
-        //include a close button to delete the tab
-        let deleteButton = document.createElement("button");
-        let closeImg = document.createElement("img");
-        closeImg.src = close;
-        deleteButton.appendChild(closeImg);
-        deleteButton.onclick = function () { deleteScenario(savedScenarios.length) } //since length indexes at 1, this value is the last index after the scenario is saved
-        tab.appendChild(deleteButton); //add to tab
-
-        document.getElementById("tab-list").appendChild(tab); //add element to HTML
+        setSavedScenarios([...savedScenarios, newScenario]);
     }
 
     const deleteScenario = (index) => {
         setSavedScenarios(savedScenarios.splice(index, 1));
-        let tab = document.getElementById("tab" + (index + 1));
-        document.getElementById("tab-list").removeChild(tab);
     }
 
     const clearScenarios = () => {
@@ -329,10 +296,10 @@ function App() {
         document.getElementById("tab-list").innerHTML = "";
     }
 
-    const toggleTabs = (isVisable) => {
+    const toggleTabs = (isVisible) => {
         try {
-            console.log("Tabs visible: " + isVisable);
-            document.getElementById("tab-list").style.display = (isVisable) ? "flex" : "none";
+            console.log("Tabs visible: " + isVisible);
+            document.getElementById("tab-list").style.display = (isVisible) ? "flex" : "none";
         }
         catch {
             console.log("Tabs do not exist yet");
@@ -343,7 +310,7 @@ function App() {
     const welcome = WelcomeScreen(showWelcomeScreen, setShowWelcomeScreen, selectedInstance, setSelectedInstance)
 
     if (isLoading) {
-        return <div></div>
+        return <></>
     }
     else if (showWelcomeScreen) {
         toggleTabs(false);
@@ -377,9 +344,11 @@ function App() {
                 </div>
 
                 <div id="tab-section" className="card tab-section">
-                    <h2>Tabs</h2>
-                    <div id="tab-list" className="tab-list">
-                    </div>
+                    <TabSection
+                        savedScenarios={savedScenarios}
+                        deleteScenario={deleteScenario}
+                        setSelectedInstance={setSelectedInstance}
+                    />
                 </div>
 
                 <div id="status-section" className="card status-section">
