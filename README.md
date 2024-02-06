@@ -8,7 +8,7 @@ FACET (Fast Actionable Counterfactuals for Ensembles of Trees) generates a novel
 
 The current state of the UI is a shown. Revised 1/28/24, 5PM
 
-![UIState](webapp/ui_state_v04.png)
+![UIState](webapp/ui_state.png)
 
 ## Requirements
 
