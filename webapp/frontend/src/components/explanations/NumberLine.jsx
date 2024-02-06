@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { select } from 'd3';
-import { numberLineBuilder } from '../../../js/numberLineBuilder';
+import { numberLineBuilder } from '../../js/numberLineBuilder';
 
 const NumberLine = ({ explanation, i, id }) => {
     const svgRef = useRef();

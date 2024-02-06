@@ -4,7 +4,6 @@ export const Feature = ({ name, value }) => {
             <div className="feature">
                 <p>{name}: <span className="featureValue">{value}</span></p>
             </div>
-            {/* Add more similar div elements for each feature */}
         </div>
     )
 }

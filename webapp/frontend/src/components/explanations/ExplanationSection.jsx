@@ -1,7 +1,7 @@
 import React from 'react';
 import ExplanationList from "./ExplanationList";
 
-const ExplanationSection = ({ explanations, totalExplanations, featureDict, handleNumExplanations }) => {
+const ExplanationSection = ({ explanations, totalExplanations, featureDict, formatDict, handleNumExplanations }) => {
 
     return (
         <div className="explanation-section" style={{ display: 'flex', flexDirection: 'column' }}>
@@ -18,6 +18,7 @@ const ExplanationSection = ({ explanations, totalExplanations, featureDict, hand
                 explanations={explanations}
                 totalExplanations={totalExplanations}
                 featureDict={featureDict}
+                formatDict={formatDict}
             />
         </div>
     );

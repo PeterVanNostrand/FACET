@@ -1,11 +1,11 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import webappConfig from '../../config.json';
-import { InstanceDropdown } from './InstanceDropdown';
-import InformationSVG from './SVG/Information.svg';
-import CloseSVG from './SVG/XClose.svg';
-import './css/welcomescreen.css';
-import { formatFeature, formatValue } from './utilities';
+import webappConfig from '../../../../config.json';
+import { InstanceDropdown } from '../InstanceDropdown';
+import InformationSVG from '../../../icons/Information.svg';
+import CloseSVG from '../../../icons/XClose.svg';
+import '../../css/welcomescreen.css';
+import { formatFeature, formatValue } from '../../js/utilities';
 
 const success = "Lime"
 const failure = "Red"

@@ -6,7 +6,7 @@ import './css/welcomescreen.css';
 import { formatFeature, formatValue } from './utilities';
 import { format } from 'd3';
 
-import webappConfig from '../../config.json';
+import webappConfig from '../../../../config.json';
 
 const SERVER_URL = webappConfig.SERVER_URL
 const API_PORT = webappConfig.API_PORT

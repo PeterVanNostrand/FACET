@@ -2,7 +2,6 @@ import { clamp_value, create_example, feature_dists_order, pretty_value, unscale
 import { ExplanationTypes, OFFSET_UNSCALED, expl_colors, rect_values } from "../../../../visualization/src/values.js";
 import { json, select } from "d3";
 import { RangeTypes } from "./numberLineUtil.js";
-import '../css/explanation-line.css'
 
 const detailsURL = "http://localhost:3001/data/loans/dataset_details.json";
 const readableURL = "http://localhost:3001/data/loans/human_readable.json";
@@ -36,7 +35,7 @@ export const numberLineBuilder = (explanation, index) => {
         const line_plot_x = labels_x + labels_width + line_plot_pad_x;
         const line_plot_width = 290;
         const line_spacing = 55;
-        const line_width = 2.5;
+        const line_width = 1.8;
         const tick_height = 15;
         const bar_height = tick_height - 3;
         const circle_radius = tick_height / 2 - 1;

@@ -1,8 +1,6 @@
 // utilities.js
 // Frontend Utility Functions
 
-
-
 /**
  * Takes in some float/int and formats it to be more human readable (Thanks Peter!)
  * @param {String} featureValue - Input number as string, e.g. 123.4567
@@ -28,7 +26,6 @@ export function formatValue(featureValue, colID, formatDict) {
     }
     return valueText
 }
-
 
 
 /**

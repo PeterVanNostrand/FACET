@@ -1,14 +1,14 @@
 import axios, { AxiosError } from 'axios';
 import { useEffect, useState } from 'react';
 import webappConfig from '../../config.json';
-import StatusDisplay from './StatusDisplay.jsx';
-import WelcomeScreen from './WelcomeSceen.jsx';
+import StatusDisplay from './components/StatusDisplay.jsx';
+import WelcomeScreen from './components/welcome/WelcomeSceen.jsx';
 import './css/style.css';
 import './css/feature-control.css'
 
-import FeatureControlSection from './FeatureControlSection.jsx';
-import ExplanationSection from './components/my-application/explanation/ExplanationSection';
-import close from './icons/close.svg';
+import FeatureControlSection from './components/feature-control/FeatureControlSection.jsx';
+import ExplanationSection from './components/explanations/ExplanationSection';
+import close from '../icons/close.svg';
 
 const SERVER_URL = webappConfig.SERVER_URL
 const API_PORT = webappConfig.API_PORT
@@ -139,7 +139,6 @@ function App() {
      * isLoading: Boolean value that helps with managing async operations. Prevents webapp from trying to display stuff before formatDict is loaded
      */
     const [applications, setApplications] = useState([]);
-    // const [index, setIndex] = useState(0);
     const [selectedInstance, setSelectedInstance] = useState("");
     const [explanations, setExplanations] = useState("");
     const [savedScenarios, setSavedScenarios] = useState([]);
@@ -154,9 +153,6 @@ function App() {
     const [isWelcome, setIsWelcome] = useState(false);
     const [showWelcomeScreen, setShowWelcomeScreen] = useState(false);
 
-    useEffect(() => {
-        console.log('constraints', constraints)
-    }, [constraints])
 
     // useEffect to fetch instances data when the component mounts
     useEffect(() => {
@@ -247,6 +243,7 @@ function App() {
                     explanations={explanations}
                     totalExplanations={totalExplanations}
                     featureDict={featureDict}
+                    formatDict={formatDict}
                     handleNumExplanations={handleNumExplanations}
                 />
             )
@@ -358,7 +355,6 @@ function App() {
 
     const welcome = WelcomeScreen(showWelcomeScreen, setShowWelcomeScreen, selectedInstance, setSelectedInstance)
 
-    // this condition prevents the page from loading until the formatDict is availible
     if (isLoading) {
         return <div></div>
     }
@@ -402,7 +398,7 @@ function App() {
                 </div>
 
                 <div id="explanation" className="card explanation">
-                    <h2 className='explanation-header' style={{}}>
+                    <h2 className='explanation-header'>
                         Explanation
                     </h2>
                     {explanationSection}
@@ -410,7 +406,7 @@ function App() {
                 </div>
 
                 <div id="suggestion" className="card suggestion">
-                    <p>suggestions box thing</p>
+                    <p>suggestions</p>
                 </div>
             </div>
         )
