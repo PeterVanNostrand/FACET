@@ -6,7 +6,7 @@ import WelcomeScreen from './components/welcome/WelcomeSceen.jsx';
 import './css/style.css';
 
 import close from '../icons/close.svg';
-import TabSection from './components/TabSection.jsx';
+import ScenarioSection from './components/ScenarioSection.jsx';
 import ExplanationSection from './components/explanations/ExplanationSection';
 import FeatureControlSection from './components/feature-control/FeatureControlSection.jsx';
 
@@ -266,16 +266,6 @@ function App() {
         }
     }
 
-
-    const handleNumExplanations = (numExplanations) => () => {
-        setNumExplanations(numExplanations);
-    }
-
-    const backToWelcomeScreen = () => {
-        toggleTabs(true);
-        setShowWelcomeScreen(true);
-    }
-
     const saveScenario = () => {
         const newScenario = {
             scenarioID: savedScenarios.length + 1,
@@ -287,23 +277,13 @@ function App() {
         setSavedScenarios([...savedScenarios, newScenario]);
     }
 
-    const deleteScenario = (index) => {
-        setSavedScenarios(savedScenarios.splice(index, 1));
+
+    const handleNumExplanations = (numExplanations) => () => {
+        setNumExplanations(numExplanations);
     }
 
-    const clearScenarios = () => {
-        setSavedScenarios([]);
-        document.getElementById("tab-list").innerHTML = "";
-    }
-
-    const toggleTabs = (isVisible) => {
-        try {
-            console.log("Tabs visible: " + isVisible);
-            document.getElementById("tab-list").style.display = (isVisible) ? "flex" : "none";
-        }
-        catch {
-            console.log("Tabs do not exist yet");
-        }
+    const backToWelcomeScreen = () => {
+        setShowWelcomeScreen(true);
     }
 
 
@@ -313,13 +293,11 @@ function App() {
         return <></>
     }
     else if (showWelcomeScreen) {
-        toggleTabs(false);
         let welcomeContent = welcome
 
         if (welcomeContent["status"] == "Display") {
             return welcomeContent["content"]
         } else {
-            console.log("The content changed!")
             setShowWelcomeScreen(false);
 
             if (welcomeContent["content"] != null) {
@@ -329,9 +307,20 @@ function App() {
     } else {
         return (
             <div id="super-div" className="super-div">
-                <div id="back-welcome" className="card welcome" style={{ diplay: 'flex' }}>
+                <div id="back-welcome" className="card welcome" style={{ display: 'flex' }}>
                     <button className="back-welcome-button" onClick={backToWelcomeScreen}>← Welcome Screen</button>
-                    <h1 style={{ marginTop: 0, marginBottom: 0, fontSize: "2.5em" }}>FACET</h1>
+                    <h1 style={{ marginTop: 0, marginBottom: 0, fontSize: "2.5em", alignSelf: 'center' }}>
+                        FACET
+                    </h1>
+                </div>
+
+                <div id="scenario-section" className="card scenario-section" style={{ maxWidth: 575 }}>
+                    <ScenarioSection
+                        savedScenarios={savedScenarios}
+                        setSavedScenarios={setSavedScenarios}
+                        selectedInstance={selectedInstance}
+                        setSelectedInstance={setSelectedInstance}
+                    />
                 </div>
 
                 <div id="feature-controls" className="card feature-controls">
@@ -343,16 +332,8 @@ function App() {
                     />
                 </div>
 
-                <div id="tab-section" className="card tab-section">
-                    <TabSection
-                        savedScenarios={savedScenarios}
-                        deleteScenario={deleteScenario}
-                        setSelectedInstance={setSelectedInstance}
-                    />
-                </div>
-
-                <div id="status-section" className="card status-section">
-                    <h2>Application</h2>
+                <div id="status-section" className="card status-section" >
+                    <h2>My Application</h2>
                     <StatusDisplay
                         featureDict={featureDict}
                         formatDict={formatDict}
