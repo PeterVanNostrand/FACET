@@ -112,6 +112,10 @@ const NumberLineC = ({ id, start, end, minRange, maxRange, currentValue, onNumbe
         }
     };
 
+    // dumb fix for bug due to Draggable using deprecated findDOMNode
+    const nodeRef = React.useRef(null)
+
+
     return (
         <div className='number-line-container' style={{ width: `100%`, height: `100%` }}>
             {/* SVG Number Line */}
@@ -132,7 +136,6 @@ const NumberLineC = ({ id, start, end, minRange, maxRange, currentValue, onNumbe
                     width={`${calculatePositionFromValue(currentRange.max - currentRange.min)}px`}
                     height="10%"
                     fill="#7fc3ff"
-                //style={{ transition: 'width 0.3s ease' }} 
                 />
 
                 {/* NumberLine Ticks */}
@@ -184,13 +187,14 @@ const NumberLineC = ({ id, start, end, minRange, maxRange, currentValue, onNumbe
             <div className='interact-line'>
                 {/* Min Range Handle */}
                 <Draggable
+                    nodeRef={nodeRef}
                     axis="x"
                     bounds={{ left: calculatePositionFromValue(start), right: calculatePositionFromValue(currentRange.max) }}
                     onDrag={handleMinRangeDrag}
                     onStop={handleMinRangeStop}
                     position={{ x: calculatePositionFromValue(currentRange.min), y: 0 }}
                 >
-                    <div style={{ position: 'absolute', top: '43%', width: '3px', height: '16px', backgroundColor: '#333', cursor: 'ew-resize' }} />
+                    <div ref={nodeRef} style={{ position: 'absolute', top: '43%', width: '3px', height: '16px', backgroundColor: '#333', cursor: 'ew-resize' }} />
                 </Draggable>
 
                 {/* Input for Min Range */}
@@ -209,6 +213,7 @@ const NumberLineC = ({ id, start, end, minRange, maxRange, currentValue, onNumbe
 
                 {/* Max Range Handle */}
                 <Draggable
+                    nodeRef={nodeRef}
                     axis="x"
                     bounds={{ left: calculatePositionFromValue(currentRange.min), right: calculatePositionFromValue(end) }}
                     onDrag={handleMaxRangeDrag}
@@ -216,7 +221,7 @@ const NumberLineC = ({ id, start, end, minRange, maxRange, currentValue, onNumbe
                     position={{ x: calculatePositionFromValue(currentRange.max), y: 0 }}
 
                 >
-                    <div style={{ position: 'absolute', top: '43%', width: '3px', height: '16px', backgroundColor: '#333', cursor: 'ew-resize' }} />
+                    <div ref={nodeRef} style={{ position: 'absolute', top: '43%', width: '3px', height: '16px', backgroundColor: '#333', cursor: 'ew-resize' }} />
                 </Draggable>
 
                 {/* Input for Max Range */}
