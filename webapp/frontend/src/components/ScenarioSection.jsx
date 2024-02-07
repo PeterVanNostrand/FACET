@@ -26,7 +26,10 @@ const ScenarioSection = ({ savedScenarios, setSavedScenarios, setCurrentExplanat
 
     return (
         <div>
-            <h2>Scenarios</h2>
+            <div style={{ display: 'flex' }}>
+                <h2>Scenarios</h2>
+                <p className="clear-scenarios" onClick={clearScenarios}>Clear All</p>
+            </div>
             {savedScenarios.length == 0
                 ?
                 <i style={{ color: '#777777' }}>Save an explanation to create a scenario</i>

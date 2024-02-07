@@ -76,6 +76,11 @@
     background-color: #dedede;
 }
 
+.clear-scenarios {
+    margin: 10px 10px 10px 15px;
+    cursor: pointer;
+    color: #2d6cff
+}
 
 .welcome {
     grid-area: welcome;
