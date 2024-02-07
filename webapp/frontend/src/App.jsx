@@ -1,8 +1,8 @@
 import axios, { AxiosError } from 'axios';
 import { useEffect, useState } from 'react';
 import webappConfig from '../../config.json';
-import StatusDisplay from './components/StatusDisplay.jsx';
-import WelcomeScreen from './components/welcome/WelcomeScreen.jsx';
+import StatusSection from './components/StatusSection.jsx';
+import WelcomeScreen from './components/welcome/WelcomeSceen.jsx';
 import './css/style.css';
 
 import ScenarioSection from './components/ScenarioSection.jsx';
@@ -327,10 +327,11 @@ function App() {
 
                 <div id="status-grid" className="card">
                     <h2>My Application</h2>
-                    <StatusDisplay
+                    <StatusSection
+                        instance={selectedInstance}
+                        status="N" //NONONONONONONONONONONO NEED TO DETERMINE THIS SEPARATELY
                         featureDict={featureDict}
                         formatDict={formatDict}
-                        selectedInstance={selectedInstance}
                     />
                 </div>
 

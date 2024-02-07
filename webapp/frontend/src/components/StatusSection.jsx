@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './css/status-section.css'; // Import your styles.css file
+import '../css/status-section.css'; // Import your styles.css file
 
 function StatusSection({ instance, status, formatDict, featureDict }) {
     console.log(instance);
