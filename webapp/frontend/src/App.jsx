@@ -138,7 +138,12 @@ function App() {
      */
     const [applications, setApplications] = useState([]);
     const [selectedInstance, setSelectedInstance] = useState("");
+
     const [explanations, setExplanations] = useState("");
+    const [numExplanations, setNumExplanations] = useState(10);
+    const [totalExplanations, setTotalExplanations] = useState([]);
+    const [currentExplanationIndex, setCurrentExplanationIndex] = useState(0);
+
     const [savedScenarios, setSavedScenarios] = useState([]);
     const [formatDict, setFormatDict] = useState(null);
     const [featureDict, setFeatureDict] = useState(null);
@@ -147,8 +152,7 @@ function App() {
     const [constraints, setConstraints] = useState([
         [1000, 1600], [0, 10], [6000, 10000], [300, 500]
     ]);
-    const [numExplanations, setNumExplanations] = useState(10);
-    const [totalExplanations, setTotalExplanations] = useState([]);
+
     const [isWelcome, setIsWelcome] = useState(false);
     const [showWelcomeScreen, setShowWelcomeScreen] = useState(false);
 
@@ -270,8 +274,8 @@ function App() {
         const newScenario = {
             scenarioID: savedScenarios.length + 1,
             values: selectedInstance,
-            // explanation: explanations,
-            // featureControls: {}
+            explanationIndex: currentExplanationIndex,
+            featureControls: [...constraints]
         };
 
         setSavedScenarios([...savedScenarios, newScenario]);
@@ -318,7 +322,7 @@ function App() {
                     <ScenarioSection
                         savedScenarios={savedScenarios}
                         setSavedScenarios={setSavedScenarios}
-                        selectedInstance={selectedInstance}
+                        setCurrentExplanationIndex={setCurrentExplanationIndex}
                         setSelectedInstance={setSelectedInstance}
                     />
                 </div>
@@ -332,7 +336,7 @@ function App() {
                     />
                 </div>
 
-                <div id="status-section" className="card status-section" >
+                <div id="status-section" className="card status-section">
                     <h2>My Application</h2>
                     <StatusDisplay
                         featureDict={featureDict}
@@ -346,10 +350,9 @@ function App() {
                         <ExplanationSection
                             explanations={explanations}
                             totalExplanations={totalExplanations}
-                            featureDict={featureDict}
                             formatDict={formatDict}
-                            numExplanations={numExplanations}
-                            handleNumExplanations={handleNumExplanations}
+                            currentExplanationIndex={currentExplanationIndex}
+                            setCurrentExplanationIndex={setCurrentExplanationIndex}
                         />
                     }
                     <button onClick={saveScenario}>Save Scenario</button>
