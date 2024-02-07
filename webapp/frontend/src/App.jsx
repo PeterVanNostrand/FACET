@@ -4,7 +4,7 @@ import webappConfig from '../../config.json';
 import StatusDisplay from './components/StatusDisplay.jsx';
 import WelcomeScreen from './components/welcome/WelcomeSceen.jsx';
 import './css/style.css';
-
+import './css/feature-control.css';
 import close from '../icons/close.svg';
 import ExplanationSection from './components/explanations/ExplanationSection';
 import FeatureControlSection from './components/feature-control/FeatureControlSection.jsx';
@@ -144,6 +144,7 @@ function App() {
     const [formatDict, setFormatDict] = useState(null);
     const [featureDict, setFeatureDict] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [features, setFeatures] = useState([]);
 
     const [constraints, setConstraints] = useState([]);
     const [numExplanations, setNumExplanations] = useState(10);
@@ -235,6 +236,49 @@ function App() {
         setTotalExplanations(instanceAndExpls);
     }, [explanations])
 
+    useEffect(() => {
+        console.log("Features: Reached UseEffect");
+        try {
+            console.log("Features: Reached try");
+            if (formatDict) {
+                console.log("Features: Reached populating");
+                // populate features
+                let priorityValue = 1;
+    
+                const newFeatures = Object.entries(formatDict.feature_names).map(([key, value], index) => {
+                    const currentValue = selectedInstance[key];
+                    const isZero = currentValue === 0; // checks if current feature value = zero
+    
+                    const default_max = 1000;
+                    const default_max_range = 500;
+                    const default_min_range = 0;
+    
+                    const lowerConstraint = constraints[index][0]
+                    const upperConstraint = constraints[index][1]
+    
+                    return {
+                        id: value,
+                        x: key,
+                        units: formatDict.feature_units[value] || '',
+                        title: formatDict.pretty_feature_names[value] || '',
+                        current_value: currentValue,
+                        min: formatDict.semantic_min[value] ?? 0,
+                        max: formatDict.semantic_max[value] ?? (isZero ? default_max : currentValue * 2), // set 1 if null or double current_val if income is not 0
+                        priority: priorityValue++,
+                        lock_state: false,
+                        pin_state: false,
+                        min_range: lowerConstraint,
+                        max_range: upperConstraint,
+                    };
+                });
+    
+                setFeatures(newFeatures);
+                console.log("features: ", features);
+            }
+        } catch (error) {
+            console.error("Error while populating features:", error);
+        }
+    }, []);
 
     /**
      * Function to explain the selected instance using the backend server
@@ -284,7 +328,7 @@ function App() {
         setShowWelcomeScreen(true);
     }
 
-
+    
     /**
      * Saves a scenario to savedScenarios, and creates a tab
      */
@@ -367,10 +411,10 @@ function App() {
                     <h1 style={{ marginTop: 0, marginBottom: 0, fontSize: "2.5em" }}>FACET</h1>
                 </div>
 
-                <div id="feature-controls" className="card feature-controls">
+                <div id="feature-controls" className="card feature-controls-tab">
                     <FeatureControlSection
-                        applicantInfo={selectedInstance}
-                        fDict={formatDict}
+                        features={features}
+                        setFeatures={setFeatures}
                         constraints={constraints}
                         setConstraints={setConstraints}
                     />
