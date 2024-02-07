@@ -47,7 +47,7 @@ const ExplanationList = ({ explanations, totalExplanations, featureDict, formatD
                     >
                         &lt;
                     </button>
-                    <p>{'\u00A0'}{'\u00A0'}{currentExplanationIndex+1}{'\u00A0'}{'\u00A0'}</p>
+                    <p style={{width: 30, textAlign: 'center'}}>{'\u00A0'}{'\u00A0'}{currentExplanationIndex+1}{'\u00A0'}{'\u00A0'}</p>
                     <button
                         className="cycle-button"
                         onClick={handleNext}

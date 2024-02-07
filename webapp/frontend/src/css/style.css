@@ -19,6 +19,7 @@
         "featurecontrols status"
         "featurecontrols explanation"
         "featurecontrols suggestion";
+    grid-gap: 20px;
 }
 
 /*TABS SECTION*/
@@ -30,6 +31,13 @@
     display: flex;
     flex-direction: row;
     overflow-x: auto;
+    white-space: nowrap;
+    background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+}
+
+.tab-list::-webkit-scrollbar {
+    display: none;
+    /* Hide the scrollbar for WebKit browsers */
 }
 
 .tab {
@@ -41,6 +49,7 @@
     padding-left: 5pt;
     padding-right: 5pt;
     height: auto;
+    width: auto;
 }
 
 .tab:hover {
@@ -66,7 +75,6 @@
 .tab-close:hover {
     background-color: #dedede;
 }
-
 
 
 .welcome {

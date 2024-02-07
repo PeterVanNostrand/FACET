@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import NumberLineC from '../NumberLineC.jsx';
+
 import arrowSVG from '../../../icons/Arrow.svg';
 import lockSVG from '../../../icons/Lock.svg';
 import unlockSVG from '../../../icons/UnLocked.svg';

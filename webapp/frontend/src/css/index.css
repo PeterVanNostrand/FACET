@@ -46,7 +46,7 @@ button:hover {
 }
 
 button:disabled {
-    opacity: 0.5;
+    opacity: 0.3;
     pointer-events: none;
 }
 
@@ -61,7 +61,6 @@ button:disabled {
 }
 
 
-
 #root {
     /* max-width: 1280px; */
     margin: 0 auto;
@@ -74,9 +73,8 @@ button:disabled {
 .card {
     background-color: white;
     box-shadow: 0 0 1em #00000022;
-    border-radius: 8px;
+    border-radius: 15px;
     padding: 1em;
-    margin: 1em 1em 0 0;
 }
 
 .toggle {
@@ -104,6 +102,7 @@ button:disabled {
 .back-welcome-button {
     background-color: #ffffff;
     color: black;
+    align-self: center;
 }
 
 .back-welcome-button:hover {
