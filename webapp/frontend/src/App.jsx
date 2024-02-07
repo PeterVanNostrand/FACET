@@ -139,6 +139,7 @@ function App() {
     const [applications, setApplications] = useState([]);
     const [selectedInstance, setSelectedInstance] = useState("");
 
+    const [features, setFeatures] = useState([]);
     const [explanations, setExplanations] = useState("");
     const [numExplanations, setNumExplanations] = useState(10);
     const [totalExplanations, setTotalExplanations] = useState([]);
@@ -231,6 +232,47 @@ function App() {
         setTotalExplanations(instanceAndExpls);
     }, [explanations])
 
+    useEffect(() => {
+        try {
+            if (formatDict) {
+                console.log("Features: Reached populating");
+                // populate features
+                let priorityValue = 1;
+    
+                const newFeatures = Object.entries(formatDict.feature_names).map(([key, value], index) => {
+                    const currentValue = selectedInstance[key];
+                    const isZero = currentValue === 0; // checks if current feature value = zero
+    
+                    const default_max = 1000;
+                    const default_max_range = 500;
+                    const default_min_range = 0;
+    
+                    const lowerConstraint = constraints[index][0]
+                    const upperConstraint = constraints[index][1]
+    
+                    return {
+                        id: value,
+                        x: key,
+                        units: formatDict.feature_units[value] || '',
+                        title: formatDict.pretty_feature_names[value] || '',
+                        current_value: currentValue,
+                        min: formatDict.semantic_min[value] ?? 0,
+                        max: formatDict.semantic_max[value] ?? (isZero ? default_max : currentValue * 2), // set 1 if null or double current_val if income is not 0
+                        priority: priorityValue++,
+                        lock_state: false,
+                        pin_state: false,
+                        min_range: lowerConstraint,
+                        max_range: upperConstraint,
+                    };
+                });
+    
+                setFeatures(newFeatures);
+                console.log("features: ", features);
+            }
+        } catch (error) {
+            console.error("Error while populating features:", error);
+        }
+    }, [formatDict]);
 
     /**
      * Function to explain the selected instance using the backend server
@@ -327,10 +369,10 @@ function App() {
                     />
                 </div>
 
-                <div id="feature-controls" className="card feature-controls">
+                          <div id="feature-controls" className="card feature-controls-tab">
                     <FeatureControlSection
-                        applicantInfo={selectedInstance}
-                        fDict={formatDict}
+                        features={features}
+                        setFeatures={setFeatures}
                         constraints={constraints}
                         setConstraints={setConstraints}
                     />
