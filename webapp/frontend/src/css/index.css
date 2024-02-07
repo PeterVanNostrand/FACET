@@ -46,7 +46,7 @@ button:hover {
 }
 
 button:disabled {
-    opacity: 0.5;
+    opacity: 0.3;
     pointer-events: none;
 }
 
@@ -61,7 +61,6 @@ button:disabled {
 }
 
 
-
 #root {
     /* max-width: 1280px; */
     margin: 0 auto;
@@ -74,9 +73,8 @@ button:disabled {
 .card {
     background-color: white;
     box-shadow: 0 0 1em #00000022;
-    border-radius: 8px;
+    border-radius: 15px;
     padding: 1em;
-    margin: 1em 1em 0 0;
 }
 
 .toggle {
@@ -90,7 +88,13 @@ button:disabled {
 }
 
 .selected {
-    border-bottom: 2px solid #555555;
+    border: 2px solid #0090ff;
+    background-color: #eeeeee;
+}
+
+.selected:hover {
+    border: 2px solid #0090ff;
+    background-color: #eeeeee;
 }
 
 .feature {
@@ -104,6 +108,7 @@ button:disabled {
 .back-welcome-button {
     background-color: #ffffff;
     color: black;
+    align-self: center;
 }
 
 .back-welcome-button:hover {
@@ -115,8 +120,7 @@ button:disabled {
     flex-direction: column;
     box-shadow: inset 0 0 10px 5px rgba(0, 0, 0, 0.03);
     margin-bottom: 15px;
-    margin-top: 10px;
-    padding-left: 15px;
-    padding-right: 10px;
+    margin-top: 15px;
+    padding: 15px;
     border-radius: 10px;
 }

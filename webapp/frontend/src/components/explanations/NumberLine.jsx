@@ -3,7 +3,6 @@ import { select } from 'd3';
 import { numberLineBuilder } from '../../js/numberLineBuilder';
 
 const NumberLine = ({ explanation, i, id }) => {
-    console.log('NumberLine', explanation, i, id)
     const svgRef = useRef();
 
     useEffect(() => {

@@ -6,6 +6,7 @@ import WelcomeScreen from './components/welcome/WelcomeSceen.jsx';
 import './css/style.css';
 
 import close from '../icons/close.svg';
+import ScenarioSection from './components/ScenarioSection.jsx';
 import ExplanationSection from './components/explanations/ExplanationSection';
 import FeatureControlSection from './components/feature-control/FeatureControlSection.jsx';
 
@@ -16,8 +17,6 @@ const ENDPOINT = SERVER_URL + ":" + API_PORT + "/facet"
 const SUCCESS = "Lime"
 const FAILURE = "Red"
 const DEBUG = "White"
-
-const ICONS = "./icons/"
 
 /**
  * A simple function for neat logging
@@ -139,16 +138,21 @@ function App() {
      */
     const [applications, setApplications] = useState([]);
     const [selectedInstance, setSelectedInstance] = useState("");
+
     const [explanations, setExplanations] = useState("");
+    const [numExplanations, setNumExplanations] = useState(10);
+    const [totalExplanations, setTotalExplanations] = useState([]);
+    const [currentExplanationIndex, setCurrentExplanationIndex] = useState(0);
+
     const [savedScenarios, setSavedScenarios] = useState([]);
     const [formatDict, setFormatDict] = useState(null);
     const [featureDict, setFeatureDict] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    const [constraints, setConstraints] = useState([]);
-    const [numExplanations, setNumExplanations] = useState(10);
-    const [totalExplanations, setTotalExplanations] = useState([]);
-    const [explanationSection, setExplanationSection] = useState(null);
+    const [constraints, setConstraints] = useState([
+        [1000, 1600], [0, 10], [6000, 10000], [300, 500]
+    ]);
+
     const [isWelcome, setIsWelcome] = useState(false);
     const [showWelcomeScreen, setShowWelcomeScreen] = useState(false);
 
@@ -156,13 +160,6 @@ function App() {
     // useEffect to fetch instances data when the component mounts
     useEffect(() => {
         status_log("Using endpoint " + ENDPOINT, SUCCESS)
-
-        setConstraints([
-            [1000, 1600],
-            [0, 10],
-            [6000, 10000],
-            [300, 500]
-        ])
 
         const pageLoad = async () => {
             fetchInstances();
@@ -198,7 +195,6 @@ function App() {
                 console.error(error);
             }
         };
-        // Call the pageLoad function when the component mounts
         pageLoad();
     }, []);
 
@@ -274,85 +270,38 @@ function App() {
         }
     }
 
+    const saveScenario = () => {
+        const newScenario = {
+            scenarioID: savedScenarios.length + 1,
+            values: selectedInstance,
+            explanationIndex: currentExplanationIndex,
+            featureControls: [...constraints]
+        };
+
+        setSavedScenarios([...savedScenarios, newScenario]);
+    }
+
 
     const handleNumExplanations = (numExplanations) => () => {
         setNumExplanations(numExplanations);
     }
 
     const backToWelcomeScreen = () => {
-        toggleTabs(true);
         setShowWelcomeScreen(true);
-    }
-
-
-    /**
-     * Saves a scenario to savedScenarios, and creates a tab
-     */
-    const saveScenario = () => {
-        let scenario = {};
-        scenario["scenario"] = savedScenarios.length + 1; //ID the scenario indexing at 1
-        scenario["values"] = selectedInstance; //store feature values
-        scenario["explanation"] = explanations; //store explanation
-        scenario["featureControls"] = {}; //TODO: store priorities of features, lock states, etc.
-
-        setSavedScenarios([...savedScenarios, scenario]); //append scenario to savedScenarios   
-
-        //Create new tab
-        let tab = document.createElement("div");
-        tab.id = "tab" + (savedScenarios.length + 1);
-        tab.className = "tab";
-        //scenario button
-        let scenarioButton = document.createElement("button"); //create button
-        scenarioButton.innerHTML = "Scenario " + (savedScenarios.length + 1); //Name the tab
-        //set onclick method to load the scenario, and display the ID
-        scenarioButton.onclick = function () { setSelectedInstance(scenario["values"]) };
-        tab.appendChild(scenarioButton); //add to tab
-        //include a close button to delete the tab
-        let deleteButton = document.createElement("button");
-        let closeImg = document.createElement("img");
-        closeImg.src = close;
-        deleteButton.appendChild(closeImg);
-        deleteButton.onclick = function () { deleteScenario(savedScenarios.length) } //since length indexes at 1, this value is the last index after the scenario is saved
-        tab.appendChild(deleteButton); //add to tab
-
-        document.getElementById("tab-list").appendChild(tab); //add element to HTML
-    }
-
-    const deleteScenario = (index) => {
-        setSavedScenarios(savedScenarios.splice(index, 1));
-        let tab = document.getElementById("tab" + (index + 1));
-        document.getElementById("tab-list").removeChild(tab);
-    }
-
-    const clearScenarios = () => {
-        setSavedScenarios([]);
-        document.getElementById("tab-list").innerHTML = "";
-    }
-
-    const toggleTabs = (isVisable) => {
-        try {
-            console.log("Tabs visible: " + isVisable);
-            document.getElementById("tab-list").style.display = (isVisable) ? "flex" : "none";
-        }
-        catch {
-            console.log("Tabs do not exist yet");
-        }
     }
 
 
     const welcome = WelcomeScreen(showWelcomeScreen, setShowWelcomeScreen, selectedInstance, setSelectedInstance)
 
     if (isLoading) {
-        return <div></div>
+        return <></>
     }
     else if (showWelcomeScreen) {
-        toggleTabs(false);
         let welcomeContent = welcome
 
         if (welcomeContent["status"] == "Display") {
             return welcomeContent["content"]
         } else {
-            console.log("The content changed!")
             setShowWelcomeScreen(false);
 
             if (welcomeContent["content"] != null) {
@@ -362,9 +311,20 @@ function App() {
     } else {
         return (
             <div id="super-div" className="super-div">
-                <div id="back-welcome" className="card welcome" style={{ diplay: 'flex' }}>
+                <div id="back-welcome" className="card welcome" style={{ display: 'flex' }}>
                     <button className="back-welcome-button" onClick={backToWelcomeScreen}>← Welcome Screen</button>
-                    <h1 style={{ marginTop: 0, marginBottom: 0, fontSize: "2.5em" }}>FACET</h1>
+                    <h1 style={{ marginTop: 0, marginBottom: 0, fontSize: "2.5em", alignSelf: 'center' }}>
+                        FACET
+                    </h1>
+                </div>
+
+                <div id="scenario-section" className="card scenario-section" style={{ maxWidth: 575 }}>
+                    <ScenarioSection
+                        savedScenarios={savedScenarios}
+                        setSavedScenarios={setSavedScenarios}
+                        setCurrentExplanationIndex={setCurrentExplanationIndex}
+                        setSelectedInstance={setSelectedInstance}
+                    />
                 </div>
 
                 <div id="feature-controls" className="card feature-controls">
@@ -376,14 +336,8 @@ function App() {
                     />
                 </div>
 
-                <div id="tab-section" className="card tab-section">
-                    <h2>Tabs</h2>
-                    <div id="tab-list" className="tab-list">
-                    </div>
-                </div>
-
                 <div id="status-section" className="card status-section">
-                    <h2>Application</h2>
+                    <h2>My Application</h2>
                     <StatusDisplay
                         featureDict={featureDict}
                         formatDict={formatDict}
@@ -396,10 +350,9 @@ function App() {
                         <ExplanationSection
                             explanations={explanations}
                             totalExplanations={totalExplanations}
-                            featureDict={featureDict}
                             formatDict={formatDict}
-                            numExplanations={numExplanations}
-                            handleNumExplanations={handleNumExplanations}
+                            currentExplanationIndex={currentExplanationIndex}
+                            setCurrentExplanationIndex={setCurrentExplanationIndex}
                         />
                     }
                     <button onClick={saveScenario}>Save Scenario</button>

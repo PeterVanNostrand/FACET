@@ -19,6 +19,7 @@
         "featurecontrols status"
         "featurecontrols explanation"
         "featurecontrols suggestion";
+    grid-gap: 20px;
 }
 
 /*TABS SECTION*/
@@ -30,28 +31,55 @@
     display: flex;
     flex-direction: row;
     overflow-x: auto;
+    white-space: nowrap;
+    background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+}
+
+.tab-list::-webkit-scrollbar {
+    display: none;
+    /* Hide the scrollbar for WebKit browsers */
 }
 
 .tab {
-    border-style: inset;
+    border: 1.5px solid #cccccc;
+    border-radius: 10px;
     display: flex;
     flex-direction: row;
     margin-right: 0.3vw;
     padding-left: 5pt;
     padding-right: 5pt;
+    height: auto;
+    width: auto;
 }
 
 .tab:hover {
     border-color: #eeeeee;
     background-color: #eeeeee;
+    cursor: default;
 }
 
-.tab button {
-    background-color: white;
-    border: none;
-    height: 5vh;
-    width: auto;
+.tab p {
+    margin-left: 5px;
+    margin-right: 10px;
+}
+
+.tab-close {
+    background-color: transparent;
     padding: 0;
+    margin: 0;
+    color: black;
+    display: flex;
+    align-self: center;
+}
+
+.tab-close:hover {
+    background-color: #dedede;
+}
+
+.clear-scenarios {
+    margin: 10px 10px 10px 15px;
+    cursor: pointer;
+    color: #2d6cff
 }
 
 .welcome {
