@@ -153,7 +153,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
     const FeatureControl = ({ id, x, units, title, current_value, min, max, priority, lock_state, pin_state, min_range, max_range }) => {
         const [isLocked, setIsLocked] = useState(lock_state);
         const [isPinned, setIsPinned] = useState(pin_state);
-        const [editedPriority, setPriority] = useState(priority);
+        const [editedPriority, setEditedPriority] = useState(priority);
         const [range, setRange] = useState([min_range, max_range]);
         const min_distance = 1; // between min_range and max_range
 
@@ -161,6 +161,10 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
         useEffect(() => {
         }, [isLocked], [isPinned]);
 
+        useEffect(() => {
+            setEditedPriority(editedPriority);
+        }, [editedPriority]);
+        
         const handleSliderChangeCommitted = () => {
             handleSliderConstraintChange(id, range[0], range[1]);
         };
@@ -220,27 +224,44 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
 
         // PRIORITY (inputs): 
         const handlePriorityInputBlur = (event) => {
+            setEditedPriority(event);
             // Check if the edited priority is different from the current priority
             if (editedPriority !== priority) {
-                // Call the function to update the priorit
-                //handlePriorityChange(id, editedPriority);
+                // Call the function to update the priority
+                handlePriorityInputChange(editedPriority);
             }
+            else {
+                // If the edited priority is the same as the previous priority, reset the input field
+                setTimeout(() => {
+                    setEditedPriority(priority);
+                }, 1500);
+            }
+            
         };
 
         const handlePriorityInputChange = (event) => {
+            setEditedPriority(event);
             const target_priority = parseInt(event.target.value, 10);
             // Check if the new value is within valid range and different from the current priority
             if (!isNaN(target_priority) && target_priority >= 1 && target_priority <= features.length && target_priority !== priority) {
                 // Check target_priority pin_state
                 if (checkPinState(target_priority)) {
+                    setTimeout(() => {
+                        setEditedPriority(priority);
+                    }, 1500);
                     return;
                 }
                 else {
-                    setPriority(target_priority);
-                    handlePriorityChange(id, target_priority);
+                    setEditedPriority(target_priority);
+                    setTimeout(() => {
+                        handlePriorityChange(id, target_priority);
+                    }, 500);
                 }
             }
             else {
+                setTimeout(() => {
+                    setEditedPriority(priority);
+                }, 1500);
                 return;
             }
         };
