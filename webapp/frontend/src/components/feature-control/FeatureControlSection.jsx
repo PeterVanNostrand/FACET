@@ -275,7 +275,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
         };
 
         return (
-            <div className={`feature-control-box ${isLocked ? 'locked' : ''}`}>
+            <div className={`feature-control-box ${isPinned ? 'pinned' : ''}`}>
                 <h1 className='feature-title'>{title} {units && `(${units})`}</h1>
                 {/* Locks*/}
                 <div className='lock'>
@@ -304,7 +304,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                     alt='arrow down'
                 />
                 {/* Priority Value*/}
-                <input className='priority-value'
+                <input className='priority-value priority-value-input'
                     type="number"
                     value={editedPriority}
                     onChange={handlePriorityInputChange}
@@ -330,6 +330,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                         max={max}
                         min={min}
                         marks={slider_marks}
+                        disabled={isLocked}
                         disableSwap
                     />
                 </div>
