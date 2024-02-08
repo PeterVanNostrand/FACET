@@ -242,3 +242,7 @@ button:disabled {
     padding: 15px;
     border-radius: 10px;
 }
+
+.explanationLine {
+    margin-left: auto;
+}

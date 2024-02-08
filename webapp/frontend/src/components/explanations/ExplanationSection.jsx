@@ -29,7 +29,8 @@ const ExplanationSection = (
                         explanations[explanations.length === 1 ? 0 : currentExplanationIndex]
                     ).map((key, innerIndex) => (
                         <div key={innerIndex} style={{ display: 'flex', flexDirection: 'row' }}>
-                            <h3>
+                            {/* style={{ minWidth: 180 }} */}
+                            <h3 >
                                 {formatFeature(key, formatDict)}
                             </h3>
                             <NumberLine

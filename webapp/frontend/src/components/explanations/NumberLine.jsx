@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
 import { select } from 'd3';
+import React, { useEffect, useRef } from 'react';
 import { numberLineBuilder } from '../../js/numberLineBuilder';
 
 const NumberLine = ({ explanation, i, id }) => {
@@ -16,7 +16,7 @@ const NumberLine = ({ explanation, i, id }) => {
                 .attr('height', 60)
                 .attr('fill', 'white')
                 .attr('id', `image_svg_${id}`)
-                
+
             : existingSvg;
 
         let visualDisplay = numberLineBuilder(explanation, i);
@@ -29,7 +29,7 @@ const NumberLine = ({ explanation, i, id }) => {
     }, [explanation, i, id]);
 
     return (
-        <div id={`${id}`} ref={svgRef}></div>
+        <div id={`${id}`} ref={svgRef} className="explanationLine"></div>
     );
 };
 
