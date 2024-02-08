@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import NumberLine from './NumberLine';
+import React from 'react';
 import { formatFeature } from "../../js/utilities.js";
+import NumberLine from './NumberLine';
 
 const ExplanationSection = (
     { explanations, totalExplanations, formatDict, currentExplanationIndex, setCurrentExplanationIndex }
@@ -29,7 +29,7 @@ const ExplanationSection = (
                         explanations[explanations.length === 1 ? 0 : currentExplanationIndex]
                     ).map((key, innerIndex) => (
                         <div key={innerIndex} style={{ display: 'flex', flexDirection: 'row' }}>
-                            <h3 style={{ minWidth: 180 }}>
+                            <h3>
                                 {formatFeature(key, formatDict)}
                             </h3>
                             <NumberLine

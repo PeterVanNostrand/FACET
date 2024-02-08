@@ -1,7 +1,9 @@
 import numpy as np
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-import json, os, sys
+import json
+import os
+import sys
 from webapp.app_utilities import run_facet, parse_dataset_info
 from dataset import get_json_paths, DataInfo
 
@@ -97,7 +99,10 @@ def facet_explanation():
         instance = DS_INFO.dict_to_point(data["instance"])
         instance = DS_INFO.scale_points(instance)
         weights = DS_INFO.dict_to_point(data["weights"])  # get vector
+        print("weights")
+        print(weights)
         weights = np.nan_to_num(weights, nan=1.0)
+        weights[weights == 0] = 1.0
         constraints = np.array(data.get("constraints", None)).astype(float)
         constraints = DS_INFO.scale_rects(constraints)[0]
         num_explanations = data.get("num_explanations", 1)
@@ -124,7 +129,7 @@ def facet_explanation():
 
             if len(unique_regions) == num_explanations:
                 break
-        
+
         unique_regions = [np.array(arr) for arr in unique_regions]
 
         unscaled_regions = [DS_INFO.unscale_rects(region) for region in unique_regions]

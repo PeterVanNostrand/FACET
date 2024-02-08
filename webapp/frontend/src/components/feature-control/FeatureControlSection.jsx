@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import Slider from '@mui/material/Slider';
+import React, { useEffect, useState } from 'react';
 import arrowSVG from '../../../icons/Arrow.svg';
 import lockSVG from '../../../icons/Lock.svg';
-import unlockSVG from '../../../icons/UnLocked.svg';
 import pinSVG from '../../../icons/Pinned.svg';
+import unlockSVG from '../../../icons/UnLocked.svg';
 import unpinSVG from '../../../icons/UnPinned.svg';
-import Slider from '@mui/material/Slider';
-import IconButton from '@mui/material/IconButton';
 import '../../css/feature-control.css';
 
 const FeatureControlSection = ({ features, setFeatures, constraints, setConstraints }) => {
@@ -141,7 +140,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
     const checkPinState = (target_priority) => {
         const targetFeatureIndex = features.findIndex((feature) => feature.priority === target_priority);
         const targetFeature = features[targetFeatureIndex];
-        
+
         if (targetFeature && targetFeature.pin_state) {
             console.log(`Target Feature (ID: ${targetFeature.id}) is Pinned`);
             return true;
@@ -150,7 +149,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
         }
     };
 
-    
+
     const FeatureControl = ({ id, x, units, title, current_value, min, max, priority, lock_state, pin_state, min_range, max_range }) => {
         const [isLocked, setIsLocked] = useState(lock_state);
         const [isPinned, setIsPinned] = useState(pin_state);
@@ -168,7 +167,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
 
         // ARROW: Priority List Traversal 
         const handleArrowDownClick = () => {
-            const target_priority = priority + 1; 
+            const target_priority = priority + 1;
 
             if (isPinned) {
                 console.log(`${title}: is Pinnned`);
@@ -176,7 +175,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
             else {
                 if (priority < features.length) {
                     if (checkPinState(target_priority)) {
-                        return; 
+                        return;
                     }
                     else {
                         handlePriorityChange(id, target_priority);
@@ -188,13 +187,13 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
         };
 
         const handleArrowUpClick = () => {
-            const target_priority = priority - 1; 
+            const target_priority = priority - 1;
             if (isPinned) {
                 console.log(`${title}: is Pinned`);
             } else {
                 if (priority > 1) {
                     if (checkPinState(target_priority)) {
-                        return; 
+                        return;
                     }
                     else {
                         handlePriorityChange(id, target_priority);
@@ -234,15 +233,15 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
             if (!isNaN(target_priority) && target_priority >= 1 && target_priority <= features.length && target_priority !== priority) {
                 // Check target_priority pin_state
                 if (checkPinState(target_priority)) {
-                    return; 
+                    return;
                 }
                 else {
                     setPriority(target_priority);
                     handlePriorityChange(id, target_priority);
                 }
-            } 
+            }
             else {
-                return; 
+                return;
             }
         };
 
@@ -254,7 +253,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
         const slider_marks = [
             {
                 value: current_value,
-                label: 'Current Value',
+                label: 'Current',
             },
         ];
 
@@ -315,24 +314,24 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                             handlePriorityInputBlur();
                         }
                     }}
-                     pattern="[0-9]*"
+                    pattern="[0-9]*"
                 />
                 {/* Sliders */}
                 <div className='slider'>
-                        <Slider
-                            className='constraint-slider'
-                            value={range}
-                            onChange={handleSliderChange}
-                            onMouseUp={() => {
-                                handleSliderChangeCommitted();
-                            }}
-                            valueLabelDisplay="auto"
-                            getAriaValueText={rangeText}
-                            max={max}
-                            min={min}
-                            marks={slider_marks}
-                            disableSwap
-                        />
+                    <Slider
+                        className='constraint-slider'
+                        value={range}
+                        onChange={handleSliderChange}
+                        onMouseUp={() => {
+                            handleSliderChangeCommitted();
+                        }}
+                        valueLabelDisplay="auto"
+                        getAriaValueText={rangeText}
+                        max={max}
+                        min={min}
+                        marks={slider_marks}
+                        disableSwap
+                    />
                 </div>
             </div>
         );

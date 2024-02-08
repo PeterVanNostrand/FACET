@@ -9,22 +9,54 @@
     color: black;
 }
 
-/* MAIN APP SCREEN LAYOUT */
+/* START GRID LAYOUT */
 
 .super-div {
     display: grid;
+    /* grid-template-rows: auto; */
+    /* grid-template-rows: 100px 100px 100px 100px; */
     grid-template-rows: auto;
+    grid-template-columns: auto;
     grid-template-areas:
-        "welcome tabs"
-        "featurecontrols status"
-        "featurecontrols explanation"
-        "featurecontrols suggestion";
+        "backGrid scenarioGrid"
+        "featureControlGrid statusGrid"
+        "featureControlGrid explanationGrid"
+        "featureControlGrid suggestionGrid";
     grid-gap: 20px;
 }
 
-/*TABS SECTION*/
-.tab-section {
-    grid-area: tabs;
+#status-grid {
+    grid-area: statusGrid;
+}
+
+#scenario-grid {
+    grid-area: scenarioGrid;
+    max-width: 575px;
+}
+
+#back-welcome {
+    grid-area: backGrid;
+}
+
+#feature-controls-grid {
+    grid-area: featureControlGrid;
+}
+
+#explanation-grid {
+    grid-area: explanationGrid;
+}
+
+#suggestion-grid {
+    grid-area: suggestionGrid;
+}
+
+/* END GRID LAYOUT */
+
+#app-logo {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    font-size: 2.5em;
+    align-self: center;
 }
 
 .tab-list {
@@ -35,9 +67,11 @@
     background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
 }
 
+*/
+
+/* Hide the scrollbar for WebKit browsers */
 .tab-list::-webkit-scrollbar {
     display: none;
-    /* Hide the scrollbar for WebKit browsers */
 }
 
 .tab {
@@ -82,23 +116,129 @@
     color: #2d6cff
 }
 
-.welcome {
-    grid-area: welcome;
+:root {
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1;
+    font-weight: 400;
+
+    color: #213547;
+    background-color: #eeeeee;
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: 100%;
+    padding: 20;
 }
 
-.feature-controls {
-    grid-area: featurecontrols;
+body {
+    margin: 0;
+    display: flex;
+    min-width: 320px;
 }
 
-.status-section {
-    grid-area: status;
+h1 {
+    font-size: 3.2em;
+    line-height: 1.1;
 }
 
-.explanation {
-    grid-area: explanation;
+h2 {
+    margin-top: 5px;
 }
 
-.suggestion {
-    grid-area: suggestion;
-    margin-bottom: 0px;
+button {
+    border-radius: 8px;
+    border: 0px solid transparent;
+    padding: 0.6em 1.2em;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    color: white;
+    background-color: #0090ff;
+}
+
+button:hover {
+    background-color: #007ede;
+}
+
+button:disabled {
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+
+.cycle-button {
+    background-color: #ffffff;
+    color: black;
+}
+
+.cycle-button:hover {
+    background-color: #eeeeee;
+}
+
+
+#root {
+    /* max-width: 1280px; */
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.card {
+    background-color: white;
+    box-shadow: 0 0 1em #00000022;
+    border-radius: 15px;
+    padding: 1em;
+}
+
+.toggle {
+    background-color: white;
+    color: black;
+    border-radius: 0px;
+}
+
+.toggle:hover {
+    background-color: #eeeeee;
+}
+
+.selected {
+    border: 2px solid #0090ff;
+    background-color: #eeeeee;
+}
+
+.selected:hover {
+    border: 2px solid #0090ff;
+    background-color: #eeeeee;
+}
+
+.feature {
+    margin-right: 10px;
+}
+
+.tick-label {
+    color: var(--text-color);
+}
+
+.back-welcome-button {
+    background-color: #ffffff;
+    color: black;
+    align-self: center;
+}
+
+.back-welcome-button:hover {
+    background-color: #eeeeee;
+}
+
+.explanation-list {
+    display: flex;
+    flex-direction: column;
+    box-shadow: inset 0 0 10px 5px rgba(0, 0, 0, 0.03);
+    margin-bottom: 15px;
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: 10px;
 }
