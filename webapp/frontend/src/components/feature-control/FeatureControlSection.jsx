@@ -252,8 +252,16 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
 
         const slider_marks = [
             {
+                value: min,
+                label: min,
+            },
+            {
                 value: current_value,
-                label: 'Current',
+                label: current_value,
+            },
+            {
+                value: max,
+                label: max,
             },
         ];
 
