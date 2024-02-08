@@ -123,7 +123,7 @@ function App() {
         const fetchHumanFormat = async () => {
             try {
                 const response = await axios.get(ENDPOINT + "/human_format");
-                status_log("Sucessfully loaded human format dictionary!", SUCCESS)
+                status_log("Sucessfully loaded human format dictionary!", SUCCESS);
                 return response.data
             }
             catch (error) {
