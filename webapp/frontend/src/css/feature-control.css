@@ -1,16 +1,31 @@
+.hidden {
+    display: none;
+}
+
 /* Feature Control Tab */
 
 .feature-control-tab-card {
     position: relative;
 }
 
-.feature-control-tab-title {
-    height: 40px;
-    font-size: 30px;
-    font-weight: bold;
-    text-align: center;
+.feature-control-header {
+    display: grid;
+    height: 50px;
+    width: 393px;
+    grid-template-columns: 20% 80%;
+    grid-template-areas:
+    "toggle secTile"; 
 }
 
+.feature-control-tab-title {
+    font-size: 30px;
+    font-weight: bold;
+    grid-area: secTile;
+}
+
+.priority-toggle {
+    grid-area: toggle;
+}
 .information {
     height: 30px;
     width: 30px;

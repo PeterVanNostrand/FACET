@@ -1,13 +1,14 @@
 import axios, { AxiosError } from 'axios';
 import { useEffect, useState } from 'react';
 import webappConfig from '../../config.json';
-import ScenarioSection from './components/ScenarioSection.jsx';
 import StatusDisplay from './components/StatusDisplay.jsx';
-import ExplanationSection from './components/explanations/ExplanationSection.jsx';
-import FeatureControlSection from './components/feature-control/FeatureControlSection.jsx';
 import WelcomeScreen from './components/welcome/WelcomeSceen.jsx';
-
 import './css/style.css';
+
+import close from '../icons/close.svg';
+import ScenarioSection from './components/ScenarioSection.jsx';
+import ExplanationSection from './components/explanations/ExplanationSection';
+import FeatureControlSection from './components/feature-control/FeatureControlSection.jsx';
 
 const SERVER_URL = webappConfig.SERVER_URL
 const API_PORT = webappConfig.API_PORT
@@ -155,7 +156,7 @@ function App() {
 
     const [isWelcome, setIsWelcome] = useState(false);
     const [showWelcomeScreen, setShowWelcomeScreen] = useState(false);
-
+    const [keepPriority, setKeepPriority] = useState(true); 
 
     // useEffect to fetch instances data when the component mounts
     useEffect(() => {
@@ -237,18 +238,18 @@ function App() {
                 console.log("Features: Reached populating");
                 // populate features
                 let priorityValue = 1;
-
+    
                 const newFeatures = Object.entries(formatDict.feature_names).map(([key, value], index) => {
                     const currentValue = selectedInstance[key];
                     const isZero = currentValue === 0; // checks if current feature value = zero
-
+    
                     const default_max = 1000;
                     const default_max_range = 500;
                     const default_min_range = 0;
-
+    
                     const lowerConstraint = constraints[index][0]
                     const upperConstraint = constraints[index][1]
-
+    
                     return {
                         id: value,
                         x: key,
@@ -264,7 +265,7 @@ function App() {
                         max_range: upperConstraint,
                     };
                 });
-
+    
                 setFeatures(newFeatures);
                 console.log("features: ", features);
             }
@@ -352,13 +353,14 @@ function App() {
     } else {
         return (
             <div id="super-div" className="super-div">
-                <script>0</script>
-                <div id="back-welcome" className="card">
+                <div id="back-welcome" className="card welcome" style={{ display: 'flex' }}>
                     <button className="back-welcome-button" onClick={backToWelcomeScreen}>← Welcome Screen</button>
-                    <h1 id="app-logo">FACET</h1>
+                    <h1 style={{ marginTop: 0, marginBottom: 0, fontSize: "2.5em", alignSelf: 'center' }}>
+                        FACET
+                    </h1>
                 </div>
 
-                <div id="scenario-grid" className="card">
+                <div id="scenario-section" className="card scenario-section" style={{ maxWidth: 575 }}>
                     <ScenarioSection
                         savedScenarios={savedScenarios}
                         setSavedScenarios={setSavedScenarios}
@@ -367,16 +369,18 @@ function App() {
                     />
                 </div>
 
-                <div id="feature-controls-grid" className="card">
+                          <div id="feature-controls" className="card feature-controls-tab">
                     <FeatureControlSection
                         features={features}
                         setFeatures={setFeatures}
                         constraints={constraints}
                         setConstraints={setConstraints}
+                        keepPriority={keepPriority}
+                        setKeepPriority={setKeepPriority}
                     />
                 </div>
 
-                <div id="status-grid" className="card">
+                <div id="status-section" className="card status-section">
                     <h2>My Application</h2>
                     <StatusDisplay
                         featureDict={featureDict}
@@ -385,8 +389,7 @@ function App() {
                     />
                 </div>
 
-                <div id="explanation-grid" className="card">
-                    <h2>My Explanation</h2>
+                <div id="explanation" className="card explanation">
                     {totalExplanations.length > 0 &&
                         <ExplanationSection
                             explanations={explanations}
@@ -399,7 +402,7 @@ function App() {
                     <button onClick={saveScenario}>Save Scenario</button>
                 </div>
 
-                <div id="suggestion-grid" className="card">
+                <div id="suggestion" className="card suggestion">
                     <p>suggestions</p>
                 </div>
             </div>

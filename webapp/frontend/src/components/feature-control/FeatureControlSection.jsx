@@ -1,5 +1,7 @@
 import Slider from '@mui/material/Slider';
 import React, { useEffect, useState } from 'react';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
 import arrowSVG from '../../../icons/Arrow.svg';
 import lockSVG from '../../../icons/Lock.svg';
 import pinSVG from '../../../icons/Pinned.svg';
@@ -7,7 +9,7 @@ import unlockSVG from '../../../icons/UnLocked.svg';
 import unpinSVG from '../../../icons/UnPinned.svg';
 import '../../css/feature-control.css';
 
-const FeatureControlSection = ({ features, setFeatures, constraints, setConstraints }) => {
+const FeatureControlSection = ({ features, setFeatures, constraints, setConstraints, keepPriority, setKeepPriority }) => {
     const feature_tab_title = 'Feature Controls';
 
     const handleSliderConstraintChange = (id, minRange, maxRange) => {
@@ -149,6 +151,9 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
         }
     };
 
+    const handleSwitchChange = (event) => {
+        setKeepPriority(event.target.checked);
+    };
 
     const FeatureControl = ({ id, x, units, title, current_value, min, max, priority, lock_state, pin_state, min_range, max_range }) => {
         const [isLocked, setIsLocked] = useState(lock_state);
@@ -164,7 +169,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
         useEffect(() => {
             setEditedPriority(editedPriority);
         }, [editedPriority]);
-        
+
         const handleSliderChangeCommitted = () => {
             handleSliderConstraintChange(id, range[0], range[1]);
         };
@@ -236,7 +241,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                     setEditedPriority(priority);
                 }, 1500);
             }
-            
+
         };
 
         const handlePriorityInputChange = (event) => {
@@ -315,7 +320,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
 
                 </div>
                 {/* PIN functionalitiy commented out bc of bugs*/}
-                <div className='pin'>
+                <div className={`pin ${keepPriority ? '' : 'hidden'}`}>
                     <img
                         src={isPinned ? pinSVG : unpinSVG}
                         alt={isPinned ? 'Pin' : 'UnPin'}
@@ -324,16 +329,18 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                     />
                 </div>
                 {/* Arrows */}
-                <img className='arrow-up' onClick={handleArrowUpClick}
+                <img className={`arrow-up ${keepPriority ? '' : 'hidden' }`}
+                    onClick={handleArrowUpClick}
                     src={arrowSVG}
                     alt='arrow up'
                 />
-                <img className='arrow-down' onClick={handleArrowDownClick}
+                <img className={`arrow-down ${keepPriority ? '' : 'hidden'}`}
+                    onClick={handleArrowDownClick}
                     src={arrowSVG}
                     alt='arrow down'
                 />
                 {/* Priority Value*/}
-                <input className='priority-value priority-value-input'
+                <input className={`priority-value priority-value-input ${keepPriority ? '' : 'hidden'}`}
                     type="number"
                     value={editedPriority}
                     onChange={handlePriorityInputChange}
@@ -370,7 +377,14 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
 
     return (
         <div className="feature-control-tab">
-            <div className="feature-control-tab-title">{feature_tab_title}</div>
+            <div className='feature-control-header'>
+                <Switch
+                    className='priority-toggle'
+                    checked={keepPriority}
+                    onChange={handleSwitchChange}
+                />
+                <div className="feature-control-tab-title">{feature_tab_title}</div>
+            </div>
             {features.map((feature) => (
                 <FeatureControl key={feature.id} {...feature} onNumberLineChange={handleSliderConstraintChange} />
             ))}
