@@ -13,8 +13,6 @@
 
 .super-div {
     display: grid;
-    /* grid-template-rows: auto; */
-    /* grid-template-rows: 100px 100px 100px 100px; */
     grid-template-rows: auto;
     grid-template-columns: auto;
     grid-template-areas:
@@ -34,9 +32,12 @@
     max-width: 575px;
 }
 
-#back-welcome {
+#back-welcome-grid {
     grid-area: backGrid;
+    display: 'flex';
 }
+
+
 
 #feature-controls-grid {
     grid-area: featureControlGrid;

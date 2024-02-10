@@ -1,7 +1,6 @@
 import Slider from '@mui/material/Slider';
-import React, { useEffect, useState } from 'react';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
+import React, { useEffect, useState } from 'react';
 import arrowSVG from '../../../icons/Arrow.svg';
 import lockSVG from '../../../icons/Lock.svg';
 import pinSVG from '../../../icons/Pinned.svg';
@@ -329,7 +328,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                     />
                 </div>
                 {/* Arrows */}
-                <img className={`arrow-up ${keepPriority ? '' : 'hidden' }`}
+                <img className={`arrow-up ${keepPriority ? '' : 'hidden'}`}
                     onClick={handleArrowUpClick}
                     src={arrowSVG}
                     alt='arrow up'
@@ -378,12 +377,12 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
     return (
         <div className="feature-control-tab">
             <div className='feature-control-header'>
+                <div className="feature-control-tab-title">{feature_tab_title}</div>
                 <Switch
                     className='priority-toggle'
                     checked={keepPriority}
                     onChange={handleSwitchChange}
                 />
-                <div className="feature-control-tab-title">{feature_tab_title}</div>
             </div>
             {features.map((feature) => (
                 <FeatureControl key={feature.id} {...feature} onNumberLineChange={handleSliderConstraintChange} />

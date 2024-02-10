@@ -12,9 +12,9 @@
     display: grid;
     height: 50px;
     width: 393px;
-    grid-template-columns: 20% 80%;
+    grid-template-columns: 80% 20%;
     grid-template-areas:
-    "toggle secTile"; 
+        "secTile toggle";
 }
 
 .feature-control-tab-title {
@@ -26,6 +26,7 @@
 .priority-toggle {
     grid-area: toggle;
 }
+
 .information {
     height: 30px;
     width: 30px;
