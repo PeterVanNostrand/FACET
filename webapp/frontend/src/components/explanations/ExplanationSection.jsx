@@ -23,13 +23,27 @@ const ExplanationSection = (
                 Explanations
             </h2>
 
-            <div className="explanation-list">
-                <div>
+            <div className="explanation-container">
+                <div className="explanation-list" >
                     {Object.keys(
                         explanations[explanations.length === 1 ? 0 : currentExplanationIndex]
                     ).map((key, innerIndex) => (
                         <div key={innerIndex} style={{ display: 'flex', flexDirection: 'row' }}>
-                            {/* style={{ minWidth: 180 }} */}
+                            <h3 >
+                                {formatFeature(key, formatDict)}
+                            </h3>
+                            <NumberLine
+                                key={innerIndex}
+                                explanation={totalExplanations[explanations.length === 1 ? 0 : currentExplanationIndex]}
+                                i={innerIndex}
+                                id={`number-line-container-${currentExplanationIndex}-${innerIndex}`}
+                            />
+                        </div>
+                    ))}
+                    {Object.keys(
+                        explanations[explanations.length === 1 ? 0 : currentExplanationIndex]
+                    ).map((key, innerIndex) => (
+                        <div key={innerIndex} style={{ display: 'flex', flexDirection: 'row' }}>
                             <h3 >
                                 {formatFeature(key, formatDict)}
                             </h3>
