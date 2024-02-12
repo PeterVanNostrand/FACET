@@ -715,6 +715,9 @@ class FACETIndex(Explainer):
         """
         xprime = []
         regions = []
+        
+        print('constraints facet', constraints)
+        print('weights facet', weights)
 
         # assumimg binary classification [0, 1] set counterfactual class
         counterfactual_classes = (y - 1) * -1

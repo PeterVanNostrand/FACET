@@ -100,8 +100,6 @@ def facet_explanation():
         instance = DS_INFO.scale_points(instance)
         weights = DS_INFO.dict_to_point(data["weights"])
         print("weights", weights)
-        weights = np.nan_to_num(weights, nan=1.0)
-        weights[weights == 0] = 1.0
         constraints = np.array(data.get("constraints", None)).astype(float)
         constraints = DS_INFO.scale_rects(constraints)[0]
         num_explanations = data.get("num_explanations", 1)
@@ -128,6 +126,7 @@ def facet_explanation():
 
             if len(unique_regions) == num_explanations:
                 break
+
 
         unique_regions = [np.array(arr) for arr in unique_regions]
 

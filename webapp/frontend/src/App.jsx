@@ -159,7 +159,6 @@ function App() {
     const [showWelcomeScreen, setShowWelcomeScreen] = useState(false);
     const [keepPriority, setKeepPriority] = useState(true);
 
-
     // fetch instances data when the component mounts
     useEffect(() => {
         status_log("Using endpoint " + ENDPOINT, SUCCESS)
@@ -213,6 +212,10 @@ function App() {
         }));
         setTotalExplanations(instanceAndExpls);
     }, [explanations])
+
+    useEffect(() => {
+        console.log('priorities', priorities)
+    }, [priorities])
 
     // when feature controls are loaded/updated, update the priorities
     useEffect(() => {
