@@ -1,4 +1,4 @@
-import Feature from './FeatureDisplay.jsx';
+import Feature from './Feature.jsx';
 import { formatFeature, formatValue } from "../js/utilities.js";
 
 export const StatusDisplay = ({ featureDict, formatDict, selectedInstance }) => {

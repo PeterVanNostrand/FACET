@@ -105,9 +105,25 @@
     color: black;
     display: flex;
     align-self: center;
+    margin-left: auto;
+    margin-right: 50px;
 }
 
 .tab-close:hover {
+    background-color: #dedede;
+}
+
+
+.tab-close-scenario {
+    background-color: transparent;
+    padding: 0;
+    margin: 0;
+    color: black;
+    display: flex;
+    align-self: center;
+}
+
+.tab-close-scenario:hover {
     background-color: #dedede;
 }
 

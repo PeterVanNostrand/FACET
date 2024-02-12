@@ -2,13 +2,12 @@ import axios, { AxiosError } from 'axios';
 import { useEffect, useState } from 'react';
 import webappConfig from '../../config.json';
 import StatusDisplay from './components/StatusDisplay.jsx';
-import WelcomeScreen from './components/welcome/WelcomeSceen.jsx';
+import WelcomeScreen from './components/welcome/WelcomeScreen.jsx';
 import './css/style.css';
 
 import ScenarioSection from './components/ScenarioSection.jsx';
 import ExplanationSection from './components/explanations/ExplanationSection';
 import FeatureControlSection from './components/feature-control/FeatureControlSection.jsx';
-import { format } from 'd3';
 
 const SERVER_URL = webappConfig.SERVER_URL
 const API_PORT = webappConfig.API_PORT
@@ -150,14 +149,14 @@ function App() {
     const [featureDict, setFeatureDict] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
+    const [keepPriority, setKeepPriority] = useState(true);
     const [constraints, setConstraints] = useState([
         [1000, 1600], [0, 10], [6000, 10000], [300, 500]
     ]);
     const [priorities, setPriorities] = useState(null);
 
-    const [isWelcome, setIsWelcome] = useState(false);
-    const [showWelcomeScreen, setShowWelcomeScreen] = useState(false);
-    const [keepPriority, setKeepPriority] = useState(true);
+    const [isWelcome, setIsWelcome] = useState(true);
+    const [applicationType, setApplicationType] = useState("Applicant");
 
     // fetch instances data when the component mounts
     useEffect(() => {
@@ -324,26 +323,38 @@ function App() {
 
 
     const backToWelcomeScreen = () => {
-        setShowWelcomeScreen(true);
+        setIsWelcome(true);
     }
 
-    const welcome = WelcomeScreen(showWelcomeScreen, setShowWelcomeScreen, selectedInstance, setSelectedInstance)
+    // const welcome = WelcomeScreen(isWelcome, setIsWelcome, selectedInstance, setSelectedInstance)
 
     if (isLoading) {
         return <></>
     }
-    else if (showWelcomeScreen) {
-        let welcomeContent = welcome
+    else if (isWelcome) {
+        return (
+            <WelcomeScreen
+                instances={applications}
+                selectedInstance={selectedInstance}
+                setSelectedInstance={setSelectedInstance}
+                setIsWelcome={setIsWelcome}
+                formatDict={formatDict}
+                featureDict={featureDict}
+                applicationType={applicationType}
+                setApplicationType={setApplicationType}
+            />
+        )
+        // let welcomeContent = welcome
 
-        if (welcomeContent["status"] == "Display") {
-            return welcomeContent["content"]
-        } else {
-            setShowWelcomeScreen(false);
+        // if (welcomeContent["status"] == "Display") {
+        //     return welcomeContent["content"]
+        // } else {
+        //     setIsWelcome(false);
 
-            if (welcomeContent["content"] != null) {
-                setSelectedInstance(welcomeContent["content"])
-            }
-        }
+        //     if (welcomeContent["content"] != null) {
+        //         setSelectedInstance(welcomeContent["content"])
+        //     }
+        // }
     } else {
         return (
             <div id="super-div" className="super-div">

@@ -44,7 +44,7 @@ const ScenarioSection = ({ savedScenarios, setSavedScenarios, setCurrentExplanat
                             <p>
                                 Scenario {scenario.scenarioID}.{scenario.explanationIndex + 1}
                             </p>
-                            <button className="tab-close" onClick={() => deleteScenario(index)}>
+                            <button className="tab-close-scenario" onClick={() => deleteScenario(index)}>
                                 <img src={close} alt="close" />
                             </button>
                         </div>
