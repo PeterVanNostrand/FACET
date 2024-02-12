@@ -1,13 +1,21 @@
 import React, { useState } from 'react';
 import close from '../../icons/close.svg';
 
-const ScenarioSection = ({ savedScenarios, setSavedScenarios, setCurrentExplanationIndex, setSelectedInstance }) => {
+const ScenarioSection = (
+    { savedScenarios,
+        setSavedScenarios,
+        setCurrentExplanationIndex,
+        setSelectedInstance,
+        setConstraints
+    }) => {
     const [selectedScenarioIndex, setSelectedScenarioIndex] = useState(null);
 
     const handleScenarioChange = (scenario, index) => {
-        setSelectedInstance(scenario.values)
+        setSelectedInstance(scenario.instance)
         setCurrentExplanationIndex(scenario.explanationIndex);
         setSelectedScenarioIndex(index);
+        setConstraints(scenario.constraints);
+        console.log('const', scenario.constraints)
     }
 
     const deleteScenario = (index) => {

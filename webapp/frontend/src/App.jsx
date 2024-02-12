@@ -198,8 +198,10 @@ function App() {
         pageLoad();
     }, []);
 
+
     useEffect(() => {
         handleExplanations();
+        console.log('updated constraintsw')
     }, [selectedInstance, numExplanations, constraints]);
 
     //fetches the weights of the features
@@ -234,8 +236,6 @@ function App() {
     useEffect(() => {
         try {
             if (formatDict) {
-                console.log("Features: Reached populating");
-                // populate features
                 let priorityValue = 1;
 
                 const newFeatures = Object.entries(formatDict.feature_names).map(([key, value], index) => {
@@ -314,23 +314,18 @@ function App() {
     const saveScenario = () => {
         const newScenario = {
             scenarioID: savedScenarios.length + 1,
-            values: selectedInstance,
+            instance: selectedInstance,
             explanationIndex: currentExplanationIndex,
-            featureControls: [...constraints]
+            constraints: [...constraints]
         };
 
         setSavedScenarios([...savedScenarios, newScenario]);
     }
 
 
-    const handleNumExplanations = (numExplanations) => () => {
-        setNumExplanations(numExplanations);
-    }
-
     const backToWelcomeScreen = () => {
         setShowWelcomeScreen(true);
     }
-
 
     const welcome = WelcomeScreen(showWelcomeScreen, setShowWelcomeScreen, selectedInstance, setSelectedInstance)
 
@@ -365,6 +360,7 @@ function App() {
                         setSavedScenarios={setSavedScenarios}
                         setCurrentExplanationIndex={setCurrentExplanationIndex}
                         setSelectedInstance={setSelectedInstance}
+                        setConstraints={setConstraints}
                     />
                 </div>
 
