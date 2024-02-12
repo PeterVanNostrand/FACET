@@ -234,7 +234,7 @@ button:disabled {
     background-color: #eeeeee;
 }
 
-.explanation-list {
+.explanation-container {
     display: flex;
     flex-direction: column;
     box-shadow: inset 0 0 10px 5px rgba(0, 0, 0, 0.03);
@@ -242,6 +242,11 @@ button:disabled {
     margin-top: 15px;
     padding: 15px;
     border-radius: 10px;
+}
+
+.explanation-list {
+    max-height: 250px;
+    overflow: auto;
 }
 
 .explanationLine {
