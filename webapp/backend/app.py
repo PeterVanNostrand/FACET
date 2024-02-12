@@ -84,12 +84,12 @@ def facet_explanation():
     ----------
     `instance`: a dictionary with the instance values like {x0: value, ..., xn: value}
     `weights`: a dictionary with the weights values like {x0: weight, ..., xn: weight}
-    `k`: TODO an integer for the number of explantions to generate
-    `constraints`: TODO a dictionary with the constaints values like {x0: [lower, upper], ..., xn: [lower, upper]}
+    `k`: an integer for the number of explantions to generate
+    `constraints`: a dictionary with the constaints values like {x0: [lower, upper], ..., xn: [lower, upper]}
 
     Returns
     -------
-    `regions: TODO an array of regions dictionaries`
+    `regions: an array of regions dictionaries`
     """
 
     try:
@@ -98,9 +98,8 @@ def facet_explanation():
 
         instance = DS_INFO.dict_to_point(data["instance"])
         instance = DS_INFO.scale_points(instance)
-        weights = DS_INFO.dict_to_point(data["weights"])  # get vector
-        print("weights")
-        print(weights)
+        weights = DS_INFO.dict_to_point(data["weights"])
+        print("weights", weights)
         weights = np.nan_to_num(weights, nan=1.0)
         weights[weights == 0] = 1.0
         constraints = np.array(data.get("constraints", None)).astype(float)
@@ -116,7 +115,7 @@ def facet_explanation():
         points, regions = FACET_CORE.explain(
             x=instance,
             y=prediction,
-            k=2*num_explanations,
+            k=2 * num_explanations,
             constraints=constraints,
             weights=weights,
         )

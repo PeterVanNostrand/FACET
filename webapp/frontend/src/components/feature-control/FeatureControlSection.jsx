@@ -51,91 +51,78 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
         }
     };
 
-    const handlePriorityChange = (id, target_priority) => {
+    const handlePriorityChange = (id, targetPriority) => {
         // id:              selected feature id 
         // target_priority: new priority value 
 
         // Find the feature to be updated based on the given feature ID
         const updatedFeature = features.find((feature) => feature.id === id);
-        console.log("Selected Feature: ", updatedFeature);
+        if (!updatedFeature) return;
 
-        // Else: 
-        if (updatedFeature) {
-            const current_priority = updatedFeature.priority;
-            console.log(`Selected Feature (ID: ${id}) current priority:`, current_priority);
+        const currentPriority = updatedFeature.priority;
 
-            let change = 1;
-            // Calculate change
-            const direction = current_priority - target_priority; // +++ value means current priority goes up, --- value means current priority goes down 
+        let change = 1;
+        const direction = currentPriority - targetPriority; // +++ value means current priority goes up, --- value means current priority goes down 
 
-            // Check Targ
-            // Map over the features array to create a new array with updated priorities
-            if (direction < 0) { // selected Feature moves DOWN
-                const index = features.findIndex((feature) => feature.id === id);
-                if (index !== -1) {
-                    let updatedFeatures = [...features]; // Changed from const to let
-                    updatedFeatures[index] = { ...updatedFeatures[index], priority: target_priority };
-                    console.log(`Selected Feature (ID: ${id}) new priority: `, updatedFeatures[index].priority);
+        const index = features.findIndex((feature) => feature.id === id);
+        if (index === -1) return;
 
-                    updatedFeatures = updatedFeatures.map((feature) => {
-                        if (feature.id === id) {
-                            return feature;
-                        }
-                        // check if pinned AND if in range
-                        else if (feature.pin_state && feature.priority > current_priority && feature.priority <= target_priority) {
-                            console.log(`Feature (ID: ${feature.id}) unchanged priority: ${feature.priority}`);
-                            change++;
-                            return feature;
-                            // check if in range
-                        } else if (feature.priority > current_priority && feature.priority <= target_priority) {
-                            console.log(`Feature (ID: ${feature.id}) old priority: ${feature.priority} new priority: ${feature.priority - change}`);
-                            return { ...feature, priority: feature.priority - change };
-                        } else {
-                            return feature;
-                        }
-                    });
+        let updatedFeatures = [...features]; // Changed from const to let
+        updatedFeatures[index] = { ...updatedFeatures[index], priority: targetPriority };
+        console.log(
+            `Selected Feature (ID: ${id}) priority: ${currentPriority} -> ${updatedFeatures[index].priority}`
+        );
 
-                    // Sort the updated features based on priority
-                    updatedFeatures.sort((a, b) => a.priority - b.priority);
-                    console.log(updatedFeatures);
-                    // Reset the features array
-                    setFeatures(updatedFeatures);
+        // Check Targ
+        // Map over the features array to create a new array with updated priorities
+        if (direction < 0) { // selected Feature moves DOWN
+
+            updatedFeatures = updatedFeatures.map((feature) => {
+                if (feature.id === id) {
+                    return feature;
                 }
-            } else { // selected eature moves UP
-                const index = features.findIndex((feature) => feature.id === id);
-                if (index !== -1) {
-                    let updatedFeatures = [...features]; // Changed from const to let
-                    updatedFeatures[index] = { ...updatedFeatures[index], priority: target_priority };
-                    console.log(`Selected Feature (ID: ${id}) new priority: `, updatedFeatures[index].priority);
-
-                    // Rest of your logic for updating priorities
-                    updatedFeatures = updatedFeatures.reverse().map((feature) => {
-                        if (feature.id === id) {
-                            return feature;
-                        }
-                        // check if pinned AND if in range
-                        else if (feature.pin_state && feature.priority < current_priority && feature.priority >= target_priority) {
-                            console.log(`Feature (ID: ${feature.id}) priority: ${feature.priority}`);
-                            change++;
-                            return feature;
-                            // check if in range
-                        } else if (feature.priority < current_priority && feature.priority >= target_priority) {
-                            console.log(`Feature (ID: ${feature.id}}) old priority: ${feature.priority} new priority: ${feature.priority + change}`);
-                            //console.log("feature priority changed ", feature.id, feature.priority + change);
-                            return { ...feature, priority: feature.priority + change };
-                        } else {
-                            return feature;
-                        }
-                    });
-
-                    // Sort the updated features based on priority
-                    updatedFeatures.sort((a, b) => a.priority - b.priority);
-                    console.log(updatedFeatures);
-                    // Reset the features array
-                    setFeatures(updatedFeatures);
+                // check if pinned AND if in range
+                else if (feature.pin_state && feature.priority > currentPriority && feature.priority <= targetPriority) {
+                    console.log(`Feature (ID: ${feature.id}) unchanged priority: ${feature.priority}`);
+                    change++;
+                    return feature;
+                    // check if in range
+                } else if (feature.priority > currentPriority && feature.priority <= targetPriority) {
+                    console.log(`Feature (ID: ${feature.id}) old priority: ${feature.priority} new priority: ${feature.priority - change}`);
+                    return { ...feature, priority: feature.priority - change };
+                } else {
+                    return feature;
                 }
-            }
+            });
+
+        } else { // selected feature moves UP
+
+            updatedFeatures = updatedFeatures.reverse().map((feature) => {
+                if (feature.id === id) {
+                    return feature;
+                }
+                // check if pinned AND if in range
+                else if (feature.pin_state && feature.priority < currentPriority && feature.priority >= targetPriority) {
+                    console.log(`Feature (ID: ${feature.id}) priority: ${feature.priority}`);
+                    change++;
+                    return feature;
+                    // check if in range
+                } else if (feature.priority < currentPriority && feature.priority >= targetPriority) {
+                    console.log(`Feature (ID: ${feature.id}}) old priority: ${feature.priority} new priority: ${feature.priority + change}`);
+                    //console.log("feature priority changed ", feature.id, feature.priority + change);
+                    return { ...feature, priority: feature.priority + change };
+                } else {
+                    return feature;
+                }
+            });
         }
+
+        // Sort the updated features based on priority
+        updatedFeatures.sort((a, b) => a.priority - b.priority);
+        console.log('updated features', updatedFeatures);
+
+        // Reset the features array
+        setFeatures(updatedFeatures);
     };
 
     const checkPinState = (target_priority) => {
