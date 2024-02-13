@@ -1,10 +1,12 @@
 
 import React, { useEffect, useState } from 'react';
-import CloseSVG from '../../../icons/XClose.svg';
+import close from '../../../icons/close.svg';
 import '../../css/welcomescreen.css';
 import { formatFeature, formatValue } from '../../js/utilities';
-import { InstanceDropdown } from '../InstanceDropdown';
+
+import InstanceDropdown from '../InstanceDropdown';
 import EditableText from '../EditableText';
+import Feature from '../Feature';
 
 const WelcomeScreen = (
     { instances,
@@ -18,7 +20,6 @@ const WelcomeScreen = (
     const [currentTab, setCurrentTab] = useState(0)
 
     const validTabNumber = (number) => {
-
         if (number == 0 || number == 1) {
             return true
         } else {
@@ -35,28 +36,21 @@ const WelcomeScreen = (
     if (formatDict == null || featureDict == null || selectedInstance == null) {
         return (
             <div className='Full-Welcome' >
-                <div className='Close'>
-                    <img
-                        className='CloseImage'
-                        src={CloseSVG}
-                        onClick={() => setIsWelcome(false)}
-                    />
-                </div>
+                <button className="tab-close" onClick={() => setIsWelcome(false)}>
+                    <img src={close} alt="close" />
+                </button>
                 <h1>Loading...</h1>
             </div>
         )
     }
     return (
         <div className='Full-Welcome' >
-            <div className='Close'>
-                <img
-                    className='CloseImage'
-                    src={CloseSVG}
-                    onClick={() => setIsWelcome(false)}
-                />
-            </div>
+            <button className="tab-close" onClick={() => setIsWelcome(false)}>
+                <img src={close} alt="close" />
+            </button>
 
             <h1>Welcome to FACET</h1>
+
             <div className='Selection-Box'>
                 <table className="DirectionTable">
                     <tbody><tr>
@@ -118,17 +112,6 @@ const WelcomeScreen = (
     )
 
 };
-
-function Feature({ name, value }) {
-    return (
-        <div className="features-container">
-            <div className="feature">
-                <p>{name}: <span className="featureValue">{value}</span></p>
-            </div>
-            {/* Add more similar div elements for each feature */}
-        </div>
-    )
-}
 
 function FeatureInput({ prettyName, name, updateValue }) {
     return (
