@@ -158,6 +158,7 @@ function App() {
     const [isWelcome, setIsWelcome] = useState(true);
     const [applicationType, setApplicationType] = useState("Applicant");
 
+    
     // fetch instances data when the component mounts
     useEffect(() => {
         status_log("Using endpoint " + ENDPOINT, SUCCESS)
@@ -228,6 +229,7 @@ function App() {
 
         setPriorities(sortedPriorities);
     }, [features]);
+
 
     // populate features for feature controls
     useEffect(() => {
@@ -326,8 +328,6 @@ function App() {
         setIsWelcome(true);
     }
 
-    // const welcome = WelcomeScreen(isWelcome, setIsWelcome, selectedInstance, setSelectedInstance)
-
     if (isLoading) {
         return <></>
     }
@@ -344,17 +344,6 @@ function App() {
                 setApplicationType={setApplicationType}
             />
         )
-        // let welcomeContent = welcome
-
-        // if (welcomeContent["status"] == "Display") {
-        //     return welcomeContent["content"]
-        // } else {
-        //     setIsWelcome(false);
-
-        //     if (welcomeContent["content"] != null) {
-        //         setSelectedInstance(welcomeContent["content"])
-        //     }
-        // }
     } else {
         return (
             <div id="super-div" className="super-div">
