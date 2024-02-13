@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import close from '../../../icons/close.svg';
 import '../../css/welcomescreen.css';
 import { formatFeature, formatValue } from '../../js/utilities';
@@ -14,25 +14,22 @@ const WelcomeScreen = (
         setSelectedInstance,
         setIsWelcome,
         formatDict,
-        featureDict
-    }
+        featureDict,
+        applicationType,
+        setApplicationType, }
 ) => {
-    const [currentTab, setCurrentTab] = useState(0)
     const [customApplicant, setCustomApplicant] = useState({ ...selectedInstance })
 
+
     const handleTabChange = (tab) => {
-        setCurrentTab(tab)
+        setApplicationType(tab)
     }
 
     const handleConfirm = () => {
-        if (currentTab == 0) {
-            console.log("Applicant")
-        } else if (currentTab == 1) {
-            console.log("Custom Application")
+        if (applicationType == "Custom") {
             setSelectedInstance(customApplicant)
-            setIsWelcome(false)
-
         }
+        setIsWelcome(false)
     }
 
     if (formatDict == null || featureDict == null || selectedInstance == null) {
@@ -52,22 +49,21 @@ const WelcomeScreen = (
             </button>
 
             <h1>Welcome to FACET</h1>
-
             <div className='Selection-Box'>
                 <table className="DirectionTable">
                     <tbody><tr>
                         <td>
                             <button
-                                className={currentTab == 0 ? 'SelectedApplicant' : 'UnselectedApplicant'}
-                                onClick={() => handleTabChange(0)}
+                                className={applicationType == 'Applicant' ? 'SelectedApplicant' : 'UnselectedApplicant'}
+                                onClick={() => handleTabChange("Applicant")}
                             >
                                 {formatDict["dataset"].charAt(0).toUpperCase() + formatDict["dataset"].slice(1) + " Applicant"}
                             </button>
                         </td>
                         <td>
                             <button
-                                className={currentTab == 1 ? 'SelectedApplicant' : 'UnselectedApplicant'}
-                                onClick={() => handleTabChange(1)}
+                                className={applicationType == 'Custom' ? 'SelectedApplicant' : 'UnselectedApplicant'}
+                                onClick={() => handleTabChange("Custom")}
                             >
                                 Custom Application
                             </button>
@@ -77,7 +73,7 @@ const WelcomeScreen = (
 
                 <div className="Selection-Details">
 
-                    <div className="Application-Window" id="DivForDropDown" style={{ display: currentTab == 1 ? 'none' : 'flex' }}>
+                    <div className="Application-Window" id="DivForDropDown" style={{ display: applicationType == 'Custom' ? 'none' : 'flex' }}>
                         <b>Applicants</b>
                         <InstanceDropdown
                             instances={instances}
@@ -92,7 +88,7 @@ const WelcomeScreen = (
                         </div>
                     </div>
 
-                    <div className="Application-Window" id="DivForCustomApplicant" style={{ display: currentTab == 0 ? 'none' : 'flex' }}>
+                    <div className="Application-Window" id="DivForCustomApplicant" style={{ display: applicationType == 'Applicant' ? 'none' : 'flex' }}>
                         <b>Custom Applicant</b>
                         <div>
                             {Object.keys(featureDict).map((key, index) => (

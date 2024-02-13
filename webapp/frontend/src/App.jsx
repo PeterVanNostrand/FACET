@@ -155,6 +155,7 @@ function App() {
     ]);
 
     const [isWelcome, setIsWelcome] = useState(true);
+    const [applicationType, setApplicationType] = useState("Applicant");
 
     // useEffect to fetch instances data when the component mounts
     useEffect(() => {
@@ -325,8 +326,7 @@ function App() {
 
     if (isLoading) {
         return <></>
-    }
-    else if (isWelcome) {
+    } else if (isWelcome) {
         return (
             <WelcomeScreen
                 instances={applications}
@@ -335,6 +335,8 @@ function App() {
                 setIsWelcome={setIsWelcome}
                 formatDict={formatDict}
                 featureDict={featureDict}
+                applicationType={applicationType}
+                setApplicationType={setApplicationType}
             />
         )
     } else {
