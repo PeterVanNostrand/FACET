@@ -3,7 +3,6 @@ from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import json
 import os
-import sys
 from webapp.app_utilities import run_facet, parse_dataset_info
 from dataset import get_json_paths, DataInfo
 
@@ -84,39 +83,37 @@ def facet_explanation():
     ----------
     `instance`: a dictionary with the instance values like {x0: value, ..., xn: value}
     `weights`: a dictionary with the weights values like {x0: weight, ..., xn: weight}
-    `k`: TODO an integer for the number of explantions to generate
-    `constraints`: TODO a dictionary with the constaints values like {x0: [lower, upper], ..., xn: [lower, upper]}
+    `k`: an integer for the number of explantions to generate
+    `constraints`: a dictionary with the constaints values like {x0: [lower, upper], ..., xn: [lower, upper]}
 
     Returns
     -------
-    `regions: TODO an array of regions dictionaries`
+    `regions: an array of regions dictionaries`
     """
 
     try:
         data = request.json
         print("request: " + str(data))
-
+        # fetch the instance
         instance = DS_INFO.dict_to_point(data["instance"])
         instance = DS_INFO.scale_points(instance)
-        weights = DS_INFO.dict_to_point(data["weights"])  # get vector
-        print("weights")
-        print(weights)
+        if len(instance.shape) == 1:  # if we only have one instance, reshape the arary correctly
+            instance = instance.reshape(-1, instance.shape[0])
+        # fetch the weights
+        weights = DS_INFO.dict_to_point(data["weights"])
         weights = np.nan_to_num(weights, nan=1.0)
-        weights[weights == 0] = 1.0
+        weights[weights == 0] = 1.0  # zero is invalid weight
+        # fetch the constraitns
         constraints = np.array(data.get("constraints", None)).astype(float)
         constraints = DS_INFO.scale_rects(constraints)[0]
         num_explanations = data.get("num_explanations", 1)
 
-        # if we only have one instance, reshape the arary correctly
-        if len(instance.shape) == 1:
-            instance = instance.reshape(-1, instance.shape[0])
-
-        # Perform explanations using FACET explain
+        # Perform explanation using FACET explain
         prediction = FACET_CORE.predict(instance)
         points, regions = FACET_CORE.explain(
             x=instance,
             y=prediction,
-            k=2*num_explanations,
+            k=2 * num_explanations,
             constraints=constraints,
             weights=weights,
         )
