@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import close from '../../../icons/close.svg';
 import '../../css/welcomescreen.css';
 import { formatFeature, formatValue } from '../../js/utilities';
@@ -18,6 +18,7 @@ const WelcomeScreen = (
     }
 ) => {
     const [currentTab, setCurrentTab] = useState(0)
+    const [customApplicant, setCustomApplicant] = useState({ ...selectedInstance })
 
     const handleTabChange = (tab) => {
         setCurrentTab(tab)
@@ -28,9 +29,10 @@ const WelcomeScreen = (
             console.log("Applicant")
         } else if (currentTab == 1) {
             console.log("Custom Application")
+            setSelectedInstance(customApplicant)
+            setIsWelcome(false)
+
         }
-        
-        setIsWelcome(false)
     }
 
     if (formatDict == null || featureDict == null || selectedInstance == null) {
@@ -94,13 +96,14 @@ const WelcomeScreen = (
                         <b>Custom Applicant</b>
                         <div>
                             {Object.keys(featureDict).map((key, index) => (
-                                <div key={index}>
-                                    <FeatureInput
-                                        prettyName={formatFeature(key, formatDict)}
-                                        name={key}
-                                        updateValue={(newValue) => (console.log(name + " has been changed to the value " + newValue))}
-                                    />
-                                </div>
+                                <FeatureInput
+                                    key={index}
+                                    prettyName={formatFeature(key, formatDict)}
+                                    featureValue={customApplicant[key]}
+                                    updateValue={(value) => {
+                                        setCustomApplicant({ ...customApplicant, [key]: value })
+                                    }}
+                                />
                             ))}
                         </div>
                     </div>
@@ -119,18 +122,16 @@ const WelcomeScreen = (
 
 };
 
-function FeatureInput({ prettyName, name, updateValue }) {
+function FeatureInput({ prettyName, featureValue, updateValue }) {
     return (
-        <div className="features-container">
-            <div className='feature'>
-                <div className="InlineTextFeature">{prettyName}&nbsp;</div>
-                <div id={"FeatureInput" + name} className="InlineTextFeature">
-                    <EditableText
-                        currText={0}
-                        updateValue={updateValue}
-                    />
-                </div>
+        <div className='feature'>
+            <div className="InlineTextFeature">
+                {prettyName}&nbsp;
             </div>
+            <EditableText
+                currText={featureValue}
+                updateValue={updateValue}
+            />
         </div>
     )
 }

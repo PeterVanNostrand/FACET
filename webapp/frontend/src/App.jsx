@@ -261,7 +261,6 @@ function App() {
                 });
 
                 setFeatures(newFeatures);
-                console.log("features: ", features);
             }
         } catch (error) {
             console.error("Error while populating features:", error);
@@ -306,6 +305,7 @@ function App() {
             return;
         }
     }
+
 
     const saveScenario = () => {
         const newScenario = {

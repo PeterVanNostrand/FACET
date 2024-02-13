@@ -19,7 +19,6 @@ const EditableText = ({ currText, updateValue }) => {
 
     const handleBlur = () => {
         setIsEditing(false);
-        // Pass the updated value to the parent component
         updateValue(text);
     };
 
