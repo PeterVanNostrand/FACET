@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export const InstanceDropdown = ({ instances, setSelectedInstance }) => {
+const InstanceDropdown = ({ instances, setSelectedInstance }) => {
 
     const [dropdownvalue, setDropdownvalue] = useState(null)
 
@@ -26,3 +26,5 @@ export const InstanceDropdown = ({ instances, setSelectedInstance }) => {
         </div>
     )
 }
+
+export default InstanceDropdown;

@@ -3,7 +3,7 @@ import { formatFeature } from "../../js/utilities.js";
 import NumberLine from './NumberLine';
 
 const ExplanationSection = (
-    { explanations, totalExplanations, formatDict, currentExplanationIndex, setCurrentExplanationIndex }
+    { explanations, totalExplanations, formatDict, currentExplanationIndex, setCurrentExplanationIndex, saveScenario }
 ) => {
 
     const handleNext = () => {
@@ -63,6 +63,8 @@ const ExplanationSection = (
                     </div>
                 )}
             </div>
+            <button onClick={saveScenario}>Save Scenario</button>
+
         </div>
     );
 };
