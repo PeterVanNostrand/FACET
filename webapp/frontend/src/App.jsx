@@ -155,7 +155,7 @@ function App() {
     ]);
     const [priorities, setPriorities] = useState(null);
 
-    const [isWelcome, setIsWelcome] = useState(true);
+    const [isWelcome, setIsWelcome] = useState(false);
     const [applicationType, setApplicationType] = useState("Applicant");
 
     
@@ -213,9 +213,6 @@ function App() {
         setTotalExplanations(instanceAndExpls);
     }, [explanations])
 
-    useEffect(() => {
-        console.log('priorities', priorities)
-    }, [priorities])
 
     // when feature controls are loaded/updated, update the priorities
     useEffect(() => {
