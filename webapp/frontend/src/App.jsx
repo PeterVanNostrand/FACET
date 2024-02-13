@@ -2,7 +2,7 @@ import axios, { AxiosError } from 'axios';
 import { useEffect, useState } from 'react';
 import webappConfig from '../../config.json';
 import StatusDisplay from './components/StatusDisplay.jsx';
-import WelcomeScreen from './components/welcome/WelcomeSceen.jsx';
+import WelcomeScreen from './components/welcome/WelcomeScreen.jsx';
 import './css/style.css';
 
 import ScenarioSection from './components/ScenarioSection.jsx';
@@ -154,7 +154,6 @@ function App() {
     ]);
 
     const [isWelcome, setIsWelcome] = useState(false);
-    const [showWelcomeScreen, setShowWelcomeScreen] = useState(false);
     const [keepPriority, setKeepPriority] = useState(true);
 
     // useEffect to fetch instances data when the component mounts
@@ -234,8 +233,6 @@ function App() {
     useEffect(() => {
         try {
             if (formatDict) {
-                console.log("Features: Reached populating");
-                // populate features
                 let priorityValue = 1;
 
                 const newFeatures = Object.entries(formatDict.feature_names).map(([key, value], index) => {
@@ -243,8 +240,6 @@ function App() {
                     const isZero = currentValue === 0; // checks if current feature value = zero
 
                     const default_max = 1000;
-                    const default_max_range = 500;
-                    const default_min_range = 0;
 
                     const lowerConstraint = constraints[index][0]
                     const upperConstraint = constraints[index][1]
@@ -272,6 +267,7 @@ function App() {
             console.error("Error while populating features:", error);
         }
     }, [formatDict]);
+
 
     /**
      * Function to explain the selected instance using the backend server
@@ -322,33 +318,25 @@ function App() {
         setSavedScenarios([...savedScenarios, newScenario]);
     }
 
-
-    const handleNumExplanations = (numExplanations) => () => {
-        setNumExplanations(numExplanations);
-    }
-
     const backToWelcomeScreen = () => {
-        setShowWelcomeScreen(true);
+        setIsWelcome(true);
     }
 
-
-    const welcome = WelcomeScreen(showWelcomeScreen, setShowWelcomeScreen, selectedInstance, setSelectedInstance)
 
     if (isLoading) {
         return <></>
     }
-    else if (showWelcomeScreen) {
-        let welcomeContent = welcome
-
-        if (welcomeContent["status"] == "Display") {
-            return welcomeContent["content"]
-        } else {
-            setShowWelcomeScreen(false);
-
-            if (welcomeContent["content"] != null) {
-                setSelectedInstance(welcomeContent["content"])
-            }
-        }
+    else if (isWelcome) {
+        return (
+            <WelcomeScreen
+                instances={applications}
+                selectedInstance={selectedInstance}
+                setSelectedInstance={setSelectedInstance}
+                setIsWelcome={setIsWelcome}
+                formatDict={formatDict}
+                featureDict={featureDict}
+            />
+        )
     } else {
         return (
             <div id="super-div" className="super-div">
@@ -396,9 +384,9 @@ function App() {
                             formatDict={formatDict}
                             currentExplanationIndex={currentExplanationIndex}
                             setCurrentExplanationIndex={setCurrentExplanationIndex}
+                            saveScenario={saveScenario}
                         />
                     }
-                    <button onClick={saveScenario}>Save Scenario</button>
                 </div>
 
                 <div id="suggestion-grid" className="card">

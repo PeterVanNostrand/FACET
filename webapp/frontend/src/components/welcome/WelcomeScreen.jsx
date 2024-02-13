@@ -1,63 +1,23 @@
-import axios, { AxiosError } from 'axios';
 
 import React, { useEffect, useState } from 'react';
-import CloseSVG from './SVG/XClose.svg';
-import './css/welcomescreen.css';
-import { formatFeature, formatValue } from './utilities';
-import { format } from 'd3';
-
-import webappConfig from '../../../../config.json';
-
-const SERVER_URL = webappConfig.SERVER_URL
-const API_PORT = webappConfig.API_PORT
-const ENDPOINT = SERVER_URL + ":" + API_PORT + "/facet"
+import CloseSVG from '../../../icons/XClose.svg';
+import '../../css/welcomescreen.css';
+import { formatFeature, formatValue } from '../../js/utilities';
+import { InstanceDropdown } from '../InstanceDropdown';
+import EditableText from '../EditableText';
 
 const WelcomeScreen = (
-    instances,
-    handleApplicationChange,
-    selectedInstance,
-    setSelectedInstance,
-    index,
-    setShowWelcomeScreen
+    { instances,
+        selectedInstance,
+        setSelectedInstance,
+        setIsWelcome,
+        formatDict,
+        featureDict
+    }
 ) => {
     const [currentTab, setCurrentTab] = useState(0)
-    const [dropdownvalue, setDropdownvalue] = useState(null)
-    const [formatDict, setFormatDict] = useState(null)
-    const [featureDict, setFeatureDict] = useState(null);
-
-    const test = [1, 2]
-
-    console.log("WelcomeScreen: ", selectedInstance)
-
-    useEffect(() => {
-
-        const pageLoad = async () => {
-            let dict_data = await fetchHumanFormat()
-            setFormatDict(dict_data)
-            setFeatureDict(dict_data["feature_names"]);
-        }
-
-        // get the human formatting data instances
-        const fetchHumanFormat = async () => {
-            try {
-                const response = await axios.get(ENDPOINT + "/human_format");
-                return response.data
-            }
-            catch (error) {
-                console.error(error);
-                return
-            }
-        };
-
-        // Call the pageLoad function when the component mounts
-        pageLoad();
-    }, []);
-
-
 
     const validTabNumber = (number) => {
-        // TODO: Code that checks to see whether the given tab 
-        //number is valid and has a corresponding tab
 
         if (number == 0 || number == 1) {
             return true
@@ -66,19 +26,10 @@ const WelcomeScreen = (
         }
     }
 
-    // If the user clicks on a tab, 
-    // - Make sure that they clicked on the tab they aren't current one
-    // - Check to make sure that the number has a corresponding tab
-    // - Set the Current Tab to the new tab and update
     const handleTabControl = (number) => {
         if (currentTab != number && validTabNumber(number)) {
             setCurrentTab(number)
         }
-    }
-
-    const handleDropDownChange = (value) => {
-        setDropdownvalue(value)
-        setSelectedInstance(instances.get(value))
     }
 
     if (formatDict == null || featureDict == null || selectedInstance == null) {
@@ -88,7 +39,7 @@ const WelcomeScreen = (
                     <img
                         className='CloseImage'
                         src={CloseSVG}
-                        onClick={() => setShowWelcomeScreen(false)}
+                        onClick={() => setIsWelcome(false)}
                     />
                 </div>
                 <h1>Loading...</h1>
@@ -101,7 +52,7 @@ const WelcomeScreen = (
                 <img
                     className='CloseImage'
                     src={CloseSVG}
-                    onClick={() => setShowWelcomeScreen(false)}
+                    onClick={() => setIsWelcome(false)}
                 />
             </div>
 
@@ -126,11 +77,10 @@ const WelcomeScreen = (
 
                     <div className="Application-Window" id="DivForDropDown" style={{ display: currentTab == 1 ? 'none' : 'flex' }}>
                         <b>Applicants</b>
-                        <select className="ApplicationDropDown" onChange={(e) => handleDropDownChange(e.target.value)} defaultValue={dropdownvalue}>
-                            {test.map((option, idx) => (
-                                <option key={idx}>{option}</option>))
-                            }
-                        </select>
+                        <InstanceDropdown
+                            instances={instances}
+                            setSelectedInstance={setSelectedInstance}
+                        />
                         <div>
                             {Object.keys(featureDict).map((key, index) => (
                                 <div key={index}>
@@ -148,7 +98,8 @@ const WelcomeScreen = (
                                     <FeatureInput
                                         prettyName={formatFeature(key, formatDict)}
                                         name={key}
-                                        updateValue={(newValue) => (console.log(name + " has been changed to the value " + newValue))} />
+                                        updateValue={(newValue) => (console.log(name + " has been changed to the value " + newValue))}
+                                    />
                                 </div>
                             ))}
                         </div>
@@ -156,7 +107,7 @@ const WelcomeScreen = (
 
                     <br></br>
                     <div className="Button-Div">
-                        <button className='Confirm-Button' onClick={() => setShowWelcomeScreen(false)}>
+                        <button className='Confirm-Button' onClick={() => setIsWelcome(false)}>
                             Confirm
                         </button>
                     </div>
@@ -195,60 +146,5 @@ function FeatureInput({ prettyName, name, updateValue }) {
     )
 }
 
-const EditableText = ({ currText, updateValue }) => {
-    const [isEditing, setIsEditing] = useState(false);
-    const [text, setText] = useState(currText);
-
-    const handleDoubleClick = () => {
-        setIsEditing(true);
-    };
-
-    const handleKeyPress = (e) => {
-        if (e.key === 'Enter') {
-            setIsEditing(false);
-            // Pass the updated value to the parent component
-            updateValue(parseInt(text));
-        }
-    };
-
-    const handleBlur = () => {
-        setIsEditing(false);
-        // Pass the updated value to the parent component
-        updateValue(text);
-    };
-
-    const handleChange = (e) => {
-        setText(e.target.value);
-    };
-
-    return (
-        <div style={{ display: 'inline-block' }}>
-            {/* <input
-                    //style={{ width: Math.min(Math.max(text.length, 2), 20) + 'ch' }}
-                    type="text"
-                    value={text}
-                    autoFocus
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    onKeyPress={handleKeyPress}
-                /> */}
-            {isEditing ? (
-                <input
-                    style={{ width: Math.min(Math.max(text.length, 2), 20) + 'ch' }}
-                    type="text"
-                    value={text}
-                    autoFocus
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    onKeyPress={handleKeyPress}
-                />
-            ) : (
-                <p onClick={handleDoubleClick} style={{ cursor: 'pointer' }}>
-                    {text}
-                </p>
-            )}
-        </div>
-    );
-};
 
 export default WelcomeScreen;
