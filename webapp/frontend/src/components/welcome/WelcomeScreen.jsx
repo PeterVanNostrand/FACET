@@ -19,18 +19,18 @@ const WelcomeScreen = (
 ) => {
     const [currentTab, setCurrentTab] = useState(0)
 
-    const validTabNumber = (number) => {
-        if (number == 0 || number == 1) {
-            return true
-        } else {
-            return false
-        }
+    const handleTabChange = (tab) => {
+        setCurrentTab(tab)
     }
 
-    const handleTabControl = (number) => {
-        if (currentTab != number && validTabNumber(number)) {
-            setCurrentTab(number)
+    const handleConfirm = () => {
+        if (currentTab == 0) {
+            console.log("Applicant")
+        } else if (currentTab == 1) {
+            console.log("Custom Application")
         }
+        
+        setIsWelcome(false)
     }
 
     if (formatDict == null || featureDict == null || selectedInstance == null) {
@@ -55,12 +55,18 @@ const WelcomeScreen = (
                 <table className="DirectionTable">
                     <tbody><tr>
                         <td>
-                            <button className={currentTab == 0 ? 'SelectedApplicant' : 'UnselectedApplicant'} onClick={() => handleTabControl(0)}>
+                            <button
+                                className={currentTab == 0 ? 'SelectedApplicant' : 'UnselectedApplicant'}
+                                onClick={() => handleTabChange(0)}
+                            >
                                 {formatDict["dataset"].charAt(0).toUpperCase() + formatDict["dataset"].slice(1) + " Applicant"}
                             </button>
                         </td>
                         <td>
-                            <button className={currentTab == 1 ? 'SelectedApplicant' : 'UnselectedApplicant'} onClick={() => handleTabControl(1)}>
+                            <button
+                                className={currentTab == 1 ? 'SelectedApplicant' : 'UnselectedApplicant'}
+                                onClick={() => handleTabChange(1)}
+                            >
                                 Custom Application
                             </button>
                         </td>
@@ -101,7 +107,7 @@ const WelcomeScreen = (
 
                     <br></br>
                     <div className="Button-Div">
-                        <button className='Confirm-Button' onClick={() => setIsWelcome(false)}>
+                        <button className='Confirm-Button' onClick={handleConfirm}>
                             Confirm
                         </button>
                     </div>

@@ -149,12 +149,12 @@ function App() {
     const [featureDict, setFeatureDict] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
+    const [keepPriority, setKeepPriority] = useState(true);
     const [constraints, setConstraints] = useState([
         [1000, 1600], [0, 10], [6000, 10000], [300, 500]
     ]);
 
-    const [isWelcome, setIsWelcome] = useState(false);
-    const [keepPriority, setKeepPriority] = useState(true);
+    const [isWelcome, setIsWelcome] = useState(true);
 
     // useEffect to fetch instances data when the component mounts
     useEffect(() => {
