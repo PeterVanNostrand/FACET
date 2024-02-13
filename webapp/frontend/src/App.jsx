@@ -2,7 +2,7 @@ import axios, { AxiosError } from 'axios';
 import { useEffect, useState } from 'react';
 import webappConfig from '../../config.json';
 import StatusSection from './components/StatusSection.jsx';
-import WelcomeScreen from './components/welcome/WelcomeSceen.jsx';
+import WelcomeScreen from './components/welcome/WelcomeScreen.jsx';
 import './css/style.css';
 
 import ScenarioSection from './components/ScenarioSection.jsx';
