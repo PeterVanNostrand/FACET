@@ -141,224 +141,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
         setKeepPriority(event.target.checked);
     };
 
-    const FeatureControl = ({ id, x, units, title, current_value, min, max, priority, lock_state, pin_state, min_range, max_range }) => {
-        const [isLocked, setIsLocked] = useState(lock_state);
-        const [isPinned, setIsPinned] = useState(pin_state);
-        const [editedPriority, setEditedPriority] = useState(priority);
-        const [range, setRange] = useState([min_range, max_range]);
-        const min_distance = 1; // between min_range and max_range
 
-        // Switch VIS state: 
-        useEffect(() => {
-        }, [isLocked], [isPinned]);
-
-        useEffect(() => {
-            setEditedPriority(editedPriority);
-        }, [editedPriority]);
-
-        const handleSliderChangeCommitted = () => {
-            handleSliderConstraintChange(id, range[0], range[1]);
-        };
-
-        // ARROW: Priority List Traversal 
-        const handleArrowDownClick = () => {
-            const target_priority = priority + 1;
-
-            if (isPinned) {
-                console.log(`${title}: is Pinnned`);
-            }
-            else {
-                if (priority < features.length) {
-                    if (checkPinState(target_priority)) {
-                        return;
-                    }
-                    else {
-                        handlePriorityChange(id, target_priority);
-                    }
-                } else {
-                    console.log('Exceeded List: no lesser priority');
-                }
-            }
-        };
-
-        const handleArrowUpClick = () => {
-            const target_priority = priority - 1;
-            if (isPinned) {
-                console.log(`${title}: is Pinned`);
-            } else {
-                if (priority > 1) {
-                    if (checkPinState(target_priority)) {
-                        return;
-                    }
-                    else {
-                        handlePriorityChange(id, target_priority);
-                    }
-                } else {
-                    console.log('Exceeded List: no greater priority )');
-                }
-            }
-        };
-
-        // LOCK:
-        const handleLockClick = () => {
-            setIsLocked((prevIsLocked) => !prevIsLocked);
-            handleLockStateChange(id, !isLocked);
-            console.log(`Feature (ID: ${id}) is Locked? ${!lock_state}}`);
-        };
-
-        // PIN:
-        const handlePinClick = () => {
-            setIsPinned((prevIsPinned) => !prevIsPinned);
-            handlePinStateChange(id, !isPinned);
-            console.log(`Feature (ID: ${id}) is Pinned? ${!pin_state}}`);
-        };
-
-        // PRIORITY (inputs): 
-        const handlePriorityInputBlur = (event) => {
-            setEditedPriority(event);
-            // Check if the edited priority is different from the current priority
-            if (editedPriority !== priority) {
-                // Call the function to update the priority
-                handlePriorityInputChange(editedPriority);
-            }
-            else {
-                // If the edited priority is the same as the previous priority, reset the input field
-                setTimeout(() => {
-                    setEditedPriority(priority);
-                }, 1500);
-            }
-
-        };
-
-        const handlePriorityInputChange = (event) => {
-            setEditedPriority(event);
-            const target_priority = parseInt(event.target.value, 10);
-            // Check if the new value is within valid range and different from the current priority
-            if (!isNaN(target_priority) && target_priority >= 1 && target_priority <= features.length && target_priority !== priority) {
-                // Check target_priority pin_state
-                if (checkPinState(target_priority)) {
-                    setTimeout(() => {
-                        setEditedPriority(priority);
-                    }, 1500);
-                    return;
-                }
-                else {
-                    setEditedPriority(target_priority);
-                    setTimeout(() => {
-                        handlePriorityChange(id, target_priority);
-                    }, 500);
-                }
-            }
-            else {
-                setTimeout(() => {
-                    setEditedPriority(priority);
-                }, 1500);
-                return;
-            }
-        };
-
-        // SLIDER: 
-        const rangeText = (range) => {
-            return `$${range}`;
-        }
-
-        const slider_marks = [
-            {
-                value: min,
-                label: min,
-            },
-            {
-                value: current_value,
-                label: current_value,
-            },
-            {
-                value: max,
-                label: max,
-            },
-        ];
-
-        const handleSliderChange = (event, newRange, activeThumb) => {
-            if (!Array.isArray(newRange)) {
-                return;
-            }
-            if (newRange[1] - newRange[0] < min_distance) {
-                if (activeThumb === 0) {
-                    const clamped = Math.min(newRange[0], max - min_distance);
-                    setRange([clamped, clamped + min_distance]);
-                } else {
-                    const clamped = Math.max(newRange[1], min_distance);
-                    setRange([clamped - min_distance, clamped]);
-                }
-            } else {
-                setRange(newRange);
-            }
-        };
-
-        return (
-            <div className={`feature-control-box ${isPinned ? 'pinned' : ''}`}>
-                <h1 className='feature-title'>{title} {units && `(${units})`}</h1>
-                {/* Locks*/}
-                <div className='lock'>
-                    <img
-                        onClick={handleLockClick}
-                        className={`lock-button ${isLocked ? 'locked' : ''}`}
-                        src={isLocked ? lockSVG : unlockSVG} />
-
-                </div>
-                {/* PIN functionalitiy commented out bc of bugs*/}
-                <div className={`pin ${keepPriority ? '' : 'hidden'}`}>
-                    <img
-                        src={isPinned ? pinSVG : unpinSVG}
-                        alt={isPinned ? 'Pin' : 'UnPin'}
-                        onClick={handlePinClick}
-                        className={isPinned ? 'pinned' : ''}
-                    />
-                </div>
-                {/* Arrows */}
-                <img className={`arrow-up ${keepPriority ? '' : 'hidden'}`}
-                    onClick={handleArrowUpClick}
-                    src={arrowSVG}
-                    alt='arrow up'
-                />
-                <img className={`arrow-down ${keepPriority ? '' : 'hidden'}`}
-                    onClick={handleArrowDownClick}
-                    src={arrowSVG}
-                    alt='arrow down'
-                />
-                {/* Priority Value*/}
-                <input className={`priority-value priority-value-input ${keepPriority ? '' : 'hidden'}`}
-                    type="number"
-                    value={editedPriority}
-                    onChange={handlePriorityInputChange}
-                    onBlur={handlePriorityInputBlur}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                            handlePriorityInputBlur();
-                        }
-                    }}
-                    pattern="[0-9]*"
-                />
-                {/* Sliders */}
-                <div className='slider'>
-                    <Slider
-                        className='constraint-slider'
-                        value={range}
-                        onChange={handleSliderChange}
-                        onMouseUp={() => {
-                            handleSliderChangeCommitted();
-                        }}
-                        valueLabelDisplay="auto"
-                        getAriaValueText={rangeText}
-                        max={max}
-                        min={min}
-                        marks={slider_marks}
-                        disabled={isLocked}
-                        disableSwap
-                    />
-                </div>
-            </div>
-        );
-    };
 
 
     return (
@@ -372,10 +155,252 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                 />
             </div>
             {features.map((feature) => (
-                <FeatureControl key={feature.id} {...feature} onNumberLineChange={handleSliderConstraintChange} />
+                <FeatureControl key={feature.id} {...feature} onNumberLineChange={handleSliderConstraintChange}
+                    handleSliderConstraintChange={handleSliderConstraintChange}
+                    handleLockStateChange={handleLockStateChange}
+                    handlePinStateChange={handlePinStateChange}
+                    handlePriorityChange={handlePriorityChange}
+                    keepPriority={keepPriority}
+                    checkPinState={checkPinState}
+                    featuresLength={features.length}
+                />
             ))}
         </div>
     );
 };
 
+const FeatureControl = (
+    { id, x, units, title, current_value, min, max, priority, lock_state, pin_state, min_range, max_range,
+        handleSliderConstraintChange, 
+        handleLockStateChange, 
+        handlePinStateChange, 
+        handlePriorityChange, 
+        keepPriority,
+        checkPinState,
+        featuresLength
+    }
+) => {
+    const [isLocked, setIsLocked] = useState(lock_state);
+    const [isPinned, setIsPinned] = useState(pin_state);
+    const [editedPriority, setEditedPriority] = useState(priority);
+    const [range, setRange] = useState([min_range, max_range]);
+    const min_distance = 1; // between min_range and max_range
+
+    // Switch VIS state: 
+    useEffect(() => {
+    }, [isLocked], [isPinned]);
+
+    useEffect(() => {
+        setEditedPriority(editedPriority);
+    }, [editedPriority]);
+
+    const handleSliderChangeCommitted = () => {
+        handleSliderConstraintChange(id, range[0], range[1]);
+    };
+
+    // ARROW: Priority List Traversal 
+    const handleArrowDownClick = () => {
+        const target_priority = priority + 1;
+
+        if (isPinned) {
+            console.log(`${title}: is Pinnned`);
+        }
+        else {
+            if (priority < featuresLength) {
+                if (checkPinState(target_priority)) {
+                    return;
+                }
+                else {
+                    handlePriorityChange(id, target_priority);
+                }
+            } else {
+                console.log('Exceeded List: no lesser priority');
+            }
+        }
+    };
+
+    const handleArrowUpClick = () => {
+        const target_priority = priority - 1;
+        if (isPinned) {
+            console.log(`${title}: is Pinned`);
+        } else {
+            if (priority > 1) {
+                if (checkPinState(target_priority)) {
+                    return;
+                }
+                else {
+                    handlePriorityChange(id, target_priority);
+                }
+            } else {
+                console.log('Exceeded List: no greater priority )');
+            }
+        }
+    };
+
+    // LOCK:
+    const handleLockClick = () => {
+        setIsLocked((prevIsLocked) => !prevIsLocked);
+        handleLockStateChange(id, !isLocked);
+        console.log(`Feature (ID: ${id}) is Locked? ${!lock_state}}`);
+    };
+
+    // PIN:
+    const handlePinClick = () => {
+        setIsPinned((prevIsPinned) => !prevIsPinned);
+        handlePinStateChange(id, !isPinned);
+        console.log(`Feature (ID: ${id}) is Pinned? ${!pin_state}}`);
+    };
+
+    // PRIORITY (inputs): 
+    const handlePriorityInputBlur = (event) => {
+        setEditedPriority(event);
+        // Check if the edited priority is different from the current priority
+        if (editedPriority !== priority) {
+            // Call the function to update the priority
+            handlePriorityInputChange(editedPriority);
+        }
+        else {
+            // If the edited priority is the same as the previous priority, reset the input field
+            setTimeout(() => {
+                setEditedPriority(priority);
+            }, 1500);
+        }
+
+    };
+
+    const handlePriorityInputChange = (event) => {
+        setEditedPriority(event);
+        const target_priority = parseInt(event.target.value, 10);
+        // Check if the new value is within valid range and different from the current priority
+        if (!isNaN(target_priority) && target_priority >= 1 && target_priority <= featuresLength && target_priority !== priority) {
+            // Check target_priority pin_state
+            if (checkPinState(target_priority)) {
+                setTimeout(() => {
+                    setEditedPriority(priority);
+                }, 1500);
+                return;
+            }
+            else {
+                setEditedPriority(target_priority);
+                setTimeout(() => {
+                    handlePriorityChange(id, target_priority);
+                }, 500);
+            }
+        }
+        else {
+            setTimeout(() => {
+                setEditedPriority(priority);
+            }, 1500);
+            return;
+        }
+    };
+
+    // SLIDER: 
+    const rangeText = (range) => {
+        return `$${range}`;
+    }
+
+    const slider_marks = [
+        {
+            value: min,
+            label: min,
+        },
+        {
+            value: current_value,
+            label: current_value,
+        },
+        {
+            value: max,
+            label: max,
+        },
+    ];
+
+    const handleSliderChange = (event, newRange, activeThumb) => {
+        if (!Array.isArray(newRange)) {
+            return;
+        }
+        if (newRange[1] - newRange[0] < min_distance) {
+            if (activeThumb === 0) {
+                const clamped = Math.min(newRange[0], max - min_distance);
+                setRange([clamped, clamped + min_distance]);
+            } else {
+                const clamped = Math.max(newRange[1], min_distance);
+                setRange([clamped - min_distance, clamped]);
+            }
+        } else {
+            setRange(newRange);
+        }
+    };
+
+    return (
+        <div className={`feature-control-box ${isPinned ? 'pinned' : ''}`}>
+            <h1 className='feature-title'>{title} {units && `(${units})`}</h1>
+
+            {/* Locks*/}
+            <div className='lock'>
+                <img
+                    onClick={handleLockClick}
+                    className={`lock-button ${isLocked ? 'locked' : ''}`}
+                    src={isLocked ? lockSVG : unlockSVG} />
+            </div>
+
+            {/* PIN functionalitiy commented out bc of bugs*/}
+            <div className={`pin ${keepPriority ? '' : 'hidden'}`}>
+                <img
+                    src={isPinned ? pinSVG : unpinSVG}
+                    alt={isPinned ? 'Pin' : 'UnPin'}
+                    onClick={handlePinClick}
+                    className={isPinned ? 'pinned' : ''}
+                />
+            </div>
+
+            {/* Arrows */}
+            <img className={`arrow-up ${keepPriority ? '' : 'hidden'}`}
+                onClick={handleArrowUpClick}
+                src={arrowSVG}
+                alt='arrow up'
+            />
+            <img className={`arrow-down ${keepPriority ? '' : 'hidden'}`}
+                onClick={handleArrowDownClick}
+                src={arrowSVG}
+                alt='arrow down'
+            />
+
+            {/* Priority Value*/}
+            <input className={`priority-value priority-value-input ${keepPriority ? '' : 'hidden'}`}
+                type="number"
+                value={editedPriority}
+                onChange={handlePriorityInputChange}
+                onBlur={handlePriorityInputBlur}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                        handlePriorityInputBlur();
+                    }
+                }}
+                pattern="[0-9]*"
+            />
+
+            {/* Sliders */}
+            <div className='slider'>
+                <Slider
+                    className='constraint-slider'
+                    value={range}
+                    onChange={handleSliderChange}
+                    onMouseUp={() => {
+                        handleSliderChangeCommitted();
+                    }}
+                    valueLabelDisplay="auto"
+                    getAriaValueText={rangeText}
+                    max={max}
+                    min={min}
+                    marks={slider_marks}
+                    disabled={isLocked}
+                    disableSwap
+                />
+            </div>
+        </div>
+    );
+};
+
 export default FeatureControlSection;
+

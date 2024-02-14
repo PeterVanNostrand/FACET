@@ -21,7 +21,7 @@ const ScenarioSection = (
     useEffect(() => {
         if (selectedScenarioIndex !== null) {
             const scenario = savedScenarios[selectedScenarioIndex];
-            
+
             setExplanations(scenario.explanations);
             setCurrentExplanationIndex(scenario.explanationIndex);
             setSelectedInstance(scenario.instance);
@@ -46,7 +46,7 @@ const ScenarioSection = (
     }
 
     return (
-        <div>
+        <div id="scenario-grid" className="card">
             <div style={{ display: 'flex' }}>
                 <h2>Scenarios</h2>
                 <p className="clear-scenarios" onClick={clearScenarios}>Clear All</p>

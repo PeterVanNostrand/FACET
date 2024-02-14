@@ -303,18 +303,16 @@ function App() {
                     </h1>
                 </div>
 
-                <div id="scenario-grid" className="card">
-                    <ScenarioSection
-                        savedScenarios={savedScenarios}
-                        setSavedScenarios={setSavedScenarios}
-                        setExplanations={setExplanations}
-                        setCurrentExplanationIndex={setCurrentExplanationIndex}
-                        setSelectedInstance={setSelectedInstance}
-                        selectedScenarioIndex={selectedScenarioIndex}
-                        setSelectedScenarioIndex={setSelectedScenarioIndex}
-                        setConstraints={setConstraints}
-                    />
-                </div>
+                <ScenarioSection
+                    savedScenarios={savedScenarios}
+                    setSavedScenarios={setSavedScenarios}
+                    setExplanations={setExplanations}
+                    setCurrentExplanationIndex={setCurrentExplanationIndex}
+                    setSelectedInstance={setSelectedInstance}
+                    selectedScenarioIndex={selectedScenarioIndex}
+                    setSelectedScenarioIndex={setSelectedScenarioIndex}
+                    setConstraints={setConstraints}
+                />
 
                 <div id="feature-controls-grid" className="card">
                     <FeatureControlSection
@@ -348,8 +346,8 @@ function App() {
                     />
                 </div>
 
-                <div id="suggestion-grid" className="card">
-                    <p>suggestions</p>
+                <div id="suggestion-grid" className="card" style={{maxHeight: 45, minHeight: 45}}>
+                    suggestions
                 </div>
             </div>
         )

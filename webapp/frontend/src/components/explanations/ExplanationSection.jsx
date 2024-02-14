@@ -84,7 +84,6 @@ const ExplanationSection = (
             <button onClick={saveScenario} style={{
                 position: "absolute",
                 bottom: 0,
-                width: "100%"
             }}>Save Scenario</button>
 
         </div>
