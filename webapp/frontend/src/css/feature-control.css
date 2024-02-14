@@ -25,6 +25,7 @@
 
 .priority-toggle {
     grid-area: toggle;
+    
 }
 
 .information {
@@ -130,6 +131,17 @@
     padding-left: 2%;
     padding-right: 15%;
     /* transform: scale(1.2); */
+}
+.slider-mark {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.slider-label {
+    font-size: 12px;
+    color: black;
 }
 
 .rotate180 {

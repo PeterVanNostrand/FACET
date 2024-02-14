@@ -1,11 +1,13 @@
-import Slider from '@mui/material/Slider';
-import Switch from '@mui/material/Switch';
 import React, { useEffect, useState } from 'react';
+import Avatar from '@mui/material/Avatar';
+import { StyledIconButton } from '../StyledComponents.jsx';
+import { StyledSlider } from '../StyledComponents.jsx';
+import { StyledSwitch } from '../StyledComponents.jsx';
 import arrowSVG from '../../../icons/Arrow.svg';
 import lockSVG from '../../../icons/Lock.svg';
-import pinSVG from '../../../icons/Pinned.svg';
 import unlockSVG from '../../../icons/UnLocked.svg';
-import unpinSVG from '../../../icons/UnPinned.svg';
+import PinIcon from '../../../icons/Pinned.svg';
+import UnPinIcon from '../../../icons/UnPinned.svg';
 import '../../css/feature-control.css';
 
 const FeatureControlSection = ({ features, setFeatures, constraints, setConstraints, keepPriority, setKeepPriority }) => {
@@ -148,7 +150,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
         <div className="feature-control-tab">
             <div className='feature-control-header'>
                 <div className="feature-control-tab-title">{feature_tab_title}</div>
-                <Switch
+                <StyledSwitch
                     className='priority-toggle'
                     style={{ color: "#0090ff" }}
                     checked={keepPriority}
@@ -344,22 +346,23 @@ const FeatureControl = (
         <div className={`feature-control-box ${isPinned ? 'pinned' : ''}`}>
             <h1 className='feature-title'>{title} {units && `(${units})`}</h1>
 
-            {/* Locks*/}
+            {/* Lock */}
             <div className='lock'>
-                <img
+                <StyledIconButton
                     onClick={handleLockClick}
                     className={`lock-button ${isLocked ? 'locked' : ''}`}
-                    src={isLocked ? lockSVG : unlockSVG} />
+                >
+                    <Avatar src={isLocked ? lockSVG : unlockSVG} alt={isLocked ? 'Unlock' : 'Lock'} />
+                </StyledIconButton>
             </div>
-
-            {/* PIN functionalitiy commented out bc of bugs*/}
+            {/* Pin*/}
             <div className={`pin ${keepPriority ? '' : 'hidden'}`}>
-                <img
-                    src={isPinned ? pinSVG : unpinSVG}
-                    alt={isPinned ? 'Pin' : 'UnPin'}
+                <StyledIconButton
                     onClick={handlePinClick}
                     className={isPinned ? 'pinned' : ''}
-                />
+                >
+                    <Avatar src={isPinned ? PinIcon : UnPinIcon} alt={isPinned ? 'Unpin' : 'Pin'} />
+                </StyledIconButton>
             </div>
 
             {/* Arrows */}
@@ -389,7 +392,7 @@ const FeatureControl = (
             />
 
             {/* Sliders */}
-            <div className='slider'>
+            {/* <div className='slider'>
                 <Slider
                     className='constraint-slider'
                     style={{ color: "#0090ff" }}
@@ -403,6 +406,22 @@ const FeatureControl = (
                     max={max}
                     min={min}
                     marks={slider_marks}
+                    disabled={isLocked}
+                    disableSwap
+                />
+            </div> */}
+            <div className='slider'>
+                <StyledSlider
+                    value={range}
+                    getAriaValueText={rangeText}
+                    max={max}
+                    min={min}
+                    marks={slider_marks}
+                    onChange={handleSliderChange}
+                    onMouseUp={() => {
+                        handleSliderChangeCommitted();
+                    }}
+                    valueLabelDisplay="auto"
                     disabled={isLocked}
                     disableSwap
                 />

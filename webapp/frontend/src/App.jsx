@@ -271,6 +271,8 @@ function App() {
         };
 
         setSavedScenarios([...savedScenarios, newScenario]);
+        print(savedScenarios);
+        print("Saved Intex: ", selectedScenarioIndex);
     }
 
     const backToWelcomeScreen = () => {
