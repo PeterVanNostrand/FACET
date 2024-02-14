@@ -154,7 +154,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                     onChange={handleSwitchChange}
                 />
             </div>
-            {features.map((feature) => (
+            {features.map((feature, index) => (
                 <FeatureControl key={feature.id} {...feature} onNumberLineChange={handleSliderConstraintChange}
                     handleSliderConstraintChange={handleSliderConstraintChange}
                     handleLockStateChange={handleLockStateChange}
@@ -163,6 +163,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                     keepPriority={keepPriority}
                     checkPinState={checkPinState}
                     featuresLength={features.length}
+                    constraints={constraints[index]}
                 />
             ))}
         </div>
@@ -171,13 +172,14 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
 
 const FeatureControl = (
     { id, x, units, title, current_value, min, max, priority, lock_state, pin_state, min_range, max_range,
-        handleSliderConstraintChange, 
-        handleLockStateChange, 
-        handlePinStateChange, 
-        handlePriorityChange, 
+        handleSliderConstraintChange,
+        handleLockStateChange,
+        handlePinStateChange,
+        handlePriorityChange,
         keepPriority,
         checkPinState,
-        featuresLength
+        featuresLength,
+        constraints
     }
 ) => {
     const [isLocked, setIsLocked] = useState(lock_state);
@@ -189,6 +191,11 @@ const FeatureControl = (
     // Switch VIS state: 
     useEffect(() => {
     }, [isLocked], [isPinned]);
+
+    useEffect(() => {
+        setRange([constraints[0], constraints[1]]);
+    }, [constraints]);
+
 
     useEffect(() => {
         setEditedPriority(editedPriority);
