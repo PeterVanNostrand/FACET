@@ -1,24 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import close from '../../icons/close.svg';
 
 const ScenarioSection = (
     { savedScenarios,
         setSavedScenarios,
+        setExplanations,
         setCurrentExplanationIndex,
         setSelectedInstance,
+        selectedScenarioIndex,
+        setSelectedScenarioIndex,
         setConstraints
     }) => {
-    const [selectedScenarioIndex, setSelectedScenarioIndex] = useState(null);
 
     const handleScenarioChange = (scenario, index) => {
-        setSelectedInstance(scenario.instance)
-        setCurrentExplanationIndex(scenario.explanationIndex);
-        setSelectedScenarioIndex(index);
-        setConstraints(scenario.constraints);
+        if (selectedScenarioIndex === index) return;
+
+        console.log("Switch to scenario", scenario.scenarioID);
         console.log('const', scenario.constraints)
+        console.log('expl', scenario.explanations)
+
+        setSelectedScenarioIndex(index);
     }
 
-    const deleteScenario = (index) => {
+    useEffect(() => {
+        if (selectedScenarioIndex !== null) {
+            const scenario = savedScenarios[selectedScenarioIndex];
+            setExplanations(scenario.explanations);
+            setCurrentExplanationIndex(scenario.explanationIndex);
+            setSelectedInstance(scenario.instance);
+            setConstraints(scenario.constraints);
+        }
+    }, [selectedScenarioIndex]);
+
+    const deleteScenario = (index, event) => {
+        event.stopPropagation(); // prevent scenario change
+
         let newScenarios = savedScenarios.slice();
         newScenarios.splice(index, 1);
         setSavedScenarios(newScenarios);
@@ -52,7 +68,7 @@ const ScenarioSection = (
                             <p>
                                 Scenario {scenario.scenarioID}.{scenario.explanationIndex + 1}
                             </p>
-                            <button className="tab-close-scenario" onClick={() => deleteScenario(index)}>
+                            <button className="tab-close-scenario" onClick={(event) => deleteScenario(index, event)}>
                                 <img src={close} alt="close" />
                             </button>
                         </div>

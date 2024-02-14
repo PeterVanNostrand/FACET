@@ -23,33 +23,46 @@
     grid-gap: 20px;
 }
 
-#status-grid {
-    grid-area: statusGrid;
-}
-
 #scenario-grid {
     grid-area: scenarioGrid;
-    max-width: 575px;
+    min-width: 615px;
+    max-width: 615px;
+    min-height: 100px;
+    max-height: 100px;
 }
+
+#status-grid {
+    grid-area: statusGrid;
+    min-width: 615px;
+    max-width: 615px;
+    min-height: 170px;
+    max-height: 170px;
+}
+
+#explanation-grid {
+    grid-area: explanationGrid;
+    min-width: 615px;
+    max-width: 615px;
+    min-height: 446px;
+    max-height: 446px;
+}
+
+#suggestion-grid {
+    grid-area: suggestionGrid;
+    min-width: 615px;
+    max-width: 615px;
+}
+
 
 #back-welcome-grid {
     grid-area: backGrid;
     display: 'flex';
 }
 
-
-
 #feature-controls-grid {
     grid-area: featureControlGrid;
 }
 
-#explanation-grid {
-    grid-area: explanationGrid;
-}
-
-#suggestion-grid {
-    grid-area: suggestionGrid;
-}
 
 /* END GRID LAYOUT */
 

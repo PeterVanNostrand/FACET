@@ -40,82 +40,36 @@ function status_log(text, color) {
 function App() {
     /**
      * applications: List of applications loaded from JSON data
-     * Structure:
-     * [{"x0": <feature value>, ... "x<n>": <feature value>}, {"x0": <feature value>, ... "x<n>": <feature value>}, ...]
-     * 
-     * index: index of where we are in applications; an int in range [0, applications.length - 1]
+     * Structure: [{"x0": <feature value>, ... "x<n>": <feature value>}, {"x0": <feature value>, ... "x<n>": <feature value>}, ...]
      * 
      * selectedInstance: the current application/scenario the user is viewing. This variable is what the app displays
-     * Structure:
-     * {
-        "x0": <feature value>,
-                ⋮
-        "x<n>": <feature value>
-       }
+     * Structure: { "x0": <feature value>, ... , "x<n>": <feature value> }
      * 
      * explanation: FACET's counterfactual explanation on what to change user's feature values to to get a desired outcome
-     * Structure:
-     * {
-        "x0": [
-            <Region Min (float)>,
-            <Region Max (float)>
-        ],
-                    ⋮
-        "x<n>": [
-            <Region Min (float),
-            <Region Max (float)
-        ]
-        }
-     *}
+     * Structure: Array of size numExplanations objects of regions for each feature
+     * [{x0: region, ... , xn: region}, ...]
      * 
      * savedScenarios: List of scenarios user has saved to tabs
-     * Structure:
-     * [{
+     * Structure: [{
      *   "scenario"   : <int>,
      *   "values"     : <selectedInstance>,
      *   "explanation": <explanation>
      * }]
      * 
      * formatDict: JSON instance that contains information regarding formatting and dataset handling
-     * Structure:
-     * {
+     * Structure: {
             "dataset": <dataset>,
-            "feature_decimals": {
-                <featureName>: <val>,
-                <featureName>: <val>,
-                        ⋮
-                <featureName>:<val>
-            },
-            "feature_names": {
-                "x0": <featureName>.
-                        ⋮
-                "x<n>":<featureName>
-            },
-            "feature_units": {
-                <featureName>: <unit, i.e. "$", "ms", "km">,
-                        ⋮
-                <featureName>:<unit>
-            },
-            "pretty_feature_names": {
-                <featureName>: <Pretty Feature Name, i.e. "Applicant Income" rather than "ApplicantIncome">,
-                            ⋮
-                <featureName>:<Pretty Feature Name>
-            },
+            "feature_decimals": { <featureName>: <val>, ... },
+            "feature_names": { "x0": <featureName>, ...},
+            "feature_units": { <featureName>: <unit, i.e. "$", "ms", "km">, ... },
+            "pretty_feature_names": { <featureName>: <Pretty Feature Name, i.e. "Applicant Income" rather than "ApplicantIncome">, ... },
             "scenario_terms": {
                 "desired_outcome": <Val, i.e. "Approved">,
                 "instance_name": "<Val, i.e. "Application">,
                 "undesired_outcome":<Val, i.e. "Rejected">
             },
-            "semantic_max": {
-                <FeatureName>: <Real Number or null>,
-                                ⋮
-                <FeatureName>:<Real Number or null>
-            },
-            "semantic_min": {
-                <FeatureName>: <Real Number or null>,
-                                ⋮
-                <FeatureName>:<Real Number or null>
-            },
+            "semantic_max": { <FeatureName>: <Real Number or null>, ... },
+            "semantic_min": { <FeatureName>: <Real Number or null>, ... },
             "target_name": <Val, i.e. "Loan_Status">,
             "weight_values": {
                 "Increment": <int>,
@@ -124,14 +78,7 @@ function App() {
         }
      * 
      * featureDict: JSON instance mapping the feature index to a feature name (i.e. x0 -> Apllicant_Income, x1 -> Debt, ...)
-     * Structure:
-     * {
-            "feature_names": {
-                "x0": <featureName>.
-                        ⋮
-                "x<n>":<featureName>
-            },
-        }
+     * Structure: { "feature_names": {"x0": <featureName>, ... , "x<n>": <featureName> } }
      * 
      * isLoading: Boolean value that helps with managing async operations. Prevents webapp from trying to display stuff before formatDict is loaded
      */
@@ -145,6 +92,8 @@ function App() {
     const [currentExplanationIndex, setCurrentExplanationIndex] = useState(0);
 
     const [savedScenarios, setSavedScenarios] = useState([]);
+    const [selectedScenarioIndex, setSelectedScenarioIndex] = useState(null);
+
     const [formatDict, setFormatDict] = useState(null);
     const [featureDict, setFeatureDict] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -158,7 +107,7 @@ function App() {
     const [isWelcome, setIsWelcome] = useState(false);
     const [applicationType, setApplicationType] = useState("Applicant");
 
-    
+
     // fetch instances data when the component mounts
     useEffect(() => {
         status_log("Using endpoint " + ENDPOINT, SUCCESS)
@@ -201,8 +150,10 @@ function App() {
 
 
     useEffect(() => {
-        handleExplanations();
-    }, [selectedInstance, numExplanations, constraints, priorities]);
+        if (selectedScenarioIndex == null) {
+            handleExplanations();
+        }
+    }, [selectedInstance, numExplanations, constraints, priorities, selectedScenarioIndex]);
 
     useEffect(() => {
         if (explanations.length === 0) return;
@@ -292,10 +243,10 @@ function App() {
                 ENDPOINT + "/explanations",
                 request,
             );
+            status_log("Successfully generated explanation!", SUCCESS)
 
             // update the explanation content
             setExplanations(response.data);
-            status_log("Successfully generated explanation!", SUCCESS)
             console.debug(response.data)
         } catch (error) {
             if (error.code != AxiosError.ECONNABORTED) { // If the error is not a front end reload
@@ -314,13 +265,13 @@ function App() {
         const newScenario = {
             scenarioID: savedScenarios.length + 1,
             instance: selectedInstance,
+            explanations: [...explanations],
             explanationIndex: currentExplanationIndex,
             constraints: [...constraints]
         };
 
         setSavedScenarios([...savedScenarios, newScenario]);
     }
-
 
     const backToWelcomeScreen = () => {
         setIsWelcome(true);
@@ -356,8 +307,11 @@ function App() {
                     <ScenarioSection
                         savedScenarios={savedScenarios}
                         setSavedScenarios={setSavedScenarios}
+                        setExplanations={setExplanations}
                         setCurrentExplanationIndex={setCurrentExplanationIndex}
                         setSelectedInstance={setSelectedInstance}
+                        selectedScenarioIndex={selectedScenarioIndex}
+                        setSelectedScenarioIndex={setSelectedScenarioIndex}
                         setConstraints={setConstraints}
                     />
                 </div>
@@ -383,16 +337,15 @@ function App() {
                 </div>
 
                 <div id="explanation-grid" className="card">
-                    {totalExplanations.length > 0 &&
-                        <ExplanationSection
-                            explanations={explanations}
-                            totalExplanations={totalExplanations}
-                            formatDict={formatDict}
-                            currentExplanationIndex={currentExplanationIndex}
-                            setCurrentExplanationIndex={setCurrentExplanationIndex}
-                        />
-                    }
-                    <button onClick={saveScenario}>Save Scenario</button>
+                    <ExplanationSection
+                        key={currentExplanationIndex}
+                        explanations={explanations}
+                        totalExplanations={totalExplanations}
+                        formatDict={formatDict}
+                        currentExplanationIndex={currentExplanationIndex}
+                        setCurrentExplanationIndex={setCurrentExplanationIndex}
+                        saveScenario={saveScenario}
+                    />
                 </div>
 
                 <div id="suggestion-grid" className="card">
