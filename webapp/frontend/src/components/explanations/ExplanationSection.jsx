@@ -28,8 +28,8 @@ const ExplanationSection = (
                 Explanations
             </h2>
 
-            {totalExplanations.length > 0 &&
-                <div className="explanation-container">
+            <div className="explanation-container" style={{ maxHeight: 308, minHeight: 308, position: 'relative' }}>
+                {totalExplanations.length > 0 &&
                     <div className="explanation-list" >
                         {Object.keys(
                             explanations[explanations.length === 1 ? 0 : currentExplanationIndex]
@@ -38,39 +38,49 @@ const ExplanationSection = (
                                 <h3 >
                                     {formatFeature(key, formatDict)}
                                 </h3>
+
                                 <NumberLine
                                     key={innerIndex}
                                     explanation={totalExplanations[explanations.length === 1 ? 0 : currentExplanationIndex]}
                                     i={innerIndex}
                                     id={`number-line-container-${currentExplanationIndex}-${innerIndex}`}
                                 />
+
                             </div>
                         ))}
                     </div>
+                }
 
-                    {/* Next and Previous buttons */}
-                    {explanations.length > 1 && (
-                        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>
-                            <button
-                                className="cycle-button"
-                                onClick={handlePrevious}
-                                disabled={currentExplanationIndex === 0}
-                            >
-                                &lt;
-                            </button>
-                            <p style={{ width: 30, textAlign: 'center' }}>{'\u00A0'}{'\u00A0'}{currentExplanationIndex + 1}{'\u00A0'}{'\u00A0'}</p>
-                            <button
-                                className="cycle-button"
-                                onClick={handleNext}
-                                disabled={currentExplanationIndex === explanations.length - 1}
-                            >
-                                &gt;
-                            </button>
-                        </div>
-                    )}
-                </div>
-            }
-            
+                {/* Next and Previous buttons */}
+                {explanations.length > 1 && (
+                    <div style={{
+                        display: 'flex',
+                        marginTop: 10,
+                        position: 'absolute',
+                        bottom: 0,
+                        marginBottom: 15,
+                        left: '50%',
+                        transform: 'translateX(-50%)'
+                    }}>
+                        <button
+                            className="cycle-button"
+                            onClick={handlePrevious}
+                            disabled={currentExplanationIndex === 0}
+                        >
+                            &lt;
+                        </button>
+                        <p style={{ width: 30, textAlign: 'center' }}>{'\u00A0'}{'\u00A0'}{currentExplanationIndex + 1}{'\u00A0'}{'\u00A0'}</p>
+                        <button
+                            className="cycle-button"
+                            onClick={handleNext}
+                            disabled={currentExplanationIndex === explanations.length - 1}
+                        >
+                            &gt;
+                        </button>
+                    </div>
+                )}
+            </div>
+
             <button onClick={saveScenario} style={{
                 position: "absolute",
                 bottom: 0,
