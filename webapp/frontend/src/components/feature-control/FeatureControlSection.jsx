@@ -150,6 +150,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                 <div className="feature-control-tab-title">{feature_tab_title}</div>
                 <Switch
                     className='priority-toggle'
+                    style={{ color: "#0090ff" }}
                     checked={keepPriority}
                     onChange={handleSwitchChange}
                 />
@@ -391,6 +392,7 @@ const FeatureControl = (
             <div className='slider'>
                 <Slider
                     className='constraint-slider'
+                    style={{ color: "#0090ff" }}
                     value={range}
                     onChange={handleSliderChange}
                     onMouseUp={() => {
