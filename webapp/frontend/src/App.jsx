@@ -2,7 +2,7 @@ import axios, { AxiosError } from 'axios';
 import { useEffect, useState } from 'react';
 import webappConfig from '../../config.json';
 import StatusDisplay from './components/StatusDisplay.jsx';
-import WelcomeScreen from './components/welcome/WelcomeSceen.jsx';
+import WelcomeScreen from './components/welcome/WelcomeScreen.jsx';
 import './css/style.css';
 
 import ScenarioSection from './components/ScenarioSection.jsx';
@@ -149,15 +149,17 @@ function App() {
     const [featureDict, setFeatureDict] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
+    const [keepPriority, setKeepPriority] = useState(true);
     const [constraints, setConstraints] = useState([
         [1000, 1600], [0, 10], [6000, 10000], [300, 500]
     ]);
+    const [priorities, setPriorities] = useState(null);
 
     const [isWelcome, setIsWelcome] = useState(false);
-    const [showWelcomeScreen, setShowWelcomeScreen] = useState(false);
-    const [keepPriority, setKeepPriority] = useState(true);
+    const [applicationType, setApplicationType] = useState("Applicant");
 
-    // useEffect to fetch instances data when the component mounts
+    
+    // fetch instances data when the component mounts
     useEffect(() => {
         status_log("Using endpoint " + ENDPOINT, SUCCESS)
 
@@ -166,7 +168,6 @@ function App() {
             let dict_data = await fetchHumanFormat()
             setFormatDict(dict_data)
             setFeatureDict(dict_data["feature_names"]);
-            setIsLoading(false);
         }
 
         // get the human formatting data instances
@@ -201,27 +202,7 @@ function App() {
 
     useEffect(() => {
         handleExplanations();
-        console.log('updated constraintsw')
-    }, [selectedInstance, numExplanations, constraints]);
-
-    //fetches the weights of the features
-    const getWeights = () => {
-        let weights = {};
-        for (let feature in featureDict) {
-            let priority = featureDict[feature]["currPriority"];
-            let w = 1; //the weight for this feature
-            if (formatDict["weight_values"]["IsExponent"]) {
-                //if feature is locked, w = 1; else increment the weight appropriately
-                w = featureDict[feature]["locked"] ? 1 : Math.pow(priority, formatDict["weight_values"]["Increment"]);
-            }
-            else {
-                //if feature is locked, w = 1; else increment the weight appropriately
-                w = featureDict[feature]["locked"] ? 1 : (1 + (priority - 1) * formatDict["weight_values"]["Increment"]);
-            }
-            weights[feature] = w;
-        }
-        return weights;
-    }
+    }, [selectedInstance, numExplanations, constraints, priorities]);
 
     useEffect(() => {
         if (explanations.length === 0) return;
@@ -233,41 +214,59 @@ function App() {
         setTotalExplanations(instanceAndExpls);
     }, [explanations])
 
+
+    // when feature controls are loaded/updated, update the priorities
     useEffect(() => {
+        const priorities = {};
+        features.forEach((feature, index) => {
+            priorities[feature.x] = index + 1;
+        });
+
+        // Sort priorities by keys
+        const sortedPriorities = Object.fromEntries(Object.entries(priorities).sort());
+
+        setPriorities(sortedPriorities);
+    }, [features]);
+
+
+    // populate features for feature controls
+    useEffect(() => {
+        if (!formatDict) return;
+
         try {
-            if (formatDict) {
-                let priorityValue = 1;
+            const priorities = {};
+            Object.keys(formatDict.feature_names).forEach((key, index) => {
+                priorities[key] = index + 1;
+            });
+            setPriorities(priorities);
 
-                const newFeatures = Object.entries(formatDict.feature_names).map(([key, value], index) => {
-                    const currentValue = selectedInstance[key];
-                    const isZero = currentValue === 0; // checks if current feature value = zero
+            const newFeatures = Object.entries(formatDict.feature_names).map(([key, value], index) => {
+                const currentValue = selectedInstance[key];
+                const isZero = currentValue === 0; // checks if current feature value = zero
 
-                    const default_max = 1000;
-                    const default_max_range = 500;
-                    const default_min_range = 0;
+                const default_max = 1000;
 
-                    const lowerConstraint = constraints[index][0]
-                    const upperConstraint = constraints[index][1]
+                const lowerConstraint = constraints[index][0]
+                const upperConstraint = constraints[index][1]
 
-                    return {
-                        id: value,
-                        x: key,
-                        units: formatDict.feature_units[value] || '',
-                        title: formatDict.pretty_feature_names[value] || '',
-                        current_value: currentValue,
-                        min: formatDict.semantic_min[value] ?? 0,
-                        max: formatDict.semantic_max[value] ?? (isZero ? default_max : currentValue * 2), // set 1 if null or double current_val if income is not 0
-                        priority: priorityValue++,
-                        lock_state: false,
-                        pin_state: false,
-                        min_range: lowerConstraint,
-                        max_range: upperConstraint,
-                    };
-                });
+                return {
+                    id: value,
+                    x: key,
+                    units: formatDict.feature_units[value] || '',
+                    title: formatDict.pretty_feature_names[value] || '',
+                    current_value: currentValue,
+                    min: formatDict.semantic_min[value] ?? 0,
+                    max: formatDict.semantic_max[value] ?? (isZero ? default_max : currentValue * 2), // set 1 if null or double current_val if income is not 0
+                    priority: priorities[key],
+                    lock_state: false,
+                    pin_state: false,
+                    min_range: lowerConstraint,
+                    max_range: upperConstraint,
+                };
+            });
 
-                setFeatures(newFeatures);
-                console.log("features: ", features);
-            }
+            setFeatures(newFeatures);
+            setIsLoading(false);
         } catch (error) {
             console.error("Error while populating features:", error);
         }
@@ -278,13 +277,13 @@ function App() {
      * @returns None
      */
     const handleExplanations = async () => {
-        if (constraints.length === 0 || selectedInstance.length == 0) return;
+        if (constraints.length === 0 || selectedInstance.length == 0 || !priorities) return;
 
         try {
             // build the explanation query, should hold the instance, weights, constraints, etc
             let request = {};
-            request["instance"] = selectedInstance
-            request["weights"] = getWeights();
+            request["instance"] = selectedInstance;
+            request["weights"] = priorities;
             request["constraints"] = constraints;
             request["num_explanations"] = numExplanations;
 
@@ -324,26 +323,25 @@ function App() {
 
 
     const backToWelcomeScreen = () => {
-        setShowWelcomeScreen(true);
+        setIsWelcome(true);
     }
-
-    const welcome = WelcomeScreen(showWelcomeScreen, setShowWelcomeScreen, selectedInstance, setSelectedInstance)
 
     if (isLoading) {
         return <></>
     }
-    else if (showWelcomeScreen) {
-        let welcomeContent = welcome
-
-        if (welcomeContent["status"] == "Display") {
-            return welcomeContent["content"]
-        } else {
-            setShowWelcomeScreen(false);
-
-            if (welcomeContent["content"] != null) {
-                setSelectedInstance(welcomeContent["content"])
-            }
-        }
+    else if (isWelcome) {
+        return (
+            <WelcomeScreen
+                instances={applications}
+                selectedInstance={selectedInstance}
+                setSelectedInstance={setSelectedInstance}
+                setIsWelcome={setIsWelcome}
+                formatDict={formatDict}
+                featureDict={featureDict}
+                applicationType={applicationType}
+                setApplicationType={setApplicationType}
+            />
+        )
     } else {
         return (
             <div id="super-div" className="super-div">

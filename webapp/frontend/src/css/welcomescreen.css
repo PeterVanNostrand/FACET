@@ -10,11 +10,11 @@
     border-color: black;
     border-width: 8px;
     border-radius: 5px;
-    position: relative; 
+    position: relative;
     color: black;
 }
 
-.Selection-Box{
+.Selection-Box {
     width: 700px;
     height: 400px;
     display: flex;
@@ -25,11 +25,11 @@
     border-style: solid;
     border-color: #DDDDDD;
     border-width: 2px;
-    position: relative; 
+    position: relative;
     color: black;
 }
 
-.Information{
+.Information {
     position: absolute;
     top: 36px;
     right: 60px;
@@ -37,7 +37,7 @@
     width: 48px;
 }
 
-.Confirm-Button{
+.Confirm-Button {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -49,13 +49,13 @@
     color: white;
 }
 
-.DirectionTable{
+.DirectionTable {
     position: absolute;
     top: 0%;
     left: 0%;
 }
 
-.SelectedApplicant{
+.SelectedApplicant {
     width: 200px;
     height: 40px;
     background-color: #DDDDDD;
@@ -65,7 +65,7 @@
     color: black;
 }
 
-.UnselectedApplicant{
+.UnselectedApplicant {
     width: 200px;
     height: 40px;
     background-color: #AAAAAA;
@@ -75,7 +75,7 @@
     color: black;
 }
 
-.ApplicationDropDown{
+.ApplicationDropDown {
     width: 300px;
     height: 40px;
     background-color: #DDDDDD;
@@ -87,7 +87,7 @@
     font-size: 16px;
 }
 
-.Application-Window{
+.Application-Window {
     width: 650px;
     height: 250px;
     display: flex;
@@ -101,18 +101,18 @@
     color: black;
 }
 
-.Selection-Details{
+.Selection-Details {
     position: absolute;
     bottom: 0px;
 }
 
-.Button-Div{
+.Button-Div {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.Close{
+.Close {
     position: absolute;
     top: 36px;
     left: 60px;
@@ -120,13 +120,13 @@
     width: 48px;
 }
 
-.CloseImage{
+.close-img {
     position: absolute;
     height: 50px;
     width: 50px;
 }
 
-.InlineTextFeature{
+.InlineTextFeature {
     display: inline-block;
     vertical-align: middle;
 }

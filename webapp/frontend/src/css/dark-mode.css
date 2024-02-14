@@ -1,10 +1,10 @@
 /*UNIVERSAL COMPONENTS*/
 h1 {
-    color:white;
+    color: white;
 }
 
 h2 {
-    color:orange;
+    color: orange;
 }
 
 p {
@@ -36,41 +36,43 @@ button:disabled {
 
 /*WELCOME SCREEN SECTION*/
 
-.Selection-Box{
-    background-color: rgb(87,87,87);
-    border-color: rgb(66,66,66);
+.Selection-Box {
+    background-color: rgb(87, 87, 87);
+    border-color: rgb(66, 66, 66);
     color: white;
 }
 
-.SelectedApplicant{
-    background-color: rgb(100,100,100);
+.SelectedApplicant {
+    background-color: rgb(100, 100, 100);
     border-color: white;
     color: white;
 }
 
-.UnselectedApplicant{
-    background-color: rgb(80,80,80);
+.UnselectedApplicant {
+    background-color: rgb(80, 80, 80);
     border-color: black;
     color: black;
 }
 
-.ApplicationDropDown{
+.ApplicationDropDown {
     background-color: #DDDDDD;
     border-color: black;
     color: black;
 }
 
-.Application-Window{
-    background-color: rgb(87,87,87);
+.Application-Window {
+    background-color: rgb(87, 87, 87);
     border-color: white;
     color: white;
 }
+
 /*END WELCOME SCREEN SECTION*/
 
 /*TAB SECTION*/
 .tab-list {
     background: -webkit-linear-gradient(top, rgba(66, 66, 66, 0), rgba(66, 66, 66, 1));
 }
+
 .tab {
     border-color: white;
 }
@@ -82,9 +84,19 @@ button:disabled {
 
 .tab-close {
     filter: invert(100%);
+    margin-left: auto;
+    margin-right: 50px;
 }
 
 .tab-close:hover {
+    background-color: transparent;
+}
+
+.tab-close-scenario {
+    filter: invert(100%);
+}
+
+.tab-close-scenario:hover {
     background-color: transparent;
 }
 
@@ -101,6 +113,7 @@ button:disabled {
     border-color: white;
     background-color: #606060;
 }
+
 /*END TAB SECTION*/
 
 /*FEATURE CONTROL SECTION*/
@@ -112,17 +125,17 @@ button:disabled {
     background-color: rgb(87, 87, 87);
 }
 
-.lock img{
-    filter:invert(100%);
+.lock img {
+    filter: invert(100%);
 }
 
-.pin img{
-    filter:invert(100%);
+.pin img {
+    filter: invert(100%);
 }
 
-.priority-value-input{
+.priority-value-input {
     background-color: transparent;
-    color:white;
+    color: white;
 }
 
 /*END FEATURE CONTROL SECTION*/
@@ -145,7 +158,8 @@ button:disabled {
     background-color: #eeeeee;
 }
 
-.toggle { /*unknown*/
+.toggle {
+    /*unknown*/
     background-color: white;
     color: black;
 }
@@ -153,6 +167,7 @@ button:disabled {
 .toggle:hover {
     background-color: #eeeeee;
 }
+
 /*END EXPLANATION SECTION*/
 
 .tick-label {
@@ -160,11 +175,10 @@ button:disabled {
 }
 
 .back-welcome-button {
-    background-color: rgba(0,0,0,0);
+    background-color: rgba(0, 0, 0, 0);
     color: white;
 }
 
 .back-welcome-button:hover {
-    background-color: rgba(87,87,87,0.5);
+    background-color: rgba(87, 87, 87, 0.5);
 }
-
