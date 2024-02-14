@@ -346,7 +346,7 @@ function App() {
                     />
                 </div>
 
-                <div id="suggestion-grid" className="card" style={{maxHeight: 45, minHeight: 45}}>
+                <div id="suggestion-grid" className="card">
                     suggestions
                 </div>
             </div>

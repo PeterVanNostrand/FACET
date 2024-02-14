@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import close from '../../icons/close.svg';
 
 const ScenarioSection = (
@@ -63,7 +63,7 @@ const ScenarioSection = (
                             onClick={() => { handleScenarioChange(scenario, index) }}
                         >
                             <p>
-                                Scenario {scenario.scenarioID}.{scenario.explanationIndex + 1}
+                                Scenario {scenario.scenarioID}
                             </p>
                             <button className="tab-close-scenario" onClick={(event) => deleteScenario(index, event)}>
                                 <img src={close} alt="close" />

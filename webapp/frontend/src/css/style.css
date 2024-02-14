@@ -51,6 +51,8 @@
     grid-area: suggestionGrid;
     min-width: 615px;
     max-width: 615px;
+    max-height: 45;
+    min-height: 45;
 }
 
 
