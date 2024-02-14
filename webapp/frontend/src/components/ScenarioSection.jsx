@@ -15,16 +15,13 @@ const ScenarioSection = (
     const handleScenarioChange = (scenario, index) => {
         if (selectedScenarioIndex === index) return;
 
-        console.log("Switch to scenario", scenario.scenarioID);
-        console.log('const', scenario.constraints)
-        console.log('expl', scenario.explanations)
-
         setSelectedScenarioIndex(index);
     }
 
     useEffect(() => {
         if (selectedScenarioIndex !== null) {
             const scenario = savedScenarios[selectedScenarioIndex];
+            
             setExplanations(scenario.explanations);
             setCurrentExplanationIndex(scenario.explanationIndex);
             setSelectedInstance(scenario.instance);

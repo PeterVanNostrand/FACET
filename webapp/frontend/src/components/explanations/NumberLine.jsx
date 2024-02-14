@@ -25,6 +25,7 @@ const NumberLine = ({ explanation, i, id }) => {
         // Clean up when the component unmounts
         return () => {
             svg.selectAll('*').remove();
+            svg.remove();
         };
     }, [explanation, i, id]);
 
