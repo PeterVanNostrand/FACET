@@ -84,7 +84,9 @@
 }
 
 */
-
+.instructionsText{
+    color: '#555555';
+}
 /* Hide the scrollbar for WebKit browsers */
 .tab-list::-webkit-scrollbar {
     display: none;
@@ -145,7 +147,8 @@
 .clear-scenarios {
     margin: 10px 10px 10px 15px;
     cursor: pointer;
-    color: #2d6cff
+    color: #0c52f7;
+    font-weight: bold;
 }
 
 :root {
@@ -188,7 +191,7 @@ button {
     font-family: inherit;
     cursor: pointer;
     color: white;
-    background-color: #0090ff;
+    background-color: #0062ac;
 }
 
 button:hover {

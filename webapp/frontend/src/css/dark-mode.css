@@ -13,7 +13,7 @@ p {
 
 button {
     color: white;
-    background-color: #0090ff;
+    background-color: #3b24eb;
 }
 
 button:hover {
@@ -101,7 +101,11 @@ button:disabled {
 }
 
 .clear-scenarios {
-    color: rgb(201, 130, 0);
+    color: rgb(0, 251, 226);
+}
+
+.instructionsText{
+    color: white;
 }
 
 .selected:hover {
