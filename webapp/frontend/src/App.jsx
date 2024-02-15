@@ -4,7 +4,6 @@ import webappConfig from '../../config.json';
 import StatusDisplay from './components/StatusDisplay.jsx';
 import WelcomeScreen from './components/welcome/WelcomeScreen.jsx';
 import './css/style.css';
-import './css/dark-mode.css';
 
 import ScenarioSection from './components/ScenarioSection.jsx';
 import ExplanationSection from './components/explanations/ExplanationSection';
