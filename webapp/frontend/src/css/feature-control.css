@@ -42,12 +42,12 @@
     width: 393px;
     height: 170px;
     margin-bottom: 2%;
-    grid-template-columns: 20% 60% 20%;
+    grid-template-columns: 15% 70% 15%;
     grid-template-rows: 30% 40% 30%;
     grid-template-areas:
         "arrowu title lock"
-        "input slider slider"
-        "arrowd slider slider";
+        "input slider empty"
+        "arrowd slider empty";
 }
 
 .feature-control-box.pinned {
@@ -67,8 +67,8 @@
 }
 
 .lock img {
-    height: 45%;
-    width: 45%;
+    height: 50%;
+    width: 50%;
 }
 
 .arrow-up {
@@ -79,17 +79,25 @@
     padding-left: 20%;
     align-self: center;
 }
+.arrow-up img {
+    height: 50%;
+    width: 50%;
+}
 
 .arrow-down {
     grid-area: arrowd;
     height: 60%;
     width: 60%;
     padding-top: 20%;
-    padding-right: 20%;
+    padding-right: 65%;
     align-self: center;
     transform: rotate(180deg);
 }
 
+.arrow-down img {
+    height: 50%;
+    width: 50%;
+}
 
 .pin {
     grid-area: lock;
@@ -128,8 +136,8 @@
     grid-area: slider;
     align-self: strech;
     align-self: center;
-    padding-left: 2%;
-    padding-right: 15%;
+    padding-left: 4%;
+    padding-right: 4%;
     /* transform: scale(1.2); */
 }
 .slider-mark {

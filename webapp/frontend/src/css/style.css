@@ -3,6 +3,7 @@
     font-weight: bold;
 }
 
+
 .feature-name {
     font-family: Arial, Helvetica, sans-serif;
     font-weight: bold;
@@ -282,4 +283,8 @@ button:disabled {
 
 .explanationLine {
     margin-left: auto;
+}
+
+.hidden {
+    display: none; 
 }

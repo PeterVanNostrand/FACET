@@ -143,9 +143,6 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
         setKeepPriority(event.target.checked);
     };
 
-
-
-
     return (
         <div className="feature-control-tab">
             <div className='feature-control-header'>
@@ -201,7 +198,7 @@ const FeatureControl = (
 
 
     useEffect(() => {
-        setEditedPriority(editedPriority);
+        setEditedPriority(priority);
     }, [editedPriority]);
 
     const handleSliderChangeCommitted = () => {
@@ -263,7 +260,8 @@ const FeatureControl = (
 
     // PRIORITY (inputs): 
     const handlePriorityInputBlur = (event) => {
-        setEditedPriority(event);
+        console.log("blur: ", event.target.value, 10); // should display whatevers typed in before validating it and  then choosing to reject or deny
+        setEditedPriority(event.target.value, 10);
         // Check if the edited priority is different from the current priority
         if (editedPriority !== priority) {
             // Call the function to update the priority
@@ -273,13 +271,14 @@ const FeatureControl = (
             // If the edited priority is the same as the previous priority, reset the input field
             setTimeout(() => {
                 setEditedPriority(priority);
-            }, 1500);
+            }, 200);
         }
 
     };
 
     const handlePriorityInputChange = (event) => {
-        setEditedPriority(event);
+        console.log("blur: ", event.target.value);
+        //setEditedPriority(event.target.value, 10);
         const target_priority = parseInt(event.target.value, 10);
         // Check if the new value is within valid range and different from the current priority
         if (!isNaN(target_priority) && target_priority >= 1 && target_priority <= featuresLength && target_priority !== priority) {
@@ -300,7 +299,7 @@ const FeatureControl = (
         else {
             setTimeout(() => {
                 setEditedPriority(priority);
-            }, 1500);
+            }, 2000);
             return;
         }
     };
@@ -366,16 +365,21 @@ const FeatureControl = (
             </div>
 
             {/* Arrows */}
-            <img className={`arrow-up ${keepPriority ? '' : 'hidden'}`}
+            <div className={`arrow-up ${keepPriority ? '' : 'hidden'}`}>
+              <StyledIconButton
                 onClick={handleArrowUpClick}
-                src={arrowSVG}
-                alt='arrow up'
-            />
-            <img className={`arrow-down ${keepPriority ? '' : 'hidden'}`}
+                 >
+                <Avatar src={arrowSVG} alt='arrow up'></Avatar>
+                </StyledIconButton>
+            </div>
+            
+            <div className={`arrow-down ${keepPriority ? '' : 'hidden'}`}>
+              <StyledIconButton
                 onClick={handleArrowDownClick}
-                src={arrowSVG}
-                alt='arrow down'
-            />
+                 >
+                <Avatar src={arrowSVG} alt='arrow down'></Avatar>
+                </StyledIconButton>
+            </div>
 
             {/* Priority Value*/}
             <input className={`priority-value priority-value-input ${keepPriority ? '' : 'hidden'}`}
@@ -391,25 +395,7 @@ const FeatureControl = (
                 pattern="[0-9]*"
             />
 
-            {/* Sliders */}
-            {/* <div className='slider'>
-                <Slider
-                    className='constraint-slider'
-                    style={{ color: "#0090ff" }}
-                    value={range}
-                    onChange={handleSliderChange}
-                    onMouseUp={() => {
-                        handleSliderChangeCommitted();
-                    }}
-                    valueLabelDisplay="auto"
-                    getAriaValueText={rangeText}
-                    max={max}
-                    min={min}
-                    marks={slider_marks}
-                    disabled={isLocked}
-                    disableSwap
-                />
-            </div> */}
+            {/* Slider */}
             <div className='slider'>
                 <StyledSlider
                     value={range}

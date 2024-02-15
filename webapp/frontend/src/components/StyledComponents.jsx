@@ -5,55 +5,59 @@ import Switch from '@mui/material/Switch';
 
 export const StyledIconButton = styled(Button)(({ theme }) => ({
     color: '#fff',
-    width: '50px',
-    height: '50px',
     '&:hover': {
         backgroundColor: '#f5f5f5',
         color: '#3c52b2',
+        width: '30px',
+        height: '50px',
     },
-    // maxWidth: '100%',
-    // maxHeight: '100%',
-    // overflow: 'hidden',
+    overflow: 'hidden',
 }));
 
-export const StyledSwitch = styled(Switch)(({ theme }) => ({
-    size: 'medium',
-    width: 60, 
-    height: 36,
-    color: '#6b8eff',
-    size: 'large',
-    '& .MuiSwitch-thumb': {
-    },
-    
-    '& .MuiSwitch-track': {
-        //borderRadius: 24 / 2, // Adjust border radius to make it round
-        color: '#6b8eff',
-        '&:before, &:after': {
-            color: '#6b8eff',
-            content: '""',
-            position: 'absolute',
-        },
-        '&:before': {
-            color: '#6b8eff',
-            content: '"ON"', 
-            left: 13,
-            color: '#fff',
-            fontSize: 10,
-            fontWeight: 'bold',
-        },
-        '&:after': {
-            content: '"OFF"',
-            right: 12,
-            color: '#fff',
-            fontSize: 10,
-            fontWeight: 'bold',
-        },
-    },
-}));
-
-
+export const StyledSwitch = (props) => (
+    <Switch
+        {...props}
+        sx={{
+            width: 62,
+            height: 36,
+            '& .MuiSwitch-switchBase.Mui-checked': {
+                color: '#6b8eff',
+                '&:hover': {
+                    backgroundColor: 'rgba(107, 142, 255, 0.5)',
+                },
+            },
+            '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                backgroundColor: '#6b8eff',
+            },
+            '& .MuiSwitch-thumb': {
+                backgroundColor: () => (props.checked ? '#6b8eff' : '#fff'), // Set thumb color based on checked state
+            },
+            '& .MuiSwitch-track': {
+                // borderRadius: 24 / 2, // Adjust border radius to make it round
+                '&:before, &:after': {
+                    content: '""',
+                    position: 'absolute',
+                },
+                '&:before': {
+                    content: '"ON"',
+                    left: 13,
+                    color: '#fff',
+                    fontSize: 10,
+                    fontWeight: 'bold',
+                },
+                '&:after': {
+                    content: '"OFF"',
+                    right: 12,
+                    color: '#fff',
+                    fontSize: 10,
+                    fontWeight: 'bold',
+                },
+            },
+        }}
+    />
+);
 export const StyledSlider = styled(Slider)(({ theme }) => ({
-    color: '#6b8eff', 
+    color: '#6b8eff',
     '& .MuiSlider-rail': {
         color: '#6b8eff',
     },
@@ -63,7 +67,7 @@ export const StyledSlider = styled(Slider)(({ theme }) => ({
         height: 20,
         borderRadius: 5,
     },
-    '& .MuiSlider-valueLabel': {
+    '& .MuiSlider-valueLabel': {    
         background: '#6b8eff',
         borderRadius: 10,
     },
@@ -76,6 +80,14 @@ export const StyledSlider = styled(Slider)(({ theme }) => ({
     '& .MuiSlider-markLabel': {
         fontSize: 15,
     },
+    '& .MuiSlider-mark[data-index="1"]': {
+        width: 15,
+        height: 15,
+        borderRadius: 10,
+        backgroundColor: 'black',
+        opacity: 1,
+    },
+
 }));
 
 
