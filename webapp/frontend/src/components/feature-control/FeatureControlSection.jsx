@@ -155,7 +155,8 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                 />
             </div>
             {features.map((feature, index) => (
-                <FeatureControl key={feature.id} {...feature} onNumberLineChange={handleSliderConstraintChange}
+                <FeatureControl key={feature.id} {...feature}
+                    onNumberLineChange={handleSliderConstraintChange}
                     handleSliderConstraintChange={handleSliderConstraintChange}
                     handleLockStateChange={handleLockStateChange}
                     handlePinStateChange={handlePinStateChange}
@@ -196,9 +197,8 @@ const FeatureControl = (
         setRange([constraints[0], constraints[1]]);
     }, [constraints]);
 
-
-    useEffect(() => {
-        setEditedPriority(priority);
+     useEffect(() => {
+       setEditedPriority(priority);
     }, [editedPriority]);
 
     const handleSliderChangeCommitted = () => {
@@ -260,12 +260,12 @@ const FeatureControl = (
 
     // PRIORITY (inputs): 
     const handlePriorityInputBlur = (event) => {
-        console.log("blur: ", event.target.value, 10); // should display whatevers typed in before validating it and  then choosing to reject or deny
-        setEditedPriority(event.target.value, 10);
+        const target_priority = parseInt(event.target.value, 10);
+        setEditedPriority(target_priority);
         // Check if the edited priority is different from the current priority
-        if (editedPriority !== priority) {
+        if (target_priority !== priority) {
             // Call the function to update the priority
-            handlePriorityInputChange(editedPriority);
+            handlePriorityInputChange(target_priority);
         }
         else {
             // If the edited priority is the same as the previous priority, reset the input field
@@ -277,9 +277,8 @@ const FeatureControl = (
     };
 
     const handlePriorityInputChange = (event) => {
-        console.log("blur: ", event.target.value);
-        //setEditedPriority(event.target.value, 10);
         const target_priority = parseInt(event.target.value, 10);
+        setEditedPriority(target_priority);
         // Check if the new value is within valid range and different from the current priority
         if (!isNaN(target_priority) && target_priority >= 1 && target_priority <= featuresLength && target_priority !== priority) {
             // Check target_priority pin_state
@@ -342,7 +341,7 @@ const FeatureControl = (
     };
 
     return (
-        <div className={`feature-control-box ${isPinned ? 'pinned' : ''}`}>
+        <div className={`feature-control-box ${keepPriority ? '' : 'no-priority'}`}>
             <h1 className='feature-title'>{title} {units && `(${units})`}</h1>
 
             {/* Lock */}
@@ -365,17 +364,19 @@ const FeatureControl = (
             </div>
 
             {/* Arrows */}
-            <div className={`arrow-up ${keepPriority ? '' : 'hidden'}`}>
+            <div className={`arrow-up-container ${keepPriority ? '' : 'hidden'}`}>
               <StyledIconButton
                 onClick={handleArrowUpClick}
+                className={`arrow-up ${isPinned ? 'pinned' : ''}`}
                  >
                 <Avatar src={arrowSVG} alt='arrow up'></Avatar>
                 </StyledIconButton>
             </div>
             
-            <div className={`arrow-down ${keepPriority ? '' : 'hidden'}`}>
+            <div className={`arrow-down-container ${keepPriority ? '' : 'hidden'}`}>
               <StyledIconButton
                 onClick={handleArrowDownClick}
+                className={`arrow-down ${isPinned ? 'pinned' : ''}`}
                  >
                 <Avatar src={arrowSVG} alt='arrow down'></Avatar>
                 </StyledIconButton>
@@ -396,7 +397,7 @@ const FeatureControl = (
             />
 
             {/* Slider */}
-            <div className='slider'>
+            <div className={`slider ${keepPriority ? 'no-priority' : ''}`}>
                 <StyledSlider
                     value={range}
                     getAriaValueText={rangeText}

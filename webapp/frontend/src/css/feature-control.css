@@ -20,12 +20,13 @@
 .feature-control-tab-title {
     font-size: 30px;
     font-weight: bold;
+    padding-left: 20%;
     grid-area: secTile;
 }
 
 .priority-toggle {
     grid-area: toggle;
-    
+    align-self: stretch;
 }
 
 .information {
@@ -40,25 +41,37 @@
     box-shadow: 0 0 1em #00000020;
     border-radius: 8px;
     width: 393px;
-    height: 170px;
+    height: 160px;
     margin-bottom: 2%;
     grid-template-columns: 15% 70% 15%;
     grid-template-rows: 30% 40% 30%;
     grid-template-areas:
         "arrowu title lock"
-        "input slider empty"
+        "input slider pin"
         "arrowd slider empty";
 }
 
-.feature-control-box.pinned {
-    filter: grayscale(100%);
-}
+/* .feature-control-box.no-priority {
+    display: grid;
+    box-shadow: 0 0 1em #00000020;
+    border-radius: 8px;
+    width: 393px;
+    height: 160px;
+    margin-bottom: 2%;
+    grid-template-columns: 10% 75% 15%;
+    grid-template-rows: 30% 40% 30%;
+    grid-template-areas:
+        "arrowu title lock"
+        "input slider pin"
+        "arrowd slider empty";
+} */
+
 
 .feature-title {
     font-size: 20px;
     text-align: center;
     grid-area: title;
-    padding-top: 5%;
+    padding-top: 3%;
 }
 
 .lock {
@@ -71,12 +84,12 @@
     width: 50%;
 }
 
-.arrow-up {
+.arrow-up-container {
     grid-area: arrowu;
     height: 60%;
     width: 60%;
-    padding-top: 20%;
-    padding-left: 20%;
+    padding-top: 50%;
+    padding-left: 16%;
     align-self: center;
 }
 .arrow-up img {
@@ -84,11 +97,18 @@
     width: 50%;
 }
 
-.arrow-down {
+.arrow-down.pinned {
+    filter: grayscale(100%);
+}
+
+.arrow-up.pinned {
+    filter: grayscale(100%);
+}
+.arrow-down-container {
     grid-area: arrowd;
     height: 60%;
     width: 60%;
-    padding-top: 20%;
+    padding-top: 50%;
     padding-right: 65%;
     align-self: center;
     transform: rotate(180deg);
@@ -100,14 +120,13 @@
 }
 
 .pin {
-    grid-area: lock;
-    margin-left: 50%;
+    grid-area: pin;
     align-self: center;
 }
 
 .pin img {
-    height: 70%;
-    width: 70%;
+    height: 60%;
+    width: 60%;
 }
 
 .priority-value-input {
@@ -119,7 +138,7 @@
     font-size: 20px;
     border: none;
     align-self: center;
-    padding-left: 30%;
+    padding-left: 40%;
 }
 
 .priority-value::-webkit-outer-spin-button,
@@ -138,7 +157,12 @@
     align-self: center;
     padding-left: 4%;
     padding-right: 4%;
-    /* transform: scale(1.2); */
+}
+
+.slider.no-priority {
+    grid-area: slider;
+    align-self: strech;
+    align-self: center;
 }
 .slider-mark {
     width: 8px;

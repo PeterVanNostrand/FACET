@@ -5,13 +5,17 @@ import Switch from '@mui/material/Switch';
 
 export const StyledIconButton = styled(Button)(({ theme }) => ({
     color: '#fff',
+    width: '5px',
+    height: '25px',
+    borderRadius: '5px',
     '&:hover': {
         backgroundColor: '#f5f5f5',
         color: '#3c52b2',
-        width: '30px',
-        height: '50px',
+        width: '10px',
+        height: '25px',
+        borderRadius: '5px',
     },
-    overflow: 'hidden',
+    //overflow: 'hidden',
 }));
 
 export const StyledSwitch = (props) => (
@@ -59,13 +63,20 @@ export const StyledSwitch = (props) => (
 export const StyledSlider = styled(Slider)(({ theme }) => ({
     color: '#6b8eff',
     '& .MuiSlider-rail': {
-        color: '#6b8eff',
+        color: 'black',
+    },
+    '&.Mui-disabled .MuiSlider-rail': {
+        color: 'black',
     },
     '& .MuiSlider-thumb': {
         color: 'black',
         width: 5,
         height: 20,
         borderRadius: 5,
+    },
+    '& .MuiSlider-track': {
+        height: 10,
+        borderRadius: 4,
     },
     '& .MuiSlider-valueLabel': {    
         background: '#6b8eff',
@@ -84,6 +95,20 @@ export const StyledSlider = styled(Slider)(({ theme }) => ({
         width: 15,
         height: 15,
         borderRadius: 10,
+        backgroundColor: 'black',
+        opacity: 1,
+    },
+    '& .MuiSlider-mark[data-index="0"]': {
+        width: 5,
+        height: 20,
+        borderRadius: 5,
+        backgroundColor: 'black',
+        opacity: 1,
+    },
+    '& .MuiSlider-mark[data-index="2"]': {
+        width: 5,
+        height: 20,
+        borderRadius: 5,
         backgroundColor: 'black',
         opacity: 1,
     },

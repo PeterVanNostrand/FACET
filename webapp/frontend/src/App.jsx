@@ -4,10 +4,11 @@ import webappConfig from '../../config.json';
 import StatusDisplay from './components/StatusDisplay.jsx';
 import WelcomeScreen from './components/welcome/WelcomeScreen.jsx';
 import './css/style.css';
-
+import Button from '@mui/material/Button';
 import ScenarioSection from './components/ScenarioSection.jsx';
 import ExplanationSection from './components/explanations/ExplanationSection';
 import FeatureControlSection from './components/feature-control/FeatureControlSection.jsx';
+import ScenarioComparison from './components/explanations/ScenarioComparison.jsx';
 
 const SERVER_URL = webappConfig.SERVER_URL
 const API_PORT = webappConfig.API_PORT
@@ -150,6 +151,10 @@ function App() {
 
 
     useEffect(() => {
+        console.log("Saved Scenarios Updated: ", savedScenarios);
+    }, [savedScenarios])
+
+    useEffect(() => {
         if (selectedScenarioIndex == null) {
             handleExplanations();
         }
@@ -247,7 +252,7 @@ function App() {
 
             // update the explanation content
             setExplanations(response.data);
-            console.debug(response.data)
+            //console.debug(response.data)
         } catch (error) {
             if (error.code != AxiosError.ECONNABORTED) { // If the error is not a front end reload
                 let error_text = "Failed to generate explanation (" + error.code + ")"
@@ -269,14 +274,18 @@ function App() {
             explanationIndex: currentExplanationIndex,
             constraints: [...constraints]
         };
-
         setSavedScenarios([...savedScenarios, newScenario]);
-        print(savedScenarios);
-        print("Saved Intex: ", selectedScenarioIndex);
     }
 
     const backToWelcomeScreen = () => {
-        setIsWelcome(true);
+        setIsWelcome(true); z
+    }
+
+    const [isComparing, setIsComparing] = useState(false)
+
+    const handleComparisonSwitch = () => {
+        setIsComparing(!isComparing);
+        console.log("Is Comparing? : ", !isComparing);
     }
 
     if (isLoading) {
@@ -336,20 +345,27 @@ function App() {
                     />
                 </div>
 
-                <div id="explanation-grid" className="card">
-                    <ExplanationSection
-                        key={currentExplanationIndex}
-                        explanations={explanations}
-                        totalExplanations={totalExplanations}
-                        formatDict={formatDict}
-                        currentExplanationIndex={currentExplanationIndex}
-                        setCurrentExplanationIndex={setCurrentExplanationIndex}
-                        saveScenario={saveScenario}
-                    />
-                </div>
+                <div>
+                    <div id="explanation-grid" className={`card ${isComparing ? 'hidden' : ''}`}>
+                        <ExplanationSection
+                            key={currentExplanationIndex}
+                            explanations={explanations}
+                            totalExplanations={totalExplanations}
+                            formatDict={formatDict}
+                            currentExplanationIndex={currentExplanationIndex}
+                            setCurrentExplanationIndex={setCurrentExplanationIndex}
+                            saveScenario={saveScenario}
+                        />
+                    </div>
 
+                    <div id="explanation-grid" className={`card ${isComparing ? '' : 'hidden'}`}>
+                        {isComparing && <ScenarioComparison savedScenarios={savedScenarios} scenario_1={0} scenario_2={1} formatDict={formatDict}/>}
+                    </div>
+                </div>
                 <div id="suggestion-grid" className="card">
-                    suggestions
+                    <Button onClick={handleComparisonSwitch}>
+                        <h1>Hello</h1>
+                    </Button>
                 </div>
             </div>
         )
