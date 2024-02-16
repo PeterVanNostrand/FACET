@@ -51,3 +51,8 @@ div {
   float: right;
   border-width: 3px;
 }
+
+#valuesContainer {
+  max-height: 100px;
+  overflow-y: auto;
+}
