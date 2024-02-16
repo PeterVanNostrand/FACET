@@ -27,23 +27,18 @@
     grid-area: scenarioGrid;
     min-width: 615px;
     max-width: 615px;
-    min-height: 100px;
-    max-height: 100px;
 }
 
 #status-grid {
     grid-area: statusGrid;
     min-width: 615px;
     max-width: 615px;
-    min-height: 170px;
-    max-height: 170px;
 }
 
 #explanation-grid {
     grid-area: explanationGrid;
     min-width: 615px;
     max-width: 615px;
-    min-height: 446px;
     max-height: 446px;
 }
 
@@ -52,7 +47,6 @@
     min-width: 615px;
     max-width: 615px;
     max-height: 45;
-    min-height: 45;
 }
 
 
@@ -83,10 +77,10 @@
     background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
 }
 
-*/
-.instructionsText{
+*/ .instructionsText {
     color: '#555555';
 }
+
 /* Hide the scrollbar for WebKit browsers */
 .tab-list::-webkit-scrollbar {
     display: none;

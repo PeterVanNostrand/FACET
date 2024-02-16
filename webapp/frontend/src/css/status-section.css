@@ -8,58 +8,37 @@ div {
   background-color: rgba(169, 62, 62, 0);
 }
 
-#prevBtn,
-#nextBtn {
-  cursor: pointer;
-  width: 100px;
-  padding: 10px;
-  text-align: center;
-  margin: 5px;
-  background-color: #747474;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  margin-top: -10px;
-  margin-left: 40px;
-  margin-right: 50px;
+.feature-display {
+  width: 49%;
+  margin: 0px 0px 10px 0px;
 }
 
-table {
-  width: 800px;
-  border-collapse: collapse;
-  margin-top: 8px;
+.status-title-container {
+  float: left;
+  width: fit-content;
 }
 
-th,
-td {
-  padding: 6px;
-  text-align: left;
+.status-title {
+  width: fit-content;
 }
 
-th {
-  background-color: #ffffff;
+.feature-text {
+  display: fit-content;
+  float: left;
 }
 
-.approvedBox {
-  width: 400px;
-  height: 20px;
-  margin-left: 75px;
-  border-radius: 10px;
-  color: #1b74c6;
-  text-align: center;
-  text-indent: 0px;
-  font-weight: bold;
-  font-family: Arial, Helvetica, sans-serif;
-  padding: 4px;
-  background-color: white;
-  border: 6px solid #1b74c6;
+.row-container {
+  display: flex;
+  flex-wrap: wrap;
+  text-indent: 5px;
+  width: 100%;
 }
 
 .deniedBox {
-  width: 475px;
-  height: 20px;
+  width: 275px;
+  height: 1.7ex;
   margin-left: 35px;
-  border-radius: 10px;
+  border-radius: 6px;
   color: #C1251B;
   text-align: center;
   text-indent: 0px;
@@ -68,298 +47,7 @@ th {
   padding: 4px;
   background-color: white;
   border: 6px solid #C1251B;
-}
-
-.statusApp {
-  color: #1b74c6;
-  white-space: nowrap;
-  margin-left: 225px;
-  margin-top: 3px;
-}
-
-.statusDenied {
-  color: #C1251B;
-  white-space: nowrap;
-  margin-left: 225px;
-  margin-top: 3px;
-}
-
-
-.row-container {
-  display: flex;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
-  text-indent: 5px;
-  padding: 10px;
-}
-
-.row-container div {
-  flex: 0 0 auto;
-  padding: 1px;
-  white-space: nowrap;
-}
-
-.row-container strong {
-  margin-right: -30px;
-  /* Adjust margin-right to create space between key and colon */
-}
-
-.row-container div:not(:last-child) {
-  margin-right: 30px;
-  /* Adjust margin-right to create space between key-value pairs */
-}
-
-.row-container2 {
-  display: flex;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
-  text-indent: 5px;
-  padding: 10px;
-}
-
-.row-container2 div {
-  flex: 0 0 auto;
-  padding: 1px;
-  white-space: nowrap;
-}
-
-.row-container2 strong {
-  margin-right: -30px;
-  /* Adjust margin-right to create space between key and colon */
-}
-
-.row-container2 div:not(:last-child) {
-  margin-right: 30px;
-  /* Adjust margin-right to create space between key-value pairs */
-}
-
-
-/* Reset default button styles */
-button {
-  border: none;
-  outline: none;
-  cursor: pointer;
-  margin-left: 0px;
-}
-
-.myApplicationFlex {
-  display: flex;
-  flex-direction: row;
-  /* padding: 15px;
-  height: 10px; */
-}
-
-.Applicationbox {
-  flex-direction: row;
-  width: 555px;
-  height: auto;
-  /* border:1px solid black; */
-}
-
-/* Styling for the circular info button */
-.info {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 1px;
-  margin-left: -5px;
-  border-radius: 50%;
-  font-size: 30px;
-  padding: 0vw 0vh;
-}
-
-.expand {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #ffffff00;
-  width: 25px;
-  height: 23px;
-  margin-left: -15px;
-  margin-top: 1px;
-  border-radius: 50px;
-  font-size: 25px;
-  color: black;
-  transition: color 0.3s ease;
-}
-
-.tooltip {
-  width: 75px;
-  height: 20px;
-  background-color: #ffffff;
-  color: black;
-  border: 1px solid black;
-  text-align: center;
-  font-weight: normal;
-  font-size: 13px;
-  padding: 1px 15px;
-  /* Position the tooltip */
-  margin-top: 20px;
-  margin-left: -50px;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease 0.9s, visibility 0.1s ease;
-}
-
-.infotooltip {
-  width: 75px;
-  position: relative;
-  height: 20px;
-  background-color: #ffffff;
-  color: black;
-  text-align: center;
-  border: 1px solid black;
-  font-weight: normal;
-  font-size: 13px;
-  padding: 1px 15px;
-  /* Position the tooltip */
-  margin-top: 22px;
-  margin-left: -48px;
-  margin-right: -10px;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease 0.9s, visibility 0.1s ease;
-}
-
-/* Hover effect */
-.info:hover {
-  background-color: #ababab;
-  /* Change background color on hover */
-}
-
-.info:hover+.infotooltip {
-  opacity: 1;
-  visibility: visible;
-}
-
-.expand:hover {
-  color: #ababab;
-}
-
-.expand:hover+.tooltip {
-  opacity: 1;
-  visibility: visible;
-}
-
-
-
-/* Optional: Add transition for a smooth hover effect */
-.info {
-  transition: background-color 0.3s ease;
-}
-
-
-
-
-
-
-
-
-
-.popup .overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.7);
-  z-index: 10;
-  display: none;
-}
-
-.popup .content {
-  position: absolute;
-  top: 370px;
-  left: 282px;
-  transform: translate(-50%, -50%) scale(0);
-  background: #fff;
-  width: 450px;
-  height: 110px;
-  z-index: 2;
-  padding: 15px;
-  box-sizing: border-box;
-  border: 1px solid black;
-}
-
-.popup .close-btn {
-  cursor: pointer;
-  position: absolute;
-  right: 410px;
-  top: 5px;
-  width: 25px;
-  height: 25px;
-  background: #222;
-  color: #fff;
-  font-size: 25px;
-  font-weight: 600;
-  line-height: 25px;
-  text-align: center;
-  border-radius: 50%;
-}
-
-.popup.active .content {
-  transition: all 300ms ease-in-out;
-  transform: translate(-50%, -50%) scale(1);
-}
-
-
-.exPopup .exOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 10000px;
-  height: 10000px;
-  background: rgba(0, 0, 0, 0.7);
-  transform: translate(-50%, -50%) scale(0);
-  z-index: 1;
-}
-
-.exPopup .exContent {
-  position: fixed;
-  top: 140px;
-  left: 500px;
-  transform: translate(-50%, -50%) scale(0);
-  background: #fff;
-  width: 525px;
-  height: 165px;
-  z-index: 2;
-  padding: 26px;
-  box-sizing: border-box;
-  border: 1px solid black;
-  resize: both;
-  overflow: auto;
-  max-width: 700px;
-  max-height: 300px;
-}
-
-.exPopup .exClose-btn {
-  cursor: pointer;
-  right: 485px;
-  top: 10px;
-  width: 25px;
-  height: 25px;
-  background: #222;
-  color: #fff;
-  font-size: 25px;
-  font-weight: 600;
-  line-height: 25px;
-  text-align: center;
-  border-radius: 50%;
-  margin-top: -10px;
-}
-
-.exPopup.active .exContent {
-  transition: all 300ms ease-in-out;
-  transform: translate(-50%, -50%) scale(1);
-}
-
-.exPopup.active .exOverlay {
-  transform: translate(-50%, -50%) scale(1);
-}
-
-.exPopup.active .exContent,
-.exPopup.active .exOverlay {
-  transform: translate(-50%, -50%) scale(1);
-  will-change: transform;
-  /* Trigger GPU rendering */
+  display: block;
+  float: right;
+  border-width: 3px;
 }

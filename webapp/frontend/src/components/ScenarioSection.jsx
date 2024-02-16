@@ -53,7 +53,7 @@ const ScenarioSection = (
             </div>
             {savedScenarios.length == 0
                 ?
-                <i class="instructionsText">Save an explanation to create a scenario</i>
+                <i className="instructionsText">Save an explanation to create a scenario</i>
                 :
                 <div className="tab-list">
                     {savedScenarios.map((scenario, index) => (

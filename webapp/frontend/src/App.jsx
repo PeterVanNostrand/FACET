@@ -326,10 +326,8 @@ function App() {
                 </div>
 
                 <div id="status-grid" className="card">
-                    <h2>My Application</h2>
                     <StatusSection
                         instance={selectedInstance}
-                        status="N" //NONONONONONONONONONONO NEED TO DETERMINE THIS SEPARATELY
                         featureDict={featureDict}
                         formatDict={formatDict}
                     />
