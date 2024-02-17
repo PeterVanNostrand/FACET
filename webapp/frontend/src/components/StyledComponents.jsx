@@ -2,20 +2,32 @@ import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import Slider from '@mui/material/Slider';
 import Switch from '@mui/material/Switch';
+import Avatar from '@mui/material/Avatar';
 
 export const StyledIconButton = styled(Button)(({ theme }) => ({
-    color: '#fff',
-    width: '5px',
-    height: '25px',
     borderRadius: '5px',
+    height: '40px',
+    minWidth: '40px',
+    padding: '0',
     '&:hover': {
         backgroundColor: '#f5f5f5',
-        color: '#3c52b2',
-        width: '10px',
-        height: '25px',
         borderRadius: '5px',
+        minHeight: '20px',
+        minWidth: '20px',
+        padding: '0',
     },
-    //overflow: 'hidden',
+    '& .MuiTouchRipple-root': {
+        width: '40px',
+        height: '40px',
+        transitionDuration: '0.5s',
+        padding: '0',
+
+    },
+}));
+
+export const StyledAvatar = styled(Avatar)(({ theme }) => ({
+    width: '40px',
+    height: '40px',
 }));
 
 export const StyledSwitch = (props) => (
@@ -32,28 +44,28 @@ export const StyledSwitch = (props) => (
             },
             '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
                 backgroundColor: '#6b8eff',
+                color: '#6b8eff',
             },
             '& .MuiSwitch-thumb': {
-                backgroundColor: () => (props.checked ? '#6b8eff' : '#fff'), // Set thumb color based on checked state
+                backgroundColor: () => (props.checked ? '#6b8eff' : '#fff'),
             },
             '& .MuiSwitch-track': {
-                // borderRadius: 24 / 2, // Adjust border radius to make it round
+                //borderRadius: 24 / 2, // Adjust border radius to make it round
                 '&:before, &:after': {
                     content: '""',
                     position: 'absolute',
                 },
                 '&:before': {
                     content: '"ON"',
-                    left: 13,
                     color: '#fff',
-                    fontSize: 10,
+                    fontSize: 9,
                     fontWeight: 'bold',
                 },
                 '&:after': {
                     content: '"OFF"',
-                    right: 12,
+                    right: 15,
                     color: '#fff',
-                    fontSize: 10,
+                    fontSize: 9,
                     fontWeight: 'bold',
                 },
             },
@@ -62,11 +74,13 @@ export const StyledSwitch = (props) => (
 );
 export const StyledSlider = styled(Slider)(({ theme }) => ({
     color: '#6b8eff',
+    overflow: 'off',
     '& .MuiSlider-rail': {
         color: 'black',
     },
-    '&.Mui-disabled .MuiSlider-rail': {
-        color: 'black',
+    '& .MuiSlider-track': {
+        height: 10,
+        borderRadius: 4,
     },
     '& .MuiSlider-thumb': {
         color: 'black',
@@ -74,45 +88,27 @@ export const StyledSlider = styled(Slider)(({ theme }) => ({
         height: 20,
         borderRadius: 5,
     },
-    '& .MuiSlider-track': {
-        height: 10,
-        borderRadius: 4,
-    },
-    '& .MuiSlider-valueLabel': {    
+    '& .MuiSlider-valueLabel': { // Handle/Thumb Labels:
         background: '#6b8eff',
         borderRadius: 10,
     },
-    '& .MuiSlider-mark': {
-        backgroundColor: '#C8D2FB',
+    '& .MuiSlider-mark': { // Min and Max
         width: 5,
         height: 20,
         borderRadius: 5,
+        backgroundColor: 'black',
+        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.25)',
     },
-    '& .MuiSlider-markLabel': {
+    '& .MuiSlider-markLabel': { // Labels 
         fontSize: 15,
     },
-    '& .MuiSlider-mark[data-index="1"]': {
+    '& .MuiSlider-mark[data-index="1"]': { // Current Value 
         width: 15,
         height: 15,
         borderRadius: 10,
         backgroundColor: 'black',
         opacity: 1,
     },
-    '& .MuiSlider-mark[data-index="0"]': {
-        width: 5,
-        height: 20,
-        borderRadius: 5,
-        backgroundColor: 'black',
-        opacity: 1,
-    },
-    '& .MuiSlider-mark[data-index="2"]': {
-        width: 5,
-        height: 20,
-        borderRadius: 5,
-        backgroundColor: 'black',
-        opacity: 1,
-    },
-
 }));
 
 

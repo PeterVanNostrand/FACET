@@ -3,16 +3,16 @@ import Avatar from '@mui/material/Avatar';
 import { StyledIconButton } from '../StyledComponents.jsx';
 import { StyledSlider } from '../StyledComponents.jsx';
 import { StyledSwitch } from '../StyledComponents.jsx';
+import { StyledAvatar } from '../StyledComponents.jsx';
 import arrowSVG from '../../../icons/Arrow.svg';
 import lockSVG from '../../../icons/Lock.svg';
 import unlockSVG from '../../../icons/UnLocked.svg';
-import PinIcon from '../../../icons/Pinned.svg';
-import UnPinIcon from '../../../icons/UnPinned.svg';
+import pinnedSVG from '../../../icons/Pinned.svg';
+import unPinnedSVG from '../../../icons/UnPinned.svg';
 import '../../css/feature-control.css';
 
 const FeatureControlSection = ({ features, setFeatures, constraints, setConstraints, keepPriority, setKeepPriority }) => {
     const feature_tab_title = 'Feature Controls';
-
     const handleSliderConstraintChange = (id, minRange, maxRange) => {
         // Find the index of the feature in constraints array
         const index = features.findIndex((feature) => feature.id === id);
@@ -147,8 +147,9 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
         <div className="feature-control-tab">
             <div className='feature-control-header'>
                 <div className="feature-control-tab-title">{feature_tab_title}</div>
+                <h3 className='priority-toggle'>Toggle Priority</h3>
                 <StyledSwitch
-                    className='priority-toggle'
+                    className='priority-toggle-switch'
                     style={{ color: "#0090ff" }}
                     checked={keepPriority}
                     onChange={handleSwitchChange}
@@ -197,8 +198,8 @@ const FeatureControl = (
         setRange([constraints[0], constraints[1]]);
     }, [constraints]);
 
-     useEffect(() => {
-       setEditedPriority(priority);
+    useEffect(() => {
+        setEditedPriority(priority);
     }, [editedPriority]);
 
     const handleSliderChangeCommitted = () => {
@@ -209,39 +210,32 @@ const FeatureControl = (
     const handleArrowDownClick = () => {
         const target_priority = priority + 1;
 
-        if (isPinned) {
-            console.log(`${title}: is Pinnned`);
-        }
-        else {
-            if (priority < featuresLength) {
-                if (checkPinState(target_priority)) {
-                    return;
-                }
-                else {
-                    handlePriorityChange(id, target_priority);
-                }
-            } else {
-                console.log('Exceeded List: no lesser priority');
+        if (priority < featuresLength) {
+            if (checkPinState(target_priority)) {
+                return;
             }
+            else {
+                handlePriorityChange(id, target_priority);
+            }
+        } else {
+            console.log('Exceeded List: no lesser priority');
         }
+
     };
 
     const handleArrowUpClick = () => {
         const target_priority = priority - 1;
-        if (isPinned) {
-            console.log(`${title}: is Pinned`);
-        } else {
-            if (priority > 1) {
-                if (checkPinState(target_priority)) {
-                    return;
-                }
-                else {
-                    handlePriorityChange(id, target_priority);
-                }
-            } else {
-                console.log('Exceeded List: no greater priority )');
+        if (priority > 1) {
+            if (checkPinState(target_priority)) {
+                return;
             }
+            else {
+                handlePriorityChange(id, target_priority);
+            }
+        } else {
+            console.log('Exceeded List: no greater priority )');
         }
+
     };
 
     // LOCK:
@@ -289,8 +283,8 @@ const FeatureControl = (
                 return;
             }
             else {
-                setEditedPriority(target_priority);
                 setTimeout(() => {
+                    setEditedPriority(target_priority);
                     handlePriorityChange(id, target_priority);
                 }, 500);
             }
@@ -350,42 +344,45 @@ const FeatureControl = (
                     onClick={handleLockClick}
                     className={`lock-button ${isLocked ? 'locked' : ''}`}
                 >
-                    <Avatar src={isLocked ? lockSVG : unlockSVG} alt={isLocked ? 'Unlock' : 'Lock'} />
+                    <StyledAvatar src={isLocked ? lockSVG : unlockSVG} alt={isLocked ? 'Unlock' : 'Lock'} />
                 </StyledIconButton>
             </div>
             {/* Pin*/}
-            <div className={`pin ${keepPriority ? '' : 'hidden'}`}>
+            <div className={`pin`}>
                 <StyledIconButton
                     onClick={handlePinClick}
                     className={isPinned ? 'pinned' : ''}
+                    disabled={!keepPriority}
                 >
-                    <Avatar src={isPinned ? PinIcon : UnPinIcon} alt={isPinned ? 'Unpin' : 'Pin'} />
+                    <StyledAvatar src={isPinned ? pinnedSVG : unPinnedSVG} alt={isPinned ? 'Unpin' : 'Pin'} />
                 </StyledIconButton>
             </div>
 
             {/* Arrows */}
-            <div className={`arrow-up-container ${keepPriority ? '' : 'hidden'}`}>
-              <StyledIconButton
-                onClick={handleArrowUpClick}
-                className={`arrow-up ${isPinned ? 'pinned' : ''}`}
-                 >
-                <Avatar src={arrowSVG} alt='arrow up'></Avatar>
+            <div className={`arrow-up-container`}>
+                <StyledIconButton
+                    onClick={handleArrowUpClick}
+                    className={`arrow-up ${keepPriority ? '' : 'no-priority'}`}
+                    disabled={isPinned || !keepPriority || priority === 1}
+                >
+                    <StyledAvatar src={arrowSVG} alt='arrow up' />
                 </StyledIconButton>
             </div>
-            
-            <div className={`arrow-down-container ${keepPriority ? '' : 'hidden'}`}>
-              <StyledIconButton
-                onClick={handleArrowDownClick}
-                className={`arrow-down ${isPinned ? 'pinned' : ''}`}
-                 >
-                <Avatar src={arrowSVG} alt='arrow down'></Avatar>
+
+            <div className={`arrow-down-container`}>
+                <StyledIconButton
+                    onClick={handleArrowDownClick}
+                    className={`arrow-down ${keepPriority ? '' : 'no-priority'}`}
+                    disabled={isPinned || !keepPriority || priority === featuresLength}
+                >
+                    <StyledAvatar src={arrowSVG} alt='arrow down' />
                 </StyledIconButton>
             </div>
 
             {/* Priority Value*/}
-            <input className={`priority-value priority-value-input ${keepPriority ? '' : 'hidden'}`}
-                type="number"
-                value={editedPriority}
+            <input className={`priority-value priority-value-input`}
+                type={keepPriority ? "number" : "text"}
+                value={keepPriority ? editedPriority : '—'}
                 onChange={handlePriorityInputChange}
                 onBlur={handlePriorityInputBlur}
                 onKeyDown={(e) => {
@@ -393,7 +390,8 @@ const FeatureControl = (
                         handlePriorityInputBlur();
                     }
                 }}
-                pattern="[0-9]*"
+                pattern={keepPriority ? "[0-9]*" : ''}
+                disabled={isPinned || !keepPriority}
             />
 
             {/* Slider */}
