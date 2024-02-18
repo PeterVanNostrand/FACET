@@ -1,15 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import Avatar from '@mui/material/Avatar';
-import { StyledIconButton } from '../StyledComponents.jsx';
-import { StyledSlider } from '../StyledComponents.jsx';
-import { StyledSwitch } from '../StyledComponents.jsx';
-import { StyledAvatar } from '../StyledComponents.jsx';
 import arrowSVG from '../../../icons/Arrow.svg';
 import lockSVG from '../../../icons/Lock.svg';
-import unlockSVG from '../../../icons/UnLocked.svg';
 import pinnedSVG from '../../../icons/Pinned.svg';
+import unlockSVG from '../../../icons/UnLocked.svg';
 import unPinnedSVG from '../../../icons/UnPinned.svg';
 import '../../css/feature-control.css';
+import { StyledAvatar, StyledIconButton, StyledSlider, StyledSwitch } from '../StyledComponents.jsx';
 
 const FeatureControlSection = ({ features, setFeatures, constraints, setConstraints, keepPriority, setKeepPriority }) => {
     const feature_tab_title = 'Feature Controls';
@@ -147,13 +143,15 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
         <div className="feature-control-tab">
             <div className='feature-control-header'>
                 <div className="feature-control-tab-title">{feature_tab_title}</div>
-                <h3 className='priority-toggle'>Toggle Priority</h3>
-                <StyledSwitch
-                    className='priority-toggle-switch'
-                    style={{ color: "#0090ff" }}
-                    checked={keepPriority}
-                    onChange={handleSwitchChange}
-                />
+                <div className='priority-toggle'>
+                    <h3 className='priority-toggle'>Prioritize Features</h3>
+                    <StyledSwitch
+                        className='priority-toggle'
+                        style={{ color: "#0090ff" }}
+                        checked={keepPriority}
+                        onChange={handleSwitchChange}
+                    />
+                </div>
             </div>
             {features.map((feature, index) => (
                 <FeatureControl key={feature.id} {...feature}

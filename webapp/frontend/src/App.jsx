@@ -1,14 +1,12 @@
 import axios, { AxiosError } from 'axios';
 import { useEffect, useState } from 'react';
 import webappConfig from '../../config.json';
-import StatusDisplay from './components/StatusDisplay.jsx';
-import WelcomeScreen from './components/welcome/WelcomeScreen.jsx';
-import './css/style.css';
-import Button from '@mui/material/Button';
 import ScenarioSection from './components/ScenarioSection.jsx';
+import StatusDisplay from './components/StatusDisplay.jsx';
 import ExplanationSection from './components/explanations/ExplanationSection';
 import FeatureControlSection from './components/feature-control/FeatureControlSection.jsx';
-import ScenarioComparison from './components/explanations/ScenarioComparison.jsx';
+import WelcomeScreen from './components/welcome/WelcomeScreen.jsx';
+import './css/style.css';
 
 const SERVER_URL = webappConfig.SERVER_URL
 const API_PORT = webappConfig.API_PORT
@@ -358,14 +356,14 @@ function App() {
                         />
                     </div>
 
-                    <div id="explanation-grid" className={`card ${isComparing ? '' : 'hidden'}`}>
+                    {/* <div id="explanation-grid" className={`card ${isComparing ? '' : 'hidden'}`}>
                         {isComparing && <ScenarioComparison savedScenarios={savedScenarios} scenario_1={0} scenario_2={1} formatDict={formatDict}/>}
-                    </div>
+                    </div> */}
                 </div>
                 <div id="suggestion-grid" className="card">
-                    <Button onClick={handleComparisonSwitch}>
+                    {/* <Button onClick={handleComparisonSwitch}>
                         <h1>Hello</h1>
-                    </Button>
+                    </Button> */}
                 </div>
             </div>
         )

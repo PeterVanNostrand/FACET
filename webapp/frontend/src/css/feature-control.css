@@ -10,34 +10,41 @@
 
 .feature-control-header {
     display: grid;
-    height: 50px;
+    height: 80px;
     width: 393px;
     grid-template-columns: 80% 20%;
     grid-template-areas:
-        "secTile toggle";
+        "secTile"
+        "toggle";
 }
 
 .feature-control-tab-title {
     font-size: 30px;
     font-weight: bold;
     grid-area: secTile;
-    margin-left: 15%;
     margin-top: 2%;
 }
 
-.priority-toggle {
+div.priority-toggle {
     grid-area: toggle;
     align-self: stretch;
-    font-size: 10px;
-    margin-bottom: 60%;
 }
 
+h3.priority-toggle {
+    float: left;
+    margin-top: 5px;
+    font-weight: normal;
+}
 
-.priority-toggle-switch {
+span.priority-toggle {
+    margin-top: -3px;
+}
+
+/* .priority-toggle-switch {
     grid-area: toggle;
     align-self: stretch;
     margin-top: 20%;
-}
+} */
 
 /* Feature Control */
 
@@ -128,7 +135,8 @@
     font-weight: bold;
     font-size: 20px;
     text-align: center;
-    width: 80%;;
+    width: 80%;
+    ;
     height: 50%;
     border: none;
     align-self: center;
@@ -159,4 +167,3 @@
     padding-left: 4%;
     padding-right: 4%;
 }
-
