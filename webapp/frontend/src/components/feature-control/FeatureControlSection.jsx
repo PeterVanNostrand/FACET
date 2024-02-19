@@ -117,7 +117,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
 
         // Sort the updated features based on priority
         updatedFeatures.sort((a, b) => a.priority - b.priority);
-        console.log('updated features', updatedFeatures);
+        // console.log('updated features', updatedFeatures);
 
         // Reset the features array
         setFeatures(updatedFeatures);

@@ -149,14 +149,10 @@ function App() {
 
 
     useEffect(() => {
-        console.log("Saved Scenarios Updated: ", savedScenarios);
-    }, [savedScenarios])
-
-    useEffect(() => {
         if (selectedScenarioIndex == null) {
             handleExplanations();
         }
-    }, [selectedInstance, numExplanations, constraints, priorities, selectedScenarioIndex]);
+    }, [selectedInstance, numExplanations, constraints, features, selectedScenarioIndex]);
 
     useEffect(() => {
         if (explanations.length === 0) return;
@@ -233,6 +229,16 @@ function App() {
 
         try {
             // build the explanation query, should hold the instance, weights, constraints, etc
+            const pinIndices = Object.values(features)
+                .map((feature, index) => feature.pin_state === true ? index : -1)
+                .filter(index => index !== -1);
+            const modifiedConstraints = [...constraints]
+            pinIndices.forEach(index => {
+                modifiedConstraints[index] = [features[index].current_value, features[index].current_value];
+            });
+            console.log("Modified Constraints: ", modifiedConstraints)
+
+                
             let request = {};
             request["instance"] = selectedInstance;
             request["weights"] = priorities;
