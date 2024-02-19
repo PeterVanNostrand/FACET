@@ -152,7 +152,7 @@ function App() {
         if (selectedScenarioIndex == null) {
             handleExplanations();
         }
-    }, [selectedInstance, numExplanations, constraints, features, selectedScenarioIndex]);
+    }, [selectedInstance, features, selectedScenarioIndex]);
 
     useEffect(() => {
         if (explanations.length === 0) return;
@@ -236,13 +236,12 @@ function App() {
             pinIndices.forEach(index => {
                 modifiedConstraints[index] = [features[index].current_value, features[index].current_value];
             });
-            console.log("Modified Constraints: ", modifiedConstraints)
 
-                
+
             let request = {};
             request["instance"] = selectedInstance;
             request["weights"] = priorities;
-            request["constraints"] = constraints;
+            request["constraints"] = modifiedConstraints;
             request["num_explanations"] = numExplanations;
 
             // make the explanation request
