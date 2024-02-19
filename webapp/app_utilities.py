@@ -73,7 +73,6 @@ def parse_dataset_info(details_path):
 
     # create a dict of pairs [min, max] for each feature
     col_scales = dict()
-    print("dict build")
     for col_id in range(ncols):
         col_scales[col_id] = [None, None]
     # get the min vals for each feature

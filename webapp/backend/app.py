@@ -27,7 +27,7 @@ SAMPLE_DATA: np.ndarray = None  # teh set of sample instances we populate for th
 def init_app():
     global FACET_CORE, SAMPLE_DATA, DS_INFO, HUMAN_FORMAT
 
-    print("\nApp initializing...\n")
+    print("\nApp initializing...")
     try:
         # initialize FACET (load data, train model, index explanations) and get samples
         FACET_CORE, SAMPLE_DATA = run_facet(ds_name=DS_NAME)
@@ -41,7 +41,7 @@ def init_app():
     except Exception as e:
         print(f"ERROR: Failed to run FACET. Details:\n{e}")
         exit(1)
-    print("\nApp initialized\n")
+    print("App initialized\n")
 
 
 init_app()
