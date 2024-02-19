@@ -168,21 +168,6 @@ function App() {
         setTotalExplanations(instanceAndExpls);
     }, [explanations])
 
-
-    // when feature controls are loaded/updated, update the priorities
-    useEffect(() => {
-        const priorities = {};
-        features.forEach((feature, index) => {
-            priorities[feature.x] = index + 1;
-        });
-
-        // Sort priorities by keys
-        const sortedPriorities = Object.fromEntries(Object.entries(priorities).sort());
-
-        setPriorities(sortedPriorities);
-    }, [features]);
-
-
     // populate features for feature controls
     useEffect(() => {
         if (!formatDict) return;
@@ -225,6 +210,19 @@ function App() {
             console.error("Error while populating features:", error);
         }
     }, [formatDict]);
+
+    // when feature controls are loaded/updated, update the priorities
+    useEffect(() => {
+        const priorities = {};
+        features.forEach((feature, index) => {
+            priorities[feature.x] = index + 1;
+        });
+
+        // Sort priorities by keys
+        const sortedPriorities = Object.fromEntries(Object.entries(priorities).sort());
+
+        setPriorities(sortedPriorities);
+    }, [features]);
 
     /**
      * Function to explain the selected instance using the backend server
