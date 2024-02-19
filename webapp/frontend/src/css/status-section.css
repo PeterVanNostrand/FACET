@@ -1,58 +1,56 @@
 body {
-  font-family: Arial, sans-serif;
+    font-family: Arial, sans-serif;
 }
 
 div {
-  font-weight: bold;
-  font-family: Arial, Helvetica, sans-serif;
-  background-color: rgba(169, 62, 62, 0);
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: rgba(169, 62, 62, 0);
 }
 
 .feature-display {
-  width: 49%;
-  margin: 0px 0px 10px 0px;
+    width: 49%;
+    margin: 0px 0px 10px 0px;
 }
 
 .status-title-container {
-  float: left;
-  width: fit-content;
+    float: left;
+    width: fit-content;
 }
 
 .status-title {
-  width: fit-content;
+    width: fit-content;
 }
 
 .feature-text {
-  display: fit-content;
-  float: left;
+    display: fit-content;
+    float: left;
 }
 
 .row-container {
-  display: flex;
-  flex-wrap: wrap;
-  text-indent: 5px;
-  width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
 }
 
 .deniedBox {
-  width: 275px;
-  height: 1.7ex;
-  margin-left: 35px;
-  border-radius: 6px;
-  color: #C1251B;
-  text-align: center;
-  text-indent: 0px;
-  font-weight: bold;
-  font-family: Arial, Helvetica, sans-serif;
-  padding: 4px;
-  background-color: white;
-  border: 6px solid #C1251B;
-  display: block;
-  float: right;
-  border-width: 3px;
+    width: 275px;
+    height: 1.7ex;
+    margin-left: 35px;
+    border-radius: 6px;
+    color: #C1251B;
+    text-align: center;
+    text-indent: 0px;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 4px;
+    background-color: white;
+    border: 6px solid #C1251B;
+    display: block;
+    float: right;
+    border-width: 3px;
 }
 
 #valuesContainer {
-  max-height: 100px;
-  overflow-y: auto;
+    max-height: 100px;
+    overflow-y: auto;
 }

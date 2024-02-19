@@ -276,7 +276,7 @@ function App() {
     }
 
     const backToWelcomeScreen = () => {
-        setIsWelcome(true); z
+        setIsWelcome(true);
     }
 
     const [isComparing, setIsComparing] = useState(false)
