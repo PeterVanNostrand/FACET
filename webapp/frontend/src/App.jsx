@@ -6,6 +6,7 @@ import StatusSection from './components/StatusSection.jsx';
 import ExplanationSection from './components/explanations/ExplanationSection.jsx';
 import FeatureControlSection from './components/feature-control/FeatureControlSection.jsx';
 import WelcomeScreen from './components/welcome/WelcomeScreen.jsx';
+import Suggest from './components/suggestion/suggestion.jsx'
 import './css/style.css';
 
 const SERVER_URL = webappConfig.SERVER_URL
@@ -360,9 +361,7 @@ function App() {
                     </div> */}
                 </div>
                 <div id="suggestion-grid" className="card">
-                    {/* <Button onClick={handleComparisonSwitch}>
-                        <h1>Hello</h1>
-                    </Button> */}
+                    <Suggest featureDict={featureDict} formatDict={formatDict} selectedInstance={selectedInstance} explanation={explanations}></Suggest>
                 </div>
             </div>
         )
