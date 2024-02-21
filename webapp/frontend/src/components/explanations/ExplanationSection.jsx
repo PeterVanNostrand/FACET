@@ -1,5 +1,4 @@
-import React from 'react';
-import { formatFeature } from "../../js/utilities.js";
+import { formatFeature } from "@src/js/utilities.js";
 import NumberLine from './NumberLine';
 
 const ExplanationSection = (

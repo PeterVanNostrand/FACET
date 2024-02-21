@@ -1,10 +1,11 @@
 import axios, { AxiosError } from 'axios';
 import { useEffect, useState } from 'react';
 import webappConfig from '../../config.json';
-import ScenarioSection from './components/ScenarioSection.jsx';
-import StatusSection from './components/StatusSection.jsx';
 import ExplanationSection from './components/explanations/ExplanationSection.jsx';
 import FeatureControlSection from './components/feature-control/FeatureControlSection.jsx';
+import ScenarioSection from './components/scenario/ScenarioSection.jsx';
+import StatusSection from './components/status/StatusSection.jsx';
+import Suggest from './components/suggestion/suggestion.jsx';
 import WelcomeScreen from './components/welcome/WelcomeScreen.jsx';
 import './css/style.css';
 
@@ -276,7 +277,7 @@ function App() {
     }
 
     const backToWelcomeScreen = () => {
-        setIsWelcome(true); z
+        setIsWelcome(true);
     }
 
     const [isComparing, setIsComparing] = useState(false)
@@ -360,9 +361,12 @@ function App() {
                     </div> */}
                 </div>
                 <div id="suggestion-grid" className="card">
-                    {/* <Button onClick={handleComparisonSwitch}>
-                        <h1>Hello</h1>
-                    </Button> */}
+                    <Suggest
+                        formatDict={formatDict}
+                        selectedInstance={selectedInstance}
+                        explanations={explanations}
+                        currentExplanationIndex={currentExplanationIndex}
+                        featureDict={featureDict} />
                 </div>
             </div>
         )

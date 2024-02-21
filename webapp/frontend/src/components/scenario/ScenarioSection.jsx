@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import close from '../../icons/close.svg';
+import close from '@icons/close.svg';
+import { useEffect } from 'react';
 
 const ScenarioSection = (
     { savedScenarios,
