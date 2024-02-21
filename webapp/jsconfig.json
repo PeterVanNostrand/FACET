@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "module": "CommonJS",
+        "target": "ES6",
+        "paths": {
+            "@icons/*": [
+                "./frontend/icons/*"
+            ],
+            "@src/*": [
+                "./frontend/src/*"
+            ],
+        }
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}

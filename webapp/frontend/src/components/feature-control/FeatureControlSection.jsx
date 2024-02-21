@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import arrowSVG from '../../../icons/Arrow.svg';
-import lockSVG from '../../../icons/Lock.svg';
-import pinnedSVG from '../../../icons/Pinned.svg';
-import unlockSVG from '../../../icons/UnLocked.svg';
-import unPinnedSVG from '../../../icons/UnPinned.svg';
-import '../../css/feature-control.css';
-import { StyledAvatar, StyledIconButton, StyledSlider, StyledSwitch } from '../StyledComponents.jsx';
+import arrowSVG from '@icons/Arrow.svg';
+import lockSVG from '@icons/Lock.svg';
+import pinnedSVG from '@icons/Pinned.svg';
+import unlockSVG from '@icons/UnLocked.svg';
+import unPinnedSVG from '@icons/UnPinned.svg';
+import { useEffect, useState } from 'react';
+import { StyledAvatar, StyledIconButton, StyledSlider, StyledSwitch } from './StyledComponents.jsx';
+import './feature-control.css';
 
 const FeatureControlSection = ({ features, setFeatures, constraints, setConstraints, keepPriority, setKeepPriority }) => {
     const feature_tab_title = 'Feature Controls';

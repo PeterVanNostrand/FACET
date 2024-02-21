@@ -1,12 +1,11 @@
+import close from '@icons/close.svg';
+import Feature from '@src/components/Feature.jsx';
+import { formatFeature, formatValue } from '@src/js/utilities.js';
+import { useState } from 'react';
+import './welcomescreen.css';
 
-import React, { useState } from 'react';
-import close from '../../../icons/close.svg';
-import '../../css/welcomescreen.css';
-import { formatFeature, formatValue } from '../../js/utilities';
-
-import EditableText from '../EditableText';
-import Feature from '../Feature';
-import InstanceDropdown from '../InstanceDropdown';
+import EditableText from './EditableText';
+import InstanceDropdown from './InstanceDropdown';
 
 const WelcomeScreen = (
     { instances,

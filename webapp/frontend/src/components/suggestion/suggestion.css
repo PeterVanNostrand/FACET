@@ -1,0 +1,15 @@
+.text-black {
+  color: Black;
+}
+
+.text-blue {
+  color: #5BAEFB;
+}
+
+.text-red {
+  color: #C1251B;
+}
+
+.altered-text {
+  float: left;
+}
