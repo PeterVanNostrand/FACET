@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import '../../css/suggestion.css';
 import { formatFeature, formatValue } from '../../js/utilities';
 
-const Suggestion = ({featureDict, formatDict, selectedInstance, explanation}) => {
-
+const Suggestion = ({formatDict, selectedInstance, explanations, currentExplanationIndex}) => {
 
     const make_singluar_suggestion = (suggestion) => {
         // your FEATUER was ACCEPTED_VALUE rather then CURRENT-VALUE
@@ -17,7 +16,7 @@ const Suggestion = ({featureDict, formatDict, selectedInstance, explanation}) =>
     }
 
     const constuct_sub_message = (suggestions) => {
-        let message_start = '<div class="div-1"><span style={{"margin-left": "5px"}}>Your application would have been <span class="span-blue"> APPROVED</span> rather than <span class="span-red"> REJECTED</span> if'
+        let message_start = '<div class="div-1"><span class=\"span-black\">Your application would have been <span class="span-blue"> APPROVED</span> rather than <span class="span-red"> REJECTED</span> if'
         let message_middle = ''
         let message_end = ', assuming no other changes.</span></div>'
 
@@ -38,19 +37,6 @@ const Suggestion = ({featureDict, formatDict, selectedInstance, explanation}) =>
         let final_message = message_start.concat(" " + message_middle + message_end)
 
         return final_message
-
-            // content =  (<div className="div-1">
-            //     <span style={{"margin-left": "5px"}}>
-            //         Your application would have been 
-            //         <span className="span-blue"> accepted</span> if your 
-            //         <span className="span-black"> savings</span> were 
-            //         <span className="span-blue"> $14,520</span> rather than 
-            //         <span className="span-red"> $12,000</span> and your 
-            //         <span className="span-black"> total debt</span> was 
-            //         <span className="span-blue"> $2,775</span> rather than 
-            //        <span classname="span-red"> 3,700</span> assuming no other changes.
-            //     </span>
-            //     </div>)
     }
 
 
@@ -84,7 +70,7 @@ const Suggestion = ({featureDict, formatDict, selectedInstance, explanation}) =>
 
     let keys = Object.keys(selectedInstance)
 
-    let ranges = explanation[0]
+    let ranges = explanations[currentExplanationIndex]
 
     if (ranges === undefined){
         return construct_full_message(undefined)

@@ -31,25 +31,10 @@ div {
   }
 
   .span-black{
-    color: black; font-weight: bold;
+    color: black; 
+    margin-left: "5px";
   }
 
   .span-red{
     color: #C1251B;font-weight: bold;
-  }
-
-  .button {
-    background-color: #5BAEFB;
-    padding: 5px;
-    color: white;
-    border: none;
-    text-align: center;
-    width: 175px;
-    height: 25px;
-    border-radius: 20px;
-    cursor: pointer;
-  }
-
-  .button:hover {
-    background-color: #397dbd; /* Change background color on hover */
   }
