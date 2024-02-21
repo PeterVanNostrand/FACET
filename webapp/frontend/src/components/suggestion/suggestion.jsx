@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react';
 import '../../css/suggestion.css';
 import { formatFeature, formatValue } from '../../js/utilities';
 

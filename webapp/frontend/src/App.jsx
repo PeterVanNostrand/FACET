@@ -361,7 +361,11 @@ function App() {
                     </div> */}
                 </div>
                 <div id="suggestion-grid" className="card">
-                    <Suggest formatDict={formatDict} selectedInstance={selectedInstance} explanations={explanations} currentExplanationIndex={currentExplanationIndex}></Suggest>
+                    <Suggest 
+                        formatDict={formatDict}
+                        selectedInstance={selectedInstance}
+                        explanations={explanations}
+                        currentExplanationIndex={currentExplanationIndex}/>
                 </div>
             </div>
         )
