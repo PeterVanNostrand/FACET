@@ -82,8 +82,8 @@
     background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
 }
 
-*/ .instructionsText {
-    color: '#555555';
+.instructions-text {
+    color: #666666;
 }
 
 /* Hide the scrollbar for WebKit browsers */
@@ -286,5 +286,5 @@ button:disabled {
 }
 
 .hidden {
-    display: none; 
+    display: none;
 }

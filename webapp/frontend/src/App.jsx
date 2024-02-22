@@ -156,7 +156,10 @@ function App() {
     }, [selectedInstance, features, selectedScenarioIndex]);
 
     useEffect(() => {
-        if (explanations.length === 0) return;
+        if (explanations.length === 0) {
+            setTotalExplanations([]);
+            return;
+        }
 
         const instanceAndExpls = explanations.map(region => ({
             instance: selectedInstance,

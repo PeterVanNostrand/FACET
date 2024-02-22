@@ -153,8 +153,9 @@ export const Suggestion = ({ formatDict, featureDict, selectedInstance, explanat
     // }
 
     let currentExplanation = explanations[currentExplanationIndex]
+
     if (currentExplanation === undefined) { // If the ranges are undefined
-        return (<span>No suggestion availible.</span>)
+        return <i className="instructions-text">No suggestion available.</i>
     }
     else {
         let nAlterations = 0;
@@ -172,7 +173,6 @@ export const Suggestion = ({ formatDict, featureDict, selectedInstance, explanat
                 let current_val = selectedInstance[key];
 
                 if (current_val < lower_bound || current_val > upper_bound) {
-                    console.log(nAlterations)
                     let alter_text = []
                     if (nAlterations > 0) {
                         alter_text.push(["and your"])
