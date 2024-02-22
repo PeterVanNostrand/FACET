@@ -229,14 +229,14 @@ function App() {
 
         try {
             // build the explanation query, should hold the instance, weights, constraints, etc
-            const pinIndices = Object.values(features)
-                .map((feature, index) => feature.pin_state === true ? index : -1)
+            const lockIndices = Object.values(features)
+                .map((feature, index) => feature.lock_state === true ? index : -1)
                 .filter(index => index !== -1);
             const modifiedConstraints = [...constraints]
-            pinIndices.forEach(index => {
-                modifiedConstraints[index] = [features[index].current_value, features[index].current_value];
+            const lockOffset = 0.01;
+            lockIndices.forEach(index => {
+                modifiedConstraints[index] = [features[index].current_value - lockOffset, features[index].current_value + lockOffset];
             });
-
 
             let request = {};
             request["instance"] = selectedInstance;
@@ -280,13 +280,6 @@ function App() {
 
     const backToWelcomeScreen = () => {
         setIsWelcome(true);
-    }
-
-    const [isComparing, setIsComparing] = useState(false)
-
-    const handleComparisonSwitch = () => {
-        setIsComparing(!isComparing);
-        console.log("Is Comparing? : ", !isComparing);
     }
 
     if (isLoading) {
@@ -345,23 +338,19 @@ function App() {
                     />
                 </div>
 
-                <div>
-                    <div id="explanation-grid" className={`card ${isComparing ? 'hidden' : ''}`}>
-                        <ExplanationSection
-                            key={currentExplanationIndex}
-                            explanations={explanations}
-                            totalExplanations={totalExplanations}
-                            formatDict={formatDict}
-                            currentExplanationIndex={currentExplanationIndex}
-                            setCurrentExplanationIndex={setCurrentExplanationIndex}
-                            saveScenario={saveScenario}
-                        />
-                    </div>
-
-                    {/* <div id="explanation-grid" className={`card ${isComparing ? '' : 'hidden'}`}>
-                        {isComparing && <ScenarioComparison savedScenarios={savedScenarios} scenario_1={0} scenario_2={1} formatDict={formatDict}/>}
-                    </div> */}
+                <div id="explanation-grid" className={`card`}>
+                    <ExplanationSection
+                        key={currentExplanationIndex}
+                        explanations={explanations}
+                        totalExplanations={totalExplanations}
+                        formatDict={formatDict}
+                        currentExplanationIndex={currentExplanationIndex}
+                        setCurrentExplanationIndex={setCurrentExplanationIndex}
+                        saveScenario={saveScenario}
+                    />
                 </div>
+
+
                 <div id="suggestion-grid" className="card">
                     {/* <Button onClick={handleComparisonSwitch}>
                         <h1>Hello</h1>

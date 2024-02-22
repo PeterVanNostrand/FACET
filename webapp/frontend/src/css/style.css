@@ -34,6 +34,8 @@
     grid-area: statusGrid;
     min-width: 615px;
     max-width: 615px;
+    max-height: 150px;
+    min-height: 150px;
 }
 
 #explanation-grid {
@@ -58,6 +60,8 @@
 
 #feature-controls-grid {
     grid-area: featureControlGrid;
+    max-height: 700px;
+    min-height: 700px;
 }
 
 

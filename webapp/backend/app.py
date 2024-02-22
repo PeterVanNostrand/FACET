@@ -5,6 +5,7 @@ import json
 import os
 from webapp.app_utilities import run_facet, parse_dataset_info
 from dataset import get_json_paths, DataInfo
+from pprint import pprint
 
 # load app confiuration parameters
 with open("./webapp/config.json", "r") as config_file:
@@ -93,7 +94,8 @@ def facet_explanation():
 
     try:
         data = request.json
-        print("request: " + str(data))
+        print("request: ")
+        pprint(data)
         # fetch the instance
         instance = DS_INFO.dict_to_point(data["instance"])
         instance = DS_INFO.scale_points(instance)
