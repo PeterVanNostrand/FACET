@@ -15,10 +15,10 @@ const WelcomeScreen = (
         formatDict,
         featureDict,
         applicationType,
-        setApplicationType, }
+        setApplicationType,
+        customInstance,
+        setCustomInstance }
 ) => {
-    const [customApplicant, setCustomApplicant] = useState({ ...selectedInstance })
-
 
     const handleTabChange = (tab) => {
         setApplicationType(tab)
@@ -26,7 +26,7 @@ const WelcomeScreen = (
 
     const handleConfirm = () => {
         if (applicationType == "Custom") {
-            setSelectedInstance(customApplicant)
+            setSelectedInstance(customInstance)
         }
         setIsWelcome(false)
     }
@@ -94,9 +94,9 @@ const WelcomeScreen = (
                                 <FeatureInput
                                     key={index}
                                     prettyName={formatFeature(key, formatDict)}
-                                    featureValue={customApplicant[key]}
+                                    featureValue={customInstance[key]}
                                     updateValue={(value) => {
-                                        setCustomApplicant({ ...customApplicant, [key]: value })
+                                        setCustomInstance({ ...customInstance, [key]: value })
                                     }}
                                 />
                             ))}

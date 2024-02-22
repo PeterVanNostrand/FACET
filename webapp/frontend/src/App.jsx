@@ -84,6 +84,7 @@ function App() {
      */
     const [applications, setApplications] = useState([]);
     const [selectedInstance, setSelectedInstance] = useState("");
+    const [customInstance, setCustomInstance] = useState("");
 
     const [features, setFeatures] = useState([]);
     const [explanations, setExplanations] = useState("");
@@ -147,6 +148,10 @@ function App() {
         };
         pageLoad();
     }, []);
+
+    useEffect(() => {
+        setCustomInstance(applications[0])
+    }, [applications])
 
 
     useEffect(() => {
@@ -300,6 +305,8 @@ function App() {
                 featureDict={featureDict}
                 applicationType={applicationType}
                 setApplicationType={setApplicationType}
+                customInstance={customInstance}
+                setCustomInstance={setCustomInstance}
             />
         )
     } else {
