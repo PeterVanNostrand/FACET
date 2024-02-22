@@ -95,6 +95,7 @@ function App() {
 
     const [savedScenarios, setSavedScenarios] = useState([]);
     const [selectedScenarioIndex, setSelectedScenarioIndex] = useState(null);
+    const [scenarioCount, setScenarioCount] = useState(1);
 
     const [formatDict, setFormatDict] = useState(null);
     const [featureDict, setFeatureDict] = useState(null);
@@ -106,7 +107,7 @@ function App() {
     ]);
     const [priorities, setPriorities] = useState(null);
 
-    const [isWelcome, setIsWelcome] = useState(true);
+    const [isWelcome, setIsWelcome] = useState(false);
     const [applicationType, setApplicationType] = useState("Applicant");
 
 
@@ -279,12 +280,13 @@ function App() {
 
     const saveScenario = () => {
         const newScenario = {
-            scenarioID: savedScenarios.length + 1,
+            scenarioID: scenarioCount,
             instance: selectedInstance,
             explanations: [...explanations],
             explanationIndex: currentExplanationIndex,
             constraints: [...constraints]
         };
+        setScenarioCount(scenarioCount + 1);
         setSavedScenarios([...savedScenarios, newScenario]);
     }
 
