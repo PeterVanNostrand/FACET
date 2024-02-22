@@ -1,5 +1,4 @@
-import React from 'react';
-import { formatFeature } from "../../js/utilities.js";
+import { formatFeature } from '@src/js/utilities.js';
 import NumberLine from './NumberLine';
 
 // Function component for rendering a single explanation item
@@ -48,7 +47,7 @@ const ExplanationList = ({ explanations, explanationIndex, formatDict }) => {
 };
 
 
-const ScenarioComparison = ({ savedScenarios, scenario_1, scenario_2, formatDict}) => {
+const ScenarioComparison = ({ savedScenarios, scenario_1, scenario_2, formatDict }) => {
     const scenarios_length = savedScenarios.length;
 
     if (scenarios_length >= 2) {

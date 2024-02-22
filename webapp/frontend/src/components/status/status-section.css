@@ -1,38 +1,26 @@
+/* General styling */
 body {
     font-family: Arial, sans-serif;
-}
-
-div {
+  }
+  
+  div {
     font-family: Arial, Helvetica, sans-serif;
     background-color: rgba(169, 62, 62, 0);
-}
-
-.feature-display {
-    width: 49%;
-    margin: 0px 0px 10px 0px;
-}
-
-.status-title-container {
-    float: left;
+  }
+  
+  /* Card title section */
+  #status-title {
+    display: flow-root;
+    margin-bottom: 2ex;
+  }
+  
+  #status-title h2 {
     width: fit-content;
-}
-
-.status-title {
-    width: fit-content;
-}
-
-.feature-text {
-    display: fit-content;
+    margin-bottom: 0px;
     float: left;
-}
-
-.row-container {
-    display: flex;
-    flex-wrap: wrap;
-    width: 100%;
-}
-
-.deniedBox {
+  }
+  
+  #status-box {
     width: 275px;
     height: 1.7ex;
     margin-left: 35px;
@@ -48,9 +36,27 @@ div {
     display: block;
     float: right;
     border-width: 3px;
-}
-
-#valuesContainer {
+  }
+  
+  /* Instance value display */
+  
+  #instance-display {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
     max-height: 100px;
     overflow-y: auto;
-}
+  }
+  
+  #instance-display div {
+    width: 49%;
+    margin: 0px 0px 10px 0px;
+  }
+  
+  #instance-display p {
+    margin: 0px;
+  }
+  
+  #instance-display span {
+    font-weight: normal;
+  }
