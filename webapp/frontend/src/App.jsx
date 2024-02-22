@@ -83,8 +83,9 @@ function App() {
      * isLoading: Boolean value that helps with managing async operations. Prevents webapp from trying to display stuff before formatDict is loaded
      */
     const [applications, setApplications] = useState([]);
-    const [selectedInstance, setSelectedInstance] = useState("");
+    const [dropdownIndex, setDropdownIndex] = useState(0);
     const [customInstance, setCustomInstance] = useState("");
+    const [selectedInstance, setSelectedInstance] = useState("");
 
     const [features, setFeatures] = useState([]);
     const [explanations, setExplanations] = useState("");
@@ -105,7 +106,7 @@ function App() {
     ]);
     const [priorities, setPriorities] = useState(null);
 
-    const [isWelcome, setIsWelcome] = useState(false);
+    const [isWelcome, setIsWelcome] = useState(true);
     const [applicationType, setApplicationType] = useState("Applicant");
 
 
@@ -307,6 +308,8 @@ function App() {
                 setApplicationType={setApplicationType}
                 customInstance={customInstance}
                 setCustomInstance={setCustomInstance}
+                dropdownIndex={dropdownIndex}
+                setDropdownIndex={setDropdownIndex}
             />
         )
     } else {
