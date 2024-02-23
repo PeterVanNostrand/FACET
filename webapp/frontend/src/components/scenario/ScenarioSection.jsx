@@ -9,7 +9,8 @@ const ScenarioSection = (
         setSelectedInstance,
         selectedScenarioIndex,
         setSelectedScenarioIndex,
-        setConstraints
+        setConstraints,
+        setScenarioCount
     }) => {
 
     const handleScenarioChange = (scenario, index) => {
@@ -41,6 +42,7 @@ const ScenarioSection = (
     }
 
     const clearScenarios = () => {
+        setScenarioCount(1);
         setSavedScenarios([]);
         setSelectedScenarioIndex(null); // Reset selected index when scenarios are cleared
     }

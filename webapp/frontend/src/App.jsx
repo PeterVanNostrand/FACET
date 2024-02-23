@@ -333,6 +333,7 @@ function App() {
                     selectedScenarioIndex={selectedScenarioIndex}
                     setSelectedScenarioIndex={setSelectedScenarioIndex}
                     setConstraints={setConstraints}
+                    setScenarioCount={setScenarioCount}
                 />
 
                 <div id="feature-controls-grid" className="card">
