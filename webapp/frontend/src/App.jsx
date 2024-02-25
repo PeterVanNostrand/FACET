@@ -332,6 +332,8 @@ function App() {
                         setConstraints={setConstraints}
                         keepPriority={keepPriority}
                         setKeepPriority={setKeepPriority}
+                        selectedScenarioIndex={selectedScenarioIndex}
+                        setSelectedScenarioIndex={setSelectedScenarioIndex}
                     />
                 </div>
 

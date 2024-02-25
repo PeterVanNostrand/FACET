@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { StyledAvatar, StyledIconButton, StyledSlider, StyledSwitch } from './StyledComponents.jsx';
 import './feature-control.css';
 
-const FeatureControlSection = ({ features, setFeatures, constraints, setConstraints, keepPriority, setKeepPriority }) => {
+const FeatureControlSection = ({ features, setFeatures, constraints, setConstraints, keepPriority, setKeepPriority, selectedScenarioIndex, setSelectedScenarioIndex }) => {
     const feature_tab_title = 'Feature Controls';
     const handleSliderConstraintChange = (id, minRange, maxRange) => {
         // Find the index of the feature in constraints array
@@ -18,7 +18,10 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
             updatedConstraints[index] = [minRange, maxRange];
             setConstraints(updatedConstraints);
             setFeatures(features);
-
+            if (selectedScenarioIndex !== null) {
+                console.log("REACHED:");
+                setSelectedScenarioIndex(null);
+            }
             const updatedFeatures = [...features];
             updatedFeatures[index] = {
                 ...updatedFeatures[index],
