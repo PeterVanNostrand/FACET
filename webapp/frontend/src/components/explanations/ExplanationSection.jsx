@@ -47,6 +47,23 @@ const ExplanationSection = (
 
                             </div>
                         ))}
+                        {explanations.length > 0 && Object.keys(
+                            explanations[explanations.length === 1 ? 0 : currentExplanationIndex]
+                        ).map((key, innerIndex) => (
+                            <div key={innerIndex} style={{ display: 'flex', flexDirection: 'row' }}>
+                                <h3 >
+                                    {formatFeature(key, formatDict)}
+                                </h3>
+
+                                <NumberLine
+                                    key={innerIndex}
+                                    explanation={totalExplanations[explanations.length === 1 ? 0 : currentExplanationIndex]}
+                                    i={innerIndex}
+                                    id={`number-line-container-${currentExplanationIndex}-${innerIndex}`}
+                                />
+
+                            </div>
+                        ))}
                     </div>
 
                     {/* Next and Previous buttons */}
