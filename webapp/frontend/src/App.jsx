@@ -269,6 +269,7 @@ function App() {
         const newScenario = {
             scenarioID: savedScenarios.length + 1,
             instance: selectedInstance,
+            features: features,
             explanations: [...explanations],
             explanationIndex: currentExplanationIndex,
             constraints: [...constraints]
@@ -331,6 +332,7 @@ function App() {
                         constraints={constraints}
                         setConstraints={setConstraints}
                         keepPriority={keepPriority}
+                        savedScenarios={savedScenarios}
                         setKeepPriority={setKeepPriority}
                         selectedScenarioIndex={selectedScenarioIndex}
                         setSelectedScenarioIndex={setSelectedScenarioIndex}
