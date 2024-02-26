@@ -216,7 +216,7 @@ function App() {
         } catch (error) {
             console.error("Error while populating features:", error);
         }
-    }, [formatDict]);
+    }, [formatDict, selectedInstance]);
 
     // when feature controls are loaded/updated, update the priorities
     useEffect(() => {
@@ -318,7 +318,7 @@ function App() {
         return (
             <div id="super-div" className="super-div">
                 <div id="back-welcome-grid" className="card">
-                    <button className="back-welcome-button" onClick={backToWelcomeScreen}>← Welcome Screen</button>
+                    <button className="back-welcome-button" onClick={backToWelcomeScreen}>Welcome Screen</button>
                     <h1 id="app-logo">
                         FACET
                     </h1>

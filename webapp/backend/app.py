@@ -94,8 +94,6 @@ def facet_explanation():
 
     try:
         data = request.json
-        print("request: ")
-        pprint(data)
         # fetch the instance
         instance = DS_INFO.dict_to_point(data["instance"])
         instance = DS_INFO.scale_points(instance)
@@ -109,6 +107,7 @@ def facet_explanation():
         constraints = np.array(data.get("constraints", None)).astype(float)
         constraints = DS_INFO.scale_rects(constraints)[0]
         num_explanations = data.get("num_explanations", 1)
+
 
         # Perform explanation using FACET explain
         prediction = FACET_CORE.predict(instance)
