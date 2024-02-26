@@ -5,6 +5,7 @@ import json
 import os
 from webapp.app_utilities import run_facet, parse_dataset_info
 from dataset import get_json_paths, DataInfo
+from pprint import pprint
 
 # load app confiuration parameters
 with open("./webapp/config.json", "r") as config_file:
@@ -27,7 +28,7 @@ SAMPLE_DATA: np.ndarray = None  # teh set of sample instances we populate for th
 def init_app():
     global FACET_CORE, SAMPLE_DATA, DS_INFO, HUMAN_FORMAT
 
-    print("\nApp initializing...\n")
+    print("\nApp initializing...")
     try:
         # initialize FACET (load data, train model, index explanations) and get samples
         FACET_CORE, SAMPLE_DATA = run_facet(ds_name=DS_NAME)
@@ -41,7 +42,7 @@ def init_app():
     except Exception as e:
         print(f"ERROR: Failed to run FACET. Details:\n{e}")
         exit(1)
-    print("\nApp initialized\n")
+    print("App initialized\n")
 
 
 init_app()
@@ -93,7 +94,6 @@ def facet_explanation():
 
     try:
         data = request.json
-        print("request: " + str(data))
         # fetch the instance
         instance = DS_INFO.dict_to_point(data["instance"])
         instance = DS_INFO.scale_points(instance)
@@ -107,6 +107,7 @@ def facet_explanation():
         constraints = np.array(data.get("constraints", None)).astype(float)
         constraints = DS_INFO.scale_rects(constraints)[0]
         num_explanations = data.get("num_explanations", 1)
+
 
         # Perform explanation using FACET explain
         prediction = FACET_CORE.predict(instance)

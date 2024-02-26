@@ -38,8 +38,16 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
         if (index !== -1) {
             const updatedFeatures = [...features];
             updatedFeatures[index] = { ...updatedFeatures[index], lock_state: newLockState };
+
+            setFeatures(features);
+            if (selectedScenarioIndex !== null) {
+                console.log("REACHED:");
+                setSelectedScenarioIndex(null);
+            }
+
             setFeatures(updatedFeatures);
         }
+
     };
 
     const handlePinStateChange = (id, newPinState) => {
@@ -120,7 +128,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
 
         // Sort the updated features based on priority
         updatedFeatures.sort((a, b) => a.priority - b.priority);
-        console.log('updated features', updatedFeatures);
+        // console.log('updated features', updatedFeatures);
 
         // Reset the features array
         setFeatures(updatedFeatures);
@@ -143,7 +151,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
     };
 
     return (
-        <div className="feature-control-tab">
+        <div id="feature-controls-grid" className="card feature-control-tab" style={{ overflow: scroll }}>
             <div className='feature-control-header'>
                 <div className="feature-control-tab-title">{feature_tab_title}</div>
                 <div className='priority-toggle'>

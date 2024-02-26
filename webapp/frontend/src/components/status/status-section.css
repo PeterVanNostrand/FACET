@@ -1,63 +1,62 @@
 /* General styling */
 body {
-  font-family: Arial, sans-serif;
-}
-
-div {
-  font-weight: bold;
-  font-family: Arial, Helvetica, sans-serif;
-  background-color: rgba(169, 62, 62, 0);
-}
-
-/* Card title section */
-#status-title {
-  display: flow-root;
-  margin-bottom: 2ex;
-}
-
-#status-title h2 {
-  width: fit-content;
-  margin-bottom: 0px;
-  float: left;
-}
-
-#status-box {
-  width: 275px;
-  height: 1.7ex;
-  margin-left: 35px;
-  border-radius: 6px;
-  color: #C1251B;
-  text-align: center;
-  text-indent: 0px;
-  font-weight: bold;
-  font-family: Arial, Helvetica, sans-serif;
-  padding: 4px;
-  background-color: white;
-  border: 6px solid #C1251B;
-  display: block;
-  float: right;
-  border-width: 3px;
-}
-
-/* Instance value display */
-
-#instance-display {
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  max-height: 100px;
-  overflow-y: auto;
-}
-
-#instance-display div {
-  width: 49%;
-  margin: 0px 0px 10px 0px;
-}
-
-#instance-display p {
-  margin: 0px;
-}
-
-#instance-display span {
-  font-weight: normal;
-}
+    font-family: Arial, sans-serif;
+  }
+  
+  div {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: rgba(169, 62, 62, 0);
+  }
+  
+  /* Card title section */
+  #status-title {
+    display: flow-root;
+    margin-bottom: 2ex;
+  }
+  
+  #status-title h2 {
+    width: fit-content;
+    margin-bottom: 0px;
+    float: left;
+  }
+  
+  #status-box {
+    width: 275px;
+    height: 1.7ex;
+    margin-left: 35px;
+    border-radius: 6px;
+    color: #C1251B;
+    text-align: center;
+    text-indent: 0px;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 4px;
+    background-color: white;
+    border: 6px solid #C1251B;
+    display: block;
+    float: right;
+    border-width: 3px;
+  }
+  
+  /* Instance value display */
+  
+  #instance-display {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    max-height: 100px;
+    overflow-y: auto;
+  }
+  
+  #instance-display div {
+    width: 49%;
+    margin: 0px 0px 10px 0px;
+  }
+  
+  #instance-display p {
+    margin: 0px;
+  }
+  
+  #instance-display span {
+    font-weight: normal;
+  }

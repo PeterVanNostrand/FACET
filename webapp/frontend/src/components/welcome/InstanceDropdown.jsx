@@ -1,27 +1,21 @@
 import React, { useState } from 'react';
 
-const InstanceDropdown = ({ instances, setSelectedInstance }) => {
+const InstanceDropdown = (
+    { instances, setSelectedInstance, dropdownIndex, setDropdownIndex }
+) => {
 
-    const [dropdownvalue, setDropdownvalue] = useState(null)
-
-    let dropDownInstances = [];
-    let applications = new Map();
-
-    for (let i = 0; i < instances.length; i++) {
-        applications.set("Application " + (i + 1), instances[i]);
-        dropDownInstances.push("Application " + (i + 1));
-    }
-
-    const handleDropDownChange = (value) => {
-        setDropdownvalue(value)
-        setSelectedInstance(applications.get(value))
+    const handleDropDownChange = (e) => {
+        const selectedIndex = e.target.selectedIndex;
+        setDropdownIndex(selectedIndex);
+        setSelectedInstance(instances[selectedIndex]);
     }
 
     return (
         <div>
-            <select className="ApplicationDropDown" onChange={(e) => handleDropDownChange(e.target.value)} defaultValue={dropdownvalue}>
-                {dropDownInstances.map((option, idx) => (
-                    <option key={idx}>{option}</option>))}
+            <select className="ApplicationDropDown" onChange={(e) => handleDropDownChange(e)} defaultValue={`Application ${dropdownIndex + 1}`}>
+                {instances.map((instance, index) => (
+                    <option key={index} value={"Application " + (index + 1)}>Application {index + 1}</option>
+                ))}
             </select>
         </div>
     )
