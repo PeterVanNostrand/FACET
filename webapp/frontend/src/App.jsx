@@ -5,7 +5,7 @@ import ExplanationSection from './components/explanations/ExplanationSection.jsx
 import FeatureControlSection from './components/feature-control/FeatureControlSection.jsx';
 import ScenarioSection from './components/scenario/ScenarioSection.jsx';
 import StatusSection from './components/status/StatusSection.jsx';
-import Suggest from './components/suggestion/suggestion.jsx';
+import SuggestionSection from './components/suggestion/suggestion.jsx';
 import WelcomeScreen from './components/welcome/WelcomeScreen.jsx';
 import './css/style.css';
 
@@ -324,6 +324,15 @@ function App() {
                     </h1>
                 </div>
 
+                <FeatureControlSection
+                    features={features}
+                    setFeatures={setFeatures}
+                    constraints={constraints}
+                    setConstraints={setConstraints}
+                    keepPriority={keepPriority}
+                    setKeepPriority={setKeepPriority}
+                />
+
                 <ScenarioSection
                     savedScenarios={savedScenarios}
                     setSavedScenarios={setSavedScenarios}
@@ -335,17 +344,6 @@ function App() {
                     setConstraints={setConstraints}
                     setScenarioCount={setScenarioCount}
                 />
-
-                <div id="feature-controls-grid" className="card">
-                    <FeatureControlSection
-                        features={features}
-                        setFeatures={setFeatures}
-                        constraints={constraints}
-                        setConstraints={setConstraints}
-                        keepPriority={keepPriority}
-                        setKeepPriority={setKeepPriority}
-                    />
-                </div>
 
                 <div id="status-grid" className="card">
                     <StatusSection
@@ -369,7 +367,7 @@ function App() {
 
 
                 <div id="suggestion-grid" className="card">
-                    <Suggest
+                    <SuggestionSection
                         formatDict={formatDict}
                         selectedInstance={selectedInstance}
                         explanations={explanations}

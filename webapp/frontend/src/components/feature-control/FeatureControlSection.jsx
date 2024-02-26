@@ -140,7 +140,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
     };
 
     return (
-        <div className="feature-control-tab">
+        <div id="feature-controls-grid" className="card feature-control-tab" style={{overflow: scroll}}>
             <div className='feature-control-header'>
                 <div className="feature-control-tab-title">{feature_tab_title}</div>
                 <div className='priority-toggle'>
@@ -153,6 +153,19 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                     />
                 </div>
             </div>
+            {features.map((feature, index) => (
+                <FeatureControl key={feature.id} {...feature}
+                    onNumberLineChange={handleSliderConstraintChange}
+                    handleSliderConstraintChange={handleSliderConstraintChange}
+                    handleLockStateChange={handleLockStateChange}
+                    handlePinStateChange={handlePinStateChange}
+                    handlePriorityChange={handlePriorityChange}
+                    keepPriority={keepPriority}
+                    checkPinState={checkPinState}
+                    featuresLength={features.length}
+                    constraints={constraints[index]}
+                />
+            ))}
             {features.map((feature, index) => (
                 <FeatureControl key={feature.id} {...feature}
                     onNumberLineChange={handleSliderConstraintChange}

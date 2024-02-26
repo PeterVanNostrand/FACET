@@ -28,7 +28,7 @@ const ExplanationSection = (
             </h2>
 
             {totalExplanations.length > 0 ? (
-                <div className="explanation-container" style={{ maxHeight: 308, minHeight: 308, position: 'relative' }}>
+                <div className="explanation-container" style={{ maxHeight: 308 }}>
                     <div className="explanation-list">
                         {explanations.length > 0 && Object.keys(
                             explanations[explanations.length === 1 ? 0 : currentExplanationIndex]
@@ -61,50 +61,51 @@ const ExplanationSection = (
                                     i={innerIndex}
                                     id={`number-line-container-${currentExplanationIndex}-${innerIndex}`}
                                 />
-
                             </div>
                         ))}
+
+
+                    </div>
+                    {/* Next and Previous buttons */}
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                        {explanations.length > 1 && (
+                            <div style={{
+                                display: 'flex',
+                                marginTop: 10,
+                            }}>
+                                <button
+                                    className="cycle-button"
+                                    onClick={handlePrevious}
+                                    disabled={currentExplanationIndex === 0}
+                                >
+                                    &lt;
+                                </button>
+                                <p style={{ width: 30, textAlign: 'center' }}>{'\u00A0'}{'\u00A0'}{currentExplanationIndex + 1}{'\u00A0'}{'\u00A0'}</p>
+                                <button
+                                    className="cycle-button"
+                                    onClick={handleNext}
+                                    disabled={currentExplanationIndex === explanations.length - 1}
+                                >
+                                    &gt;
+                                </button>
+                            </div>
+                        )}
                     </div>
 
-                    {/* Next and Previous buttons */}
-                    {explanations.length > 1 && (
-                        <div style={{
-                            display: 'flex',
-                            marginTop: 10,
-                            position: 'absolute',
-                            bottom: 0,
-                            marginBottom: 15,
-                            left: '50%',
-                            transform: 'translateX(-50%)'
-                        }}>
-                            <button
-                                className="cycle-button"
-                                onClick={handlePrevious}
-                                disabled={currentExplanationIndex === 0}
-                            >
-                                &lt;
-                            </button>
-                            <p style={{ width: 30, textAlign: 'center' }}>{'\u00A0'}{'\u00A0'}{currentExplanationIndex + 1}{'\u00A0'}{'\u00A0'}</p>
-                            <button
-                                className="cycle-button"
-                                onClick={handleNext}
-                                disabled={currentExplanationIndex === explanations.length - 1}
-                            >
-                                &gt;
-                            </button>
-                        </div>
-                    )}
                 </div>
-            ): (
+
+            ) : (
                 <i className="instructions-text">
                     No explanations available. Please relax the constraints to generate explanations.
                 </i>
             )}
 
-            <button onClick={saveScenario} style={{
-                bottom: 0,
+            {explanations.length != 0 && <button onClick={saveScenario} style={{
+                marginTop: 15,
                 width: 'fit-content'
-            }}>Save Scenario</button>
+            }}>
+                Save Scenario
+            </button>}
 
         </div>
     );

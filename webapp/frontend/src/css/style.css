@@ -14,7 +14,7 @@
 
 .super-div {
     display: grid;
-    grid-template-rows: auto;
+    grid-template-rows: auto auto;
     grid-template-columns: auto;
     grid-template-areas:
         "backGrid scenarioGrid"
@@ -35,24 +35,22 @@
     grid-area: statusGrid;
     min-width: 615px;
     max-width: 615px;
-    max-height: 150px;
-    min-height: 150px;
+    height: fit-content;
 }
 
 #explanation-grid {
     grid-area: explanationGrid;
     min-width: 615px;
     max-width: 615px;
-    max-height: 446px;
+    height: fit-content;
 }
 
 #suggestion-grid {
     grid-area: suggestionGrid;
     min-width: 615px;
     max-width: 615px;
-    max-height: 45;
+    height: fit-content;
 }
-
 
 #back-welcome-grid {
     grid-area: backGrid;
@@ -271,7 +269,6 @@ button:disabled {
     display: flex;
     flex-direction: column;
     box-shadow: inset 0 0 10px 5px rgba(0, 0, 0, 0.03);
-    margin-bottom: 15px;
     padding: 15px;
     border-radius: 10px;
 }
@@ -296,6 +293,6 @@ button:disabled {
 
 ::-webkit-scrollbar-thumb {
     border-radius: 4px;
-    background-color: rgba(0,0,0,.5);
-    -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+    background-color: rgba(0, 0, 0, .5);
+    -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, .5);
 }

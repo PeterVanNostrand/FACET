@@ -23,6 +23,20 @@ export const StatusSection = ({ instance, formatDict, featureDict }) => {
                         key={index}
                     />
                 ))}
+                {Object.keys(featureDict).map((key, index) => (
+                    <Feature
+                        name={formatFeature(key, formatDict)}
+                        value={formatValue(instance[key], key, formatDict)}
+                        key={index}
+                    />
+                ))}
+                {Object.keys(featureDict).map((key, index) => (
+                    <Feature
+                        name={formatFeature(key, formatDict)}
+                        value={formatValue(instance[key], key, formatDict)}
+                        key={index}
+                    />
+                ))}
             </div>
         </div >
     );
