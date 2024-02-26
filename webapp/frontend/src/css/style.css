@@ -28,6 +28,7 @@
     grid-area: scenarioGrid;
     min-width: 615px;
     max-width: 615px;
+    height: 100px;
 }
 
 #status-grid {
