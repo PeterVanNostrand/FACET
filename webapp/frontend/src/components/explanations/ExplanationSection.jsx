@@ -23,7 +23,7 @@ const ExplanationSection = (
         <div className="explanation-section" style={{
             display: 'flex', flexDirection: 'column', position: 'relative', minHeight: '100%'
         }}>
-            <h2 className='explanation-header' style={{ marginBottom: 10, }}>
+            <h2 className='explanation-header' style={{ marginBottom: 20, }}>
                 Explanations
             </h2>
 
@@ -85,8 +85,8 @@ const ExplanationSection = (
             )}
 
             <button onClick={saveScenario} style={{
-                position: "absolute",
                 bottom: 0,
+                width: 'fit-content'
             }}>Save Scenario</button>
 
         </div>
