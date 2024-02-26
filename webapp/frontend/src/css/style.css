@@ -70,7 +70,10 @@
     margin-top: 0px;
     margin-bottom: 0px;
     font-size: 2.5em;
-    align-self: center;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .tab-list {

@@ -318,7 +318,7 @@ function App() {
         return (
             <div id="super-div" className="super-div">
                 <div id="back-welcome-grid" className="card">
-                    <button className="back-welcome-button" onClick={backToWelcomeScreen}>Welcome Screen</button>
+                    <button className="back-welcome-button" onClick={backToWelcomeScreen}>← {formatDict["scenario_terms"]["instance_name"]}</button>
                     <h1 id="app-logo">
                         FACET
                     </h1>
