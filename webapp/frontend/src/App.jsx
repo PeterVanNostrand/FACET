@@ -236,12 +236,11 @@ function App() {
     /**
      * Function to explain the selected instance using the backend server
      * @returns None
-     */
+     */priorities
     const handleExplanations = async () => {
         if (constraints.length === 0 || selectedInstance.length == 0 || !priorities) return;
 
         try {
-            console.log("features: ", features);
             // build the explanation query, should hold the instance, weights, constraints, etc
             const lockIndices = Object.values(features)
                 .map((feature, index) => feature.lock_state === true ? index : -1)
