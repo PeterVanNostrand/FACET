@@ -39,6 +39,11 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
         if (index !== -1) {
             const updatedFeatures = [...features];
             updatedFeatures[index] = { ...updatedFeatures[index], lock_state: newLockState };
+
+            if (selectedScenarioIndex !== null) {
+                console.log("REACHED:");
+                setSelectedScenarioIndex(null);
+            }
             setFeatures(updatedFeatures);
         }
     };
@@ -240,46 +245,53 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
 
         // PRIORITY (inputs): 
         const handlePriorityInputBlur = (event) => {
-            const target_priority = parseInt(event.target.value, 10);
-            setEditedPriority(target_priority);
-            // Check if the edited priority is different from the current priority
-            if (target_priority !== priority) {
-                // Call the function to update the priority
-                handlePriorityInputChange(target_priority);
-            }
-            else {
-                // If the edited priority is the same as the previous priority, reset the input field
-                setTimeout(() => {
-                    setEditedPriority(priority);
-                }, 200);
+            try {
+                const target_priority = parseInt(event.target.value, 10);
+                setEditedPriority(target_priority);
+                // Check if the edited priority is different from the current priority
+                if (target_priority !== priority) {
+                    // Call the function to update the priority
+                    handlePriorityInputChange(target_priority);
+                } else {
+                    // If the edited priority is the same as the previous priority, reset the input field
+                    setTimeout(() => {
+                        setEditedPriority(priority);
+                    }, 200);
+                }
+            } catch (error) {
+                console.error("Invalid input entered.", error);
             }
 
         };
 
         const handlePriorityInputChange = (event) => {
-            const target_priority = parseInt(event.target.value, 10);
-            setEditedPriority(target_priority);
-            // Check if the new value is within valid range and different from the current priority
-            if (!isNaN(target_priority) && target_priority >= 1 && target_priority <= features.length && target_priority !== priority) {
-                // Check target_priority pin_state
-                if (checkPinState(target_priority)) {
-                    setTimeout(() => {
-                        setEditedPriority(priority);
-                    }, 1500);
-                    return;
+            try {
+                const target_priority = parseInt(event.target.value, 10);
+                setEditedPriority(target_priority);
+                // Check if the new value is within valid range and different from the current priority
+                if (!isNaN(target_priority) && target_priority >= 1 && target_priority <= features.length && target_priority !== priority) {
+                    // Check target_priority pin_state
+                    if (checkPinState(target_priority)) {
+                        setTimeout(() => {
+                            setEditedPriority(priority);
+                        }, 1500);
+                        return;
+                    }
+                    else {
+                        setTimeout(() => {
+                            setEditedPriority(target_priority);
+                            handlePriorityChange(id, target_priority);
+                        }, 500);
+                    }
                 }
                 else {
                     setTimeout(() => {
-                        setEditedPriority(target_priority);
-                        handlePriorityChange(id, target_priority);
-                    }, 500);
+                        setEditedPriority(priority);
+                    }, 2000);
+                    return;
                 }
-            }
-            else {
-                setTimeout(() => {
-                    setEditedPriority(priority);
-                }, 2000);
-                return;
+            } catch (error) {
+                console.error("Invalid input entered.", error);
             }
         };
 
