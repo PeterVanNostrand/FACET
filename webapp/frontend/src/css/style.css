@@ -14,7 +14,7 @@
 
 .super-div {
     display: grid;
-    grid-template-rows: auto;
+    grid-template-rows: auto auto;
     grid-template-columns: auto;
     grid-template-areas:
         "backGrid scenarioGrid"
@@ -28,28 +28,29 @@
     grid-area: scenarioGrid;
     min-width: 615px;
     max-width: 615px;
+    height: 100px;
 }
 
 #status-grid {
     grid-area: statusGrid;
     min-width: 615px;
     max-width: 615px;
+    height: fit-content;
 }
 
 #explanation-grid {
     grid-area: explanationGrid;
     min-width: 615px;
     max-width: 615px;
-    max-height: 446px;
+    height: fit-content;
 }
 
 #suggestion-grid {
     grid-area: suggestionGrid;
     min-width: 615px;
     max-width: 615px;
-    max-height: 45;
+    height: fit-content;
 }
-
 
 #back-welcome-grid {
     grid-area: backGrid;
@@ -58,6 +59,8 @@
 
 #feature-controls-grid {
     grid-area: featureControlGrid;
+    max-height: 700px;
+    min-height: 700px;
 }
 
 
@@ -67,7 +70,10 @@
     margin-top: 0px;
     margin-bottom: 0px;
     font-size: 2.5em;
-    align-self: center;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .tab-list {
@@ -78,8 +84,8 @@
     background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
 }
 
-*/ .instructionsText {
-    color: '#555555';
+.instructions-text {
+    color: #666666;
 }
 
 /* Hide the scrollbar for WebKit browsers */
@@ -143,7 +149,6 @@
     margin: 10px 10px 10px 15px;
     cursor: pointer;
     color: #0c52f7;
-    font-weight: bold;
 }
 
 :root {
@@ -267,15 +272,13 @@ button:disabled {
     display: flex;
     flex-direction: column;
     box-shadow: inset 0 0 10px 5px rgba(0, 0, 0, 0.03);
-    margin-bottom: 15px;
-    margin-top: 15px;
     padding: 15px;
     border-radius: 10px;
 }
 
 .explanation-list {
     max-height: 250px;
-    overflow: auto;
+    overflow-y: auto;
 }
 
 .explanationLine {
@@ -283,5 +286,16 @@ button:disabled {
 }
 
 .hidden {
-    display: none; 
+    display: none;
+}
+
+::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, .5);
+    -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, .5);
 }

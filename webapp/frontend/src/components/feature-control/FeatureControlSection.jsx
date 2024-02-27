@@ -40,12 +40,14 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
             const updatedFeatures = [...features];
             updatedFeatures[index] = { ...updatedFeatures[index], lock_state: newLockState };
 
+            setFeatures(features);
             if (selectedScenarioIndex !== null) {
                 console.log("REACHED:");
                 setSelectedScenarioIndex(null);
             }
             setFeatures(updatedFeatures);
         }
+
     };
 
     const handlePinStateChange = (id, newPinState) => {
@@ -142,16 +144,21 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                 }
             }
         }
-        console.log("features: ", features);
     };
 
     const handleScenarioChange = () => {
         const selectedScenario = savedScenarios[selectedScenarioIndex];
-        const selectedFeatures = selectedScenario.features;
-        setFeatures(selectedFeatures);
+        if (selectedScenario) {
+            const selectedFeatures = selectedScenario.features;
+            console.log("SELECTED FEATURES: ", selectedFeatures);
+            setFeatures(selectedFeatures);
+        } else {
+            console.error("Failed to select scenario: selectedScenario is undefined.");
+        }
     }
 
     useEffect(() => {
+        console.log("selectedIndex: ", selectedScenarioIndex);
         if (selectedScenarioIndex !== null) {
             handleScenarioChange();
         }

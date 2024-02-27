@@ -9,7 +9,8 @@ const ScenarioSection = (
         setSelectedInstance,
         selectedScenarioIndex,
         setSelectedScenarioIndex,
-        setConstraints
+        setConstraints,
+        setScenarioCount
     }) => {
 
     const handleScenarioChange = (scenario, index) => {
@@ -44,6 +45,7 @@ const ScenarioSection = (
     }
 
     const clearScenarios = () => {
+        setScenarioCount(1);
         setSavedScenarios([]);
         setSelectedScenarioIndex(null); // Reset selected index when scenarios are cleared
     }
@@ -56,7 +58,7 @@ const ScenarioSection = (
             </div>
             {savedScenarios.length == 0
                 ?
-                <i className="instructionsText">Save an explanation to create a scenario</i>
+                <i className="instructions-text">Save an explanation to create a scenario</i>
                 :
                 <div className="tab-list">
                     {savedScenarios.map((scenario, index) => (

@@ -9,29 +9,33 @@ import InstanceDropdown from './InstanceDropdown';
 
 const WelcomeScreen = (
     { instances,
-        selectedInstance,
         setSelectedInstance,
         setIsWelcome,
         formatDict,
         featureDict,
         applicationType,
-        setApplicationType, }
+        setApplicationType,
+        dropdownIndex,
+        setDropdownIndex,
+        customInstance,
+        setCustomInstance,
+    }
 ) => {
-    const [customApplicant, setCustomApplicant] = useState({ ...selectedInstance })
-
 
     const handleTabChange = (tab) => {
         setApplicationType(tab)
     }
 
     const handleConfirm = () => {
-        if (applicationType == "Custom") {
-            setSelectedInstance(customApplicant)
+        if (applicationType == "Applicant") {
+            setSelectedInstance(instances[dropdownIndex])
+        } else if (applicationType == "Custom") {
+            setSelectedInstance(customInstance)
         }
         setIsWelcome(false)
     }
 
-    if (formatDict == null || featureDict == null || selectedInstance == null) {
+    if (formatDict == null || featureDict == null) {
         return (
             <div className='Full-Welcome' >
                 <button className="tab-close" onClick={() => setIsWelcome(false)}>
@@ -54,7 +58,10 @@ const WelcomeScreen = (
                         <td>
                             <button
                                 className={applicationType == 'Applicant' ? 'SelectedApplicant' : 'UnselectedApplicant'}
-                                onClick={() => handleTabChange("Applicant")}
+                                onClick={() => {
+                                    setSelectedInstance(instances[dropdownIndex])
+                                    handleTabChange("Applicant")
+                                }}
                             >
                                 {formatDict["dataset"].charAt(0).toUpperCase() + formatDict["dataset"].slice(1) + " Applicant"}
                             </button>
@@ -77,11 +84,14 @@ const WelcomeScreen = (
                         <InstanceDropdown
                             instances={instances}
                             setSelectedInstance={setSelectedInstance}
+                            dropdownIndex={dropdownIndex}
+                            setDropdownIndex={setDropdownIndex}
                         />
                         <div>
                             {Object.keys(featureDict).map((key, index) => (
+                                
                                 <div key={index}>
-                                    <Feature name={formatFeature(key, formatDict)} value={formatValue(selectedInstance[key], key, formatDict)} />
+                                    <Feature name={formatFeature(key, formatDict)} value={formatValue(instances[dropdownIndex][key], key, formatDict)} />
                                 </div>
                             ))}
                         </div>
@@ -94,9 +104,9 @@ const WelcomeScreen = (
                                 <FeatureInput
                                     key={index}
                                     prettyName={formatFeature(key, formatDict)}
-                                    featureValue={customApplicant[key]}
+                                    featureValue={customInstance[key]}
                                     updateValue={(value) => {
-                                        setCustomApplicant({ ...customApplicant, [key]: value })
+                                        setCustomInstance({ ...customInstance, [key]: value })
                                     }}
                                 />
                             ))}

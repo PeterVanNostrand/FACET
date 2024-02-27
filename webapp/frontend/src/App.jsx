@@ -5,7 +5,7 @@ import ExplanationSection from './components/explanations/ExplanationSection.jsx
 import FeatureControlSection from './components/feature-control/FeatureControlSection.jsx';
 import ScenarioSection from './components/scenario/ScenarioSection.jsx';
 import StatusSection from './components/status/StatusSection.jsx';
-import Suggest from './components/suggestion/suggestion.jsx';
+import SuggestionSection from './components/suggestion/suggestion.jsx';
 import WelcomeScreen from './components/welcome/WelcomeScreen.jsx';
 import './css/style.css';
 import { format } from 'd3';
@@ -84,6 +84,8 @@ function App() {
      * isLoading: Boolean value that helps with managing async operations. Prevents webapp from trying to display stuff before formatDict is loaded
      */
     const [applications, setApplications] = useState([]);
+    const [dropdownIndex, setDropdownIndex] = useState(0);
+    const [customInstance, setCustomInstance] = useState("");
     const [selectedInstance, setSelectedInstance] = useState("");
 
     const [features, setFeatures] = useState([]);
@@ -94,6 +96,7 @@ function App() {
 
     const [savedScenarios, setSavedScenarios] = useState([]);
     const [selectedScenarioIndex, setSelectedScenarioIndex] = useState(null);
+    const [scenarioCount, setScenarioCount] = useState(1);
 
     const [formatDict, setFormatDict] = useState(null);
     const [featureDict, setFeatureDict] = useState(null);
@@ -101,7 +104,6 @@ function App() {
 
     const [keepPriority, setKeepPriority] = useState(true);
     const [constraints, setConstraints] = useState([]);
-    const [constraintsT, setConstraintsT] = useState([]);
     const [priorities, setPriorities] = useState(null);
 
     const [isWelcome, setIsWelcome] = useState(false);
@@ -148,19 +150,22 @@ function App() {
         pageLoad();
     }, []);
 
-
     useEffect(() => {
-        console.log("Saved Scenarios Updated: ", savedScenarios);
-    }, [savedScenarios])
+        setCustomInstance(applications[0])
+    }, [applications])
+
 
     useEffect(() => {
         if (selectedScenarioIndex == null) {
             handleExplanations();
         }
-    }, [selectedInstance, numExplanations, constraints, priorities, selectedScenarioIndex]);
+    }, [selectedInstance, features, selectedScenarioIndex]);
 
     useEffect(() => {
-        if (explanations.length === 0) return;
+        if (explanations.length === 0) {
+            setTotalExplanations([]);
+            return;
+        }
 
         const instanceAndExpls = explanations.map(region => ({
             instance: selectedInstance,
@@ -168,20 +173,6 @@ function App() {
         }));
         setTotalExplanations(instanceAndExpls);
     }, [explanations])
-
-
-    // when feature controls are loaded/updated, update the priorities
-    useEffect(() => {
-        const priorities = {};
-        features.forEach((feature, index) => {
-            priorities[feature.x] = index + 1;
-        });
-
-        // Sort priorities by keys
-        const sortedPriorities = Object.fromEntries(Object.entries(priorities).sort());
-
-        setPriorities(sortedPriorities);
-    }, [features]);
 
     // populate features for feature controls
     useEffect(() => {
@@ -202,15 +193,10 @@ function App() {
                 // calc. constraints and ranges 
                 const semantic_min = formatDict.semantic_min[value] ?? 0;
                 const semantic_max = formatDict.semantic_max[value] ?? (isZero ? default_max : currentValue * 2);
-                // c
                 const lowerConstraint = semantic_max*0.25; 
                 const upperConstraint = semantic_max*0.75;
 
-
                 setConstraints(prevConstraints => [...prevConstraints, [lowerConstraint, upperConstraint]]);
-                //setConstraints( [upper C]
-                console.log("CON: ", constraints);
-
                 return {
                     id: value,
                     x: key,
@@ -232,7 +218,20 @@ function App() {
         } catch (error) {
             console.error("Error while populating features:", error);
         }
-    }, [formatDict]);
+    }, [formatDict, selectedInstance]);
+
+    // when feature controls are loaded/updated, update the priorities
+    useEffect(() => {
+        const priorities = {};
+        features.forEach((feature, index) => {
+            priorities[feature.x] = index + 1;
+        });
+
+        // Sort priorities by keys
+        const sortedPriorities = Object.fromEntries(Object.entries(priorities).sort());
+
+        setPriorities(sortedPriorities);
+    }, [features]);
 
     /**
      * Function to explain the selected instance using the backend server
@@ -242,11 +241,21 @@ function App() {
         if (constraints.length === 0 || selectedInstance.length == 0 || !priorities) return;
 
         try {
+            console.log("features: ", features);
             // build the explanation query, should hold the instance, weights, constraints, etc
+            const lockIndices = Object.values(features)
+                .map((feature, index) => feature.lock_state === true ? index : -1)
+                .filter(index => index !== -1);
+            const modifiedConstraints = [...constraints]
+            const lockOffset = 0.01;
+            lockIndices.forEach(index => {
+                modifiedConstraints[index] = [features[index].current_value - lockOffset, features[index].current_value + lockOffset];
+            });
+
             let request = {};
             request["instance"] = selectedInstance;
             request["weights"] = priorities;
-            request["constraints"] = constraints;
+            request["constraints"] = modifiedConstraints;
             request["num_explanations"] = numExplanations;
 
             // make the explanation request
@@ -274,25 +283,19 @@ function App() {
 
     const saveScenario = () => {
         const newScenario = {
-            scenarioID: savedScenarios.length + 1,
+            scenarioID: scenarioCount,
             instance: selectedInstance,
             features: features,
             explanations: [...explanations],
             explanationIndex: currentExplanationIndex,
             constraints: [...constraints]
         };
+        setScenarioCount(scenarioCount + 1);
         setSavedScenarios([...savedScenarios, newScenario]);
     }
 
     const backToWelcomeScreen = () => {
         setIsWelcome(true);
-    }
-
-    const [isComparing, setIsComparing] = useState(false)
-
-    const handleComparisonSwitch = () => {
-        setIsComparing(!isComparing);
-        console.log("Is Comparing? : ", !isComparing);
     }
 
     if (isLoading) {
@@ -309,17 +312,33 @@ function App() {
                 featureDict={featureDict}
                 applicationType={applicationType}
                 setApplicationType={setApplicationType}
+                customInstance={customInstance}
+                setCustomInstance={setCustomInstance}
+                dropdownIndex={dropdownIndex}
+                setDropdownIndex={setDropdownIndex}
             />
         )
     } else {
         return (
             <div id="super-div" className="super-div">
                 <div id="back-welcome-grid" className="card">
-                    <button className="back-welcome-button" onClick={backToWelcomeScreen}>← Welcome Screen</button>
+                    <button className="back-welcome-button" onClick={backToWelcomeScreen}>← {formatDict["scenario_terms"]["instance_name"]}</button>
                     <h1 id="app-logo">
                         FACET
                     </h1>
                 </div>
+
+                <FeatureControlSection
+                    features={features}
+                    setFeatures={setFeatures}
+                    constraints={constraints}
+                    setConstraints={setConstraints}
+                    keepPriority={keepPriority}
+                    setKeepPriority={setKeepPriority}
+                    savedScenarios={savedScenarios}
+                    selectedScenarioIndex={selectedScenarioIndex}
+                    setSelectedScenarioIndex={setSelectedScenarioIndex}
+                />
 
                 <ScenarioSection
                     savedScenarios={savedScenarios}
@@ -330,21 +349,8 @@ function App() {
                     selectedScenarioIndex={selectedScenarioIndex}
                     setSelectedScenarioIndex={setSelectedScenarioIndex}
                     setConstraints={setConstraints}
+                    setScenarioCount={setScenarioCount}
                 />
-
-                <div id="feature-controls-grid" className="card">
-                    <FeatureControlSection
-                        features={features}
-                        setFeatures={setFeatures}
-                        constraints={constraints}
-                        setConstraints={setConstraints}
-                        keepPriority={keepPriority}
-                        savedScenarios={savedScenarios}
-                        setKeepPriority={setKeepPriority}
-                        selectedScenarioIndex={selectedScenarioIndex}
-                        setSelectedScenarioIndex={setSelectedScenarioIndex}
-                    />
-                </div>
 
                 <div id="status-grid" className="card">
                     <StatusSection
@@ -354,25 +360,21 @@ function App() {
                     />
                 </div>
 
-                <div>
-                    <div id="explanation-grid" className={`card ${isComparing ? 'hidden' : ''}`}>
-                        <ExplanationSection
-                            key={currentExplanationIndex}
-                            explanations={explanations}
-                            totalExplanations={totalExplanations}
-                            formatDict={formatDict}
-                            currentExplanationIndex={currentExplanationIndex}
-                            setCurrentExplanationIndex={setCurrentExplanationIndex}
-                            saveScenario={saveScenario}
-                        />
-                    </div>
-
-                    {/* <div id="explanation-grid" className={`card ${isComparing ? '' : 'hidden'}`}>
-                        {isComparing && <ScenarioComparison savedScenarios={savedScenarios} scenario_1={0} scenario_2={1} formatDict={formatDict}/>}
-                    </div> */}
+                <div id="explanation-grid" className={`card`}>
+                    <ExplanationSection
+                        key={currentExplanationIndex}
+                        explanations={explanations}
+                        totalExplanations={totalExplanations}
+                        formatDict={formatDict}
+                        currentExplanationIndex={currentExplanationIndex}
+                        setCurrentExplanationIndex={setCurrentExplanationIndex}
+                        saveScenario={saveScenario}
+                    />
                 </div>
+
+
                 <div id="suggestion-grid" className="card">
-                    <Suggest
+                    <SuggestionSection
                         formatDict={formatDict}
                         selectedInstance={selectedInstance}
                         explanations={explanations}
