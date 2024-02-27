@@ -92,12 +92,12 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                 }
                 // check if pinned AND if in range
                 else if (feature.pin_state && feature.priority > currentPriority && feature.priority <= targetPriority) {
-                    console.log(`Feature (ID: ${feature.id}) unchanged priority: ${feature.priority}`);
+                    //console.log(`Feature (ID: ${feature.id}) unchanged priority: ${feature.priority}`);
                     change++;
                     return feature;
                     // check if in range
                 } else if (feature.priority > currentPriority && feature.priority <= targetPriority) {
-                    console.log(`Feature (ID: ${feature.id}) old priority: ${feature.priority} new priority: ${feature.priority - change}`);
+                    //console.log(`Feature (ID: ${feature.id}) old priority: ${feature.priority} new priority: ${feature.priority - change}`);
                     return { ...feature, priority: feature.priority - change };
                 } else {
                     return feature;
@@ -112,12 +112,12 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                 }
                 // check if pinned AND if in range
                 else if (feature.pin_state && feature.priority < currentPriority && feature.priority >= targetPriority) {
-                    console.log(`Feature (ID: ${feature.id}) priority: ${feature.priority}`);
+                    //console.log(`Feature (ID: ${feature.id}) priority: ${feature.priority}`);
                     change++;
                     return feature;
                     // check if in range
                 } else if (feature.priority < currentPriority && feature.priority >= targetPriority) {
-                    console.log(`Feature (ID: ${feature.id}}) old priority: ${feature.priority} new priority: ${feature.priority + change}`);
+                    //console.log(`Feature (ID: ${feature.id}}) old priority: ${feature.priority} new priority: ${feature.priority + change}`);
                     //console.log("feature priority changed ", feature.id, feature.priority + change);
                     return { ...feature, priority: feature.priority + change };
                 } else {
