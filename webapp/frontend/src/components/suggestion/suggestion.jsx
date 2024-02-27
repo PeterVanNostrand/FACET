@@ -172,7 +172,7 @@ export const Suggestion = ({ formatDict, featureDict, selectedInstance, explanat
                 let current_val = selectedInstance[key];
 
                 if (current_val < lower_bound || current_val > upper_bound) {
-                    console.log(nAlterations)
+                    //console.log(nAlterations)
                     let alter_text = []
                     if (nAlterations > 0) {
                         alter_text.push(["and your"])

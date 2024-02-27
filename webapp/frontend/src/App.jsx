@@ -8,6 +8,7 @@ import StatusSection from './components/status/StatusSection.jsx';
 import Suggest from './components/suggestion/suggestion.jsx';
 import WelcomeScreen from './components/welcome/WelcomeScreen.jsx';
 import './css/style.css';
+import { format } from 'd3';
 
 const SERVER_URL = webappConfig.SERVER_URL
 const API_PORT = webappConfig.API_PORT
@@ -99,9 +100,8 @@ function App() {
     const [isLoading, setIsLoading] = useState(true);
 
     const [keepPriority, setKeepPriority] = useState(true);
-    const [constraints, setConstraints] = useState([
-        [1000, 1600], [0, 10], [6000, 10000], [300, 500]
-    ]);
+    const [constraints, setConstraints] = useState([]);
+    const [constraintsT, setConstraintsT] = useState([]);
     const [priorities, setPriorities] = useState(null);
 
     const [isWelcome, setIsWelcome] = useState(false);
@@ -183,7 +183,6 @@ function App() {
         setPriorities(sortedPriorities);
     }, [features]);
 
-
     // populate features for feature controls
     useEffect(() => {
         if (!formatDict) return;
@@ -200,9 +199,17 @@ function App() {
                 const isZero = currentValue === 0; // checks if current feature value = zero
 
                 const default_max = 1000;
+                // calc. constraints and ranges 
+                const semantic_min = formatDict.semantic_min[value] ?? 0;
+                const semantic_max = formatDict.semantic_max[value] ?? (isZero ? default_max : currentValue * 2);
+                // c
+                const lowerConstraint = semantic_max*0.25; 
+                const upperConstraint = semantic_max*0.75;
 
-                const lowerConstraint = constraints[index][0]
-                const upperConstraint = constraints[index][1]
+
+                setConstraints(prevConstraints => [...prevConstraints, [lowerConstraint, upperConstraint]]);
+                //setConstraints( [upper C]
+                console.log("CON: ", constraints);
 
                 return {
                     id: value,
@@ -210,8 +217,8 @@ function App() {
                     units: formatDict.feature_units[value] || '',
                     title: formatDict.pretty_feature_names[value] || '',
                     current_value: currentValue,
-                    min: formatDict.semantic_min[value] ?? 0,
-                    max: formatDict.semantic_max[value] ?? (isZero ? default_max : currentValue * 2), // set 1 if null or double current_val if income is not 0
+                    min: semantic_min,
+                    max: semantic_max, 
                     priority: priorities[key],
                     lock_state: false,
                     pin_state: false,
