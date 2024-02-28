@@ -407,8 +407,10 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
             </div>
         );
     };
+
+
     return (
-        <div className="feature-control-tab">
+        <div id="feature-controls-grid" className="card">
             <div className='feature-control-header'>
                 <div className="feature-control-tab-title">{feature_tab_title}</div>
                 <div className='priority-toggle'>
@@ -420,6 +422,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                     />
                 </div>
             </div>
+
             {features.map((feature, index) => (
                 <FeatureControl key={feature.id} {...feature}
                 />

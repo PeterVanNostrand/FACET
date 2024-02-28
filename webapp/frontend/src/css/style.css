@@ -14,7 +14,7 @@
 
 .super-div {
     display: grid;
-    grid-template-rows: auto auto;
+    grid-template-rows: auto;
     grid-template-columns: auto;
     grid-template-areas:
         "backGrid scenarioGrid"
