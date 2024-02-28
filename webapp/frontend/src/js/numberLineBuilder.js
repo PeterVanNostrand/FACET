@@ -35,8 +35,8 @@ export const numberLineBuilder = (explanation, index) => {
         const line_plot_x = labels_x + labels_width + line_plot_pad_x;
         const line_plot_width = 290;
         const line_spacing = 55;
-        const line_width = 1.8;
-        const tick_height = 15;
+        const line_width = 2.4;
+        const tick_height = 16;
         const bar_height = tick_height - 3;
         const circle_radius = tick_height / 2 - 1;
         const value_font = 12;
@@ -161,8 +161,6 @@ export const numberLineBuilder = (explanation, index) => {
 
 
 
-
-
         // ##### DRAW THE BAR #####
         if (expl_type == ExplanationTypes.Region) {
             // add a bar for the region range
@@ -205,6 +203,7 @@ export const numberLineBuilder = (explanation, index) => {
                 .attr("y", line_y - bar_height)
                 .attr("text-anchor", "end")
                 .attr("class", "tick-label");
+
             const bar_text_upper = selection.append("text")
                 .text(pretty_value(bar_upper_val, feature_name, readable))
                 .attr("font-size", value_font)
@@ -214,6 +213,7 @@ export const numberLineBuilder = (explanation, index) => {
                 .attr("y", line_y - bar_height)
                 .attr("text-anchor", "start")
                 .attr("class", "tick-label");
+
 
             // if we have space for the text, center the bar end labels on the ticks
             const lower_text_width = bar_text_lower.node().getComputedTextLength();

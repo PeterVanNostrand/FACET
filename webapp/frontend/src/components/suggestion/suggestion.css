@@ -1,13 +1,15 @@
 .text-black {
-  color: Black;
+  color: black;
 }
 
 .text-blue {
-  color: #5BAEFB;
+  color: var(--accepted-color);
+  font-weight: bold;
 }
 
 .text-red {
-  color: #C1251B;
+  color: var(--rejected-color);
+  font-weight: bold;
 }
 
 .altered-text {

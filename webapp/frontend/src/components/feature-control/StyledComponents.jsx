@@ -37,7 +37,7 @@ export const StyledSwitch = (props) => (
             width: 62,
             height: 36,
             '& .MuiSwitch-switchBase.Mui-checked': {
-                color: '#6b8eff',
+                color: '#006eff',
                 '&:hover': {
                     backgroundColor: 'rgba(107, 142, 255, 0.5)',
                 },
@@ -72,8 +72,9 @@ export const StyledSwitch = (props) => (
         }}
     />
 );
+
 export const StyledSlider = styled(Slider)(({ theme }) => ({
-    color: '#6b8eff',
+    color: '#006eff',
     overflow: 'off',
     '& .MuiSlider-rail': {
         color: 'black',
@@ -84,7 +85,7 @@ export const StyledSlider = styled(Slider)(({ theme }) => ({
     },
     '& .MuiSlider-thumb': {
         color: 'black',
-        width: 5,
+        width: 4,
         height: 20,
         borderRadius: 5,
     },
@@ -93,7 +94,7 @@ export const StyledSlider = styled(Slider)(({ theme }) => ({
         borderRadius: 10,
     },
     '& .MuiSlider-mark': { // Min and Max
-        width: 5,
+        width: 4,
         height: 20,
         borderRadius: 5,
         backgroundColor: 'black',

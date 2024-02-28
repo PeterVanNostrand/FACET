@@ -7,7 +7,7 @@ export const StatusSection = ({ instance, formatDict, featureDict }) => {
     return (
         <div>
             {/* Card title and Status box */}
-            <div id="status-title">
+            <div id="status-header">
                 <h2>My {formatDict["scenario_terms"]["instance_name"]}</h2>
                 <div id="status-box">
                     Your {formatDict["scenario_terms"]["instance_name"].toLowerCase()} has been {formatDict["scenario_terms"]["undesired_outcome"].toLowerCase()}

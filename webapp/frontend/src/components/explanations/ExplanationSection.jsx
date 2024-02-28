@@ -73,7 +73,6 @@ const ExplanationSection = (
                             </div>
                         )}
                     </div>
-
                 </div>
 
             ) : (
@@ -82,12 +81,10 @@ const ExplanationSection = (
                 </i>
             )}
 
-            {explanations.length != 0 && <button onClick={saveScenario} style={{
-                marginTop: 15,
-                width: 'fit-content'
-            }}>
-                Save Scenario
-            </button>}
+            {explanations.length != 0 &&
+                <button className="save-scenario-button" onClick={saveScenario}>
+                    Save Scenario
+                </button>}
 
         </div>
     );
