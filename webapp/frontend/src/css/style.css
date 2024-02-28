@@ -8,6 +8,7 @@
 
     --accepted-color: #006eff;
     --rejected-color: #e73b3c;
+    --test: yellow;
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;

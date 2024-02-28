@@ -43,11 +43,11 @@ export const StyledSwitch = (props) => (
                 },
             },
             '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-                backgroundColor: '#6b8eff',
-                color: '#6b8eff',
+                backgroundColor: 'var(--accepted-color)',
+                color: 'var(--accepted-color)',
             },
             '& .MuiSwitch-thumb': {
-                backgroundColor: () => (props.checked ? '#6b8eff' : '#fff'),
+                backgroundColor: () => (props.checked ? 'var(--accepted-color)' : '#fff'),
             },
             '& .MuiSwitch-track': {
                 //borderRadius: 24 / 2, // Adjust border radius to make it round
@@ -90,7 +90,7 @@ export const StyledSlider = styled(Slider)(({ theme }) => ({
         borderRadius: 5,
     },
     '& .MuiSlider-valueLabel': { // Handle/Thumb Labels:
-        background: '#6b8eff',
+        background: 'var(--accepted-color)',
         borderRadius: 10,
     },
     '& .MuiSlider-mark': { // Min and Max
