@@ -28,7 +28,7 @@ const ExplanationSection = (
             </h2>
 
             {totalExplanations.length > 0 ? (
-                <div className="explanation-container" style={{ maxHeight: 308 }}>
+                <div className="explanation-container" style={{ maxHeight: 340 }}>
                     <div className="explanation-list">
                         {explanations.length > 0 && Object.keys(
                             explanations[explanations.length === 1 ? 0 : currentExplanationIndex]
