@@ -39,12 +39,6 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
         if (index !== -1) {
             const updatedFeatures = [...features];
             updatedFeatures[index] = { ...updatedFeatures[index], lock_state: newLockState };
-
-            setFeatures(features);
-            if (selectedScenarioIndex !== null) {
-                console.log("REACHED:");
-                setSelectedScenarioIndex(null);
-            }
             setFeatures(updatedFeatures);
         }
 
