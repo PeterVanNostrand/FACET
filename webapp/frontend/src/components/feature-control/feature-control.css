@@ -8,26 +8,17 @@
     position: relative;
 }
 
-.feature-control-header {
-    display: grid;
-    height: 80px;
-    width: 393px;
-    grid-template-columns: 80% 20%;
-    grid-template-areas:
-        "secTile"
-        "toggle";
-}
 
 .feature-control-tab-title {
-    font-size: 30px;
     font-weight: bold;
     grid-area: secTile;
-    margin-top: 2%;
+    margin: 16px 0 8px;
 }
 
 div.priority-toggle {
     grid-area: toggle;
     align-self: stretch;
+    margin-bottom: 0px;
 }
 
 h3.priority-toggle {
@@ -48,13 +39,13 @@ span.priority-toggle {
 
 /* Feature Control */
 
-.feature-control-box {
+.feature-control-card {
     display: grid;
     box-shadow: 0 0 1em #00000020;
     border-radius: 8px;
     width: 393px;
     height: 160px;
-    margin-bottom: 2%;
+    margin-top: 2%;
     grid-template-columns: 8% 10% 72% 10%;
     grid-template-rows: 30% 40% 30%;
     grid-template-areas:

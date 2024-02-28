@@ -151,11 +151,11 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
     };
 
     return (
-        <div id="feature-controls-grid" className="card feature-control-tab" style={{ overflow: scroll }}>
-            <div className='feature-control-header'>
-                <div className="feature-control-tab-title">{feature_tab_title}</div>
+        <div id="feature-controls-grid" className="card feature-control-tab" style={{ padding: 0 }}>
+            <div className='feature-control-header' style={{ margin: "21px 16px 0px" }}>
+                <h2 className="feature-control-tab-title">{feature_tab_title}</h2>
                 <div className='priority-toggle'>
-                    <h3 className='priority-toggle'>Prioritize Features</h3>
+                    <h3 className='priority-toggle' style={{ marginBottom: 0 }}>Prioritize Features</h3>
                     <StyledSwitch
                         className='priority-toggle'
                         style={{ color: "#0090ff" }}
@@ -164,22 +164,40 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                     />
                 </div>
             </div>
-            {features.map((feature, index) => (
-                <FeatureControl key={feature.id} {...feature}
-                    onNumberLineChange={handleSliderConstraintChange}
-                    handleSliderConstraintChange={handleSliderConstraintChange}
-                    handleLockStateChange={handleLockStateChange}
-                    handlePinStateChange={handlePinStateChange}
-                    handlePriorityChange={handlePriorityChange}
-                    keepPriority={keepPriority}
-                    checkPinState={checkPinState}
-                    featuresLength={features.length}
-                    constraints={constraints[index]}
-                />
-            ))}
+            <div className="fc-list" style={
+                { overflowY: 'auto', height: 'fit-content', maxHeight: '70vh', margin: "0 8px 8px", padding: "8px 8px" }
+            }>
+                {features.map((feature, index) => (
+                    <FeatureControl key={feature.id} {...feature}
+                        onNumberLineChange={handleSliderConstraintChange}
+                        handleSliderConstraintChange={handleSliderConstraintChange}
+                        handleLockStateChange={handleLockStateChange}
+                        handlePinStateChange={handlePinStateChange}
+                        handlePriorityChange={handlePriorityChange}
+                        keepPriority={keepPriority}
+                        checkPinState={checkPinState}
+                        featuresLength={features.length}
+                        constraints={constraints[index]}
+                    />
+                ))}
+                {features.map((feature, index) => (
+                    <FeatureControl key={feature.id} {...feature}
+                        onNumberLineChange={handleSliderConstraintChange}
+                        handleSliderConstraintChange={handleSliderConstraintChange}
+                        handleLockStateChange={handleLockStateChange}
+                        handlePinStateChange={handlePinStateChange}
+                        handlePriorityChange={handlePriorityChange}
+                        keepPriority={keepPriority}
+                        checkPinState={checkPinState}
+                        featuresLength={features.length}
+                        constraints={constraints[index]}
+                    />
+                ))}
+            </div>
         </div>
     );
 };
+
 
 const FeatureControl = (
     { id, x, units, title, current_value, min, max, priority, lock_state, pin_state, min_range, max_range,
@@ -344,7 +362,7 @@ const FeatureControl = (
     };
 
     return (
-        <div className={`feature-control-box ${keepPriority ? '' : 'no-priority'}`}>
+        <div className={`feature-control-card ${keepPriority ? '' : 'no-priority'}`}>
             <h1 className='feature-title'>{title} {units && `(${units})`}</h1>
 
             {/* Lock */}

@@ -59,8 +59,7 @@
 
 #feature-controls-grid {
     grid-area: featureControlGrid;
-    max-height: 700px;
-    min-height: 700px;
+    height: fit-content;
 }
 
 
@@ -180,6 +179,7 @@ h1 {
 
 h2 {
     margin-top: 5px;
+    font-size: 1.6em;
 }
 
 button {
@@ -277,7 +277,7 @@ button:disabled {
 }
 
 .explanation-list {
-    max-height: 252px;
+    max-height: 254px;
     overflow-y: auto;
 }
 
