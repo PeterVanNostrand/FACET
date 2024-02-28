@@ -15,10 +15,6 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
         const index = features.findIndex((feature) => feature.id === id);
         if (index !== -1) {
             // Update the constraints state
-            if (selectedScenarioIndex !== null) {
-                console.log("REACHED:");
-                setSelectedScenarioIndex(null);
-            }
             const updatedConstraints = [...constraints];
             updatedConstraints[index] = [minRange, maxRange];
             setConstraints(updatedConstraints);
@@ -144,7 +140,6 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
         const selectedScenario = savedScenarios[selectedScenarioIndex];
         if (selectedScenario) {
             const selectedFeatures = selectedScenario.features;
-            console.log("SELECTED FEATURES: ", selectedFeatures);
             setFeatures(selectedFeatures);
         } else {
             console.error("Failed to select scenario: selectedScenario is undefined.");

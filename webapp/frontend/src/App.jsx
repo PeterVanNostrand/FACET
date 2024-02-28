@@ -156,8 +156,9 @@ function App() {
 
 
     useEffect(() => {
-        if (selectedScenarioIndex == null) {
-            handleExplanations();
+        handleExplanations();
+        if (selectedScenarioIndex !== null) {
+            updateScenario();
         }
     }, [selectedInstance, features, selectedScenarioIndex]);
 
@@ -193,8 +194,8 @@ function App() {
                 // calc. constraints and ranges 
                 const semantic_min = formatDict.semantic_min[value] ?? 0;
                 const semantic_max = formatDict.semantic_max[value] ?? (isZero ? default_max : currentValue * 2);
-                const lowerConstraint = semantic_max*0.25; 
-                const upperConstraint = semantic_max*0.75;
+                const lowerConstraint = semantic_max * 0.25;
+                const upperConstraint = semantic_max * 0.75;
 
                 setConstraints(prevConstraints => [...prevConstraints, [lowerConstraint, upperConstraint]]);
                 return {
@@ -204,7 +205,7 @@ function App() {
                     title: formatDict.pretty_feature_names[value] || '',
                     current_value: currentValue,
                     min: semantic_min,
-                    max: semantic_max, 
+                    max: semantic_max,
                     priority: priorities[key],
                     lock_state: false,
                     pin_state: false,
@@ -291,6 +292,24 @@ function App() {
         };
         setScenarioCount(scenarioCount + 1);
         setSavedScenarios([...savedScenarios, newScenario]);
+    }
+    const updateScenario = () => {
+        if (selectedScenarioIndex < 0 || selectedScenarioIndex >= savedScenarios.length) {
+            // Invalid index
+            return;
+        }
+
+        const updatedScenario = {
+            ...savedScenarios[selectedScenarioIndex],
+            features: features,
+            explanations: [...explanations],
+            explanationIndex: currentExplanationIndex,
+            constraints: [...constraints]
+        };
+
+        const updatedScenarios = [...savedScenarios];
+        updatedScenarios[selectedScenarioIndex] = updatedScenario;
+        setSavedScenarios(updatedScenarios);
     }
 
     const backToWelcomeScreen = () => {
