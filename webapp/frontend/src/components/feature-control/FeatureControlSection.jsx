@@ -180,19 +180,6 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                         constraints={constraints[index]}
                     />
                 ))}
-                {features.map((feature, index) => (
-                    <FeatureControl key={feature.id} {...feature}
-                        onNumberLineChange={handleSliderConstraintChange}
-                        handleSliderConstraintChange={handleSliderConstraintChange}
-                        handleLockStateChange={handleLockStateChange}
-                        handlePinStateChange={handlePinStateChange}
-                        handlePriorityChange={handlePriorityChange}
-                        keepPriority={keepPriority}
-                        checkPinState={checkPinState}
-                        featuresLength={features.length}
-                        constraints={constraints[index]}
-                    />
-                ))}
             </div>
         </div>
     );
