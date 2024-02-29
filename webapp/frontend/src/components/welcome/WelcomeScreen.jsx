@@ -18,7 +18,9 @@ const WelcomeScreen = (
         customApplicant,
         setCustomApplicant,
         selectCustom,
-        setSelectCustom }
+        setSelectCustom,
+        applicantIndex,
+        setApplicantIndex }
 ) => {
     const [selectedApplicant, setSelectedApplicant] = useState(selectedInstance);
 
@@ -75,6 +77,7 @@ const WelcomeScreen = (
     const handleSelectionChange = (event, newApplicant) => {
         if (newApplicant) {
             const applicantIndex = parseInt(newApplicant.split(' ')[1]);
+            setApplicantIndex(applicantIndex);
             const selectedApplicant = instances[applicantIndex];
             setSelectedApplicant(selectedApplicant);
         }
@@ -98,7 +101,7 @@ const WelcomeScreen = (
 
             <div className="welcome-body" style={{ display: 'flex' }}>
                 <div className="left-column">
-                    <h4 style={{margin: "0px 0 10px", fontWeight: 600}}>Type</h4>
+                    <h4 style={{ margin: "0px 0 10px", fontWeight: 600 }}>Type</h4>
                     <StyledToggleButtonGroup
                         sx={{
                             display: "grid",
@@ -125,7 +128,7 @@ const WelcomeScreen = (
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
-                                    label={selectCustom ? 'Custom Applicant' : 'Select Applicant'}
+                                    label={selectCustom ? 'Custom Applicant' : (applicantIndex ? `Applicant ${applicantIndex}` : 'Select Applicant')}
                                 />
                             )}
                             disabled={selectCustom ? true : false}
@@ -163,7 +166,7 @@ const WelcomeScreen = (
 
 // displays feature input boxes
 function FeatureInput({ featureKey, prettyName, featureValue, handleInputChange, selectCustom, unit, selectedApplicant }) {
-    const [inputValue, setInputValue] = useState(featureValue);
+    const [inputValue, setInputValue] = useState(Math.round(featureValue));
     const [error, setError] = useState(false);
     const [helperText, setHelperText] = useState('');
 
@@ -187,7 +190,7 @@ function FeatureInput({ featureKey, prettyName, featureValue, handleInputChange,
         // Set to custom applicant if validated 
         if (!error) {
             console.log("key: ", featureKey);
-            handleInputChange(featureKey, parseInt(value));
+            handleInputChange(featureKey, Math.round(parseInt(value)));
         }
     };
 
@@ -195,7 +198,7 @@ function FeatureInput({ featureKey, prettyName, featureValue, handleInputChange,
         <div className='feature' style={{ marginBottom: '8px', }}>
             <TextField
                 label={prettyName}
-                value={inputValue}
+                value={Math.round(inputValue)}
                 onChange={handleInputValueChange}
                 error={error}
                 helperText={helperText}

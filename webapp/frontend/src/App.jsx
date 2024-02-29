@@ -84,11 +84,11 @@ function App() {
      * isLoading: Boolean value that helps with managing async operations. Prevents webapp from trying to display stuff before formatDict is loaded
      */
     const [applications, setApplications] = useState([]);
-    const [customInstance, setCustomInstance] = useState("");
     const [selectedInstance, setSelectedInstance] = useState("");
     const [selectCustom, setSelectCustom] = useState(null);
     const [customApplicant, setCustomApplicant] = useState(null);
-    
+    const [applicantIndex, setApplicantIndex] = useState(null);
+
     const [features, setFeatures] = useState([]);
     const [explanations, setExplanations] = useState("");
     const [numExplanations, setNumExplanations] = useState(10);
@@ -150,9 +150,6 @@ function App() {
         pageLoad();
     }, []);
 
-    useEffect(() => {
-        setCustomInstance(applications[0])
-    }, [applications])
 
     useEffect(() => {
         handleExplanations();
@@ -328,12 +325,12 @@ function App() {
                 setIsWelcome={setIsWelcome}
                 formatDict={formatDict}
                 featureDict={featureDict}
-                customInstance={customInstance}
-                setCustomInstance={setCustomInstance}
                 selectCustom={selectCustom}
                 setSelectCustom={setSelectCustom}
                 customApplicant={customApplicant}
                 setCustomApplicant={setCustomApplicant}
+                setApplicantIndex={setApplicantIndex}
+                applicantIndex={applicantIndex}
             />
         )
     } else {
