@@ -84,16 +84,17 @@ function App() {
      * isLoading: Boolean value that helps with managing async operations. Prevents webapp from trying to display stuff before formatDict is loaded
      */
     const [applications, setApplications] = useState([]);
-    const [dropdownIndex, setDropdownIndex] = useState(0);
     const [customInstance, setCustomInstance] = useState("");
     const [selectedInstance, setSelectedInstance] = useState("");
-
+    const [selectCustom, setSelectCustom] = useState(null);
+    const [customApplicant, setCustomApplicant] = useState(null);
+    
     const [features, setFeatures] = useState([]);
     const [explanations, setExplanations] = useState("");
     const [numExplanations, setNumExplanations] = useState(10);
     const [totalExplanations, setTotalExplanations] = useState([]);
     const [currentExplanationIndex, setCurrentExplanationIndex] = useState(0);
-
+    //console.log("explanations :", explanations);
     const [savedScenarios, setSavedScenarios] = useState([]);
     const [selectedScenarioIndex, setSelectedScenarioIndex] = useState(null);
     const [scenarioCount, setScenarioCount] = useState(1);
@@ -107,7 +108,6 @@ function App() {
     const [priorities, setPriorities] = useState(null);
 
     const [isWelcome, setIsWelcome] = useState(false);
-    const [applicationType, setApplicationType] = useState("Applicant");
 
 
     // fetch instances data when the component mounts
@@ -153,7 +153,6 @@ function App() {
     useEffect(() => {
         setCustomInstance(applications[0])
     }, [applications])
-
 
     useEffect(() => {
         handleExplanations();
@@ -220,6 +219,7 @@ function App() {
             console.error("Error while populating features:", error);
         }
     }, [formatDict, selectedInstance]);
+
 
     // when feature controls are loaded/updated, update the priorities
     useEffect(() => {
@@ -328,12 +328,12 @@ function App() {
                 setIsWelcome={setIsWelcome}
                 formatDict={formatDict}
                 featureDict={featureDict}
-                applicationType={applicationType}
-                setApplicationType={setApplicationType}
                 customInstance={customInstance}
                 setCustomInstance={setCustomInstance}
-                dropdownIndex={dropdownIndex}
-                setDropdownIndex={setDropdownIndex}
+                selectCustom={selectCustom}
+                setSelectCustom={setSelectCustom}
+                customApplicant={customApplicant}
+                setCustomApplicant={setCustomApplicant}
             />
         )
     } else {
