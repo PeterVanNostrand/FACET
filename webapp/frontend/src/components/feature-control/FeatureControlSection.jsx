@@ -147,7 +147,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
         const targetFeature = features[targetFeatureIndex];
 
         if (targetFeature && targetFeature.pin_state) {
-            console.log(target_priority, "not pinned");
+            // console.log(`Target Feature (x: ${xid}, id: ${id}) is Pinned`);
             return true;
         } else {
             return false;

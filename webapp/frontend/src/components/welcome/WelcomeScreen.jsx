@@ -1,12 +1,12 @@
 import close from '@icons/close.svg';
-import { formatFeature, formatValue } from '@src/js/utilities.js';
-import { useState, useEffect } from 'react';
-import './welcome-screen.css';
-import TextField from '@mui/material/TextField';
+import { InputLabel } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import InputAdornment from '@mui/material/InputAdornment';
-import { StyledIconButton, StyledAvatar, StyledToggleButtonGroup, StyledToggleButton } from '../feature-control/StyledComponents.jsx';
-import { InputLabel } from '@mui/material';
+import TextField from '@mui/material/TextField';
+import { formatFeature } from '@src/js/utilities.js';
+import { useEffect, useState } from 'react';
+import { StyledAvatar, StyledIconButton, StyledToggleButton, StyledToggleButtonGroup } from '../feature-control/StyledComponents.jsx';
+import './welcome-screen.css';
 
 const WelcomeScreen = (
     { instances,
@@ -80,6 +80,9 @@ const WelcomeScreen = (
 
     const handleToggleChange = (event, newSelection) => {
         setSelectCustom(newSelection === 'custom');
+        if (newSelection === 'dropdown') {
+            handleSelectionChange(null, `Applicant ${applicantIndex}`)
+        }
     };
 
 
@@ -96,7 +99,7 @@ const WelcomeScreen = (
 
             <div className="welcome-body" style={{ display: 'flex' }}>
                 <div className="left-column">
-                    <h4 style={{margin: "0px 0 10px", fontWeight: 600}}>Applicant Type</h4>
+                    <h4 style={{ margin: "0px 0 10px", fontWeight: 600 }}>Applicant Type</h4>
                     <StyledToggleButtonGroup
                         sx={{
                             display: "grid",
@@ -127,6 +130,7 @@ const WelcomeScreen = (
                                 />
                             )}
                             disabled={selectCustom ? true : false}
+                            style={{ width: "190px" }}
                         />
                     </div>
                 </div>
