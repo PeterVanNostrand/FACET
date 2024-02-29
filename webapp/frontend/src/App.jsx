@@ -8,7 +8,8 @@ import StatusSection from './components/status/StatusSection.jsx';
 import SuggestionSection from './components/suggestion/suggestion.jsx';
 import WelcomeScreen from './components/welcome/WelcomeScreen.jsx';
 import './css/style.css';
-import { format } from 'd3';
+
+import backArrowIcon from '../icons/BackArrow.svg';
 
 const SERVER_URL = webappConfig.SERVER_URL
 const API_PORT = webappConfig.API_PORT
@@ -89,7 +90,7 @@ function App() {
     const [customApplicant, setCustomApplicant] = useState(null);
     const [applicantIndex, setApplicantIndex] = useState('0');
 
-    const [featureControls, setFeatureControls] = useState([]);
+    const [features, setFeatures] = useState([]);
     const [explanations, setExplanations] = useState("");
     const [numExplanations, setNumExplanations] = useState(10);
     const [totalExplanations, setTotalExplanations] = useState([]);
@@ -154,7 +155,7 @@ function App() {
         if (selectedScenarioIndex !== null) {
             updateScenario();
         }
-    }, [selectedInstance, featureControls, selectedScenarioIndex]);
+    }, [selectedInstance, features, selectedScenarioIndex]);
 
     useEffect(() => {
         if (explanations.length === 0) {
@@ -194,7 +195,7 @@ function App() {
                 setConstraints(prevConstraints => [...prevConstraints, [lowerConstraint, upperConstraint]]);
                 return {
                     id: value,
-                    x: key,
+                    xid: key,
                     units: formatDict.feature_units[value] || '',
                     title: formatDict.pretty_feature_names[value] || '',
                     current_value: currentValue,
@@ -208,7 +209,7 @@ function App() {
                 };
             });
 
-            setFeatureControls(newFeatures);
+            setFeatures(newFeatures);
             setIsLoading(false);
         } catch (error) {
             console.error("Error while populating features:", error);
@@ -223,40 +224,35 @@ function App() {
     const handleExplanations = async () => {
         if (constraints.length === 0 || selectedInstance.length == 0) return;
 
-        console.log(featureControls)
         try {
+            const lockOffset = 0.01;
             // build the explanation query, should hold the instance, weights, constraints, etc
             const priorities = {};
-            featureControls.forEach((feature, index) => {
-                priorities[feature.x] = index + 1;
+            const constraints = {};
+            features.forEach((feature, index) => {
+                // set priorities
+                priorities[feature.xid] = index + 1;
+                // set constraints
+                if (feature.lock_state) { // with lock
+                    const curr_val = parseInt(feature.current_value);
+                    constraints[feature.xid] = [curr_val - lockOffset, curr_val + lockOffset]
+                }
+                else { // without lock
+                    constraints[feature.xid] = [parseInt(feature.min_range), parseInt(feature.max_range)];
+                }
             });
 
-            //featureLockIndices is the indices of the features controls that are locked (affected by priority)
-            const featureLockIndices = Object.values(featureControls)
-                .map((feature, index) => feature.lock_state === true ? index : -1)
-                .filter(index => index !== -1);
-
-            //constraintLockIndices is the indices of the actual features that are queried to the backend (unaffected by priority)
-            const constraintLockIndices = featureLockIndices.map(index => parseInt(Object.keys(priorities)[index][1]));
-            const modifiedConstraints = [...constraints]
-            const lockOffset = 0.01;
-
-            //featureIndex: index in feature control 
-            //actualIndex: index of the actual instance
-            //this is due to the fact that featureControls state is priority ordered
-            //while constraints are not, so features uses featureIndex, while constraints uses actualIndex
-            constraintLockIndices.forEach((constraintIndex, i) => {
-                const fcIndex = featureLockIndices[i]
-                modifiedConstraints[constraintIndex] = [
-                    featureControls[fcIndex].current_value - lockOffset,
-                    featureControls[fcIndex].current_value + lockOffset
-                ];
-            });
+            // put the min and max ranges in to a list
+            const sortedConstraints = Object.fromEntries(Object.entries(constraints).sort());
+            const constraintsArray = [];
+            for (var xid in sortedConstraints) {
+                constraintsArray.push(sortedConstraints[xid]);
+            }
 
             let request = {};
             request["instance"] = selectedInstance;
             request["weights"] = priorities;
-            request["constraints"] = modifiedConstraints;
+            request["constraints"] = constraintsArray;
             request["num_explanations"] = numExplanations;
 
             // make the explanation request
@@ -269,6 +265,7 @@ function App() {
 
             // update the explanation content
             setExplanations(response.data);
+            //console.debug(response.data)
         } catch (error) {
             if (error.code != AxiosError.ECONNABORTED) { // If the error is not a front end reload
                 let error_text = "Failed to generate explanation (" + error.code + ")"
@@ -286,7 +283,7 @@ function App() {
         const newScenario = {
             scenarioID: scenarioCount,
             instance: selectedInstance,
-            features: featureControls,
+            features: features,
             explanations: [...explanations],
             explanationIndex: currentExplanationIndex,
             constraints: [...constraints]
@@ -302,7 +299,7 @@ function App() {
 
         const updatedScenario = {
             ...savedScenarios[selectedScenarioIndex],
-            features: featureControls,
+            features: features,
             explanations: [...explanations],
             explanationIndex: currentExplanationIndex,
             constraints: [...constraints]
@@ -341,15 +338,18 @@ function App() {
         return (
             <div id="super-div" className="super-div">
                 <div id="back-welcome-grid" className="card">
-                    <button className="back-welcome-button" onClick={backToWelcomeScreen}>← {formatDict["scenario_terms"]["instance_name"]}</button>
+                    <button className="back-welcome-button" onClick={backToWelcomeScreen}>
+                        <img src={backArrowIcon} alt="Back Arrow Icon" />
+                        {formatDict["scenario_terms"]["instance_name"]}
+                    </button>
                     <h1 id="app-logo">
                         FACET
                     </h1>
                 </div>
 
                 <FeatureControlSection
-                    features={featureControls}
-                    setFeatures={setFeatureControls}
+                    features={features}
+                    setFeatures={setFeatures}
                     constraints={constraints}
                     setConstraints={setConstraints}
                     keepPriority={keepPriority}
@@ -400,7 +400,7 @@ function App() {
                         currentExplanationIndex={currentExplanationIndex}
                         featureDict={featureDict} />
                 </div>
-            </div>
+            </div >
         )
     }
 

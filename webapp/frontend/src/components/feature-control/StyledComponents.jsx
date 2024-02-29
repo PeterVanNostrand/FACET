@@ -17,11 +17,13 @@ export const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => 
         padding: '0',
         fontWeight: 'bold',
         border: '0px',
+        color: '#aaaaaa',
         '&:hover': {
             backgroundColor: '#f0f2f5',
         },
         '&.Mui-selected': {
             backgroundColor: 'white',
+            color: 'black',
         },
         '&.Mui-selected:hover': {
             backgroundColor: 'white',

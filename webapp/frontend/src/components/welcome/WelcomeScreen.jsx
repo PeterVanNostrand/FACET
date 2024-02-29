@@ -111,8 +111,8 @@ const WelcomeScreen = (
                             marginBottom: 18,
                         }}
                     >
-                        <StyledToggleButton value="dropdown">Dropdown</StyledToggleButton>
-                        <StyledToggleButton value="custom">Custom</StyledToggleButton>
+                        <StyledToggleButton disableRipple value="dropdown">Dropdown</StyledToggleButton>
+                        <StyledToggleButton disableRipple value="custom">Custom</StyledToggleButton>
                     </StyledToggleButtonGroup>
                     <div className="autocomplete-container">
                         <Autocomplete
@@ -127,6 +127,7 @@ const WelcomeScreen = (
                                 />
                             )}
                             disabled={selectCustom ? true : false}
+                            style={{width: "190px"}}
                         />
                     </div>
                 </div>
@@ -148,8 +149,8 @@ const WelcomeScreen = (
                             </div>
                         ))}
                     </div>
-                    <div style={{ marginLeft: 'auto', marginBottom: 16, marginRight: 10, marginTop: 20 }}>
-                        <button className='confirm-button' onClick={handleConfirm}>
+                    <div style={{ marginLeft: 'auto', marginBottom: 10, marginRight: 10, marginTop: 30 }}>
+                        <button className='confirm-button' onClick={handleConfirm} >
                             Continue
                         </button>
                     </div>

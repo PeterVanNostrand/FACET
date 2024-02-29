@@ -8,6 +8,16 @@
     position: relative;
 }
 
+.feature-control-header {
+    margin: 0px 0px 10px;
+}
+
+.fc-list {
+    width: 100%;
+    height: fit-content;
+    max-height: 75vh;
+    overflow-y: auto;
+}
 
 .feature-control-tab-title {
     font-weight: bold;
@@ -18,12 +28,11 @@
 div.priority-toggle {
     grid-area: toggle;
     align-self: stretch;
-    margin-bottom: 0px;
 }
 
-h3.priority-toggle {
+h4.priority-toggle {
     float: left;
-    margin-top: 5px;
+    margin: 5px 0;
     font-weight: normal;
 }
 
@@ -43,7 +52,6 @@ span.priority-toggle {
     display: grid;
     box-shadow: 0 0 1em #00000020;
     border-radius: 8px;
-    width: 393px;
     height: 160px;
     margin-top: 2%;
     grid-template-columns: 8% 10% 72% 10%;
@@ -148,6 +156,7 @@ span.priority-toggle {
 
 .priority-value[type=number] {
     -moz-appearance: textfield;
+    appearance: textfield;
 }
 
 /* SLIDER */
