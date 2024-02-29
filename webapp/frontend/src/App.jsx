@@ -89,7 +89,7 @@ function App() {
     const [customApplicant, setCustomApplicant] = useState(null);
     const [applicantIndex, setApplicantIndex] = useState('0');
 
-    const [features, setFeatures] = useState([]);
+    const [featureControls, setFeatureControls] = useState([]);
     const [explanations, setExplanations] = useState("");
     const [numExplanations, setNumExplanations] = useState(10);
     const [totalExplanations, setTotalExplanations] = useState([]);
@@ -154,7 +154,7 @@ function App() {
         if (selectedScenarioIndex !== null) {
             updateScenario();
         }
-    }, [selectedInstance, features, selectedScenarioIndex]);
+    }, [selectedInstance, featureControls, selectedScenarioIndex]);
 
     useEffect(() => {
         if (explanations.length === 0) {
@@ -208,7 +208,7 @@ function App() {
                 };
             });
 
-            setFeatures(newFeatures);
+            setFeatureControls(newFeatures);
             setIsLoading(false);
         } catch (error) {
             console.error("Error while populating features:", error);
@@ -216,46 +216,41 @@ function App() {
     }, [formatDict, selectedInstance]);
 
 
-    // when feature controls are loaded/updated, update the priorities
-    // useEffect(() => {
-    //     const priorities = {};
-    //     features.forEach((feature, index) => {
-    //         priorities[feature.x] = index + 1;
-    //     });
-
-    //     // Sort priorities by keys
-    //     const sortedPriorities = Object.fromEntries(Object.entries(priorities).sort());
-
-    //     setPriorities(sortedPriorities);
-    // }, [features]);
-
     /**
      * Function to explain the selected instance using the backend server
      * @returns None
      */
     const handleExplanations = async () => {
-        if (constraints.length === 0 || selectedInstance.length == 0 ) return;
+        if (constraints.length === 0 || selectedInstance.length == 0) return;
 
-        console.log(features)
+        console.log(featureControls)
         try {
             // build the explanation query, should hold the instance, weights, constraints, etc
             const priorities = {};
-            features.forEach((feature, index) => {
+            featureControls.forEach((feature, index) => {
                 priorities[feature.x] = index + 1;
             });
-            // Sort priorities by keys
-            const sortedPriorities = Object.fromEntries(Object.entries(priorities).sort());
 
-            const rawLockIndices = Object.values(features)
+            //featureLockIndices is the indices of the features controls that are locked (affected by priority)
+            const featureLockIndices = Object.values(featureControls)
                 .map((feature, index) => feature.lock_state === true ? index : -1)
                 .filter(index => index !== -1);
 
-            const lockIndices = rawLockIndices.map(index => parseInt(Object.keys(priorities)[index][1]));
+            //constraintLockIndices is the indices of the actual features that are queried to the backend (unaffected by priority)
+            const constraintLockIndices = featureLockIndices.map(index => parseInt(Object.keys(priorities)[index][1]));
             const modifiedConstraints = [...constraints]
-            console.log(modifiedConstraints)
             const lockOffset = 0.01;
-            lockIndices.forEach(index => {
-                modifiedConstraints[index] = [features[index].current_value - lockOffset, features[index].current_value + lockOffset];
+
+            //featureIndex: index in feature control 
+            //actualIndex: index of the actual instance
+            //this is due to the fact that featureControls state is priority ordered
+            //while constraints are not, so features uses featureIndex, while constraints uses actualIndex
+            constraintLockIndices.forEach((constraintIndex, i) => {
+                const fcIndex = featureLockIndices[i]
+                modifiedConstraints[constraintIndex] = [
+                    featureControls[fcIndex].current_value - lockOffset,
+                    featureControls[fcIndex].current_value + lockOffset
+                ];
             });
 
             let request = {};
@@ -292,7 +287,7 @@ function App() {
         const newScenario = {
             scenarioID: scenarioCount,
             instance: selectedInstance,
-            features: features,
+            features: featureControls,
             explanations: [...explanations],
             explanationIndex: currentExplanationIndex,
             constraints: [...constraints]
@@ -308,7 +303,7 @@ function App() {
 
         const updatedScenario = {
             ...savedScenarios[selectedScenarioIndex],
-            features: features,
+            features: featureControls,
             explanations: [...explanations],
             explanationIndex: currentExplanationIndex,
             constraints: [...constraints]
@@ -354,8 +349,8 @@ function App() {
                 </div>
 
                 <FeatureControlSection
-                    features={features}
-                    setFeatures={setFeatures}
+                    features={featureControls}
+                    setFeatures={setFeatureControls}
                     constraints={constraints}
                     setConstraints={setConstraints}
                     keepPriority={keepPriority}
