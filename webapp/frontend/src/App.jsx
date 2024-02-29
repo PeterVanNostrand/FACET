@@ -8,7 +8,6 @@ import StatusSection from './components/status/StatusSection.jsx';
 import SuggestionSection from './components/suggestion/suggestion.jsx';
 import WelcomeScreen from './components/welcome/WelcomeScreen.jsx';
 import './css/style.css';
-import { format } from 'd3';
 
 const SERVER_URL = webappConfig.SERVER_URL
 const API_PORT = webappConfig.API_PORT
@@ -194,7 +193,7 @@ function App() {
                 setConstraints(prevConstraints => [...prevConstraints, [lowerConstraint, upperConstraint]]);
                 return {
                     id: value,
-                    x: key,
+                    xid: key,
                     units: formatDict.feature_units[value] || '',
                     title: formatDict.pretty_feature_names[value] || '',
                     current_value: currentValue,
@@ -220,7 +219,7 @@ function App() {
     // useEffect(() => {
     //     const priorities = {};
     //     features.forEach((feature, index) => {
-    //         priorities[feature.x] = index + 1;
+    //         priorities[feature.xid] = index + 1;
     //     });
 
     //     // Sort priorities by keys
@@ -234,34 +233,37 @@ function App() {
      * @returns None
      */
     const handleExplanations = async () => {
-        if (constraints.length === 0 || selectedInstance.length == 0 ) return;
+        if (constraints.length === 0 || selectedInstance.length == 0) return;
 
-        console.log(features)
         try {
+            const lockOffset = 0.01;
             // build the explanation query, should hold the instance, weights, constraints, etc
             const priorities = {};
+            const constraints = {};
             features.forEach((feature, index) => {
-                priorities[feature.x] = index + 1;
+                // set priorities
+                priorities[feature.xid] = index + 1;
+                // set constraints
+                if (feature.lock_state) { // with lock
+                    const curr_val = parseInt(feature.current_value);
+                    constraints[feature.xid] = [curr_val - lockOffset, curr_val + lockOffset]
+                }
+                else { // without lock
+                    constraints[feature.xid] = [parseInt(feature.min_range), parseInt(feature.max_range)];
+                }
             });
-            // Sort priorities by keys
-            const sortedPriorities = Object.fromEntries(Object.entries(priorities).sort());
 
-            const rawLockIndices = Object.values(features)
-                .map((feature, index) => feature.lock_state === true ? index : -1)
-                .filter(index => index !== -1);
-
-            const lockIndices = rawLockIndices.map(index => parseInt(Object.keys(priorities)[index][1]));
-            const modifiedConstraints = [...constraints]
-            console.log(modifiedConstraints)
-            const lockOffset = 0.01;
-            lockIndices.forEach(index => {
-                modifiedConstraints[index] = [features[index].current_value - lockOffset, features[index].current_value + lockOffset];
-            });
+            // put the min and max ranges in to a list
+            const sortedConstraints = Object.fromEntries(Object.entries(constraints).sort());
+            const constraintsArray = [];
+            for (var xid in sortedConstraints) {
+                constraintsArray.push(sortedConstraints[xid]);
+            }
 
             let request = {};
             request["instance"] = selectedInstance;
             request["weights"] = priorities;
-            request["constraints"] = modifiedConstraints;
+            request["constraints"] = constraintsArray;
             request["num_explanations"] = numExplanations;
 
             // make the explanation request

@@ -8,6 +8,17 @@
     position: relative;
 }
 
+.feature-control-header {
+    margin: "21px 16px 0px";
+}
+
+.fc-list {
+    width: 100%;
+    height: fit-content;
+    max-height: 75vh;
+    overflow-y: auto;
+    padding-bottom: 10px;
+}
 
 .feature-control-tab-title {
     font-weight: bold;
@@ -43,7 +54,8 @@ span.priority-toggle {
     display: grid;
     box-shadow: 0 0 1em #00000020;
     border-radius: 8px;
-    width: 393px;
+    margin-left: 5px;
+    margin-right: 5px;
     height: 160px;
     margin-top: 2%;
     grid-template-columns: 8% 10% 72% 10%;
@@ -148,6 +160,7 @@ span.priority-toggle {
 
 .priority-value[type=number] {
     -moz-appearance: textfield;
+    appearance: textfield;
 }
 
 /* SLIDER */

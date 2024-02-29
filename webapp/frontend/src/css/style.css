@@ -105,6 +105,8 @@ button:disabled {
 #feature-controls-grid {
     grid-area: featureControlGrid;
     height: fit-content;
+    padding: 1em;
+    max-width: 380px;
 }
 
 /* END GRID LAYOUT */

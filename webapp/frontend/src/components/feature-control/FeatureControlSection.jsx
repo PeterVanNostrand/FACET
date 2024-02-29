@@ -10,9 +10,9 @@ import './feature-control.css';
 const FeatureControlSection = ({ features, setFeatures, constraints, setConstraints, keepPriority, setKeepPriority, savedScenarios, selectedScenarioIndex, setSelectedScenarioIndex }) => {
     const feature_tab_title = 'Feature Controls';
 
-    const handleSliderConstraintChange = (id, minRange, maxRange) => {
+    const handleSliderConstraintChange = (xid, minRange, maxRange) => {
         // Find the index of the feature in constraints array
-        const index = features.findIndex((feature) => feature.id === id);
+        const index = features.findIndex((feature) => feature.xid === xid);
         if (index !== -1) {
             // Update the constraints state
             const updatedConstraints = [...constraints];
@@ -29,19 +29,21 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
         }
     };
 
-    const handleLockStateChange = (id, newLockState) => {
-        const index = features.findIndex((feature) => feature.id === id);
-
+    const handleLockStateChange = (xid, newLockState) => {
+        const index = features.findIndex((feature) => feature.xid === xid);
+        console.log(`Locking Feature (x: ${xid}) at index ${index}`);
         if (index !== -1) {
             const updatedFeatures = [...features];
             updatedFeatures[index] = { ...updatedFeatures[index], lock_state: newLockState };
+            console.log("updated features");
+            console.log(updatedFeatures);
             setFeatures(updatedFeatures);
         }
 
     };
 
-    const handlePinStateChange = (id, newPinState) => {
-        const index = features.findIndex((feature) => feature.id === id);
+    const handlePinStateChange = (xid, newPinState) => {
+        const index = features.findIndex((feature) => feature.xid === xid);
 
         if (index !== -1) {
             const updatedFeatures = [...features];
@@ -50,18 +52,18 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
         }
     };
 
-    const handlePriorityChange = (id, target_priority) => {
+    const handlePriorityChange = (xid, target_priority) => {
         // id:              selected feature id 
         // target_priority: new priority value 
 
         // Find the feature to be updated based on the given feature ID
-        const updatedFeature = features.find((feature) => feature.id === id);
+        const updatedFeature = features.find((feature) => feature.xid === xid);
         console.log("Selected Feature: ", updatedFeature);
 
         // Else: 
         if (updatedFeature) {
             const current_priority = updatedFeature.priority;
-            //console.log(`Selected Feature (ID: ${id}) current priority:`, current_priority);
+            //console.log(`Selected Feature (x: ${xid}, id: ${id}) current priority:`, current_priority);
 
             let change = 1;
             // Calculate change
@@ -70,23 +72,23 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
             // Check Targ
             // Map over the features array to create a new array with updated priorities
             if (direction < 0) { // selected Feature moves DOWN
-                const index = features.findIndex((feature) => feature.id === id);
+                const index = features.findIndex((feature) => feature.xid === xid);
                 if (index !== -1) {
                     let updatedFeatures = [...features]; // Changed from const to let
                     updatedFeatures[index] = { ...updatedFeatures[index], priority: target_priority };
 
                     updatedFeatures = updatedFeatures.map((feature) => {
-                        if (feature.id === id) {
+                        if (feature.xid === xid) {
                             return feature;
                         }
                         // check if pinned AND if in range
                         else if (feature.pin_state && feature.priority > current_priority && feature.priority <= target_priority) {
-                            //console.log(`Feature (ID: ${feature.id}) unchanged priority: ${feature.priority}`);
+                            //console.log(`Feature (x: ${xid}, id: ${id}) unchanged priority: ${feature.priority}`);
                             change++;
                             return feature;
                             // check if in range
                         } else if (feature.priority > current_priority && feature.priority <= target_priority) {
-                            //console.log(`Feature (ID: ${feature.id}) old priority: ${feature.priority} new priority: ${feature.priority - change}`);
+                            //console.log(`Feature (x: ${xid}, id: ${id}) old priority: ${feature.priority} new priority: ${feature.priority - change}`);
                             return { ...feature, priority: feature.priority - change };
                         } else {
                             return feature;
@@ -100,25 +102,25 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                     setFeatures(updatedFeatures);
                 }
             } else { // selected eature moves UP
-                const index = features.findIndex((feature) => feature.id === id);
+                const index = features.findIndex((feature) => feature.xid === xid);
                 if (index !== -1) {
                     let updatedFeatures = [...features]; // Changed from const to let
                     updatedFeatures[index] = { ...updatedFeatures[index], priority: target_priority };
-                    //console.log(`Selected Feature (ID: ${id}) new priority: `, updatedFeatures[index].priority);
+                    //console.log(`Selected Feature (x: ${xid}, id: ${id}) new priority: `, updatedFeatures[index].priority);
 
                     // Rest of your logic for updating priorities
                     updatedFeatures = updatedFeatures.reverse().map((feature) => {
-                        if (feature.id === id) {
+                        if (feature.xid === xid) {
                             return feature;
                         }
                         // check if pinned AND if in range
                         else if (feature.pin_state && feature.priority < current_priority && feature.priority >= target_priority) {
-                            //console.log(`Feature (ID: ${feature.id}) priority: ${feature.priority}`);
+                            //console.log(`Feature (x: ${xid}, id: ${id}) priority: ${feature.priority}`);
                             change++;
                             return feature;
                             // check if in range
                         } else if (feature.priority < current_priority && feature.priority >= target_priority) {
-                            //console.log(`Feature (ID: ${feature.id}}) old priority: ${feature.priority} new priority: ${feature.priority + change}`);
+                            //console.log(`Feature (x: ${xid}, id: ${id}) old priority: ${feature.priority} new priority: ${feature.priority + change}`);
                             return { ...feature, priority: feature.priority + change };
                         } else {
                             return feature;
@@ -156,7 +158,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
         const targetFeature = features[targetFeatureIndex];
 
         if (targetFeature && targetFeature.pin_state) {
-            console.log(`Target Feature (ID: ${targetFeature.id}) is Pinned`);
+            console.log(`Target Feature (x: ${xid}, id: ${id}) is Pinned`);
             return true;
         } else {
             return false;
@@ -170,7 +172,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
 
     const FeatureControl = (
         {
-            id, x, units, title, current_value, min, max, priority, lock_state, pin_state, min_range, max_range,
+            id, xid, units, title, current_value, min, max, priority, lock_state, pin_state, min_range, max_range,
         }
     ) => {
         const [isLocked, setIsLocked] = useState(lock_state);
@@ -180,7 +182,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
         const min_distance = 1; // between min_range and max_range
 
         const handleSliderChangeCommitted = () => {
-            handleSliderConstraintChange(id, range[0], range[1]);
+            handleSliderConstraintChange(xid, range[0], range[1]);
         };
 
         // ARROW: Priority List Traversal 
@@ -192,7 +194,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                     return;
                 }
                 else {
-                    handlePriorityChange(id, target_priority);
+                    handlePriorityChange(xid, target_priority);
                 }
             } else {
                 console.log('Exceeded List: no lesser priority');
@@ -207,7 +209,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                     return;
                 }
                 else {
-                    handlePriorityChange(id, target_priority);
+                    handlePriorityChange(xid, target_priority);
                 }
             } else {
                 console.log('Exceeded List: no greater priority )');
@@ -218,15 +220,15 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
         // LOCK:
         const handleLockClick = () => {
             setIsLocked((prevIsLocked) => !prevIsLocked);
-            handleLockStateChange(id, !isLocked);
-            console.log(`Feature (ID: ${id}) is Locked? ${!lock_state}}`);
+            handleLockStateChange(xid, !isLocked);
+            console.log(`Feature (x: ${xid}, id: ${id}) is Locked? ${!lock_state}}`);
         };
 
         // PIN:
         const handlePinClick = () => {
             setIsPinned((prevIsPinned) => !prevIsPinned);
-            handlePinStateChange(id, !isPinned);
-            console.log(`Feature (ID: ${id}) is Pinned? ${!pin_state}}`);
+            handlePinStateChange(xid, !isPinned);
+            console.log(`Feature (x: ${xid}, id: ${id}) is Pinned? ${!pin_state}}`);
         };
 
         // PRIORITY (inputs): 
@@ -267,7 +269,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                     else {
                         setTimeout(() => {
                             setEditedPriority(target_priority);
-                            handlePriorityChange(id, target_priority);
+                            handlePriorityChange(xid, target_priority);
                         }, 500);
                     }
                 }
@@ -404,11 +406,11 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
 
 
     return (
-        <div id="feature-controls-grid" className="card feature-control-tab" style={{ padding: 0 }}>
-            <div className='feature-control-header' style={{ margin: "21px 16px 0px" }}>
+        <div id="feature-controls-grid" className="card feature-control-tab">
+            <div className='feature-control-header'>
                 <h2 className="feature-control-tab-title">{feature_tab_title}</h2>
                 <div className='priority-toggle'>
-                    <h3 className='priority-toggle' style={{ marginBottom: 0 }}>Prioritize Features</h3>
+                    <h3 className='priority-toggle'>Prioritize Features</h3>
                     <StyledSwitch
                         className='priority-toggle'
                         checked={keepPriority}
@@ -416,9 +418,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                     />
                 </div>
             </div>
-            <div className="fc-list" style={
-                { overflowY: 'auto', height: 'fit-content', maxHeight: '70vh', margin: "0 8px 8px", padding: "8px 8px" }
-            }>
+            <div className="fc-list">
                 {features.map((feature, index) => (
                     <FeatureControl key={feature.id} {...feature} />
                 ))}
