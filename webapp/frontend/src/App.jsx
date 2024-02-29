@@ -87,7 +87,7 @@ function App() {
     const [selectedInstance, setSelectedInstance] = useState("");
     const [selectCustom, setSelectCustom] = useState(null);
     const [customApplicant, setCustomApplicant] = useState(null);
-    const [applicantIndex, setApplicantIndex] = useState(null);
+    const [applicantIndex, setApplicantIndex] = useState('0');
 
     const [features, setFeatures] = useState([]);
     const [explanations, setExplanations] = useState("");

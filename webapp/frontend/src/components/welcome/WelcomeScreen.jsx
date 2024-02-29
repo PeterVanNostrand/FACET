@@ -5,7 +5,7 @@ import './welcome-screen.css';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import InputAdornment from '@mui/material/InputAdornment';
-import { StyledSwitch, StyledIconButton, StyledAvatar, StyledToggleButtonGroup, StyledToggleButton } from '../feature-control/StyledComponents.jsx';
+import { StyledIconButton, StyledAvatar, StyledToggleButtonGroup, StyledToggleButton } from '../feature-control/StyledComponents.jsx';
 import { InputLabel } from '@mui/material';
 
 const WelcomeScreen = (
@@ -61,12 +61,7 @@ const WelcomeScreen = (
             setCustomApplicant(defaultApplicant);
         }
     }, [selectedInstance, customApplicant, setCustomApplicant]);
-
-    // Toggle custom applicant on and off
-    const handleSwitchChange = (event) => {
-        setSelectCustom(event.target.checked);
-    };
-
+    
     // Handle changes to custom applicant fields
     const handleInputChange = (featureKey, value) => {
         setCustomApplicant({ ...customApplicant, [featureKey]: value })
@@ -77,7 +72,7 @@ const WelcomeScreen = (
     const handleSelectionChange = (event, newApplicant) => {
         if (newApplicant) {
             const applicantIndex = parseInt(newApplicant.split(' ')[1]);
-            setApplicantIndex(applicantIndex);
+            setApplicantIndex(newApplicant.split(' ')[1]);
             const selectedApplicant = instances[applicantIndex];
             setSelectedApplicant(selectedApplicant);
         }
