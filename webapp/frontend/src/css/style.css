@@ -7,6 +7,7 @@
     background-color: #eeeeee;
 
     --accepted-color: #006eff;
+    --accepted-color-hover: #0060de;
     --rejected-color: #e73b3c;
     --test: yellow;
 
@@ -43,11 +44,11 @@ button {
     font-family: inherit;
     cursor: pointer;
     color: white;
-    background-color: #0062ac;
+    background-color: var(--accepted-color);
 }
 
 button:hover {
-    background-color: #007ede;
+    background-color: var(--accepted-color-hover);
 }
 
 button:disabled {
@@ -282,12 +283,8 @@ button:disabled {
 .save-scenario-button {
     margin-top: 15px;
     width: fit-content;
-    background-color: var(--accepted-color);
 }
 
-.save-scenario-button:hover {
-    background-color: #0060de;
-}
 
 .hidden {
     display: none;

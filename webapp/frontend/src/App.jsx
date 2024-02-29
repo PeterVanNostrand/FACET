@@ -107,7 +107,7 @@ function App() {
     const [constraints, setConstraints] = useState([]);
     const [priorities, setPriorities] = useState(null);
 
-    const [isWelcome, setIsWelcome] = useState(false);
+    const [isWelcome, setIsWelcome] = useState(true);
 
 
     // fetch instances data when the component mounts

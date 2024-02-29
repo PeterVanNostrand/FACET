@@ -1,11 +1,12 @@
 import close from '@icons/close.svg';
 import { formatFeature, formatValue } from '@src/js/utilities.js';
 import { useState, useEffect } from 'react';
-import './welcomescreen.css';
+import './welcome-screen.css';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import InputAdornment from '@mui/material/InputAdornment';
-import { StyledSwitch, StyledIconButton, StyledAvatar } from '../feature-control/StyledComponents.jsx';
+import { StyledSwitch, StyledIconButton, StyledAvatar, StyledToggleButtonGroup, StyledToggleButton } from '../feature-control/StyledComponents.jsx';
+import { InputLabel } from '@mui/material';
 
 const WelcomeScreen = (
     { instances,
@@ -58,7 +59,7 @@ const WelcomeScreen = (
             setCustomApplicant(defaultApplicant);
         }
     }, [selectedInstance, customApplicant, setCustomApplicant]);
-    
+
     // Toggle custom applicant on and off
     const handleSwitchChange = (event) => {
         setSelectCustom(event.target.checked);
@@ -79,48 +80,68 @@ const WelcomeScreen = (
         }
     };
 
+    const handleToggleChange = (event, newSelection) => {
+        setSelectCustom(newSelection === 'custom');
+    };
+
 
     return (
-        <div className='full-welcome'>
-            <div className="left-column">
-                    <h1 className="welcome-title">Welcome, Applicant {selectedInstance.index}</h1>
-                    <StyledSwitch
-                        className='custom-switch'
-                        checked={selectCustom}
-                        onChange={handleSwitchChange}
-                    />
-                    <h2 className="custom-application-title">Custom Application</h2>
-                <div className="autocomplete-container">
-                    <Autocomplete 
-                        className="dropdown"
-                        options={instances.map((_, index) => `Applicant ${index}`)}
-                        getOptionLabel={(option) => selectCustom ? 'Custom Applicant' : option}
-                        onChange={handleSelectionChange}
-                        renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                label={selectCustom ? 'Custom Applicant' : 'Select Applicant'}
-                            />
-                        )}
-                        disabled={selectCustom ? true : false}
-                    />
-                </div>
-            </div>
-            <div className="right-column">
-                <StyledIconButton
-                    className="close-button"
-                    onClick={() => setIsWelcome(false)}
-                >
+        <div className='full-welcome card'>
+            <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+                <h1 className="welcome-title">
+                    Applicant Selection
+                </h1>
+                <StyledIconButton className="close-button" onClick={() => setIsWelcome(false)} style={{ margin: "16px 16px 0 0" }}>
                     <StyledAvatar src={close} alt="close" />
                 </StyledIconButton>
-                <div className="feature-information">
-                    <div key={selectedApplicant}>
+            </div>
+
+            <div className="welcome-body" style={{ display: 'flex' }}>
+                <div className="left-column">
+                    <h4 style={{margin: "0px 0 10px", fontWeight: 600}}>Type</h4>
+                    <StyledToggleButtonGroup
+                        sx={{
+                            display: "grid",
+                            gridTemplateColumns: "auto auto",
+                            gridGap: "10px",
+                        }}
+                        value={selectCustom ? 'custom' : 'dropdown'}
+                        exclusive
+                        onChange={handleToggleChange}
+                        aria-label="text alignment"
+                        style={{
+                            marginBottom: 18,
+                        }}
+                    >
+                        <StyledToggleButton value="dropdown">Dropdown</StyledToggleButton>
+                        <StyledToggleButton value="custom">Custom</StyledToggleButton>
+                    </StyledToggleButtonGroup>
+                    <div className="autocomplete-container">
+                        <Autocomplete
+                            className="dropdown"
+                            options={instances.map((_, index) => `Applicant ${index}`)}
+                            getOptionLabel={(option) => selectCustom ? 'Custom Applicant' : option}
+                            onChange={handleSelectionChange}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label={selectCustom ? 'Custom Applicant' : 'Select Applicant'}
+                                />
+                            )}
+                            disabled={selectCustom ? true : false}
+                        />
+                    </div>
+                </div>
+                <div className="right-column" style={{ display: 'flex', flexDirection: 'column' }}>
+                    <div className="feature-information" style={{ maxHeight: 400, overflowY: "scroll" }}>
                         {Object.keys(featureDict).map((key, index) => (
                             <div key={index} className="feature-input-container">
+                                <InputLabel style={{ fontWeight: 500, fontSize: 14 }}>
+                                    {formatFeature(key, formatDict)}
+                                </InputLabel>
                                 <FeatureInput
                                     featureKey={key}
-                                    prettyName={formatFeature(key, formatDict)}
-                                    featureValue={selectCustom ? customApplicant[key] : selectedApplicant[key]} // Check if selectedApplicant is available
+                                    featureValue={selectCustom ? customApplicant[key] : selectedApplicant[key]}
                                     unit={formatDict.feature_units[formatDict.feature_names[key]]}
                                     selectCustom={selectCustom}
                                     handleInputChange={handleInputChange}
@@ -129,10 +150,12 @@ const WelcomeScreen = (
                             </div>
                         ))}
                     </div>
+                    <div style={{ marginLeft: 'auto', marginBottom: 16, marginRight: 10, marginTop: 20 }}>
+                        <button className='confirm-button' onClick={handleConfirm}>
+                            Continue
+                        </button>
+                    </div>
                 </div>
-                <button className='confirm-button' onClick={handleConfirm}>
-                    Confirm
-                </button>
             </div>
         </div>
     )
@@ -169,7 +192,7 @@ function FeatureInput({ featureKey, prettyName, featureValue, handleInputChange,
     };
 
     return (
-        <div className='feature' style={{ marginBottom: '10px' }}>
+        <div className='feature' style={{ marginBottom: '8px', }}>
             <TextField
                 label={prettyName}
                 value={inputValue}
@@ -180,7 +203,7 @@ function FeatureInput({ featureKey, prettyName, featureValue, handleInputChange,
                 InputProps={{
                     endAdornment: <InputAdornment position="end" className="custom-input-adornment">{unit}</InputAdornment>,
                 }}
-                style={{ width: '80%' }}
+                style={{ width: '100%', color: 'black' }}
             />
         </div>
     );

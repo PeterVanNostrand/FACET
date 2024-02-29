@@ -436,10 +436,6 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                     <FeatureControl key={feature.id} {...feature}
                     />
                 ))}
-                {features.map((feature, index) => (
-                    <FeatureControl key={feature.id} {...feature}
-                    />
-                ))}
             </div>
         </div>
 

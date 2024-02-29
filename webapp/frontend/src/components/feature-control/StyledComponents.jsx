@@ -3,6 +3,35 @@ import Button from '@mui/material/Button';
 import Slider from '@mui/material/Slider';
 import Switch from '@mui/material/Switch';
 import Avatar from '@mui/material/Avatar';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import ToggleButton from '@mui/material/ToggleButton';
+
+export const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
+    borderRadius: '30px',
+    height: '40px',
+    minWidth: '40px',
+    padding: '6px',
+    backgroundColor: '#dee4ec',
+    '& .MuiToggleButton-root': {
+        borderRadius: '24px',
+        padding: '0',
+        fontWeight: 'bold',
+        border: '0px',
+        '&:hover': {
+            backgroundColor: '#f0f2f5',
+        },
+        '&.Mui-selected': {
+            backgroundColor: 'white',
+        },
+        '&.Mui-selected:hover': {
+            backgroundColor: 'white',
+        },
+    },
+}));
+
+export const StyledToggleButton = styled(ToggleButton)(({ theme }) => ({
+}));
+
 
 export const StyledIconButton = styled(Button)(({ theme }) => ({
     borderRadius: '5px',
