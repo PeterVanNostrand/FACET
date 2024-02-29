@@ -89,7 +89,7 @@ function App() {
     const [applicantIndex, setApplicantIndex] = useState('0');
     // const [isComparing, setIsComparing] = useState(false); for scenario comparison
 
-    const [features, setFeatures] = useState([]);
+    const [featureControls, setFeatureControls] = useState([]);
     const [explanations, setExplanations] = useState("");
     const [numExplanations, setNumExplanations] = useState(10);
     const [totalExplanations, setTotalExplanations] = useState([]);
@@ -154,7 +154,7 @@ function App() {
         if (selectedScenarioIndex !== null) {
             updateScenario();
         }
-    }, [selectedInstance, features, selectedScenarioIndex]);
+    }, [selectedInstance, featureControls, selectedScenarioIndex]);
 
     useEffect(() => {
         if (explanations.length === 0) {
@@ -206,26 +206,13 @@ function App() {
                 };
             });
 
-            setFeatures(newFeatures);
+            setFeatureControls(newFeatures);
             setIsLoading(false);
         } catch (error) {
             console.error("Error while populating features:", error);
         }
     }, [formatDict, selectedInstance]);
 
-
-    // when feature controls are loaded/updated, update the priorities
-    // useEffect(() => {
-    //     const priorities = {};
-    //     features.forEach((feature, index) => {
-    //         priorities[feature.xid] = index + 1;
-    //     });
-
-    //     // Sort priorities by keys
-    //     const sortedPriorities = Object.fromEntries(Object.entries(priorities).sort());
-
-    //     setPriorities(sortedPriorities);
-    // }, [features]);
 
     /**
      * Function to explain the selected instance using the backend server
@@ -293,7 +280,7 @@ function App() {
         const newScenario = {
             scenarioID: scenarioCount,
             instance: selectedInstance,
-            features: features,
+            features: featureControls,
             explanations: [...explanations],
             explanationIndex: currentExplanationIndex,
             constraints: [...constraints]
@@ -309,7 +296,7 @@ function App() {
 
         const updatedScenario = {
             ...savedScenarios[selectedScenarioIndex],
-            features: features,
+            features: featureControls,
             explanations: [...explanations],
             explanationIndex: currentExplanationIndex,
             constraints: [...constraints]
@@ -363,8 +350,8 @@ function App() {
                 </div>
 
                 <FeatureControlSection
-                    features={features}
-                    setFeatures={setFeatures}
+                    features={featureControls}
+                    setFeatures={setFeatureControls}
                     constraints={constraints}
                     setConstraints={setConstraints}
                     keepPriority={keepPriority}
