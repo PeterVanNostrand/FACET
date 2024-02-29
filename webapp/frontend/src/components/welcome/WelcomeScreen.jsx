@@ -80,6 +80,9 @@ const WelcomeScreen = (
 
     const handleToggleChange = (event, newSelection) => {
         setSelectCustom(newSelection === 'custom');
+        if (newSelection === 'dropdown') {
+            handleSelectionChange(null, `Applicant ${applicantIndex}`)
+        }
     };
 
 
@@ -96,7 +99,7 @@ const WelcomeScreen = (
 
             <div className="welcome-body" style={{ display: 'flex' }}>
                 <div className="left-column">
-                    <h4 style={{margin: "0px 0 10px", fontWeight: 600}}>Applicant Type</h4>
+                    <h4 style={{ margin: "0px 0 10px", fontWeight: 600 }}>Applicant Type</h4>
                     <StyledToggleButtonGroup
                         sx={{
                             display: "grid",
@@ -127,7 +130,7 @@ const WelcomeScreen = (
                                 />
                             )}
                             disabled={selectCustom ? true : false}
-                            style={{width: "190px"}}
+                            style={{ width: "190px" }}
                         />
                     </div>
                 </div>
