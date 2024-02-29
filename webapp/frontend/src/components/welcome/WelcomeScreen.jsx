@@ -61,7 +61,7 @@ const WelcomeScreen = (
             setCustomApplicant(defaultApplicant);
         }
     }, [selectedInstance, customApplicant, setCustomApplicant]);
-    
+
     // Handle changes to custom applicant fields
     const handleInputChange = (featureKey, value) => {
         setCustomApplicant({ ...customApplicant, [featureKey]: value })
@@ -96,7 +96,7 @@ const WelcomeScreen = (
 
             <div className="welcome-body" style={{ display: 'flex' }}>
                 <div className="left-column">
-                    <h4 style={{ margin: "0px 0 10px", fontWeight: 600 }}>Type</h4>
+                    <h4 style={{margin: "0px 0 10px", fontWeight: 600}}>Applicant Type</h4>
                     <StyledToggleButtonGroup
                         sx={{
                             display: "grid",

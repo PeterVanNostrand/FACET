@@ -108,6 +108,8 @@ def facet_explanation():
         constraints = DS_INFO.scale_rects(constraints)[0]
         num_explanations = data.get("num_explanations", 1)
 
+        pprint(data)
+
 
         # Perform explanation using FACET explain
         prediction = FACET_CORE.predict(instance)

@@ -74,7 +74,6 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                 if (index !== -1) {
                     let updatedFeatures = [...features]; // Changed from const to let
                     updatedFeatures[index] = { ...updatedFeatures[index], priority: target_priority };
-                    //console.log(`Selected Feature (ID: ${id}) new priority: `, updatedFeatures[index].priority);
 
                     updatedFeatures = updatedFeatures.map((feature) => {
                         if (feature.id === id) {
@@ -128,7 +127,6 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
 
                     // Sort the updated features based on priority
                     updatedFeatures.sort((a, b) => a.priority - b.priority);
-                    console.log(updatedFeatures);
                     // Reset the features array
                     setFeatures(updatedFeatures);
                 }
@@ -147,7 +145,6 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
     }
 
     useEffect(() => {
-        console.log("selectedIndex: ", selectedScenarioIndex);
         if (selectedScenarioIndex !== null) {
             handleScenarioChange();
         }
@@ -172,7 +169,8 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
 
 
     const FeatureControl = (
-        { id, x, units, title, current_value, min, max, priority, lock_state, pin_state, min_range, max_range,
+        {
+            id, x, units, title, current_value, min, max, priority, lock_state, pin_state, min_range, max_range,
         }
     ) => {
         const [isLocked, setIsLocked] = useState(lock_state);
@@ -181,21 +179,10 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
         const [range, setRange] = useState([min_range, max_range]);
         const min_distance = 1; // between min_range and max_range
 
-        // Switch VIS state: 
-        useEffect(() => {
-        }, [isLocked], [isPinned]);
-
-        useEffect(() => {
-            setRange([constraints[0], constraints[1]]);
-        }, [constraints]);
-
-        useEffect(() => {
-            setEditedPriority(priority);
-        }, [editedPriority]);
-
         const handleSliderChangeCommitted = () => {
             handleSliderConstraintChange(id, range[0], range[1]);
         };
+
         // ARROW: Priority List Traversal 
         const handleArrowDownClick = () => {
             const target_priority = priority + 1;
@@ -433,8 +420,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                 { overflowY: 'auto', height: 'fit-content', maxHeight: '70vh', margin: "0 8px 8px", padding: "8px 8px" }
             }>
                 {features.map((feature, index) => (
-                    <FeatureControl key={feature.id} {...feature}
-                    />
+                    <FeatureControl key={feature.id} {...feature} />
                 ))}
             </div>
         </div>

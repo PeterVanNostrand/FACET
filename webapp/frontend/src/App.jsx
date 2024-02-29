@@ -94,7 +94,6 @@ function App() {
     const [numExplanations, setNumExplanations] = useState(10);
     const [totalExplanations, setTotalExplanations] = useState([]);
     const [currentExplanationIndex, setCurrentExplanationIndex] = useState(0);
-    //console.log("explanations :", explanations);
     const [savedScenarios, setSavedScenarios] = useState([]);
     const [selectedScenarioIndex, setSelectedScenarioIndex] = useState(null);
     const [scenarioCount, setScenarioCount] = useState(1);
@@ -105,9 +104,9 @@ function App() {
 
     const [keepPriority, setKeepPriority] = useState(true);
     const [constraints, setConstraints] = useState([]);
-    const [priorities, setPriorities] = useState(null);
+    // const [priorities, setPriorities] = useState(null);
 
-    const [isWelcome, setIsWelcome] = useState(true);
+    const [isWelcome, setIsWelcome] = useState(false);
 
 
     // fetch instances data when the component mounts
@@ -150,7 +149,6 @@ function App() {
         pageLoad();
     }, []);
 
-
     useEffect(() => {
         handleExplanations();
         if (selectedScenarioIndex !== null) {
@@ -180,7 +178,7 @@ function App() {
             Object.keys(formatDict.feature_names).forEach((key, index) => {
                 priorities[key] = index + 1;
             });
-            setPriorities(priorities);
+            // setPriorities(priorities);
 
             const newFeatures = Object.entries(formatDict.feature_names).map(([key, value], index) => {
                 const currentValue = selectedInstance[key];
@@ -219,31 +217,42 @@ function App() {
 
 
     // when feature controls are loaded/updated, update the priorities
-    useEffect(() => {
-        const priorities = {};
-        features.forEach((feature, index) => {
-            priorities[feature.x] = index + 1;
-        });
+    // useEffect(() => {
+    //     const priorities = {};
+    //     features.forEach((feature, index) => {
+    //         priorities[feature.x] = index + 1;
+    //     });
 
-        // Sort priorities by keys
-        const sortedPriorities = Object.fromEntries(Object.entries(priorities).sort());
+    //     // Sort priorities by keys
+    //     const sortedPriorities = Object.fromEntries(Object.entries(priorities).sort());
 
-        setPriorities(sortedPriorities);
-    }, [features]);
+    //     setPriorities(sortedPriorities);
+    // }, [features]);
 
     /**
      * Function to explain the selected instance using the backend server
      * @returns None
-     */priorities
+     */
     const handleExplanations = async () => {
-        if (constraints.length === 0 || selectedInstance.length == 0 || !priorities) return;
+        if (constraints.length === 0 || selectedInstance.length == 0 ) return;
 
+        console.log(features)
         try {
             // build the explanation query, should hold the instance, weights, constraints, etc
-            const lockIndices = Object.values(features)
+            const priorities = {};
+            features.forEach((feature, index) => {
+                priorities[feature.x] = index + 1;
+            });
+            // Sort priorities by keys
+            const sortedPriorities = Object.fromEntries(Object.entries(priorities).sort());
+
+            const rawLockIndices = Object.values(features)
                 .map((feature, index) => feature.lock_state === true ? index : -1)
                 .filter(index => index !== -1);
+
+            const lockIndices = rawLockIndices.map(index => parseInt(Object.keys(priorities)[index][1]));
             const modifiedConstraints = [...constraints]
+            console.log(modifiedConstraints)
             const lockOffset = 0.01;
             lockIndices.forEach(index => {
                 modifiedConstraints[index] = [features[index].current_value - lockOffset, features[index].current_value + lockOffset];
@@ -260,6 +269,7 @@ function App() {
                 ENDPOINT + "/explanations",
                 request,
             );
+
             status_log("Successfully generated explanation!", SUCCESS)
 
             // update the explanation content
