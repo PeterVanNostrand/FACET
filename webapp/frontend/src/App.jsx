@@ -269,7 +269,6 @@ function App() {
 
             // update the explanation content
             setExplanations(response.data);
-            //console.debug(response.data)
         } catch (error) {
             if (error.code != AxiosError.ECONNABORTED) { // If the error is not a front end reload
                 let error_text = "Failed to generate explanation (" + error.code + ")"

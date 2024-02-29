@@ -214,6 +214,11 @@ export const numberLineBuilder = (explanation, index) => {
                 .attr("text-anchor", "start")
                 .attr("class", "tick-label");
 
+            if (bar_lower_val === bar_upper_val - 0.02) {
+                // Hide the upper text if values are equal
+                bar_text_upper.remove();
+                bar_text_lower.attr("text-anchor", "middle");
+            }
 
             // if we have space for the text, center the bar end labels on the ticks
             const lower_text_width = bar_text_lower.node().getComputedTextLength();
