@@ -14,7 +14,10 @@ const ScenarioSection = (
     }) => {
 
     const handleScenarioChange = (scenario, index) => {
-        if (selectedScenarioIndex === index) return;
+        if (selectedScenarioIndex === index) {
+            setSelectedScenarioIndex(null);
+            return;
+        }
 
         setSelectedScenarioIndex(index);
     }

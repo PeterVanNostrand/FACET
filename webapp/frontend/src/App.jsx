@@ -8,6 +8,7 @@ import StatusSection from './components/status/StatusSection.jsx';
 import SuggestionSection from './components/suggestion/suggestion.jsx';
 import WelcomeScreen from './components/welcome/WelcomeScreen.jsx';
 import './css/style.css';
+import { format } from 'd3';
 
 const SERVER_URL = webappConfig.SERVER_URL
 const API_PORT = webappConfig.API_PORT
@@ -83,16 +84,17 @@ function App() {
      * isLoading: Boolean value that helps with managing async operations. Prevents webapp from trying to display stuff before formatDict is loaded
      */
     const [applications, setApplications] = useState([]);
-    const [dropdownIndex, setDropdownIndex] = useState(0);
     const [customInstance, setCustomInstance] = useState("");
     const [selectedInstance, setSelectedInstance] = useState("");
-
+    const [selectCustom, setSelectCustom] = useState(null);
+    const [customApplicant, setCustomApplicant] = useState(null);
+    
     const [features, setFeatures] = useState([]);
     const [explanations, setExplanations] = useState("");
     const [numExplanations, setNumExplanations] = useState(10);
     const [totalExplanations, setTotalExplanations] = useState([]);
     const [currentExplanationIndex, setCurrentExplanationIndex] = useState(0);
-
+    //console.log("explanations :", explanations);
     const [savedScenarios, setSavedScenarios] = useState([]);
     const [selectedScenarioIndex, setSelectedScenarioIndex] = useState(null);
     const [scenarioCount, setScenarioCount] = useState(1);
@@ -102,13 +104,10 @@ function App() {
     const [isLoading, setIsLoading] = useState(true);
 
     const [keepPriority, setKeepPriority] = useState(true);
-    const [constraints, setConstraints] = useState([
-        [1000, 1600], [0, 10], [6000, 10000], [300, 500]
-    ]);
+    const [constraints, setConstraints] = useState([]);
     const [priorities, setPriorities] = useState(null);
 
     const [isWelcome, setIsWelcome] = useState(false);
-    const [applicationType, setApplicationType] = useState("Applicant");
 
 
     // fetch instances data when the component mounts
@@ -155,10 +154,10 @@ function App() {
         setCustomInstance(applications[0])
     }, [applications])
 
-
     useEffect(() => {
-        if (selectedScenarioIndex == null) {
-            handleExplanations();
+        handleExplanations();
+        if (selectedScenarioIndex !== null) {
+            updateScenario();
         }
     }, [selectedInstance, features, selectedScenarioIndex]);
 
@@ -191,18 +190,21 @@ function App() {
                 const isZero = currentValue === 0; // checks if current feature value = zero
 
                 const default_max = 1000;
+                // calc. constraints and ranges 
+                const semantic_min = formatDict.semantic_min[value] ?? 0;
+                const semantic_max = formatDict.semantic_max[value] ?? (isZero ? default_max : currentValue * 2);
+                const lowerConstraint = semantic_max * 0.25;
+                const upperConstraint = semantic_max * 0.75;
 
-                const lowerConstraint = constraints[index][0]
-                const upperConstraint = constraints[index][1]
-
+                setConstraints(prevConstraints => [...prevConstraints, [lowerConstraint, upperConstraint]]);
                 return {
                     id: value,
                     x: key,
                     units: formatDict.feature_units[value] || '',
                     title: formatDict.pretty_feature_names[value] || '',
                     current_value: currentValue,
-                    min: formatDict.semantic_min[value] ?? 0,
-                    max: formatDict.semantic_max[value] ?? (isZero ? default_max : currentValue * 2), // set 1 if null or double current_val if income is not 0
+                    min: semantic_min,
+                    max: semantic_max,
                     priority: priorities[key],
                     lock_state: false,
                     pin_state: false,
@@ -217,6 +219,7 @@ function App() {
             console.error("Error while populating features:", error);
         }
     }, [formatDict, selectedInstance]);
+
 
     // when feature controls are loaded/updated, update the priorities
     useEffect(() => {
@@ -234,7 +237,7 @@ function App() {
     /**
      * Function to explain the selected instance using the backend server
      * @returns None
-     */
+     */priorities
     const handleExplanations = async () => {
         if (constraints.length === 0 || selectedInstance.length == 0 || !priorities) return;
 
@@ -282,12 +285,31 @@ function App() {
         const newScenario = {
             scenarioID: scenarioCount,
             instance: selectedInstance,
+            features: features,
             explanations: [...explanations],
             explanationIndex: currentExplanationIndex,
             constraints: [...constraints]
         };
         setScenarioCount(scenarioCount + 1);
         setSavedScenarios([...savedScenarios, newScenario]);
+    }
+    const updateScenario = () => {
+        if (selectedScenarioIndex < 0 || selectedScenarioIndex >= savedScenarios.length) {
+            // Invalid index
+            return;
+        }
+
+        const updatedScenario = {
+            ...savedScenarios[selectedScenarioIndex],
+            features: features,
+            explanations: [...explanations],
+            explanationIndex: currentExplanationIndex,
+            constraints: [...constraints]
+        };
+
+        const updatedScenarios = [...savedScenarios];
+        updatedScenarios[selectedScenarioIndex] = updatedScenario;
+        setSavedScenarios(updatedScenarios);
     }
 
     const backToWelcomeScreen = () => {
@@ -306,12 +328,12 @@ function App() {
                 setIsWelcome={setIsWelcome}
                 formatDict={formatDict}
                 featureDict={featureDict}
-                applicationType={applicationType}
-                setApplicationType={setApplicationType}
                 customInstance={customInstance}
                 setCustomInstance={setCustomInstance}
-                dropdownIndex={dropdownIndex}
-                setDropdownIndex={setDropdownIndex}
+                selectCustom={selectCustom}
+                setSelectCustom={setSelectCustom}
+                customApplicant={customApplicant}
+                setCustomApplicant={setCustomApplicant}
             />
         )
     } else {
@@ -331,6 +353,8 @@ function App() {
                     setConstraints={setConstraints}
                     keepPriority={keepPriority}
                     setKeepPriority={setKeepPriority}
+                    savedScenarios={savedScenarios}
+                    selectedScenarioIndex={selectedScenarioIndex}
                     setSelectedScenarioIndex={setSelectedScenarioIndex}
                 />
 
