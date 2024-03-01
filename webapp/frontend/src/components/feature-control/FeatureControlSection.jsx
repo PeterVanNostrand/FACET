@@ -11,7 +11,6 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
     const feature_tab_title = 'Feature Controls';
 
     const handleSliderConstraintChange = (xid, minRange, maxRange) => {
-        // Find the index of the feature in constraints array
         const index = features.findIndex((feature) => feature.xid === xid);
         if (index !== -1) {
             // Update the constraints state
@@ -19,6 +18,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
             updatedConstraints[index] = [minRange, maxRange];
             setConstraints(updatedConstraints);
             setFeatures(features);
+            // Update features
             const updatedFeatures = [...features];
             updatedFeatures[index] = {
                 ...updatedFeatures[index],
@@ -31,12 +31,9 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
 
     const handleLockStateChange = (xid, newLockState) => {
         const index = features.findIndex((feature) => feature.xid === xid);
-        console.log(`Locking Feature (x: ${xid}) at index ${index}`);
         if (index !== -1) {
             const updatedFeatures = [...features];
             updatedFeatures[index] = { ...updatedFeatures[index], lock_state: newLockState };
-            console.log("updated features");
-            console.log(updatedFeatures);
             setFeatures(updatedFeatures);
         }
 
@@ -44,10 +41,10 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
 
     const handlePinStateChange = (xid, newPinState) => {
         const index = features.findIndex((feature) => feature.xid === xid);
-
         if (index !== -1) {
             const updatedFeatures = [...features];
             updatedFeatures[index] = { ...updatedFeatures[index], pin_state: newPinState };
+            console.log("Feature: ", updatedFeatures[index], "pin state: ", newPinState);
             setFeatures(updatedFeatures);
         }
     };
@@ -63,18 +60,16 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
         // Else: 
         if (updatedFeature) {
             const current_priority = updatedFeature.priority;
-            //console.log(`Selected Feature (x: ${xid}, id: ${id}) current priority:`, current_priority);
 
             let change = 1;
             // Calculate change
             const direction = current_priority - target_priority; // +++ value means current priority goes up, --- value means current priority goes down 
 
-            // Check Targ
             // Map over the features array to create a new array with updated priorities
             if (direction < 0) { // selected Feature moves DOWN
                 const index = features.findIndex((feature) => feature.xid === xid);
                 if (index !== -1) {
-                    let updatedFeatures = [...features]; // Changed from const to let
+                    let updatedFeatures = [...features];
                     updatedFeatures[index] = { ...updatedFeatures[index], priority: target_priority };
 
                     updatedFeatures = updatedFeatures.map((feature) => {
@@ -83,12 +78,9 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                         }
                         // check if pinned AND if in range
                         else if (feature.pin_state && feature.priority > current_priority && feature.priority <= target_priority) {
-                            //console.log(`Feature (x: ${xid}, id: ${id}) unchanged priority: ${feature.priority}`);
                             change++;
                             return feature;
-                            // check if in range
                         } else if (feature.priority > current_priority && feature.priority <= target_priority) {
-                            //console.log(`Feature (x: ${xid}, id: ${id}) old priority: ${feature.priority} new priority: ${feature.priority - change}`);
                             return { ...feature, priority: feature.priority - change };
                         } else {
                             return feature;
@@ -106,21 +98,17 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                 if (index !== -1) {
                     let updatedFeatures = [...features]; // Changed from const to let
                     updatedFeatures[index] = { ...updatedFeatures[index], priority: target_priority };
-                    //console.log(`Selected Feature (x: ${xid}, id: ${id}) new priority: `, updatedFeatures[index].priority);
 
-                    // Rest of your logic for updating priorities
                     updatedFeatures = updatedFeatures.reverse().map((feature) => {
                         if (feature.xid === xid) {
                             return feature;
                         }
                         // check if pinned AND if in range
                         else if (feature.pin_state && feature.priority < current_priority && feature.priority >= target_priority) {
-                            //console.log(`Feature (x: ${xid}, id: ${id}) priority: ${feature.priority}`);
                             change++;
                             return feature;
                             // check if in range
                         } else if (feature.priority < current_priority && feature.priority >= target_priority) {
-                            //console.log(`Feature (x: ${xid}, id: ${id}) old priority: ${feature.priority} new priority: ${feature.priority + change}`);
                             return { ...feature, priority: feature.priority + change };
                         } else {
                             return feature;
@@ -158,7 +146,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
         const targetFeature = features[targetFeatureIndex];
 
         if (targetFeature && targetFeature.pin_state) {
-            console.log(`Target Feature (x: ${xid}, id: ${id}) is Pinned`);
+            console.log(target_priority, "not pinned");
             return true;
         } else {
             return false;
@@ -179,7 +167,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
         const [isPinned, setIsPinned] = useState(pin_state);
         const [editedPriority, setEditedPriority] = useState(priority);
         const [range, setRange] = useState([min_range, max_range]);
-        const min_distance = 1; // between min_range and max_range
+        const min_distance = 1; // set minimum between min_range and max_range
 
         const handleSliderChangeCommitted = () => {
             handleSliderConstraintChange(xid, range[0], range[1]);
@@ -187,34 +175,35 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
 
         // ARROW: Priority List Traversal 
         const handleArrowDownClick = () => {
-            const target_priority = priority + 1;
-
-            if (priority < features.length) {
+            let target_priority = priority + 1;
+            while (target_priority <= features.length) {
                 if (checkPinState(target_priority)) {
-                    return;
-                }
-                else {
+                    target_priority++;
+                    console.log("target priority: ", target_priority);
+                } else {
                     handlePriorityChange(xid, target_priority);
+                    break;
                 }
-            } else {
-                console.log('Exceeded List: no lesser priority');
             }
-
+            if (target_priority === features.length) {
+                console.log("Unable to find unpinned value below feature.");
+            }
         };
 
         const handleArrowUpClick = () => {
-            const target_priority = priority - 1;
-            if (priority > 1) {
+            let target_priority = priority - 1;
+            while (target_priority > 0) {
                 if (checkPinState(target_priority)) {
-                    return;
-                }
-                else {
+                    target_priority--;
+                    console.log("target priority: ", target_priority);
+                } else {
                     handlePriorityChange(xid, target_priority);
+                    break;
                 }
-            } else {
-                console.log('Exceeded List: no greater priority )');
             }
-
+            if (target_priority === features.length) {
+                console.log("Unable to find unpinned value above feature.");
+            }
         };
 
         // LOCK:
@@ -228,7 +217,6 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
         const handlePinClick = () => {
             setIsPinned((prevIsPinned) => !prevIsPinned);
             handlePinStateChange(xid, !isPinned);
-            console.log(`Feature (x: ${xid}, id: ${id}) is Pinned? ${!pin_state}}`);
         };
 
         // PRIORITY (inputs): 
@@ -236,20 +224,16 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
             try {
                 const target_priority = parseInt(event.target.value, 10);
                 setEditedPriority(target_priority);
-                // Check if the edited priority is different from the current priority
                 if (target_priority !== priority) {
-                    // Call the function to update the priority
                     handlePriorityInputChange(target_priority);
                 }
                 else {
-                    // If the edited priority is the same as the previous priority, reset the input field
                     setTimeout(() => {
                         setEditedPriority(priority);
                     }, 200);
                 }
             } catch (error) {
-                // Handle the error here
-                console.error("INvalid Input:", error);
+                console.error("Invalid Input:", error);
             }
         };
 
@@ -263,7 +247,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                     if (checkPinState(target_priority)) {
                         setTimeout(() => {
                             setEditedPriority(priority);
-                        }, 1500);
+                        }, 500);
                         return;
                     }
                     else {
@@ -276,11 +260,10 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                 else {
                     setTimeout(() => {
                         setEditedPriority(priority);
-                    }, 2000);
+                    }, 500);
                     return;
                 }
             } catch (error) {
-                // Handle the error here
                 console.error("Invalid Input:", error);
             }
         };
