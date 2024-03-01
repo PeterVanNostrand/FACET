@@ -180,30 +180,28 @@ function App() {
             // setPriorities(priorities);
 
             const newFeatures = Object.entries(formatDict.feature_names).map(([key, value], index) => {
-                const currentValue = selectedInstance[key];
-                const isZero = currentValue === 0; // checks if current feature value = zero
-
-                const default_max = 1000;
+                // default max when current_value = 0 
+                const default_max = 10000;
                 // calc. constraints and ranges 
+                const current_value = Math.round(selectedInstance[key]);
                 const semantic_min = formatDict.semantic_min[value] ?? 0;
-                const semantic_max = formatDict.semantic_max[value] ?? (isZero ? default_max : currentValue * 2);
-                const lowerConstraint = semantic_max * 0.25;
-                const upperConstraint = semantic_max * 0.75;
-
-                setConstraints(prevConstraints => [...prevConstraints, [lowerConstraint, upperConstraint]]);
+                const semantic_max = Math.round(formatDict.semantic_max[value] ?? ((current_value === 0) ? default_max : current_value * 2));
+                const lower_constraint = Math.round(semantic_max * 0.25);
+                const upper_constraint = Math.round(semantic_max * 0.75);
+                setConstraints(prevConstraints => [...prevConstraints, [lower_constraint, upper_constraint]]);
                 return {
                     id: value,
                     xid: key,
                     units: formatDict.feature_units[value] || '',
                     title: formatDict.pretty_feature_names[value] || '',
-                    current_value: currentValue,
+                    current_value: current_value,
                     min: semantic_min,
                     max: semantic_max,
                     priority: priorities[key],
                     lock_state: false,
                     pin_state: false,
-                    min_range: lowerConstraint,
-                    max_range: upperConstraint,
+                    min_range: lower_constraint,
+                    max_range: upper_constraint,
                 };
             });
 
