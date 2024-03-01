@@ -272,19 +272,19 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
         const rangeText = (range) => {
             return `$${range}`;
         }
-
+        
         const slider_marks = [
             {
                 value: min,
-                label: min,
+                label: units.length > 5 ? min : (units === '$' ? `${units}${min}` : `${min} ${units}`),
             },
             {
                 value: current_value,
-                label: current_value,
+                label: units.length > 5 ? current_value : (units === '$' ? `${units}${current_value}` : `${current_value} ${units}`),
             },
             {
                 value: max,
-                label: max,
+                label: units.length > 5 ? max : (units === '$' ? `${units}${max}` : `${max} ${units}`),
             },
         ];
 

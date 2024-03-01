@@ -131,6 +131,8 @@ export const StyledSlider = styled(Slider)(({ theme }) => ({
     },
     '& .MuiSlider-markLabel': { // Labels 
         fontSize: 15,
+        fontWeight: 'bold',
+        color: 'black',
     },
     '& .MuiSlider-mark[data-index="1"]': { // Current Value 
         width: 15,
@@ -138,6 +140,12 @@ export const StyledSlider = styled(Slider)(({ theme }) => ({
         borderRadius: 10,
         backgroundColor: 'black',
         opacity: 1,
+    },
+    '& .MuiSlider-markLabel[data-index="1"]': { 
+        marginLeft: '10px !important',
+    },
+    '& .MuiSlider-markLabel[data-index="0"]': { // Min
+        marginLeft: '10px !important',
     },
 }));
 
