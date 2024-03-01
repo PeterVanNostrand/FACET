@@ -7,6 +7,7 @@ import ScenarioSection from './components/scenario/ScenarioSection.jsx';
 import StatusSection from './components/status/StatusSection.jsx';
 import SuggestionSection from './components/suggestion/suggestion.jsx';
 import WelcomeScreen from './components/welcome/WelcomeScreen.jsx';
+import ScenarioComparison from './components/scenario-comparison/ScenarioComparison.jsx';
 import './css/style.css';
 
 const SERVER_URL = webappConfig.SERVER_URL
@@ -87,6 +88,7 @@ function App() {
     const [selectCustom, setSelectCustom] = useState(null);
     const [customApplicant, setCustomApplicant] = useState(null);
     const [applicantIndex, setApplicantIndex] = useState('0');
+    // const [isComparing, setIsComparing] = useState(false); for scenario comparison
 
     const [features, setFeatures] = useState([]);
     const [explanations, setExplanations] = useState("");
@@ -319,6 +321,10 @@ function App() {
         setSavedScenarios(updatedScenarios);
     }
 
+    // const changeToScenario = () => { // Change to comparing scenarios
+    //     setIsComparing(prevIsComparing => !prevIsComparing);
+    // };
+
     const backToWelcomeScreen = () => {
         setIsWelcome(true);
     }
@@ -351,6 +357,10 @@ function App() {
                     <h1 id="app-logo">
                         FACET
                     </h1>
+                    {/* <button
+                        onClick={changeToScenario}>
+                            Experimental Comparison Mode
+                    </button> */}
                 </div>
 
                 <FeatureControlSection
@@ -384,7 +394,11 @@ function App() {
                         formatDict={formatDict}
                     />
                 </div>
-
+                {/* {isComparing ? (
+                    <div id="scenario-comparsion-grid" className="card">
+                        <ScenarioComparison savedScenarios={savedScenarios} />
+                    </div>
+                ) : (  */}
                 <div id="explanation-grid" className={`card`}>
                     <ExplanationSection
                         key={currentExplanationIndex}
@@ -396,8 +410,7 @@ function App() {
                         saveScenario={saveScenario}
                     />
                 </div>
-
-
+                {/* )}  */}
                 <div id="suggestion-grid" className="card">
                     <SuggestionSection
                         formatDict={formatDict}
