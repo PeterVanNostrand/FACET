@@ -179,14 +179,12 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
             while (target_priority <= features.length) {
                 if (checkPinState(target_priority)) {
                     target_priority++;
-                    console.log("target priority: ", target_priority);
                 } else {
                     handlePriorityChange(xid, target_priority);
                     break;
                 }
             }
-            if (target_priority === features.length) {
-                console.log("Unable to find unpinned value below feature.");
+            if (target_priority === features.length+1) {
             }
         };
 
@@ -201,7 +199,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                     break;
                 }
             }
-            if (target_priority === features.length) {
+            if (target_priority === 0) {
                 console.log("Unable to find unpinned value above feature.");
             }
         };
