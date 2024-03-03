@@ -1,6 +1,6 @@
-import { clamp_value, create_example, feature_dists_order, pretty_value, unscale } from '../../../../visualization/src/utilities.js';
-import { ExplanationTypes, OFFSET_UNSCALED, expl_colors, rect_values } from "../../../../visualization/src/values.js";
-import { json, select } from "d3";
+import { json } from "d3";
+import { clamp_value, feature_dists_order, pretty_value } from '../../../../visualization/src/utilities.js';
+import { ExplanationTypes, expl_colors, rect_values } from "../../../../visualization/src/values.js";
 import { RangeTypes } from "./numberLineUtil.js";
 
 const detailsURL = "http://localhost:3001/data/loans/dataset_details.json";
@@ -214,7 +214,7 @@ export const numberLineBuilder = (explanation, index) => {
                 .attr("text-anchor", "start")
                 .attr("class", "tick-label");
 
-            if (bar_lower_val === bar_upper_val - 0.02) {
+            if ((bar_upper_val - bar_lower_val) < Math.abs(0.001 * bar_upper_val)) {
                 // Hide the upper text if values are equal
                 bar_text_upper.remove();
                 bar_text_lower.attr("text-anchor", "middle");
