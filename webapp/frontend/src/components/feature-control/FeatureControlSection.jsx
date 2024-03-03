@@ -394,14 +394,16 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
     return (
         <div id="feature-controls-grid" className="card feature-control-tab">
             <div className='feature-control-header'>
-                <h2 className="feature-control-tab-title">{feature_tab_title}</h2>
+                <h2 className="feature-control-tab-title" style={{ marginTop: 5 }}>{feature_tab_title}</h2>
                 <div className='priority-toggle'>
-                    <h3 className='priority-toggle'>Prioritize Features</h3>
-                    <StyledSwitch
-                        className='priority-toggle'
-                        checked={keepPriority}
-                        onChange={handleSwitchChange}
-                    />
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
+                        <h4 className="priority-toggle">Prioritize Features</h4>
+                        <StyledSwitch
+                            className='priority-toggle'
+                            checked={keepPriority}
+                            onChange={handleSwitchChange}
+                        />
+                    </div>
                 </div>
             </div>
             <div className="fc-list">

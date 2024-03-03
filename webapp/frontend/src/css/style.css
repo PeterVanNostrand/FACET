@@ -313,3 +313,13 @@ button:disabled {
     font-weight: bold;
     color: black;
 }
+
+.back-welcome-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.back-welcome-button img {
+    margin-right: 5px; 
+}

@@ -9,6 +9,8 @@ import SuggestionSection from './components/suggestion/suggestion.jsx';
 import WelcomeScreen from './components/welcome/WelcomeScreen.jsx';
 import './css/style.css';
 
+import backArrowIcon from '../icons/BackArrow.svg';
+
 const SERVER_URL = webappConfig.SERVER_URL
 const API_PORT = webappConfig.API_PORT
 const ENDPOINT = SERVER_URL + ":" + API_PORT + "/facet"
@@ -338,7 +340,10 @@ function App() {
         return (
             <div id="super-div" className="super-div">
                 <div id="back-welcome-grid" className="card">
-                    <button className="back-welcome-button" onClick={backToWelcomeScreen}>← {formatDict["scenario_terms"]["instance_name"]}</button>
+                    <button className="back-welcome-button" onClick={backToWelcomeScreen}>
+                        <img src={backArrowIcon} alt="Back Arrow Icon" />
+                        {formatDict["scenario_terms"]["instance_name"]}
+                    </button>
                     <h1 id="app-logo">
                         FACET
                     </h1>
@@ -405,7 +410,7 @@ function App() {
                         currentExplanationIndex={currentExplanationIndex}
                         featureDict={featureDict} />
                 </div>
-            </div>
+            </div >
         )
     }
 
