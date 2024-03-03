@@ -223,7 +223,7 @@ export const numberLineBuilder = (explanation, index, formatDict) => {
                 .attr("text-anchor", "start")
                 .attr("class", "tick-label");
 
-            if (bar_lower_val === bar_upper_val - 0.02) {
+            if ((bar_upper_val - bar_lower_val) < Math.abs(0.001 * bar_upper_val)) {
                 // Hide the upper text if values are equal
                 bar_text_upper.remove();
                 bar_text_lower.attr("text-anchor", "middle");
