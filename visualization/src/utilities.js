@@ -54,6 +54,13 @@ const formatter = new Intl.NumberFormat('en-US', {
     maximumFractionDigits: CURRENCY_DIGITS,
 });
 
+/**
+ * 
+ * @param {*} feature_value the numeric value of the feature, e.g., 1000
+ * @param {*} feature_name  the name of the feature, e.g., Applicant Income
+ * @param {*} readable      a human readable info dictionary containing the number of units and decimals to use
+ * @returns 
+ */
 export function pretty_value(feature_value, feature_name, readable) {
     var value_text = "";
     var trimmed_value = parseFloat(feature_value).toFixed(readable["feature_decimals"][feature_name])

@@ -3,11 +3,12 @@ import lockSVG from '@icons/Lock.svg';
 import pinnedSVG from '@icons/Pinned.svg';
 import unlockSVG from '@icons/UnLocked.svg';
 import unPinnedSVG from '@icons/UnPinned.svg';
+import { formatValue } from '@src/js/utilities.js';
 import { useEffect, useState } from 'react';
 import { StyledAvatar, StyledIconButton, StyledSlider, StyledSwitch } from './StyledComponents.jsx';
 import './feature-control.css';
 
-const FeatureControlSection = ({ features, setFeatures, constraints, setConstraints, keepPriority, setKeepPriority, savedScenarios, selectedScenarioIndex, setSelectedScenarioIndex }) => {
+const FeatureControlSection = ({ features, setFeatures, constraints, setConstraints, keepPriority, setKeepPriority, savedScenarios, selectedScenarioIndex, setSelectedScenarioIndex, formatDict }) => {
     const feature_tab_title = 'Feature Controls';
 
     const handleSliderConstraintChange = (xid, minRange, maxRange) => {
@@ -160,7 +161,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
 
     const FeatureControl = (
         {
-            id, xid, units, title, current_value, min, max, priority, lock_state, pin_state, min_range, max_range,
+            id, xid, units, title, current_value, min, max, priority, lock_state, pin_state, min_range, max_range, formatDict
         }
     ) => {
         const [isLocked, setIsLocked] = useState(lock_state);
@@ -184,7 +185,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                     break;
                 }
             }
-            if (target_priority === features.length+1) {
+            if (target_priority === features.length + 1) {
             }
         };
 
@@ -268,21 +269,25 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
 
         // SLIDER: 
         const rangeText = (range) => {
-            return `$${range}`;
+            if (units.length > 5) {
+                return range;
+            } else {
+                return formatValue(range, xid, formatDict);
+            }
         }
-        
+
         const slider_marks = [
             {
                 value: min,
-                label: units.length > 5 ? min : (units === '$' ? `${units}${min}` : `${min} ${units}`),
+                label: units.length > 5 ? min : formatValue(min, xid, formatDict),
             },
             {
                 value: current_value,
-                label: units.length > 5 ? current_value : (units === '$' ? `${units}${current_value}` : `${current_value} ${units}`),
+                label: units.length > 5 ? current_value : formatValue(current_value, xid, formatDict),
             },
             {
                 value: max,
-                label: units.length > 5 ? max : (units === '$' ? `${units}${max}` : `${max} ${units}`),
+                label: units.length > 5 ? max : formatValue(max, xid, formatDict),
             },
         ];
 
@@ -373,7 +378,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                             handleSliderChangeCommitted();
                         }}
                         valueLabelDisplay="auto"
-                        getAriaValueText={rangeText}
+                        valueLabelFormat={rangeText}
                         max={max}
                         min={min}
                         marks={slider_marks}
@@ -401,7 +406,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
             </div>
             <div className="fc-list">
                 {features.map((feature, index) => (
-                    <FeatureControl key={feature.id} {...feature} />
+                    <FeatureControl key={feature.id} {...feature} formatDict={formatDict} />
                 ))}
             </div>
         </div>

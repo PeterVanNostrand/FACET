@@ -1,18 +1,27 @@
-import { clamp_value, create_example, feature_dists_order, pretty_value, unscale } from '../../../../visualization/src/utilities.js';
-import { ExplanationTypes, OFFSET_UNSCALED, expl_colors, rect_values } from "../../../../visualization/src/values.js";
-import { json, select } from "d3";
-import { RangeTypes } from "./numberLineUtil.js";
+import { RangeTypes } from "@src/js/numberLineUtil.js";
+import { ExplanationTypes, clamp_value, feature_dists_order, formatValue } from "@src/js/utilities.js";
 
-const detailsURL = "http://localhost:3001/data/loans/dataset_details.json";
-const readableURL = "http://localhost:3001/data/loans/human_readable.json";
+export const rect_values = {
+    fill: "white",
+    round: 5,
+    stroke_width: 2,
+    stroke: "black",
+}
 
-export const numberLineBuilder = (explanation, index) => {
+export const expl_colors = {
+    desired: "#006eff",
+    undesired: "#e73b3c",
+    altered_bad: "#e73b3c",
+    altered_good: "#006eff",
+    unaltered: "#939393"
+}
+
+
+export const numberLineBuilder = (explanation, index, formatDict) => {
 
     const my = async (selection) => {
 
         const width = 50;
-        const dataset_details = await json(detailsURL);
-        const readable = await json(readableURL);
         let expl_type = ExplanationTypes.Region;
 
         const instance = explanation["instance"];
@@ -50,13 +59,13 @@ export const numberLineBuilder = (explanation, index) => {
             // select the bar min value
             let min_value;
             if (range_type_min == RangeTypes.DataSet) {
-                min_value = dataset_details["min_values"][feature_id];
+                min_value = formatDict["min_values"][feature_id];
             } else if (range_type_min == RangeTypes.StdDev) {
-                min_value = value - dataset_details["std_dev"][feature_id];
+                min_value = value - formatDict["std_dev"][feature_id];
             } else if (range_type_min == RangeTypes.Percent) {
                 min_value = value - (percent_val * value);
             }
-            min_value = clamp_value(min_value, feature_id, readable, dataset_details);
+            // min_value = clamp_value(min_value, feature_id, formatDict);
             return min_value;
         }
 
@@ -64,14 +73,14 @@ export const numberLineBuilder = (explanation, index) => {
             // select the bar max value
             let max_value;
             if (range_type_max == RangeTypes.DataSet) {
-                max_value = dataset_details["max_values"][feature_id];
+                max_value = formatDict["max_values"][feature_id];
             } else if (range_type_max == RangeTypes.StdDev) {
-                max_value = value + dataset_details["std_dev"][feature_id];
+                max_value = value + formatDict["std_dev"][feature_id];
             }
             else if (range_type_max == RangeTypes.Percent) {
                 max_value = value + (percent_val * value);
             }
-            max_value = clamp_value(max_value, feature_id, readable, dataset_details);
+            max_value = clamp_value(max_value, feature_id, formatDict, formatDict);
             return max_value;
         }
 
@@ -83,7 +92,7 @@ export const numberLineBuilder = (explanation, index) => {
         }
 
         const feature_id = "x" + idx_order[index];
-        const feature_name = dataset_details["feature_names"][feature_id];
+        const feature_name = formatDict["feature_names"][feature_id];
 
 
         // ##### DRAW THE NUMBER LINE ########################################################################
@@ -137,7 +146,7 @@ export const numberLineBuilder = (explanation, index) => {
 
         // TEXT LABEL the ends of the explanation bar
         const line_text_lower = selection.append("text")
-            .text(pretty_value(line_min, feature_name, readable))
+            .text(formatValue(line_min, feature_id, formatDict))
             .attr("class", "")
             .attr("font-size", value_font)
             .attr("font-family", "Inter, sans-serif") // Use Inter font family
@@ -149,7 +158,7 @@ export const numberLineBuilder = (explanation, index) => {
             .attr("class", "tick-label");
 
         const line_text_upper = selection.append("text")
-            .text(pretty_value(line_max, feature_name, readable))
+            .text(formatValue(line_max, feature_id, formatDict))
             .attr("font-size", value_font)
             .attr("font-family", "Inter, sans-serif") // Use Inter font family
             .attr("font-weight", 600) // Set font weight to 600
@@ -195,7 +204,7 @@ export const numberLineBuilder = (explanation, index) => {
 
             // TEXT LABELS for min/max of the region explanation
             const bar_text_lower = selection.append("text")
-                .text(pretty_value(bar_lower_val, feature_name, readable))
+                .text(formatValue(bar_lower_val, feature_id, formatDict))
                 .attr("font-size", value_font)
                 .attr("font-weight", "bold")
                 .attr("fill", bar_color)
@@ -205,7 +214,7 @@ export const numberLineBuilder = (explanation, index) => {
                 .attr("class", "tick-label");
 
             const bar_text_upper = selection.append("text")
-                .text(pretty_value(bar_upper_val, feature_name, readable))
+                .text(formatValue(bar_upper_val, feature_id, formatDict))
                 .attr("font-size", value_font)
                 .attr("font-weight", "bold")
                 .attr("fill", bar_color)
@@ -238,7 +247,7 @@ export const numberLineBuilder = (explanation, index) => {
 
         // add text label for instance circle
         const circle_text = selection.append("text")
-            .text(pretty_value(instance_val, feature_name, readable))
+            .text(formatValue(instance_val, feature_id, formatDict))
             .attr("font-size", value_font)
             .attr("font-weight", "bold")
             .attr("fill", circle_color)

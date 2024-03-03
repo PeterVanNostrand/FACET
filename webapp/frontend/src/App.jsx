@@ -7,7 +7,6 @@ import ScenarioSection from './components/scenario/ScenarioSection.jsx';
 import StatusSection from './components/status/StatusSection.jsx';
 import SuggestionSection from './components/suggestion/suggestion.jsx';
 import WelcomeScreen from './components/welcome/WelcomeScreen.jsx';
-import ScenarioComparison from './components/scenario-comparison/ScenarioComparison.jsx';
 import './css/style.css';
 
 const SERVER_URL = webappConfig.SERVER_URL
@@ -116,20 +115,20 @@ function App() {
 
         const pageLoad = async () => {
             fetchInstances();
-            let dict_data = await fetchHumanFormat()
+            let dict_data = await fetchFormatDict()
             setFormatDict(dict_data)
             setFeatureDict(dict_data["feature_names"]);
         }
 
         // get the human formatting data instances
-        const fetchHumanFormat = async () => {
+        const fetchFormatDict = async () => {
             try {
-                const response = await axios.get(ENDPOINT + "/human_format");
-                status_log("Sucessfully loaded human format dictionary!", SUCCESS);
+                const response = await axios.get(ENDPOINT + "/data_format");
+                status_log("Sucessfully loaded data format dictionary!", SUCCESS);
                 return response.data
             }
             catch (error) {
-                status_log("Failed to load human format dictionary", FAILURE)
+                status_log("Failed to load data format dictionary", FAILURE)
                 console.error(error);
                 return
             }
@@ -373,6 +372,7 @@ function App() {
                     savedScenarios={savedScenarios}
                     selectedScenarioIndex={selectedScenarioIndex}
                     setSelectedScenarioIndex={setSelectedScenarioIndex}
+                    formatDict={formatDict}
                 />
 
                 <ScenarioSection

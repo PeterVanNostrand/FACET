@@ -2,7 +2,7 @@ import { numberLineBuilder } from '@src/js/numberLineBuilder';
 import { select } from 'd3';
 import { useEffect, useRef } from 'react';
 
-const NumberLine = ({ explanation, i, id }) => {
+const NumberLine = ({ explanation, i, id, formatDict }) => {
     const svgRef = useRef();
 
     useEffect(() => {
@@ -19,7 +19,7 @@ const NumberLine = ({ explanation, i, id }) => {
 
             : existingSvg;
 
-        let visualDisplay = numberLineBuilder(explanation, i);
+        let visualDisplay = numberLineBuilder(explanation, i, formatDict);
         svg.call(visualDisplay);
 
         // Clean up when the component unmounts

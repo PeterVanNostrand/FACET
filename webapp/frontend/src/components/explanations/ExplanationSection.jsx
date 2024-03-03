@@ -43,6 +43,7 @@ const ExplanationSection = (
                                     explanation={totalExplanations[explanations.length === 1 ? 0 : currentExplanationIndex]}
                                     i={innerIndex}
                                     id={`number-line-container-${currentExplanationIndex}-${innerIndex}`}
+                                    formatDict={formatDict}
                                 />
 
                             </div>
