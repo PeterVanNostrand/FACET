@@ -228,7 +228,7 @@ function App() {
             // build the explanation query, should hold the instance, weights, constraints, etc
             const priorities = {};
             const constraints = {};
-            features.forEach((feature, index) => {
+            featureControls.forEach((feature, index) => {
                 // set priorities
                 priorities[feature.xid] = index + 1;
                 // set constraints
