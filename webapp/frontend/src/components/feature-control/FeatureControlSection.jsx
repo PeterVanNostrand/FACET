@@ -310,82 +310,96 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
 
         return (
             <div className={`feature-control-card ${keepPriority ? '' : 'no-priority'}`}>
-                <h1 className='feature-title'>{title} {units && `(${units})`}</h1>
 
-                {/* Lock */}
-                <div className='lock'>
-                    <StyledIconButton
-                        onClick={handleLockClick}
-                        className={`lock-button ${isLocked ? 'locked' : ''}`}
-                    >
-                        <StyledAvatar src={isLocked ? lockSVG : unlockSVG} alt={isLocked ? 'Unlock' : 'Lock'} />
-                    </StyledIconButton>
-                </div>
-                {/* Pin*/}
-                <div className={`pin`}>
-                    <StyledIconButton
-                        onClick={handlePinClick}
-                        className={isPinned ? 'pinned' : ''}
-                        disabled={!keepPriority}
-                    >
-                        <StyledAvatar src={isPinned ? pinnedSVG : unPinnedSVG} alt={isPinned ? 'Unpin' : 'Pin'} />
-                    </StyledIconButton>
+                <div className="card-priority">
+
+                    {/* Pin*/}
+                    <div className={`pin`}>
+                        <StyledIconButton
+                            onClick={handlePinClick}
+                            className={isPinned ? 'pinned' : ''}
+                            disabled={!keepPriority}
+                        >
+                            <StyledAvatar src={isPinned ? pinnedSVG : unPinnedSVG} alt={isPinned ? 'Unpin' : 'Pin'} />
+                        </StyledIconButton>
+                    </div>
+
+                    <div className="card-priority-inputs">
+                        {/* Arrows */}
+                        <div className={`arrow-up-container`}>
+                            <StyledIconButton
+                                onClick={handleArrowUpClick}
+                                className={`arrow ${keepPriority ? '' : 'no-priority'}`}
+                                disabled={isPinned || !keepPriority || priority === 1}
+                            >
+                                <StyledAvatar src={arrowSVG} alt='arrow up' />
+                            </StyledIconButton>
+                        </div>
+
+                        {/* Priority Value*/}
+                        <input className={`priority-value priority-value-input`}
+                            type={keepPriority ? "number" : "text"}
+                            value={keepPriority ? editedPriority : '—'}
+                            onChange={handlePriorityInputChange}
+                            onBlur={handlePriorityInputBlur}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    handlePriorityInputBlur();
+                                }
+                            }}
+                            pattern={keepPriority ? "[0-9]*" : ''}
+                            disabled={isPinned || !keepPriority}
+                        />
+
+                        <div className={`arrow-down-container`}>
+                            <StyledIconButton
+                                onClick={handleArrowDownClick}
+                                className={`arrow arrow-down ${keepPriority ? '' : 'no-priority'}`}
+                                disabled={isPinned || !keepPriority || priority === features.length}
+                            >
+                                <StyledAvatar src={arrowSVG} alt='arrow down' />
+                            </StyledIconButton>
+                        </div>
+                    </div>
                 </div>
 
-                {/* Arrows */}
-                <div className={`arrow-up-container`}>
-                    <StyledIconButton
-                        onClick={handleArrowUpClick}
-                        className={`arrow-up ${keepPriority ? '' : 'no-priority'}`}
-                        disabled={isPinned || !keepPriority || priority === 1}
-                    >
-                        <StyledAvatar src={arrowSVG} alt='arrow up' />
-                    </StyledIconButton>
+
+                <div className="card-slider-container">
+
+                    <div>
+                        <h1 className='feature-title'>{title} {units && `(${units})`}</h1>
+                        {/* Lock */}
+                        <div className='lock'>
+                            <StyledIconButton
+                                onClick={handleLockClick}
+                                className={`lock-button ${isLocked ? 'locked' : ''}`}
+                            >
+                                <StyledAvatar src={isLocked ? lockSVG : unlockSVG} alt={isLocked ? 'Unlock' : 'Lock'} />
+                            </StyledIconButton>
+                        </div>
+                    </div>
+
+                    {/* Slider */}
+                    <div className={`slider ${keepPriority ? 'no-priority' : ''}`}>
+                        <StyledSlider
+                            className='constraint-slider'
+                            value={range}
+                            onChange={handleSliderChange}
+                            onMouseUp={() => {
+                                handleSliderChangeCommitted();
+                            }}
+                            valueLabelDisplay="auto"
+                            valueLabelFormat={rangeText}
+                            max={max}
+                            min={min}
+                            marks={slider_marks}
+                            disabled={isLocked}
+                            disableSwap
+                        />
+                    </div>
+
                 </div>
 
-                <div className={`arrow-down-container`}>
-                    <StyledIconButton
-                        onClick={handleArrowDownClick}
-                        className={`arrow-down ${keepPriority ? '' : 'no-priority'}`}
-                        disabled={isPinned || !keepPriority || priority === features.length}
-                    >
-                        <StyledAvatar src={arrowSVG} alt='arrow down' />
-                    </StyledIconButton>
-                </div>
-
-                {/* Priority Value*/}
-                <input className={`priority-value priority-value-input`}
-                    type={keepPriority ? "number" : "text"}
-                    value={keepPriority ? editedPriority : '—'}
-                    onChange={handlePriorityInputChange}
-                    onBlur={handlePriorityInputBlur}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                            handlePriorityInputBlur();
-                        }
-                    }}
-                    pattern={keepPriority ? "[0-9]*" : ''}
-                    disabled={isPinned || !keepPriority}
-                />
-
-                {/* Slider */}
-                <div className={`slider ${keepPriority ? 'no-priority' : ''}`}>
-                    <StyledSlider
-                        className='constraint-slider'
-                        value={range}
-                        onChange={handleSliderChange}
-                        onMouseUp={() => {
-                            handleSliderChangeCommitted();
-                        }}
-                        valueLabelDisplay="auto"
-                        valueLabelFormat={rangeText}
-                        max={max}
-                        min={min}
-                        marks={slider_marks}
-                        disabled={isLocked}
-                        disableSwap
-                    />
-                </div>
             </div>
         );
     };
