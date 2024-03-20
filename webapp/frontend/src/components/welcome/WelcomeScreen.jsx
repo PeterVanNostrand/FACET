@@ -131,7 +131,7 @@ const WelcomeScreen = (
                                 />
                             )}
                             disabled={selectCustom ? true : false}
-                            style={{ width: "190px" }}
+                            style={{ width: "200px" }}
                         />
                     </div>
                 </div>
@@ -151,7 +151,6 @@ const WelcomeScreen = (
                                     selectedApplicant={selectedApplicant}
                                     max={formatDict.feature_units[formatDict.semantic_max[key]]}
                                     min={formatDict.feature_units[formatDict.semantic_min[key]]}
-                                    currentValue={formatDict.feature_units[formatDict.semantic_min[key]]} // used to gen. max when it doesn't exist
                                     setCustomError={setCustomError}
                                     customError={customError}
                                 />
@@ -171,16 +170,17 @@ const WelcomeScreen = (
 
 // displays feature input boxes
 function FeatureInput({ featureKey, prettyName, featureValue, handleInputChange, selectCustom, unit, selectedApplicant, max, min, currentValue, setCustomError, customError }) {
-    const [inputValue, setInputValue] = useState(Math.round(featureValue).toFixed(2));
+    const roundedValue = z;
+    const [inputValue, setInputValue] = useState(roundedValue);
     const [helperText, setHelperText] = useState('');
     const [error, setError] = useState(false);
     // Define default min and max values
     const max_value = 10000
     const default_min = min ?? 0;
-    const default_max = max ?? (currentValue ? currentValue * 2 : max_value);
+    const default_max = max ?? (roundedValue ? roundedValue * 2 : max_value);
 
     useEffect(() => {
-        setInputValue(featureValue);
+        setInputValue(Math.round(featureValue * 100) / 100);
     }, [selectedApplicant, featureValue])
     
     const handleInputValueChange = (event) => {
