@@ -122,12 +122,12 @@ const WelcomeScreen = (
                         <Autocomplete
                             className="dropdown"
                             options={instances.map((_, index) => `${formatDict.scenario_terms.instance_name} ${index}`)}
-                            getOptionLabel={(option) => selectCustom ? 'Custom Applicant' : option}
+                            getOptionLabel={(option) => selectCustom ? `Custom ${formatDict.scenario_terms.instance_name}` : option}
                             onChange={handleSelectionChange}
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
-                                    label={selectCustom ? 'Custom Applicant' : (applicantIndex ? `${formatDict.scenario_terms.instance_name} ${applicantIndex}` : 'Select Applicant')}
+                                    label={selectCustom ? `Custom ${formatDict.scenario_terms.instance_name}` : (applicantIndex ? `${formatDict.scenario_terms.instance_name} ${applicantIndex}` : 'Select Applicant')}
                                 />
                             )}
                             disabled={selectCustom ? true : false}
