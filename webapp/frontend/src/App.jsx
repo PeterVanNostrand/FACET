@@ -176,6 +176,7 @@ function App() {
         if (!formatDict) return;
 
         try {
+            console.log("FORMAT: ", formatDict);
             const priorities = {};
             Object.keys(formatDict.feature_names).forEach((key, index) => {
                 priorities[key] = index + 1;

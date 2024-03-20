@@ -91,7 +91,7 @@ const WelcomeScreen = (
         <div className='full-welcome card'>
             <div style={{ display: 'flex', alignItems: 'flex-start' }}>
                 <h1 className="welcome-title">
-                    Applicant Selection
+                    {formatDict.scenario_terms.instance_name} Selection
                 </h1>
                 <StyledIconButton className="close-button" onClick={() => setIsWelcome(false)} style={{ margin: "16px 16px 0 0" }}>
                     <StyledAvatar src={close} alt="close" />
@@ -100,7 +100,7 @@ const WelcomeScreen = (
 
             <div className="welcome-body" style={{ display: 'flex' }}>
                 <div className="left-column">
-                    <h4 style={{ margin: "0px 0 10px", fontWeight: 600 }}>Applicant Type</h4>
+                    <h4 style={{ margin: "0px 0 10px", fontWeight: 600 }}>{formatDict.scenario_terms.instance_name} Type</h4>
                     <StyledToggleButtonGroup
                         sx={{
                             display: "grid",
@@ -121,13 +121,13 @@ const WelcomeScreen = (
                     <div className="autocomplete-container">
                         <Autocomplete
                             className="dropdown"
-                            options={instances.map((_, index) => `Applicant ${index}`)}
+                            options={instances.map((_, index) => `${formatDict.scenario_terms.instance_name} ${index}`)}
                             getOptionLabel={(option) => selectCustom ? 'Custom Applicant' : option}
                             onChange={handleSelectionChange}
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
-                                    label={selectCustom ? 'Custom Applicant' : (applicantIndex ? `Applicant ${applicantIndex}` : 'Select Applicant')}
+                                    label={selectCustom ? 'Custom Applicant' : (applicantIndex ? `${formatDict.scenario_terms.instance_name} ${applicantIndex}` : 'Select Applicant')}
                                 />
                             )}
                             disabled={selectCustom ? true : false}
