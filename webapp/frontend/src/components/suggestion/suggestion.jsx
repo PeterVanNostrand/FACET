@@ -3,10 +3,12 @@ import './suggestion.css';
 
 export const Suggestion = ({ formatDict, featureDict, selectedInstance, explanations, currentExplanationIndex }) => {
 
-
     // Return the message for the suggestion box
+    // e.g. your application would have been ACCEPTED rather than REJECTED if your...
     let suggestion_text = [
-        ["Your application would have been", "text-black"],
+        ["Your", "text-black"],
+        [formatDict["scenario_terms"]["instance_name"].toLowerCase(), "text-black"],
+        ["would have been", "text-black"],
         [formatDict["scenario_terms"]["desired_outcome"].toUpperCase(), "text-blue"],
         ["rather than", "text-black"],
         [formatDict["scenario_terms"]["undesired_outcome"].toUpperCase(), "text-red"],
