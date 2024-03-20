@@ -100,6 +100,7 @@ function App() {
     const [selectedScenarioIndex, setSelectedScenarioIndex] = useState(null);
     const [scenarioCount, setScenarioCount] = useState(1);
 
+
     const [formatDict, setFormatDict] = useState(null);
     const [featureDict, setFeatureDict] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -312,6 +313,10 @@ function App() {
     // const changeToScenario = () => { // Change to comparing scenarios
     //     setIsComparing(prevIsComparing => !prevIsComparing);
     // };
+
+    useEffect(( ) => {
+        setSelectedScenarioIndex(null);
+    }, [applicantIndex]);
 
     const backToWelcomeScreen = () => {
         setIsWelcome(true);
