@@ -28,6 +28,7 @@ const WelcomeScreen = (
     const handleConfirm = () => {
         if (!selectCustom) { // selected from drop down
             setSelectedInstance(selectedApplicant)
+            setApplicantIndex(applicantIndex);
         } else if (selectCustom) { // custom applicant 
             setSelectedInstance(customApplicant)
         }
