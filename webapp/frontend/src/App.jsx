@@ -186,11 +186,11 @@ function App() {
                 // default max when current_value = 0 
                 const default_max = 10000;
                 // calc. constraints and ranges 
-                const current_value = Math.round(selectedInstance[key]);
-                const semantic_min = formatDict.semantic_min[value] ?? 0;
-                const semantic_max = Math.round(formatDict.semantic_max[value] ?? ((current_value === 0) ? default_max : current_value * 2));
-                const lower_constraint = Math.round(semantic_max * 0.25);
-                const upper_constraint = Math.round(semantic_max * 0.75);
+                const current_value = (Math.round(selectedInstance[key])).toFixed(2);
+                const semantic_min = (formatDict.semantic_min[value] ?? 0).toFixed(2);
+                const semantic_max = (Math.round(formatDict.semantic_max[value] ?? ((current_value === 0) ? default_max : current_value * 2))).toFixed(2);
+                const lower_constraint = (Math.round(semantic_max * 0.25)).toFixed(2);
+                const upper_constraint = (Math.round(semantic_max * 0.75)).toFixed(2);
                 setConstraints(prevConstraints => [...prevConstraints, [lower_constraint, upper_constraint]]);
                 return {
                     id: value,

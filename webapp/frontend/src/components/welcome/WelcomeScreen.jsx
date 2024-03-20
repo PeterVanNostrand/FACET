@@ -23,6 +23,7 @@ const WelcomeScreen = (
         setApplicantIndex }
 ) => {
     const [selectedApplicant, setSelectedApplicant] = useState(selectedInstance);
+    const [customError, setCustomError] = useState(null);
 
     const handleConfirm = () => {
         if (!selectCustom) { // selected from drop down
@@ -148,12 +149,17 @@ const WelcomeScreen = (
                                     selectCustom={selectCustom}
                                     handleInputChange={handleInputChange}
                                     selectedApplicant={selectedApplicant}
+                                    max={formatDict.feature_units[formatDict.semantic_max[key]]}
+                                    min={formatDict.feature_units[formatDict.semantic_min[key]]}
+                                    currentValue={formatDict.feature_units[formatDict.semantic_min[key]]} // used to gen. max when it doesn't exist
+                                    setCustomError={setCustomError}
+                                    customError={customError}
                                 />
                             </div>
                         ))}
                     </div>
                     <div style={{ marginLeft: 'auto', marginBottom: 10, marginRight: 10, marginTop: 30 }}>
-                        <button className='confirm-button' onClick={handleConfirm} >
+                        <button className='confirm-button' onClick={handleConfirm} disabled={customError && selectCustom}>
                             Continue
                         </button>
                     </div>
@@ -164,10 +170,12 @@ const WelcomeScreen = (
 };
 
 // displays feature input boxes
-function FeatureInput({ featureKey, prettyName, featureValue, handleInputChange, selectCustom, unit, selectedApplicant }) {
-    const [inputValue, setInputValue] = useState(Math.round(featureValue));
-    const [error, setError] = useState(false);
+function FeatureInput({ featureKey, prettyName, featureValue, handleInputChange, selectCustom, unit, selectedApplicant, max, min, currentValue, setCustomError, customError }) {
+    const [inputValue, setInputValue] = useState(Math.round(featureValue).toFixed(2));
     const [helperText, setHelperText] = useState('');
+    // Define default min and max values
+    const default_min = min ?? 0;
+    const default_max = max ?? (currentValue ? currentValue * 2 : 10000);
 
     useEffect(() => {
         setInputValue(featureValue);
@@ -177,36 +185,48 @@ function FeatureInput({ featureKey, prettyName, featureValue, handleInputChange,
         const value = event.target.value;
         setInputValue(value); // disp. input in field 
 
-        // Validation
-        if (isNaN(value) || value.startsWith('-') || value.startsWith('0')) {
-            setError(true);
-            setHelperText('Please enter a valid positive number.');
-        } else {
-            setError(false);
-            setHelperText('');
-        }
+        // Validatie
+        if (!isNaN(value)) {
+            setInputValue(value); // display input in field 
+            // Valid 
+            if (value < default_min || value > default_max) {
+                setError(true);
+                setHelperText(`Please enter a value between ${default_min} and ${default_max}`);
+            } else {
+                setError(false);
+                setHelperText('');
+            }
 
-        // Set to custom applicant if validated 
-        if (!error) {
-            console.log("key: ", featureKey);
-            handleInputChange(featureKey, Math.round(parseInt(value)));
+            // Set to custom applicant if validated 
+            if (!error) {
+                console.log("key: ", featureKey);
+                handleInputChange(featureKey, parseFloat(value));
+            }
         }
     };
 
     return (
-        <div className='feature' style={{ marginBottom: '8px', }}>
+        <div className='feature' style={{ marginBottom: '15px', width: '90%', height: '70%', position: 'relative' }}>
             <TextField
                 label={prettyName}
-                value={Math.round(inputValue)}
+                type="number"
+                value={inputValue ?? 0}
                 onChange={handleInputValueChange}
-                error={error}
-                helperText={helperText}
+                //error={error}
                 disabled={!selectCustom}
                 InputProps={{
+                    inputProps: { step: 'any' },
+                    min: default_min,
+                    max: default_max,
                     endAdornment: <InputAdornment position="end" className="custom-input-adornment">{unit}</InputAdornment>,
                 }}
                 style={{ width: '100%', color: 'black' }}
             />
+            {helperText && selectCustom && (
+                <div style={{ position: 'absolute', bottom: '-15px', left: 0, color: 'red', fontSize: '0.75rem' }}>
+                    {helperText}
+                </div>
+            )}
         </div>
     );
 }
