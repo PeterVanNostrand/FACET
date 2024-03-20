@@ -54,13 +54,13 @@ button:disabled {
     color: black;
 }
 
-.ApplicationDropDown {
+.InstanceDropDown {
     background-color: #DDDDDD;
     border-color: black;
     color: black;
 }
 
-.Application-Window {
+.Instance-Window {
     background-color: rgb(87, 87, 87);
     border-color: white;
     color: white;
@@ -104,7 +104,7 @@ button:disabled {
     color: rgb(0, 251, 226);
 }
 
-.instructionsText{
+.instructionsText {
     color: white;
 }
 

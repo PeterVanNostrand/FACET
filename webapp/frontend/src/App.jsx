@@ -41,10 +41,10 @@ function status_log(text, color) {
 
 function App() {
     /**
-     * applications: List of applications loaded from JSON data
+     * instances: List of instances loaded from JSON data
      * Structure: [{"x0": <feature value>, ... "x<n>": <feature value>}, {"x0": <feature value>, ... "x<n>": <feature value>}, ...]
      * 
-     * selectedInstance: the current application/scenario the user is viewing. This variable is what the app displays
+     * selectedInstance: the current instances/scenario the user is viewing. This variable is what the app displays
      * Structure: { "x0": <feature value>, ... , "x<n>": <feature value> }
      * 
      * explanation: FACET's counterfactual explanation on what to change user's feature values to to get a desired outcome
@@ -66,9 +66,9 @@ function App() {
             "feature_units": { <featureName>: <unit, i.e. "$", "ms", "km">, ... },
             "pretty_feature_names": { <featureName>: <Pretty Feature Name, i.e. "Applicant Income" rather than "ApplicantIncome">, ... },
             "scenario_terms": {
-                "desired_outcome": <Val, i.e. "Approved">,
-                "instance_name": "<Val, i.e. "Application">,
-                "undesired_outcome":<Val, i.e. "Rejected">
+                "desired_outcome":   <Val, e.g. "Approved">,
+                "instance_name":     <Val, e.g. "Application">,
+                "undesired_outcome": <Val, e.g. "Rejected">
             },
             "semantic_max": { <FeatureName>: <Real Number or null>, ... },
             "semantic_min": { <FeatureName>: <Real Number or null>, ... },
@@ -84,7 +84,7 @@ function App() {
      * 
      * isLoading: Boolean value that helps with managing async operations. Prevents webapp from trying to display stuff before formatDict is loaded
      */
-    const [applications, setApplications] = useState([]);
+    const [instances, setInstances] = useState([]);
     const [selectedInstance, setSelectedInstance] = useState("");
     const [selectCustom, setSelectCustom] = useState(null);
     const [customApplicant, setCustomApplicant] = useState(null);
@@ -141,7 +141,7 @@ function App() {
         const fetchInstances = async () => {
             try {
                 const response = await axios.get(ENDPOINT + "/instances");
-                setApplications(response.data);
+                setInstances(response.data);
                 setSelectedInstance(response.data[0]);
                 status_log("Sucessfully loaded instances!", SUCCESS)
             } catch (error) {
@@ -328,7 +328,7 @@ function App() {
     else if (isWelcome) {
         return (
             <WelcomeScreen
-                instances={applications}
+                instances={instances}
                 selectedInstance={selectedInstance}
                 setSelectedInstance={setSelectedInstance}
                 setIsWelcome={setIsWelcome}
