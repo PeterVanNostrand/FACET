@@ -1,11 +1,11 @@
-import { styled } from '@mui/material/styles';
+import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Slider from '@mui/material/Slider';
 import Switch from '@mui/material/Switch';
-import Avatar from '@mui/material/Avatar';
 import TextField from '@mui/material/TextField';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import { styled } from '@mui/material/styles';
 
 export const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
     borderRadius: '30px',
@@ -34,12 +34,12 @@ export const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => 
 
 export const StyledInput = styled(TextField)(({ theme }) => ({
     "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
-      display: "none",
+        display: "none",
     },
     "& input[type=number]": {
-      MozAppearance: "textfield",
+        MozAppearance: "textfield",
     },
-  }));
+}));
 
 
 export const StyledToggleButton = styled(ToggleButton)(({ theme }) => ({
@@ -76,13 +76,14 @@ export const StyledSwitch = (props) => (
     <Switch
         {...props}
         sx={{
-            width: 62,
+            width: 65,
             height: 36,
             '& .MuiSwitch-switchBase.Mui-checked': {
                 color: '#006eff',
                 '&:hover': {
                     backgroundColor: 'rgba(107, 142, 255, 0.5)',
                 },
+                transform: 'translateX(23px)',
             },
             '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
                 backgroundColor: 'var(--accepted-color)',
@@ -92,10 +93,14 @@ export const StyledSwitch = (props) => (
                 backgroundColor: () => (props.checked ? 'var(--accepted-color)' : '#fff'),
             },
             '& .MuiSwitch-track': {
+                marginTop: '1px',
                 //borderRadius: 24 / 2, // Adjust border radius to make it round
                 '&:before, &:after': {
                     content: '""',
                     position: 'absolute',
+                    paddingTop: '2px',
+                    paddingLeft: '3px',
+                    marginTop: '1px',
                 },
                 '&:before': {
                     content: '"ON"',
@@ -154,7 +159,7 @@ export const StyledSlider = styled(Slider)(({ theme }) => ({
         backgroundColor: 'black',
         opacity: 1,
     },
-    '& .MuiSlider-markLabel[data-index="1"]': { 
+    '& .MuiSlider-markLabel[data-index="1"]': {
         marginLeft: '10px !important',
     },
     '& .MuiSlider-markLabel[data-index="0"]': { // Min
