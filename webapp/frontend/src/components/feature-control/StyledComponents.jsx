@@ -3,6 +3,7 @@ import Button from '@mui/material/Button';
 import Slider from '@mui/material/Slider';
 import Switch from '@mui/material/Switch';
 import Avatar from '@mui/material/Avatar';
+import TextField from '@mui/material/TextField';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import ToggleButton from '@mui/material/ToggleButton';
 
@@ -30,6 +31,16 @@ export const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => 
         },
     },
 }));
+
+export const StyledInput = styled(TextField)(({ theme }) => ({
+    "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
+      display: "none",
+    },
+    "& input[type=number]": {
+      MozAppearance: "textfield",
+    },
+  }));
+
 
 export const StyledToggleButton = styled(ToggleButton)(({ theme }) => ({
 }));
