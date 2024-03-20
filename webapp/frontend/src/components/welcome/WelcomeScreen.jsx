@@ -5,7 +5,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import { formatFeature } from '@src/js/utilities.js';
 import { useEffect, useState } from 'react';
-import { StyledAvatar, StyledIconButton, StyledToggleButton, StyledToggleButtonGroup } from '../feature-control/StyledComponents.jsx';
+import { StyledAvatar, StyledIconButton, StyledInput, StyledToggleButton, StyledToggleButtonGroup } from '../feature-control/StyledComponents.jsx';
 import './welcome-screen.css';
 
 const WelcomeScreen = (
@@ -174,6 +174,7 @@ const WelcomeScreen = (
 function FeatureInput({ featureKey, prettyName, featureValue, handleInputChange, selectCustom, unit, selectedApplicant, max, min, currentValue, setCustomError, customError }) {
     const [inputValue, setInputValue] = useState(Math.round(featureValue).toFixed(2));
     const [helperText, setHelperText] = useState('');
+    const [error, setError] = useState(false);
     // Define default min and max values
     const default_min = min ?? 0;
     const default_max = max ?? (currentValue ? currentValue * 2 : 10000);
@@ -181,39 +182,42 @@ function FeatureInput({ featureKey, prettyName, featureValue, handleInputChange,
     useEffect(() => {
         setInputValue(featureValue);
     }, [selectedApplicant, featureValue])
-
+    
     const handleInputValueChange = (event) => {
         const value = event.target.value;
         setInputValue(value); // disp. input in field 
-
-        // Validatie
-        if (!isNaN(value)) {
-            setInputValue(value); // display input in field 
-            // Valid 
-            if (value < default_min || value > default_max) {
-                setError(true);
-                setHelperText(`Please enter a value between ${default_min} and ${default_max}`);
-            } else {
-                setError(false);
-                setHelperText('');
-            }
-
-            // Set to custom applicant if validated 
-            if (!error) {
-                console.log("key: ", featureKey);
-                handleInputChange(featureKey, parseFloat(value));
-            }
+        console.log("Value Parse: ", parseFloat(value));
+    
+        // Validation
+        if (isNaN(value) || value.trim() === '') {
+            // If input is not a number or empty
+            setCustomError(true);
+            setError(true);
+            setHelperText('Please enter a valid input.');
+        } else if (value < default_min || value > default_max) {
+            // If input is out of range
+            setError(true);
+            setCustomError(true);
+            setHelperText(`Please enter a value between ${default_min} and ${default_max}`);
+        } else {
+            // Valid input
+            setError(false);
+            setCustomError(false);
+            setHelperText(null);
+            handleInputChange(featureKey, parseFloat(value));
         }
-    };
+    }
+    
 
     return (
         <div className='feature' style={{ marginBottom: '15px', width: '90%', height: '70%', position: 'relative' }}>
-            <TextField
+            <StyledInput
                 label={prettyName}
                 type="number"
                 value={inputValue ?? 0}
                 onChange={handleInputValueChange}
-                //error={error}
+                error={error}
+                //helperText={helperText}
                 disabled={!selectCustom}
                 InputProps={{
                     inputProps: { step: 'any' },
@@ -223,11 +227,11 @@ function FeatureInput({ featureKey, prettyName, featureValue, handleInputChange,
                 }}
                 style={{ width: '100%', color: 'black' }}
             />
-            {helperText && selectCustom && (
+             {helperText && selectCustom && (
                 <div style={{ position: 'absolute', bottom: '-15px', left: 0, color: 'red', fontSize: '0.75rem' }}>
                     {helperText}
                 </div>
-            )}
+            )} 
         </div>
     );
 }
