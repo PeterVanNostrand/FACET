@@ -176,8 +176,9 @@ function FeatureInput({ featureKey, prettyName, featureValue, handleInputChange,
     const [helperText, setHelperText] = useState('');
     const [error, setError] = useState(false);
     // Define default min and max values
+    const max_value = 10000
     const default_min = min ?? 0;
-    const default_max = max ?? (currentValue ? currentValue * 2 : 10000);
+    const default_max = max ?? (currentValue ? currentValue * 2 : max_value);
 
     useEffect(() => {
         setInputValue(featureValue);
