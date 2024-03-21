@@ -151,10 +151,9 @@ const WelcomeScreen = (
                                     selectCustom={selectCustom}
                                     handleInputChange={handleInputChange}
                                     selectedApplicant={selectedApplicant}
-                                    max={formatDict.feature_units[formatDict.semantic_max[key]]}
-                                    min={formatDict.feature_units[formatDict.semantic_min[key]]}
+                                    max={formatDict["semantic_max"][featureDict[key]]}
+                                    min={formatDict["semantic_min"][featureDict[key]]}
                                     setCustomError={setCustomError}
-                 
                                 />
                             </div>
                         ))}
@@ -171,22 +170,19 @@ const WelcomeScreen = (
 };
 
 // displays feature input boxes
-function FeatureInput({ featureKey, prettyName, featureValue, handleInputChange, selectCustom, unit, selectedApplicant, max, min, setCustomError }) {
+function FeatureInput({ featureKey, prettyName, featureValue, handleInputChange, selectCustom, unit, selectedApplicant, min, max, setCustomError }) {
     const roundedValue = Math.round(featureValue * 100) / 100;
-    console.log("Rounded Value: ", roundedValue);
     const [inputValue, setInputValue] = useState(roundedValue);
     const [helperText, setHelperText] = useState('');
     const [error, setError] = useState(false);
     // Define default min and max values
-    const max_value = 10000
+    const max_value = 10000;
     const default_min = min ?? 0;
-    const default_max = selectCustom
-    ? max_value
-    : max
+    const default_max = max
         ? max
-        : roundedValue
-            ? roundedValue * 2
-            : max_value;
+        : (selectCustom
+            ? max_value
+            : roundedValue * 2);
 
 
     useEffect(() => {
