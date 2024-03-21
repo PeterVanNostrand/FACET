@@ -182,7 +182,9 @@ function FeatureInput({ featureKey, prettyName, featureValue, handleInputChange,
         ? max
         : (selectCustom
             ? max_value
-            : roundedValue * 2);
+            : (roundedValue !== null)
+                ? Math.round((featureValue * 2) * 100) / 100
+                : max_value);
 
 
     useEffect(() => {
