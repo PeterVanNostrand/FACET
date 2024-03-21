@@ -202,7 +202,7 @@ function FeatureInput({ featureKey, prettyName, featureValue, handleInputChange,
             setCustomError(true);
             setError(true);
             setHelperText('Please enter a valid input.');
-        } else if (value < default_min || value > default_max) {
+        } else if (value <= default_min || value >= default_max) {
             // If input is out of range
             setError(true);
             setCustomError(true);
