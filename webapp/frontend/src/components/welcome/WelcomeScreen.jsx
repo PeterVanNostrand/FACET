@@ -131,6 +131,7 @@ const WelcomeScreen = (
                             )}
                             disabled={selectCustom ? true : false}
                             style={{ width: "190px" }}
+                            ListboxProps={{ style: { maxHeight: 250 } }}
                         />
                     </div>
                 </div>

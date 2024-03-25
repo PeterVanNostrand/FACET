@@ -1,11 +1,13 @@
 /* General styling */
 body {
     font-family: Arial, sans-serif;
+    background-color: white;
+    min-height: 100vh;
 }
 
 div {
     font-family: Arial, Helvetica, sans-serif;
-    background-color: rgba(169, 62, 62, 0);
+    background-color: white;
 }
 
 /* Card title section */
