@@ -185,33 +185,20 @@ function App() {
             // setPriorities(priorities);
 
             const newFeatures = Object.entries(formatDict.feature_names).map(([key, value], index) => {
-                // get all the current values
-                console.log("-------------")
-                console.log("feature", key)
                 const current_value = (Math.round(selectedInstance[key]));
-                console.log("curr val", current_value)
                 const semantic_min = parseFloat(formatDict.semantic_min[value]);
-                console.log("sem min", semantic_min)
                 const semantic_max = parseFloat(formatDict.semantic_max[value]);
-                console.log("sem max", semantic_max)
                 const std_dev = parseFloat(formatDict.std_dev[key]);
-                console.log("std dev", std_dev)
 
                 // determine the line mine and max based on the current value
                 let line_min = Math.round(current_value - 2 * std_dev);
                 if (!Number.isNaN(semantic_min) && line_min < semantic_min) {
                     line_min = semantic_min;
-                    console.log("clamped min!");
-                    console.log("isnan", !isNaN(semantic_min));
                 }
                 let line_max = Math.round(current_value + 2 * std_dev);
                 if (!Number.isNaN(semantic_max) && line_max > semantic_max) {
                     line_max = semantic_max;
-                    console.log("clamped max!");
-                    console.log("isnan", !isNaN(semantic_max));
                 }
-                console.log("line min", line_min);
-                console.log("line max", line_max);
 
                 // make sure the current value is included, and we don't exceed the semantic min/max
                 let lower_constraint = (line_min + (line_max - line_min) * 0.1);
@@ -285,7 +272,12 @@ function App() {
 
             let request = {};
             request["instance"] = selectedInstance;
-            request["weights"] = priorities;
+            let weights = {};
+            const multiplier = 3;
+            for (const [key, value] of Object.entries(priorities)) {
+                weights[key] = value * multiplier;
+            }
+            request["weights"] = weights;
             request["constraints"] = constraintsArray;
             request["num_explanations"] = numExplanations;
 
