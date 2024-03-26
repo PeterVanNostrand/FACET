@@ -79,7 +79,6 @@ export const numberLineBuilder = (explanation, index, formatDict) => {
             }
             else if (range_type_max == RangeTypes.Percent) {
                 max_value = value + (percent_val * value);
-                console.log("value: ", value);
                 if (value == 0 || value == 0.01 || value == -0.01) { // just the lock offset
                     max_value = value + formatDict["std_dev"][feature_id];
                 }

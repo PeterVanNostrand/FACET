@@ -11,7 +11,7 @@ import './feature-control.css';
 const FeatureControlSection = ({ features, setFeatures, constraints, setConstraints, keepPriority, setKeepPriority, savedScenarios, selectedScenarioIndex, setSelectedScenarioIndex, formatDict }) => {
     const feature_tab_title = 'Feature Controls';
 
-    const handleSliderConstraintChange = (xid, minRange, maxRange) => {
+    const handleSliderConstraintChange = (xid, minRange, maxRange, current_value) => {
         const index = features.findIndex((feature) => feature.xid === xid);
         if (index !== -1) {
             // Update the constraints state
@@ -26,6 +26,40 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
                 min_range: minRange,
                 max_range: maxRange
             };
+
+            const feat_name = formatDict.feature_names[xid];
+            const std_dev = parseFloat(formatDict.std_dev[xid]);
+            // update the range max value if we're near the end of the range
+            const curr_max = updatedFeatures[index].max
+            if (maxRange > 0.90 * curr_max) {
+                let new_max = maxRange + 0.5 * std_dev;
+                const semantic_max = parseFloat(formatDict.semantic_max[feat_name]);
+                if (!Number.isNaN(semantic_max)) {
+                    new_max = Math.min(new_max, semantic_max)
+                }
+                updatedFeatures[index].max = new_max
+            }
+            if (curr_max > 2 * maxRange) {
+                let new_max = 1.5 * maxRange;
+                new_max = Math.max(new_max, current_value + 0.2 * current_value)
+                updatedFeatures[index].max = new_max
+            }
+
+            // update the range min value if we're near the end of the range
+            const curr_min = updatedFeatures[index].min
+            if (minRange <= 1.09 * curr_min) {
+                let new_min = minRange - 0.5 * std_dev;
+                const semantic_min = parseFloat(formatDict.semantic_min[feat_name]);
+                if (!Number.isNaN(semantic_min)) {
+                    new_min = Math.max(new_min, semantic_min)
+                }
+                updatedFeatures[index].min = new_min
+            }
+            if (curr_min < 0.5 * minRange && ((minRange - curr_min) > 0.05 * std_dev)) {
+                let new_min = minRange - 0.75 * minRange;
+                new_min = Math.min(new_min, current_value - 0.2 * current_value)
+                updatedFeatures[index].min = new_min
+            }
             setFeatures(updatedFeatures);
         }
     };
@@ -156,6 +190,8 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
 
     const handleSwitchChange = (event) => {
         setKeepPriority(event.target.checked);
+        const updatedFeatures = [...features];
+        setFeatures(updatedFeatures);
     };
 
 
@@ -171,7 +207,7 @@ const FeatureControlSection = ({ features, setFeatures, constraints, setConstrai
         const min_distance = 1; // set minimum between min_range and max_range
 
         const handleSliderChangeCommitted = () => {
-            handleSliderConstraintChange(xid, range[0], range[1]);
+            handleSliderConstraintChange(xid, range[0], range[1], current_value);
         };
 
         // ARROW: Priority List Traversal 

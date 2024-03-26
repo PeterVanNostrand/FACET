@@ -151,8 +151,8 @@ const WelcomeScreen = (
                                     selectCustom={selectCustom}
                                     handleInputChange={handleInputChange}
                                     selectedApplicant={selectedApplicant}
-                                    max={formatDict["semantic_max"][featureDict[key]]}
-                                    min={formatDict["semantic_min"][featureDict[key]]}
+                                    max={parseFloat(formatDict["semantic_max"][featureDict[key]])}
+                                    min={parseFloat(formatDict["semantic_min"][featureDict[key]])}
                                     setCustomError={setCustomError}
                                 />
                             </div>
@@ -176,15 +176,15 @@ function FeatureInput({ featureKey, prettyName, featureValue, handleInputChange,
     const [helperText, setHelperText] = useState('');
     const [error, setError] = useState(false);
     // Define default min and max values
-    const max_value = 10000;
-    const default_min = min ?? 0;
-    const default_max = max
-        ? max
-        : (selectCustom
-            ? max_value
-            : (roundedValue !== null)
-                ? Math.round((featureValue * 2) * 100) / 100
-                : max_value);
+    // const max_value = 10000;
+    // const default_min = min ?? 0;
+    // const default_max = max
+    //     ? max
+    //     : (selectCustom
+    //         ? max_value
+    //         : (roundedValue !== null)
+    //             ? Math.round((featureValue * 2) * 100) / 100
+    //             : max_value);
 
 
     useEffect(() => {
@@ -197,22 +197,31 @@ function FeatureInput({ featureKey, prettyName, featureValue, handleInputChange,
         console.log("Value Parse: ", parseFloat(value));
 
         // Validation
-        if (isNaN(value) || value.trim() === '') {
-            // If input is not a number or empty
-            setCustomError(true);
-            setError(true);
-            setHelperText('Please enter a valid input.');
-        } else if (value < default_min || value > default_max) {
-            // If input is out of range
-            setError(true);
-            setCustomError(true);
-            setHelperText(`Please enter a value between ${default_min} and ${default_max}`);
-        } else {
-            // Valid input
-            setError(false);
-            setCustomError(false);
-            setHelperText(null);
-            handleInputChange(featureKey, parseFloat(value));
+        const doValidation = true
+        if (doValidation) {
+            if (Number.isNaN(value) || value.trim() === '') {
+                // If input is not a number or empty
+                setCustomError(true);
+                setError(true);
+                setHelperText('Please enter a valid input.');
+            }
+            else if (!Number.isNaN(min) && value < min) {
+                // If input is out of range
+                setError(true);
+                setCustomError(true);
+                setHelperText(`Please enter a value greater than ${min}`);
+            } else if (!Number.isNaN(max) && value > max) {
+                // If input is out of range
+                setError(true);
+                setCustomError(true);
+                setHelperText(`Please enter a value less than ${max}`);
+            } else {
+                // Valid input
+                setError(false);
+                setCustomError(false);
+                setHelperText(null);
+                handleInputChange(featureKey, parseFloat(value));
+            }
         }
     }
 
@@ -229,8 +238,8 @@ function FeatureInput({ featureKey, prettyName, featureValue, handleInputChange,
                 disabled={!selectCustom}
                 InputProps={{
                     inputProps: { step: 'any' },
-                    min: default_min,
-                    max: default_max,
+                    min: min,
+                    max: max,
                     endAdornment: <InputAdornment position="end" className="custom-input-adornment">{unit}</InputAdornment>,
                 }}
                 style={{ width: '100%', color: 'black' }}
