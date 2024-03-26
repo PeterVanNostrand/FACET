@@ -65,7 +65,7 @@ export const numberLineBuilder = (explanation, index, formatDict) => {
             } else if (range_type_min == RangeTypes.Percent) {
                 min_value = value - (percent_val * value);
             }
-            // min_value = clamp_value(min_value, feature_id, formatDict);
+            min_value = clamp_value(min_value, feature_id, formatDict, formatDict);
             return min_value;
         }
 
@@ -79,6 +79,10 @@ export const numberLineBuilder = (explanation, index, formatDict) => {
             }
             else if (range_type_max == RangeTypes.Percent) {
                 max_value = value + (percent_val * value);
+                console.log("value: ", value);
+                if (value == 0 || value == 0.01 || value == -0.01) { // just the lock offset
+                    max_value = value + formatDict["std_dev"][feature_id];
+                }
             }
             max_value = clamp_value(max_value, feature_id, formatDict, formatDict);
             return max_value;
