@@ -16,7 +16,6 @@ export const expl_colors = {
     unaltered: "#939393"
 }
 
-
 export const numberLineBuilder = (explanation, index, formatDict) => {
 
     const my = async (selection) => {
@@ -48,7 +47,8 @@ export const numberLineBuilder = (explanation, index, formatDict) => {
         const tick_height = 16;
         const bar_height = tick_height - 3;
         const circle_radius = tick_height / 2 - 1;
-        const value_font = 12;
+        const value_font = 14;
+        const font_family = "Roboto"
 
         const range_type_min = RangeTypes.Percent;
         const range_type_max = RangeTypes.Percent;
@@ -148,30 +148,34 @@ export const numberLineBuilder = (explanation, index, formatDict) => {
         const bar_upper_val = Math.min(region_upper, line_max);
 
         // TEXT LABEL the ends of the explanation bar
+
+
         const line_text_lower = selection.append("text")
             .text(formatValue(line_min, feature_id, formatDict))
-            .attr("class", "")
+            .attr("class", "svgtext")
             .attr("font-size", value_font)
-            .attr("font-family", "Inter, sans-serif") // Use Inter font family
-            .attr("font-weight", 600) // Set font weight to 600
+            .attr("font-family", font_family) // Use Inter font family
             .attr("fill", "black")
             .attr("x", line_plot_x)
             .attr("y", line_y + bar_height + value_font)
             .attr("text-anchor", "middle")
             .attr("class", "tick-label");
+        if (line_min == region_lower || line_min == instance_val) {
+            line_text_lower.text("");
+        }
 
         const line_text_upper = selection.append("text")
             .text(formatValue(line_max, feature_id, formatDict))
             .attr("font-size", value_font)
-            .attr("font-family", "Inter, sans-serif") // Use Inter font family
-            .attr("font-weight", 600) // Set font weight to 600
+            .attr("font-family", font_family) // Use Inter font family
             .attr("fill", "black")
             .attr("x", line_plot_x + line_plot_width)
             .attr("y", line_y + bar_height + value_font)
             .attr("text-anchor", "middle")
             .attr("class", "tick-label");
-
-
+        if (line_max == region_upper || line_max == instance_val) {
+            line_text_upper.text("");
+        }
 
         // ##### DRAW THE BAR #####
         if (expl_type == ExplanationTypes.Region) {
@@ -209,7 +213,6 @@ export const numberLineBuilder = (explanation, index, formatDict) => {
             const bar_text_lower = selection.append("text")
                 .text(formatValue(bar_lower_val, feature_id, formatDict))
                 .attr("font-size", value_font)
-                .attr("font-weight", "bold")
                 .attr("fill", bar_color)
                 .attr("x", bar_start_px)
                 .attr("y", line_y - bar_height)
@@ -219,7 +222,6 @@ export const numberLineBuilder = (explanation, index, formatDict) => {
             const bar_text_upper = selection.append("text")
                 .text(formatValue(bar_upper_val, feature_id, formatDict))
                 .attr("font-size", value_font)
-                .attr("font-weight", "bold")
                 .attr("fill", bar_color)
                 .attr("x", bar_end_px)
                 .attr("y", line_y - bar_height)
@@ -257,7 +259,6 @@ export const numberLineBuilder = (explanation, index, formatDict) => {
         const circle_text = selection.append("text")
             .text(formatValue(instance_val, feature_id, formatDict))
             .attr("font-size", value_font)
-            .attr("font-weight", "bold")
             .attr("fill", circle_color)
             .attr("x", circle_x)
             .attr("y", line_y + bar_height + value_font)

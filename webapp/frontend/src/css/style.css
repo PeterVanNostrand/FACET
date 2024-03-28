@@ -253,6 +253,9 @@ button:disabled {
 
 .tick-label {
     color: var(--text-color);
+    font-family: 'Roboto';
+    font-size: 15px;
+    font-weight: bold;
 }
 
 .back-welcome-button {
@@ -321,5 +324,5 @@ button:disabled {
 }
 
 .back-welcome-button img {
-    margin-right: 5px; 
+    margin-right: 5px;
 }
