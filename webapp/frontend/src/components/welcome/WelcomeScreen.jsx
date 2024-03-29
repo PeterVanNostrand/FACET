@@ -67,7 +67,7 @@ const WelcomeScreen = (
     // Handle changes to custom applicant fields
     const handleInputChange = (featureKey, value) => {
         setCustomApplicant({ ...customApplicant, [featureKey]: value })
-        console.log("Changed Value: ", value);
+        // console.log("Changed Value: ", value);
     }
 
     // Handle Autocomplete selection change
@@ -194,7 +194,7 @@ function FeatureInput({ featureKey, prettyName, featureValue, handleInputChange,
     const handleInputValueChange = (event) => {
         const value = event.target.value;
         setInputValue(value); // disp. input in field 
-        console.log("Value Parse: ", parseFloat(value));
+        // console.log("Value Parse: ", parseFloat(value));
 
         // Validation
         const doValidation = true
@@ -228,6 +228,7 @@ function FeatureInput({ featureKey, prettyName, featureValue, handleInputChange,
 
     return (
         <div className='feature' style={{ marginBottom: '15px', width: '90%', height: '70%', position: 'relative' }}>
+
             <StyledInput
                 label={prettyName}
                 type="number"
@@ -236,10 +237,11 @@ function FeatureInput({ featureKey, prettyName, featureValue, handleInputChange,
                 error={error}
                 //helperText={helperText}
                 disabled={!selectCustom}
+
                 InputProps={{
                     inputProps: { step: 'any' },
-                    min: min,
-                    max: max,
+                    min: Number.isNaN(min) ? "" : min,
+                    max: Number.isNaN(max) ? "" : max,
                     endAdornment: <InputAdornment position="end" className="custom-input-adornment">{unit}</InputAdornment>,
                 }}
                 style={{ width: '100%', color: 'black' }}

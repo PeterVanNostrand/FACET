@@ -86,6 +86,7 @@ function App() {
      */
     const [instances, setInstances] = useState([]);
     const [selectedInstance, setSelectedInstance] = useState("");
+    const [instancePrediction, setInstancePrediction] = useState("");
     const [selectCustom, setSelectCustom] = useState(null);
     const [customApplicant, setCustomApplicant] = useState(null);
     const [applicantIndex, setApplicantIndex] = useState('0');
@@ -160,6 +161,27 @@ function App() {
     }, [selectedInstance, featureControls, selectedScenarioIndex]);
 
     useEffect(() => {
+        if (!formatDict) return;
+        if (!selectedInstance) return;
+
+        try {
+            const updatePrediction = async (instance) => {
+                let request = { "instance": selectedInstance };
+                const response = await axios.post(
+                    ENDPOINT + "/predict",
+                    request,
+                );
+                setInstancePrediction(response.data);
+            }
+            updatePrediction(selectedInstance);
+        }
+        catch (error) {
+
+        }
+
+    }, [selectedInstance]);
+
+    useEffect(() => {
         if (explanations.length === 0) {
             setTotalExplanations([]);
             return;
@@ -232,7 +254,6 @@ function App() {
         }
     }, [formatDict, selectedInstance]);
 
-
     /**
      * Function to explain the selected instance using the backend server
      * @returns None
@@ -273,9 +294,17 @@ function App() {
             let request = {};
             request["instance"] = selectedInstance;
             let weights = {};
-            const multiplier = 3;
-            for (const [key, value] of Object.entries(priorities)) {
-                weights[key] = value * multiplier;
+            const increment = formatDict["weight_values"]["Increment"];
+            const type = formatDict["weight_values"]["Type"]
+            let i = 0;
+            for (const [key, index] of Object.entries(priorities)) {
+                if (type === "Add")
+                    weights[key] = index + increment;
+                else if (type === "Multiply")
+                    weights[key] = index * increment;
+                else if (type === "Exponent")
+                    weights[key] = increment ** index;
+                i++;
             }
             request["weights"] = weights;
             request["constraints"] = constraintsArray;
@@ -413,6 +442,7 @@ function App() {
                     <StatusSection
                         instance={selectedInstance}
                         featureDict={featureDict}
+                        prediction={instancePrediction}
                         formatDict={formatDict}
                     />
                 </div>
@@ -430,6 +460,7 @@ function App() {
                         currentExplanationIndex={currentExplanationIndex}
                         setCurrentExplanationIndex={setCurrentExplanationIndex}
                         saveScenario={saveScenario}
+                        prediction={instancePrediction}
                     />
                 </div>
                 {/* )}  */}
@@ -439,6 +470,7 @@ function App() {
                         selectedInstance={selectedInstance}
                         explanations={explanations}
                         currentExplanationIndex={currentExplanationIndex}
+                        prediction={instancePrediction}
                         featureDict={featureDict} />
                 </div>
             </div >

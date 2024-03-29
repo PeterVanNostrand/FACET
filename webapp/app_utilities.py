@@ -32,7 +32,11 @@ def flask_setup_server(
     manager.explainer.prepare_dataset(x, y)
     manager.prepare(xtrain=xtrain, ytrain=xtrain)
 
-    return manager, xtest
+    # get the negative outcome samples for explanation
+    preds = manager.predict(xtrain)
+    neg_samples = xtrain[preds == 0]
+
+    return manager, neg_samples
 
 
 def run_facet(
@@ -51,14 +55,14 @@ def run_facet(
 
     print("dataset: " + ds_name)
 
-    manager, test_applicants = flask_setup_server(
+    manager, sample_data = flask_setup_server(
         dataset_name=ds_name,
         explainer=explainer,
         params=params,
         random_state=random_state,
     )
 
-    return manager, test_applicants
+    return manager, sample_data
 
 
 def parse_dataset_info(details_path):

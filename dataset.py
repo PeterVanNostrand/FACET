@@ -144,7 +144,6 @@ class DataInfo:
             rect_dict["x{:d}".format(i)] = [rect[i, LOWER], rect[i, UPPER]]
         return rect_dict
 
-
     def dict_to_point(self, point_dict: dict) -> np.ndarray:
         """
         Takes a dictionary of {"xi" : <number>, ...} and converts it to a numpy array

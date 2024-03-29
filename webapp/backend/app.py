@@ -50,7 +50,7 @@ def init_app():
         print("FORMAT_DICT")
         pprint(FORMAT_DICT)
     except Exception as e:
-        print(f"ERROR: Failed to run FACET. Details:\n{e}")
+        print(f"ERROR in init_app(): Failed to run FACET. Details:\n{e}")
         exit(1)
     print("App initialized\n")
 
@@ -75,6 +75,16 @@ def get_test_instances():
 @app.route("/facet/data_format", methods=["GET"])
 def get_data_format():
     return jsonify(FORMAT_DICT)
+
+
+@app.route("/facet/predict", methods=["POST"])
+def predict_instance():
+    data = request.json
+    # fetch the instance
+    instance = DS_INFO.dict_to_point(data["instance"])
+    instance = DS_INFO.scale_points(instance)
+    prediction = int(FACET_CORE.predict([instance])[0])
+    return jsonify(prediction)
 
 
 @app.route("/facet/explanations", methods=["POST"])
@@ -140,7 +150,7 @@ def facet_explanation():
 
     except Exception as e:
         print(e)
-        return "\nError: " + str(e), 500
+        return "\nError in facet_explanation(): " + str(e), 500
 
 
 if __name__ == "__main__":

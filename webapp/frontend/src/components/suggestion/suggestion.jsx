@@ -1,7 +1,7 @@
 import { formatFeature, formatValue } from '@src/js/utilities.js';
 import './suggestion.css';
 
-export const Suggestion = ({ formatDict, featureDict, selectedInstance, explanations, currentExplanationIndex }) => {
+export const Suggestion = ({ formatDict, featureDict, selectedInstance, explanations, prediction, currentExplanationIndex }) => {
 
     // Return the message for the suggestion box
     // e.g. your application would have been ACCEPTED rather than REJECTED if your...
@@ -17,7 +17,7 @@ export const Suggestion = ({ formatDict, featureDict, selectedInstance, explanat
 
     let currentExplanation = explanations[currentExplanationIndex]
 
-    if (currentExplanation === undefined) { // If the ranges are undefined
+    if (currentExplanation === undefined || prediction != 0) { // If the ranges are undefined
         return (
             <>
                 <h2>Suggestion</h2>

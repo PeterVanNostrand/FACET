@@ -20,19 +20,27 @@ div {
     float: left;
 }
 
+.status-desired {
+    color: var(--accepted-color);
+    border: 6px solid var(--accepted-color);
+}
+
+.status-undesired {
+    color: var(--rejected-color);
+    border: 6px solid var(--rejected-color);
+}
+
 #status-box {
     width: 275px;
     height: 1.7ex;
     margin-left: 35px;
     border-radius: 6px;
-    color: var(--rejected-color);
     text-align: center;
     text-indent: 0px;
     font-weight: bold;
     font-family: Arial, Helvetica, sans-serif;
     padding: 4px;
     background-color: white;
-    border: 6px solid var(--rejected-color);
     display: block;
     float: right;
     border-width: 3px;

@@ -37,7 +37,7 @@
         "Loan_Amount_Term": null
     },
     "weight_values": {
-        "Increment": 1,
-        "IsExponent": false
+        "Increment": 3,
+        "Type": "Multiply"
     }
 }
