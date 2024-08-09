@@ -1,12 +1,14 @@
+import copy
 from dataclasses import dataclass
+
+
 import numpy as np
 import pandas as pd
-from typing import List, Tuple
-import copy
 
-from baselines.mace.fair_utils_data import get_one_hot_encoding as mace_get_one_hot
-from baselines.ocean.CounterFactualParameters import FeatureActionability
-from baselines.ocean.CounterFactualParameters import FeatureType
+from baselines.mace.fair_utils_data import \
+    get_one_hot_encoding as mace_get_one_hot
+from baselines.ocean.CounterFactualParameters import (FeatureActionability,
+                                                      FeatureType)
 
 # a list of the abbreviated name for all classification datasets
 DS_NAMES = [
@@ -17,6 +19,7 @@ DS_NAMES = [
     "vertebral",
     "adult",
     "compas",
+    "loans",
 ]
 
 DS_PATHS = {
@@ -28,15 +31,17 @@ DS_PATHS = {
     "adult": "data/adult/Adult_processedMACE.csv",
     "compas": "data/compas/COMPAS-ProPublica_processedMACE.csv",
     "credit": "data/credit/Credit-Card-Default_processedMACE.csv",
+    "loans": "data/loans/loans_continuous.csv"
 }
 
-# DS_DIMENSIONS = {
-#     "cancer": (568, 30),
-#     "glass": (162, 9),
-#     "magic": (19019, 10),
-#     "spambase": (4600, 57),
-#     "vertebral": (309, 6)
-# }
+DS_DIMENSIONS = {
+    "cancer": (568, 30),
+    "glass": (162, 9),
+    "magic": (19019, 10),
+    "spambase": (4600, 57),
+    "vertebral": (309, 6),
+    "loans": (578, 4),
+}
 
 RANGED_DISCRETE = {
     # adult
@@ -56,16 +61,16 @@ RANGED_DISCRETE = {
 @dataclass
 class DataInfo:
     # init required
-    col_names: List[str]
-    col_types: List[FeatureType]
-    col_actions: List[FeatureActionability]
+    col_names: list[str]
+    col_types: list[FeatureType]
+    col_actions: list[FeatureActionability]
     one_hot_schema: dict
     # computed in post_init()
     ncols: int = -1
     all_numeric: bool = False
     reverse_one_hot_schema = None
     # set in get_possible_vals
-    possible_vals: List = None
+    possible_vals: list = None
     col_scales: dict = None
     # set by normalize()
     normalize_numeric: bool = False
@@ -305,7 +310,7 @@ def rescale_discrete(x: np.ndarray, ds_info: DataInfo, scale_up=True):
     return x
 
 
-def load_data(dataset_name, normalize_numeric=True, normalize_discrete=True, do_convert=False):
+def load_data(dataset_name, normalize_numeric=True, normalize_discrete=True, do_convert=False) -> tuple[np.ndarray, np.ndarray, DataInfo]:
     '''
     Returns one of many possible anomaly detetion datasets based on the given `dataset_name`. Note that all features are currently treated as actionable regardless of source file designation
 
@@ -335,6 +340,8 @@ def load_data(dataset_name, normalize_numeric=True, normalize_discrete=True, do_
         x, y, ds_info = util_load_spambase()
     elif dataset_name == "vertebral":
         x, y, ds_info = util_load_vertebral()
+    elif dataset_name == "loans":
+        x, y, ds_info = util_load_loans()
     else:
         print("ERROR NO SUCH DATASET")
         exit(0)
@@ -345,7 +352,7 @@ def load_data(dataset_name, normalize_numeric=True, normalize_discrete=True, do_
     return x, y, ds_info
 
 
-def type_to_enum(col_types) -> List[FeatureType]:
+def type_to_enum(col_types) -> list[FeatureType]:
     '''
     Convert the characters `N`, `B`, `D`, `C` used to denote feature types in the dataset csv to their matching FeatureType enum value.
     '''
@@ -365,7 +372,7 @@ def type_to_enum(col_types) -> List[FeatureType]:
     return enum_types
 
 
-def action_to_enum(col_actionability) -> List[FeatureActionability]:
+def action_to_enum(col_actionability) -> list[FeatureActionability]:
     '''
     Converts string values for action types to the corresponding FeatureActionability enum value
     '''
@@ -388,7 +395,7 @@ def action_to_enum(col_actionability) -> List[FeatureActionability]:
     return action_enums
 
 
-def one_hot_encode(input: np.ndarray, col_names: List[str], col_types: List[FeatureType]) -> DataInfo:
+def one_hot_encode(input: np.ndarray, col_names: list[str], col_types: list[FeatureType]) -> DataInfo:
     '''
     One-hot encode the given data. Categorical features are removed and replaced with one column for each categorical value
 
@@ -431,7 +438,7 @@ def one_hot_encode(input: np.ndarray, col_names: List[str], col_types: List[Feat
     return x, ds_info
 
 
-def load_facet_data(ds_name: str) -> Tuple[np.ndarray, np.ndarray, DataInfo]:
+def load_facet_data(ds_name: str) -> tuple[np.ndarray, np.ndarray, DataInfo]:
     '''
     Load a csv file tagged with feature types and actionabilities as per the FACET/OCEAN encoding
 
@@ -444,7 +451,7 @@ def load_facet_data(ds_name: str) -> Tuple[np.ndarray, np.ndarray, DataInfo]:
     data: pd.array = pd.read_csv(path)
 
     # get all columns names and types
-    col_names: List[str] = list(data.columns)
+    col_names: list[str] = list(data.columns)
     col_types = type_to_enum(list(data.iloc[0]))
     col_actionabiltiy = action_to_enum(list(data.iloc[1]))
 
@@ -544,4 +551,19 @@ def util_load_vertebral():
     y[labels == "AB"] = 1
     x = data[:, :-1].astype(float)
     ds_info = DataInfo.generic(ncols=x.shape[1])
+    return x, y, ds_info
+
+
+def util_load_loans():
+    data = pd.read_csv(DS_PATHS["loans"])
+    colnames = list(data.columns)
+    data = data.dropna().to_numpy()
+    labels = data[:, -1:].squeeze()
+
+    y = np.zeros(labels.shape[0], dtype=int)
+    y[labels == "Y"] = 1
+    x = data[:, :-1].astype(float)
+
+    ds_info = DataInfo.generic(ncols=x.shape[1])
+    ds_info.col_names = colnames[:-1]
     return x, y, ds_info

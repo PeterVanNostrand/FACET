@@ -1,0 +1,31 @@
+.slider-box {
+    display: grid;
+    width: inherit;
+    height: inherit;
+    grid-template-areas: 
+      "id slider percent";
+    grid-template-columns: 10% 80% 10%; 
+    gap: 30px;
+    font-family: inherit;
+    font-size: inherit;
+  }
+  .slider-id{
+    grid-area: id; 
+    font-size: 20px;
+    margin-top: 30px;
+  }
+
+  .scenario-explanation-slider {
+    grid-area: slider;
+  }
+
+  .percent-change {
+    grid-area: percent; 
+    font-size: 20px;
+    margin-top: 25px;
+    font-weight: bold; 
+  }
+
+  .blue-text {
+    color: #006eff;
+}

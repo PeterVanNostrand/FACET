@@ -1,0 +1,40 @@
+{
+    "dataset": "loans",
+    "normalized": true,
+    "target_name": "Loan_Status",
+    "pretty_feature_names": {
+        "ApplicantIncome": "Applicant Income",
+        "CoapplicantIncome": "Coapplicant Income",
+        "LoanAmount": "Loan Amount",
+        "Loan_Amount_Term": "Loan Term"
+    },
+    "feature_units": {
+        "ApplicantIncome": "$",
+        "CoapplicantIncome": "$",
+        "LoanAmount": "$",
+        "Loan_Amount_Term": "Days"
+    },
+    "feature_decimals": {
+        "ApplicantIncome": 2,
+        "CoapplicantIncome": 2,
+        "LoanAmount": 2,
+        "Loan_Amount_Term": 0
+    },
+    "scenario_terms": {
+        "desired_outcome": "Approved",
+        "undesired_outcome": "Rejected",
+        "instance_name": "Application"
+    },
+    "semantic_min": {
+        "ApplicantIncome": 0,
+        "CoapplicantIncome": 0,
+        "LoanAmount": 0,
+        "Loan_Amount_Term": 0
+    },
+    "semantic_max": {
+        "ApplicantIncome": null,
+        "CoapplicantIncome": null,
+        "LoanAmount": null,
+        "Loan_Amount_Term": null
+    }
+}

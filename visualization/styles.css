@@ -1,0 +1,65 @@
+/* BOUNDING BOX AND SIDEBAR */
+#bbox {
+  /* filter: drop-shadow(3px 5px 2px rgb(0 0 0 / 0.4)); */
+  stroke-width: 0px;
+}
+
+.feature-details {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 16px;
+}
+
+#predicated-status {
+  font-size: 20px;
+  fill: red;
+  font-weight: bold;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* NUMERIC DISPLAY TABLE STYLING */
+.header-text {
+  font-weight: bold;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.table-header {
+  font-weight: bold;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* VISUAL DISPLAY STYLING */
+.tick-label {
+  font-family: 'Times New Roman', Times, serif;
+}
+
+/* BUTTON STYLING */
+.control-button {
+  width: 100px;
+}
+
+.button-row {
+  margin: 2px 0px 0px auto;
+  width: 310px;
+}
+
+.button-container {
+  width: 800px;
+  margin-top: 0px;
+}
+
+/* INSTANCE DISPLAY */
+#instance-div {
+  margin: 0px;
+  width: 100px;
+  border: solid;
+  border-color: darkgray;
+  border-radius: 3px;
+  display: inline-block;
+  border-width: 1px;
+  background-color: #E9E9ED;
+  text-align: center;
+  font-family: Helvetica, sans-serif;
+  font-size: 11pt;
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
