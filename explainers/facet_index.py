@@ -6,7 +6,6 @@ import bisect
 import math
 from typing import TYPE_CHECKING, Dict, List, Tuple
 from detectors.gradient_boosting_classifier import GradientBoostingClassifier
-from utilities.math_tools import sigmoid
 
 # graph packages
 import networkx as nx
@@ -854,7 +853,7 @@ class FACETIndex(Explainer):
                     weights[col_id] += (self.ds_info.col_scales[col_id][1] - self.ds_info.col_scales[col_id][0])
         return weights
 
-    def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf, min_robust: float = None, min_widths: np.ndarray = None, opt_robust: bool = False) -> np.ndarray:
+    def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf, min_robust: float = None, min_widths: np.ndarray = None, opt_robust: bool = False, return_regions: bool = False) -> np.ndarray:
         '''
         Parameters
         ----------
@@ -869,12 +868,14 @@ class FACETIndex(Explainer):
         `min_robust`      : the minimum radial robustness an explanation must meet, applied to all features
         `min_widths`      : array of shape (features,) where min_widths[i] is the min required robustness of xprime[i]
         `opt_robust`      : When true chose a point in the nearest rect that maximizes robustness rather than min dist
+        `return_regions`  : Whether or not to include regions in the function return
 
         Returns
         -------
         `xprime` : a list of of counterfactual example arrays each with dimensions (nsamples, nfeatures)
         '''
         xprime = []  # an array for the constructed contrastive examples
+        regions = []  # list of regions corresponding to each xprime
 
         # assumimg binary classification [0, 1] set counterfactual class
         counterfactual_classes = ((y - 1) * -1)
@@ -940,6 +941,13 @@ class FACETIndex(Explainer):
                 else:
                     explanation = [np.inf for _ in range(x.shape[1])]
 
+                # save the regions for the generated points
+                if k == 1:
+                    regions.append(nearest_rect)
+                elif k > 1:
+                    for nearest_rect in result:
+                        regions.append(nearest_rect)
+
                 xprime.append(explanation)
                 progress.update()
             progress.close()
@@ -954,11 +962,16 @@ class FACETIndex(Explainer):
         xprime[failed_explanation] = np.tile(np.inf, x.shape[1])
         # replace infinite values for invalid explanation
         xprime[idx_inf] = np.tile(np.inf, x.shape[1])
+        # convert regions to an array
+        regions = np.array(regions)
 
         if self.verbose:
             print("failed x':", failed_explanation.sum())
 
-        return xprime
+        if return_regions:
+            return xprime, regions
+        else:
+            return xprime
 
     def find_synthesizeable_paths(self, trees):
         ntrees = len(trees)

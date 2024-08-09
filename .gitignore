@@ -10,6 +10,9 @@ mace_temp.log
 ./baselines/ocean-err/*
 rf.lp
 scripts/*
-visualization/*
+node_modules
+package-lock.json
 node_modules
 */package-lock.json
+.vite
+*.eslintrc.cjs

@@ -1,0 +1,218 @@
+.hidden {
+    display: none;
+}
+
+/* Feature Control Tab */
+
+.feature-control-tab-card {
+    position: relative;
+}
+
+.feature-control-header {
+    margin: 0px 0px 10px;
+}
+
+.fc-list {
+    width: 100%;
+    height: fit-content;
+    max-height: 75vh;
+    overflow-y: auto;
+    padding: 0px 5px 5px 5px;
+}
+
+.feature-control-tab-title {
+    font-weight: bold;
+    grid-area: secTile;
+    margin: 16px 0 8px;
+}
+
+div.priority-toggle {
+    grid-area: toggle;
+    align-self: stretch;
+}
+
+h4.priority-toggle {
+    float: left;
+    margin: 5px 0;
+    font-weight: normal;
+}
+
+span.priority-toggle {
+    /* margin-top: -3px; */
+}
+
+/* .priority-toggle-switch {
+    grid-area: toggle;
+    align-self: stretch;
+    margin-top: 20%;
+} */
+
+/* Feature Control */
+
+.feature-control-card {
+    /* display: grid; */
+    box-shadow: 0 0 1em #00000020;
+    border-radius: 8px;
+    height: 160px;
+    margin-top: 2%;
+    width: 98%;
+    margin-left: auto;
+    margin-right: auto;
+    min-width: 225px;
+    /* grid-template-columns: 8% 10% 72% 10%;
+    grid-template-rows: 30% 40% 30%;
+    grid-template-areas:
+        "1 arrowu title lock"
+        "pin input slider 2"
+        "3 arrowd slider 4"; */
+}
+
+.feature-title {
+    font-size: 20px;
+    text-align: center;
+    width: 80%;
+    margin-left: 4%;
+    float: left;
+    margin-top: 0px;
+    padding-top: 2px;
+}
+
+.card-priority {
+    width: 15%;
+    margin-left: 3%;
+    height: 100%;
+    display: flex;
+    float: left;
+    align-items: center;
+}
+
+.card-priority-inputs {
+    width: 50%;
+}
+
+.card-priority-inputs div {
+    width: 100%;
+    min-width: 0px;
+}
+
+.card-priority-inputs button {
+    width: 100%;
+    min-width: 0px;
+}
+
+.card-slider-container {
+    width: 80%;
+    float: left;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* ARROWS */
+
+.lock {
+    width: 10%;
+    float: right;
+    margin-right: 6%;
+    max-width: 20px;
+}
+
+.lock div {
+    height: 100%;
+    width: 100%;
+    min-width: 0px;
+}
+
+.lock button {
+    height: 100%;
+    width: 100%;
+    min-width: 0px;
+}
+
+.lock img {
+    height: 100%;
+    width: 100%;
+}
+
+/* ARROWS */
+/* .arrow-up-container {
+    grid-area: arrowu;
+    align-self: center;
+    margin-top: 160%;
+} */
+
+.arrow img {
+    height: auto;
+    width: auto;
+    min-width: 15px;
+}
+
+.arrow button {
+    min-width: 0px;
+    width: 100%;
+}
+
+.arrow.no-priority {
+    filter: grayscale(100%);
+}
+
+.arrow-down-container {
+    transform: rotate(180deg);
+    float: left;
+}
+
+/* PIN */
+.pin {
+    width: 50%;
+}
+
+.pin div {
+    width: 100%;
+}
+
+.pin img {
+    height: auto;
+    width: 100%;
+    object-fit: contain;
+    min-width: 10px;
+}
+
+.pin button {
+    min-width: 10px;
+    width: 100%;
+}
+
+/* PRIORITY INPUT */
+.priority-value-input {
+    font-weight: bold;
+    font-size: 20px;
+    text-align: center;
+    width: 100%;
+    border: none;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+
+.priority-value-input:hover {
+    border: beige;
+}
+
+.priority-value::-webkit-outer-spin-button,
+.priority-value::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.priority-value[type=number] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+/* SLIDER */
+.slider {
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}

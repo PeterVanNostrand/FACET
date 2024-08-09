@@ -1,0 +1,17 @@
+.text-black {
+  color: black;
+}
+
+.text-blue {
+  color: var(--accepted-color);
+  font-weight: bold;
+}
+
+.text-red {
+  color: var(--rejected-color);
+  font-weight: bold;
+}
+
+.altered-text {
+  float: left;
+}
