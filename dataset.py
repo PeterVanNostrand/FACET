@@ -1,12 +1,17 @@
+import copy
 from dataclasses import dataclass
+import os
+from pathlib import Path
+
+
 import numpy as np
 import pandas as pd
-from typing import List, Tuple
-import copy
 
 from baselines.mace.fair_utils_data import get_one_hot_encoding as mace_get_one_hot
-from baselines.ocean.CounterFactualParameters import FeatureActionability
-from baselines.ocean.CounterFactualParameters import FeatureType
+from baselines.ocean.CounterFactualParameters import (FeatureActionability, FeatureType)
+from explainers.bit_vector import LOWER, UPPER
+
+script_directory = os.path.dirname(os.path.abspath(__file__))
 
 # a list of the abbreviated name for all classification datasets
 DS_NAMES = [
@@ -17,26 +22,30 @@ DS_NAMES = [
     "vertebral",
     "adult",
     "compas",
+    "loans",
 ]
 
+
 DS_PATHS = {
-    "cancer": "data/cancer/wdbc.data",
-    "glass": "data/glass/glass.data",
-    "magic": "data/magic/magic04.data",
-    "spambase": "data/spambase/spambase.data",
-    "vertebral": "data/vertebral/column_2C.dat",
-    "adult": "data/adult/Adult_processedMACE.csv",
-    "compas": "data/compas/COMPAS-ProPublica_processedMACE.csv",
-    "credit": "data/credit/Credit-Card-Default_processedMACE.csv",
+    "cancer": os.path.join(script_directory, "data/cancer/wdbc.data"),
+    "glass": os.path.join(script_directory, "data/glass/glass.data"),
+    "magic": os.path.join(script_directory, "data/magic/magic04.data"),
+    "spambase": os.path.join(script_directory, "data/spambase/spambase.data"),
+    "vertebral": os.path.join(script_directory, "data/vertebral/column_2C.dat"),
+    "adult": os.path.join(script_directory, "data/adult/Adult_processedMACE.csv"),
+    "compas": os.path.join(script_directory, "data/compas/COMPAS-ProPublica_processedMACE.csv"),
+    "credit": os.path.join(script_directory, "data/credit/Credit-Card-Default_processedMACE.csv"),
+    "loans": os.path.join(script_directory, "data/loans/loans_continuous.csv"),
 }
 
-# DS_DIMENSIONS = {
-#     "cancer": (568, 30),
-#     "glass": (162, 9),
-#     "magic": (19019, 10),
-#     "spambase": (4600, 57),
-#     "vertebral": (309, 6)
-# }
+DS_DIMENSIONS = {
+    "cancer": (568, 30),
+    "glass": (162, 9),
+    "magic": (19019, 10),
+    "spambase": (4600, 57),
+    "vertebral": (309, 6),
+    "loans": (578, 4),
+}
 
 RANGED_DISCRETE = {
     # adult
@@ -56,21 +65,22 @@ RANGED_DISCRETE = {
 @dataclass
 class DataInfo:
     # init required
-    col_names: List[str]
-    col_types: List[FeatureType]
-    col_actions: List[FeatureActionability]
+    col_names: list[str]
+    col_types: list[FeatureType]
+    col_actions: list[FeatureActionability]
     one_hot_schema: dict
     # computed in post_init()
     ncols: int = -1
     all_numeric: bool = False
     reverse_one_hot_schema = None
     # set in get_possible_vals
-    possible_vals: List = None
+    possible_vals: list = None
     col_scales: dict = None
     # set by normalize()
     normalize_numeric: bool = False
     normalize_discrete: bool = False
     numeric_int_map: dict = None  # only used for adult on MACE
+    col_to_idx: dict = None
 
     def __post_init__(self):
         self.ncols = len(self.col_names)
@@ -84,6 +94,12 @@ class DataInfo:
         for col_name, col_idxs in self.one_hot_schema.items():
             for idx in col_idxs:
                 self.reverse_one_hot_schema[idx] = col_name
+
+    def _map_cols(self):
+        col_to_idx = dict()
+        for i in range(self.ncols):
+            col_to_idx["x{}".format(i)] = i
+        self.col_to_idx = col_to_idx
 
     @classmethod
     def generic(cls, ncols):
@@ -153,7 +169,58 @@ class DataInfo:
         self.possible_vals = possible_vals
         self.col_scales = col_scales
 
-    def normalize_data(self, x: np.ndarray, normalize_numeric=True, normalize_discrete: bool = False) -> None:
+    def scale_points(self, x: np.ndarray):
+        """
+        Unscales the given points, x must be an array/list of shape (ninstances, ncols)
+        """
+        # create a 2D array copy of x
+        scaled = np.array([x.copy()]) if len(x.shape) == 1 else x.copy()
+        # normalize the copy
+        for i in range(self.ncols):
+            col_type = self.col_types[i]
+            min_value, max_value = self.col_scales[i]
+            # if we need to scale this column
+            if (col_type == FeatureType.Numeric and self.normalize_numeric) or \
+                    (col_type == FeatureType.Discrete and self.normalize_discrete):
+                # scale the given data
+                scaled[:, i] = (scaled[:, i] - min_value) / (max_value - min_value)
+        # return the scaled copy
+        return scaled
+
+    def rescale_rects(self, rects: np.ndarray, scale_down: bool) -> np.ndarray:
+        """
+        Scales/unscales the given rectangles
+
+        Args:
+            rects (np.ndarray): an array/list of shape (nrects, ncols, 2)
+            is_scale (bool): Whether to scale down (true) or up (false)
+        """
+        # create a copy of the rects
+        rescaled_rects: np.ndarray = rects.copy()
+        # if we only have one rect, add a dimension to allow for slicing
+        if len(rescaled_rects.shape) == 2:
+            rescaled_rects = rescaled_rects.reshape(-1, self.ncols, 2)
+        # rescale all the rects
+        for i in range(len(rescaled_rects)):  # for each rectangle
+            for col_id in range(self.ncols):  # for each column
+                col_type = self.col_types[col_id]  # get the column type
+                # if we need to rescale this column
+                if (col_type == FeatureType.Numeric and self.normalize_numeric) or \
+                        (col_type == FeatureType.Discrete and self.normalize_discrete):
+                    # get the min and max values
+                    min_val, max_val = self.col_scales[col_id]
+                    for end in [LOWER, UPPER]:  # rescale both rect ends
+                        if scale_down:  # if we are scaling down e.g. 10-->1
+                            rescaled_rects[i][col_id][end] = (
+                                rescaled_rects[i][col_id][end] - min_val
+                            ) / (max_val - min_val)
+                        else:  # if we are scaling up, e.g., 1->10
+                            rescaled_rects[i][col_id][end] = (
+                                rescaled_rects[i][col_id][end] * (max_val - min_val) + min_val
+                            )
+        return rescaled_rects
+
+    def normalize_data(self, x: np.ndarray, normalize_numeric: bool = True, normalize_discrete: bool = False) -> None:
         '''
         Normalizes Numeric and Discrete columns to the range [0, 1]. Updates `self.possible_vals` to match new scale
         '''
@@ -192,7 +259,7 @@ class DataInfo:
         if col_id is not None:
             col_type = self.col_types[col_id]
             if (col_type == FeatureType.Discrete and self.normalize_discrete) or \
-                    (col_type == FeatureType.Numeric and not self.normalize_numeric):
+                    (col_type == FeatureType.Numeric and self.normalize_numeric):
                 return x * (self.col_scales[col_id][1] - self.col_scales[col_id][0]) + self.col_scales[col_id][0]
             else:
                 return x
@@ -203,7 +270,7 @@ class DataInfo:
                 if col_id in self.col_scales:
                     col_type = self.col_types[col_id]
                     if (col_type == FeatureType.Discrete and self.normalize_discrete) or \
-                            (col_type == FeatureType.Numeric and not self.normalize_numeric):
+                            (col_type == FeatureType.Numeric and self.normalize_numeric):
                         min_val, max_val = self.col_scales[col_id]
                         unscaled[col_id] = unscaled[col_id] * (max_val - min_val) + min_val
         elif len(unscaled.shape) == 2:  # given an array of (ninstances, ncols)
@@ -212,7 +279,7 @@ class DataInfo:
                     if col_id in self.col_scales:
                         col_type = self.col_types[col_id]
                         if (col_type == FeatureType.Discrete and self.normalize_discrete) or \
-                                (col_type == FeatureType.Numeric and not self.normalize_numeric):
+                                (col_type == FeatureType.Numeric and self.normalize_numeric):
                             min_val, max_val = self.col_scales[col_id]
                             unscaled[i, col_id] = unscaled[i, col_id] * (max_val - min_val) + min_val
         else:
@@ -274,6 +341,36 @@ class DataInfo:
                                                                              cat_column_name, sum(data[i][sub_col_idxs])))
         return all_valid
 
+    def dict_to_point(self, point_dict: dict) -> np.ndarray:
+        """
+        Takes a dictionary of {"xi" : <number>, ...} and converts it to a numpy array
+        """
+        point = np.zeros(shape=(self.ncols,))
+        for col, val in point_dict.items():
+            point[self.col_to_idx[col]] = val
+        return point
+
+    def point_to_dict(self, point: np.ndarray) -> dict:
+        """
+        Takes a a numpy array and converts it to a dictionary of the form {"xi" : <number>, ...}
+        """
+        point_dict = dict()
+        for i in range(point.shape[0]):
+            point_dict["x{:d}".format(i)] = point[i]
+        return point_dict
+
+    def rect_to_dict(self, rect: np.ndarray) -> dict:
+        """
+        Takes a numpy array representing a rectangular counterfactual region and converts it to a dict
+        """
+        INFTY = 100000000000000
+        rect_dict = dict()
+        rect[rect == -np.inf] = -INFTY
+        rect[rect == np.inf] = INFTY
+        for i in range(self.ncols):
+            rect_dict["x{:d}".format(i)] = [rect[i, LOWER], rect[i, UPPER]]
+        return rect_dict
+
 
 def rescale_numeric(x: np.ndarray, ds_info: DataInfo, scale_up=True):
     # if the datasets not normalized, we're dong
@@ -305,7 +402,7 @@ def rescale_discrete(x: np.ndarray, ds_info: DataInfo, scale_up=True):
     return x
 
 
-def load_data(dataset_name, normalize_numeric=True, normalize_discrete=True, do_convert=False):
+def load_data(dataset_name, normalize_numeric=True, normalize_discrete=True, do_convert=False) -> tuple[np.ndarray, np.ndarray, DataInfo]:
     '''
     Returns one of many possible anomaly detetion datasets based on the given `dataset_name`. Note that all features are currently treated as actionable regardless of source file designation
 
@@ -335,6 +432,8 @@ def load_data(dataset_name, normalize_numeric=True, normalize_discrete=True, do_
         x, y, ds_info = util_load_spambase()
     elif dataset_name == "vertebral":
         x, y, ds_info = util_load_vertebral()
+    elif dataset_name == "loans":
+        x, y, ds_info = util_load_loans()
     else:
         print("ERROR NO SUCH DATASET")
         exit(0)
@@ -345,7 +444,34 @@ def load_data(dataset_name, normalize_numeric=True, normalize_discrete=True, do_
     return x, y, ds_info
 
 
-def type_to_enum(col_types) -> List[FeatureType]:
+def get_json_paths(dataset_name: str) -> tuple[str, str]:
+    """
+    Returns the paths the JSON files corresponding to the given dataset information
+
+    Parameters
+    ----------
+    dataset_name : the short name of a dataset from DS_NAMES
+
+    Returns
+    -------
+    json_paths : a tuple[ds_details_path, human_readable_path]
+    """
+    # check the dataset name is valid
+    if dataset_name not in DS_NAMES:
+        print("ERROR NO SUCH DATASET")
+        exit(0)
+
+    # get the paths of the JSON files
+    data_directory = str(Path(DS_PATHS[dataset_name]).parent)
+    ds_details_path = data_directory + "/dataset_details.json"
+    human_readable_path = data_directory + "/human_readable.json"
+
+    # return them as a tuple
+    json_paths = [ds_details_path, human_readable_path]
+    return json_paths
+
+
+def type_to_enum(col_types) -> list[FeatureType]:
     '''
     Convert the characters `N`, `B`, `D`, `C` used to denote feature types in the dataset csv to their matching FeatureType enum value.
     '''
@@ -365,7 +491,7 @@ def type_to_enum(col_types) -> List[FeatureType]:
     return enum_types
 
 
-def action_to_enum(col_actionability) -> List[FeatureActionability]:
+def action_to_enum(col_actionability) -> list[FeatureActionability]:
     '''
     Converts string values for action types to the corresponding FeatureActionability enum value
     '''
@@ -388,7 +514,7 @@ def action_to_enum(col_actionability) -> List[FeatureActionability]:
     return action_enums
 
 
-def one_hot_encode(input: np.ndarray, col_names: List[str], col_types: List[FeatureType]) -> DataInfo:
+def one_hot_encode(input: np.ndarray, col_names: list[str], col_types: list[FeatureType]) -> DataInfo:
     '''
     One-hot encode the given data. Categorical features are removed and replaced with one column for each categorical value
 
@@ -431,7 +557,7 @@ def one_hot_encode(input: np.ndarray, col_names: List[str], col_types: List[Feat
     return x, ds_info
 
 
-def load_facet_data(ds_name: str) -> Tuple[np.ndarray, np.ndarray, DataInfo]:
+def load_facet_data(ds_name: str) -> tuple[np.ndarray, np.ndarray, DataInfo]:
     '''
     Load a csv file tagged with feature types and actionabilities as per the FACET/OCEAN encoding
 
@@ -444,7 +570,7 @@ def load_facet_data(ds_name: str) -> Tuple[np.ndarray, np.ndarray, DataInfo]:
     data: pd.array = pd.read_csv(path)
 
     # get all columns names and types
-    col_names: List[str] = list(data.columns)
+    col_names: list[str] = list(data.columns)
     col_types = type_to_enum(list(data.iloc[0]))
     col_actionabiltiy = action_to_enum(list(data.iloc[1]))
 
@@ -544,4 +670,19 @@ def util_load_vertebral():
     y[labels == "AB"] = 1
     x = data[:, :-1].astype(float)
     ds_info = DataInfo.generic(ncols=x.shape[1])
+    return x, y, ds_info
+
+
+def util_load_loans():
+    data = pd.read_csv(DS_PATHS["loans"])
+    colnames = list(data.columns)
+    data = data.dropna().to_numpy()
+    labels = data[:, -1:].squeeze()
+
+    y = np.zeros(labels.shape[0], dtype=int)
+    y[labels == "Y"] = 1
+    x = data[:, :-1].astype(float)
+
+    ds_info = DataInfo.generic(ncols=x.shape[1])
+    ds_info.col_names = colnames[:-1]
     return x, y, ds_info

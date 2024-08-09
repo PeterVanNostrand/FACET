@@ -22,6 +22,7 @@ TUNED_FACET_SD = {
     "magic": 0.001,
     "spambase": 0.01,
     "vertebral": 0.05,
+    "loans": 0.05,  # TODO tune on loans
 }
 
 # generated as the average minimum point to point distance
@@ -52,6 +53,7 @@ FACET_TUNED_M = {
     "magic": 16,
     "spambase": 16,
     "vertebral": 16,
+    "loans": 16,  # TODO tune on loans
 }
 
 

@@ -17,15 +17,15 @@
 # from .observations cimport distance as rule_distance
 # from .observations cimport partial_distance
 
-from typing import List, Tuple
-from .extraction_problem_header import *
 from dataclasses import dataclass
+
+from .extraction_problem_header import FeatureBounds
 
 
 @dataclass
 class StepState:
-    removed_rules: List[int]
-    previous_bounds: List[FeatureBounds]
+    removed_rules: list[int]
+    previous_bounds: list[FeatureBounds]
 
 
 # def activate_rule(global_state: ExtractionContext, rule_id: int) -> bool:
@@ -48,7 +48,7 @@ class StepState:
 #     pass
 
 
-# def soft_pruning(global_state: ExtractionContext, solution: Solution, removed_rules: List[int]) -> None:
+# def soft_pruning(global_state: ExtractionContext, solution: Solution, removed_rules: list[int]) -> None:
 #     pass
 
 
@@ -56,11 +56,11 @@ class StepState:
 #     pass
 
 
-# def deactivate_bucket_batch(global_state: ExtractionContext, condition_side: ConditionSide, bucket_from: int, bucket_to: int, removed_rules: List[int]) -> None:
+# def deactivate_bucket_batch(global_state: ExtractionContext, condition_side: ConditionSide, bucket_from: int, bucket_to: int, removed_rules: list[int]) -> None:
 #     pass
 
 
-# def deactivate_bucket(global_state: ExtractionContext, condition_side: ConditionSide, bucket: int, removed_rules: List[int]) -> None:
+# def deactivate_bucket(global_state: ExtractionContext, condition_side: ConditionSide, bucket: int, removed_rules: list[int]) -> None:
 #     pass
 
 
@@ -80,7 +80,7 @@ class StepState:
 #     pass
 
 
-# def get_set_trees_ids(global_state: ExtractionContext) -> List[int]:
+# def get_set_trees_ids(global_state: ExtractionContext) -> list[int]:
 #     pass
 
 

@@ -9,7 +9,7 @@ class RandomAndIsolationForest:
 
         if isolationForest:
             self.n_estimators += self.isolationForest.n_estimators
-            self.isolationForestEstimatorsIndices = [i + self.randomForest.n_estimators for i in range(self.isolationForest.n_estimators)]
+            self.isolationForestEstimatorsIndices = [
+                i + self.randomForest.n_estimators for i in range(self.isolationForest.n_estimators)]
             for est in self.isolationForest.estimators_:
                 self.estimators_.append(est)
-

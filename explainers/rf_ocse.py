@@ -1,24 +1,24 @@
+import multiprocessing as mp
+from typing import TYPE_CHECKING
+
 import numpy as np
 import pandas as pd
-from baselines.ocean.CounterFactualParameters import FeatureType
-from explainers.explainer import Explainer
 from sklearn.preprocessing import StandardScaler
 from tqdm.auto import tqdm
-import multiprocessing as mp
 
+from baselines.rfocse.converter import convert_rf_format
+from baselines.rfocse.datasets import DatasetInfo, DatasetInfoBuilder
+from baselines.rfocse.extraction_problem import make_problem
+from baselines.rfocse.rfocse_main import batch_extraction, extract_single_counterfactual_set
+from dataset import DataInfo
+from explainers.explainer import Explainer
 
 # from fastcrf.rfocse_main import batch_extraction, CounterfactualSetExplanation
 # from fastcrf.datasets import DatasetInfo, DatasetInfoBuilder
 
-from baselines.rfocse.rfocse_main import batch_extraction, extract_single_counterfactual_set
-from baselines.rfocse.extraction_problem import make_problem
-from baselines.rfocse.converter import convert_rf_format
-from baselines.rfocse.datasets import DatasetInfoBuilder
 
-from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from manager import MethodManager
-    from dataset import DataInfo
 
 
 class RFOCSE(Explainer):
@@ -60,57 +60,39 @@ class RFOCSE(Explainer):
         else:
             self.maxtime = maxtime
 
-    def get_rfocse_datainfo(self):
-        '''
-        Converts the FACET DataInfo information to RFOCSE's DatasetInfo object. Note that these are NOT the same class
-        '''
-        dataset_builder = DatasetInfoBuilder("dataset")
-        for col_id in range(self.ds_info.ncols):
-            col_name: str = self.ds_info.col_names[col_id]
-            col_type: FeatureType = self.ds_info.col_types[col_id]
-            if col_type == FeatureType.Numeric:
-                dataset_builder.add_numerical_variable(
-                    position=col_id,
-                    lower_bound=self.ds_info.possible_vals[col_id][0],
-                    upper_bound=self.ds_info.possible_vals[col_id][-1],
-                    name=col_name
-                )
-            elif col_type == FeatureType.Discrete:
-                dataset_builder.add_ordinal_variable(
-                    position=col_id,
-                    lower_bound=self.ds_info.possible_vals[col_id][0],
-                    upper_bound=self.ds_info.possible_vals[col_id][-1],
-                    name=col_name
-                )
-            elif col_type == FeatureType.Binary:
-                dataset_builder.add_binary_variable(
-                    position=col_id,
-                    name=col_name,
-                    category_names=("0", "1")
-                )
-        built_ds = dataset_builder.create_dataset_info()
-        return built_ds
-
-    def prepare_dataset(self, x: np.ndarray, y: np.ndarray, ds_info) -> None:
-        self.ds_info: DataInfo = ds_info
-        # create RFOCSE formatted dataset information, converted from FACET DataInfo
-        self.rfocse_datainfo = self.get_rfocse_datainfo()
+    def prepare_dataset(self, x: np.ndarray, y: np.ndarray, ds_info: DataInfo) -> None:
+        pass
 
     def prepare(self, xtrain=None, ytrain=None):
-        # save the training data
-        df = pd.DataFrame(xtrain)
-        df.columns = self.ds_info.col_names
-        self.Xtrain = df
+        data = xtrain
+        self.data = data
+        df = pd.DataFrame(data)
+        y = self.manager.predict(data)
+        df["y"] = y
+        override_dtypes = {}
+        col_names = []
+        for i in range(data.shape[1]):
+            name = "x{}".format(i)
+            col_names.append(name)
+            override_dtypes[name] = float
+        col_names.append("y")
+        self.col_names = col_names
+        df.columns = col_names
 
-    def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf, opt_robust: bool = False, min_robust: float = None) -> np.ndarray:
+        dataset_info, X, y = self.process_pandas_dataset(df[list(override_dtypes.keys()) + ['y']], 'y',
+                                                         **self.get_dataset_args(dict(override_feature_types=override_dtypes), {}))
+        self.dataset_info: DatasetInfo = dataset_info
+        self.Xtrain: pd.DataFrame = X
+
+    def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf, opt_robust: bool = False, min_robust: float = None, return_regions: bool = False) -> np.ndarray:
         if self.perform_transform:
             x = self.float_transformer.transform(x)
         # an array for the constructed contrastive examples
         X_test = pd.DataFrame(x)
-        X_test.columns = self.ds_info.col_names
+        X_test.columns = self.col_names[:-1]
         xprime = np.empty(shape=x.shape)
         xprime[:, :] = np.inf
-        dataset_info = self.rfocse_datainfo
+        dataset_info: DatasetInfo = self.dataset_info
         sklearn_rf = self.manager.model.model
         X_train = self.Xtrain
 
@@ -135,8 +117,6 @@ class RFOCSE(Explainer):
                                                          verbose=self.verbose)
             if explanation is not None:
                 xprime[idx] = explanation
-                # if not self.ds_info.check_valid([explanation]):  # !DEBUG
-                #     print("CRITICAL ERROR - RFOCSE GENERATED AN INVALID EXPLANATION")
 
         # locate non-counterfactual examples and replace them with [np.inf, ... , np.inf]
         idx_no_examples = (xprime == np.inf).any(axis=1)
@@ -156,8 +136,8 @@ class RFOCSE(Explainer):
         X_test.columns = self.col_names[:-1]
         xprime = np.empty(shape=x.shape)
         xprime[:, :] = np.inf
-        dataset_info = self.rfocse_datainfo
-        rf = self.manager.model.model
+        dataset_info: DatasetInfo = self.dataset_info
+        rf = self.manager.random_forest.model
         X_train = self.Xtrain
 
         valids = []
@@ -336,19 +316,19 @@ def doRFOCSEExplanationWithQueueCatch(queue,
                                       dataset,
                                       offset
                                       ):
-    # try:
-    doRFOCSEExplanationWithQueue(queue,
-                                 problem,
-                                 sklearn_rf,
-                                 parsed_rf,
-                                 dataset_info,
-                                 observation,
-                                 dataset,
-                                 offset
-                                 )
-    # except:
-    #     print("RFOCSE error")
-    #     queue.put(None)
+    try:
+        doRFOCSEExplanationWithQueue(queue,
+                                     problem,
+                                     sklearn_rf,
+                                     parsed_rf,
+                                     dataset_info,
+                                     observation,
+                                     dataset,
+                                     offset
+                                     )
+    except:  # noqa E722
+        print("RFOCSE error")
+        queue.put(None)
 
 
 def doRFOCSEExplanationWithQueue(queue,

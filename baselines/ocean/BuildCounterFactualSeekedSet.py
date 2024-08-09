@@ -1,12 +1,11 @@
 import os
 
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.ensemble import IsolationForest
+import pandas as pd
+from sklearn.ensemble import IsolationForest, RandomForestClassifier
 
-from .dataProcessing import *
-from .DecisionTreeCounterFactual import *
-from .RandomForestCounterFactual import *
-from .CuiRandomForestCounterFactual import *
+from .CounterFactualParameters import BinaryDecisionVariables, TreeConstraintsType
+from .dataProcessing import DatasetReader
+from .RandomForestCounterFactual import RandomForestCounterFactualMilp
 
 
 def checkFeasibilityOfCounterFactuals(clf, ilf, reader, indices, desiredOutcome):
