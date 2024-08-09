@@ -4,7 +4,7 @@ from __future__ import annotations
 import bisect
 # core python packages
 import math
-from typing import TYPE_CHECKING, Dict, List, Tuple
+from typing import TYPE_CHECKING
 from detectors.gradient_boosting_classifier import GradientBoostingClassifier
 
 # graph packages
@@ -80,7 +80,8 @@ class FACETIndex(Explainer):
 
     def build_bitvectorindex(self):
         # create redundant bit vector index
-        self.rbvs: List[BitVectorIndex] = []
+        self.rbvs: list[BitVectorIndex] = []
+        self.rbvs: list[BitVectorIndex] = []
         for class_id in range(self.nclasses):
             if self.verbose:
                 print("class {}".format(class_id))
@@ -273,7 +274,7 @@ class FACETIndex(Explainer):
             i += 1
         return covered
 
-    def leaves_to_rects(self, all_paths: List[List[np.ndarray]], leaf_vals: List[List[np.ndarray]]) -> List[Dict]:
+    def leaves_to_rects(self, all_paths: list[list[np.ndarray]], leaf_vals: list[list[np.ndarray]]) -> list[dict]:
         '''
         For each path in the ensemble, identifies the leaf node of that path and builds the corresponding hyper-rectangle
 
@@ -333,7 +334,7 @@ class FACETIndex(Explainer):
         '''
         self.index = [[] for _ in range(self.nclasses)]
 
-    def enumerate_rectangle(self, leaf_ids: List[int], label: int) -> np.ndarray:
+    def enumerate_rectangle(self, leaf_ids: list[int], label: int) -> np.ndarray:
         '''
         Given a set of scikitlearns leaf_ids, one per tree in the ensemble, extracts the paths which correspond to these leaves and constructs a majority size hyper-rectangle from their intersection
 
@@ -346,9 +347,12 @@ class FACETIndex(Explainer):
         rect: a numpy ndarray of shape (ndim, 2) containing a majority size hyper-rectangle
         paths_used: a list of pairs (tree_id, leaf_id) which correspond to the leaves the form the intersection
         '''
-        all_bounds: List[np.ndarray] = []  # list of leaf hyper-rectangles w/ dims (nfeatures, 2)
-        paths: List[(int, int)] = []  # list of tree_id, leaf_id included in all_bounds
-        path_probs: List[np.ndarray] = []  # list of class probs for the given leaves, dims (nclasses,)
+        all_bounds: list[np.ndarray] = []  # list of leaf hyper-rectangles w/ dims (nfeatures, 2)
+        paths: list[(int, int)] = []  # list of tree_id, leaf_id included in all_bounds
+        path_probs: list[np.ndarray] = []  # list of class probs for the given leaves, dims (nclasses,)
+        all_bounds: list[np.ndarray] = []  # list of leaf hyper-rectangles w/ dims (nfeatures, 2)
+        paths: list[(int, int)] = []  # list of tree_id, leaf_id included in all_bounds
+        path_probs: list[np.ndarray] = []  # list of class probs for the given leaves, dims (nclasses,)
         for tree_id in range(self.ntrees):
             leaf_class, leaf_rect, class_probs = self.leaf_rects[tree_id][leaf_ids[tree_id]]
             if self.model_type == "RandomForest":
@@ -368,7 +372,7 @@ class FACETIndex(Explainer):
         rect, paths_used = self.select_intersection(all_bounds, paths, path_probs, label)
         return rect, paths_used
 
-    def select_hard_intersection(self, all_bounds: List[np.ndarray], paths: List[Tuple[int]], path_probs: np.ndarray, label: int) -> np.ndarray:
+    def select_hard_intersection(self, all_bounds: list[np.ndarray], paths: list[tuple[int]], path_probs: np.ndarray, label: int) -> np.ndarray:
         '''
         ensemble is using majority vote take the intersection of the first nmajority hyper-rectangles, we should only receive leaf hyper-rectangles of class `label`
         '''
@@ -404,7 +408,7 @@ class FACETIndex(Explainer):
 
         return rect, paths_used
 
-    def gbc_intersect_all(self, leaf_rects: List[np.ndarray], leaf_vals: np.ndarray) -> Tuple[np.ndarray, float]:
+    def gbc_intersect_all(self, leaf_rects: list[np.ndarray], leaf_vals: np.ndarray) -> tuple[np.ndarray, float]:
         '''
         returns the intersection of all the leaf rectangles and the accumulated odds of that intersection
         '''
@@ -420,7 +424,7 @@ class FACETIndex(Explainer):
             accumulated_odds += self.manager.model.lr * leaf_vals[i, 0]
         return rect, accumulated_odds
 
-    def find_leaf_extremes(self) -> List[Tuple[float, float]]:
+    def find_leaf_extremes(self) -> list[tuple[float, float]]:
         worst_values = []
         for tree_id in range(self.ntrees):
             lowest_val = np.inf
@@ -437,7 +441,7 @@ class FACETIndex(Explainer):
     def gbc_accumulate_odds(self, leaf_vals: np.ndarray) -> float:
         return self.manager.model.init_value + self.manager.model.lr * sum(leaf_vals)[0]
 
-    def select_gbc_intersection_minimal(self, leaf_rects: List[np.ndarray], paths: List[Tuple[int]], leaf_vals: np.ndarray, label: int) -> np.ndarray:
+    def select_gbc_intersection_minimal(self, leaf_rects: list[np.ndarray], paths: list[tuple[int]], leaf_vals: np.ndarray, label: int) -> np.ndarray:
         '''
         Given a set of of leaf rectangles, their corresponding paths, and their leaf values. Examine the set of leaves and intersect as few as needed to ensure that the intersection is guaranteed to be a counterfactual region of the observed class
         '''
@@ -472,7 +476,7 @@ class FACETIndex(Explainer):
         # !DEBUG END
         return rect, used_paths
 
-    def select_gbc_intersection_complete(self, leaf_rects: List[np.ndarray], paths: List[Tuple[int]], leaf_vals: np.ndarray, label: int) -> np.ndarray:
+    def select_gbc_intersection_complete(self, leaf_rects: list[np.ndarray], paths: list[tuple[int]], leaf_vals: np.ndarray, label: int) -> np.ndarray:
         '''
         Given a set of of leaf rectangles, their corresponding paths, and their leaf values. Intersect all the leaf rectangles to create a counterfactual region of the observed class
         '''
@@ -488,7 +492,7 @@ class FACETIndex(Explainer):
         # !DEBUG END
         return rect, paths
 
-    def select_soft_intersection(self, all_bounds: List[np.ndarray], paths: List[Tuple[int]], path_probs: np.ndarray, label: int) -> np.ndarray:
+    def select_soft_intersection(self, all_bounds: list[np.ndarray], paths: list[tuple[int]], path_probs: np.ndarray, label: int) -> np.ndarray:
         '''
         ensemble is using soft voting, take intersection of sufficient hyper-rects to reach a majority probability, we sould receive ntrees leaf hyper-rectangles
         '''
@@ -560,7 +564,7 @@ class FACETIndex(Explainer):
 
         return rect, paths_used
 
-    def select_intersection(self, all_bounds: List[np.ndarray], paths: List[(int, int)], path_probs: np.ndarray, label: int) -> np.ndarray:
+    def select_intersection(self, all_bounds: list[np.ndarray], paths: list[(int, int)], path_probs: np.ndarray, label: int) -> np.ndarray:
         '''
         Given a list of ntrees hyper-rectangles each corresponing to a leaf node, constructs a majority size hyper-rectangle by taking the intersection of nmajority leaf node hyper-rectangles
 
@@ -612,7 +616,7 @@ class FACETIndex(Explainer):
                 feature_bounds[feature][0] = max(threshold, feature_bounds[feature][0])
         return feature_bounds
 
-    def build_paths(self, trees: List[tree.DecisionTreeClassifier]) -> List[List[np.ndarray]]:
+    def build_paths(self, trees: list[tree.DecisionTreeClassifier]) -> list[list[np.ndarray]]:
         '''
         Walks each tree and extracts each path from root to leaf into a data structure. Each tree is represented as a list of paths, with each path stored into an array
 
@@ -629,7 +633,7 @@ class FACETIndex(Explainer):
 
         return all_paths, path_class_vals
 
-    def __in_order_path(self, t, built_paths: List[np.ndarray] = [], leaf_vals: List[np.ndarray] = [], node_id=0, path: List = []):
+    def __in_order_path(self, t, built_paths: list[np.ndarray] = [], leaf_vals: list[np.ndarray] = [], node_id=0, path: list = []):
         '''
         An algorithm for pre-order binary tree traversal. This walks through the entire tree enumerating each paths the root node to a leaf.
 

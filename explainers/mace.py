@@ -1,5 +1,5 @@
 import multiprocessing as mp
-from typing import TYPE_CHECKING, Dict
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
@@ -80,7 +80,7 @@ class MACE(Explainer):
     def prepare(self, xtrain=None, ytrain=None):
         pass
 
-    def get_mace_attributes(self) -> Dict[str, DatasetAttribute]:
+    def get_mace_attributes(self) -> dict[str, DatasetAttribute]:
         '''
         Takes FACET/OCEAN encoded feature types and converts them to MACE DatasetAttributes
         '''
