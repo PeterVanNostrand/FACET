@@ -1,12 +1,12 @@
 # from typing_extensions import ParamSpec
 import random
+
 import numpy as np
 
+from detectors.gradient_boosting_classifier import GradientBoostingClassifier
 # Detector classes
 from detectors.random_forest import RandomForest
-from detectors.gradient_boosting_classifier import GradientBoostingClassifier
 # Explainer classes
-# from explainers import *
 from explainers.best_candidate import AFT
 from explainers.facet_index import FACETIndex
 from explainers.mace import MACE

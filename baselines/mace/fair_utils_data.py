@@ -1,5 +1,5 @@
+
 import numpy as np
-from random import seed
 
 # SEED = 1122334455
 # seed(SEED) # set the random seed so that the random permutations can be reproduced again

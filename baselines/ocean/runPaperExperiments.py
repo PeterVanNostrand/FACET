@@ -1,7 +1,8 @@
 # Build from datasets the set of counterfactuals that will be used in the numerical experiments
 
-from baselines.ocean.RunExperimentsRoutines import *
-from baselines.ocean.BuildCounterFactualSeekedSet import *
+from .BuildCounterFactualSeekedSet import buildCounterFactualSeekedFile
+from .CounterFactualParameters import BinaryDecisionVariables
+from .RunExperimentsRoutines import runNumericalExperiments
 
 print("In module products __package__, __name__ ==", __package__, __name__)
 

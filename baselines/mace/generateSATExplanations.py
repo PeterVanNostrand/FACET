@@ -1,26 +1,26 @@
 import sys
 import time
-import copy
-import pickle
-import numpy as np
-import pandas as pd
-import baselines.mace.normalizedDistance as normalizedDistance
-
-from .modelConversion import *
-from pysmt.shortcuts import *
-from pysmt.typing import *
 from pprint import pprint
+from random import seed
 
-from sklearn.tree import DecisionTreeClassifier
+import numpy as np
+from pysmt.shortcuts import (GE, LE, TRUE, And, Bool, Div, Equals, EqualsOrIff, Int, Ite, Max, Minus, Not, Plus, Pow,
+                             Real, Solver, Symbol, Times, ToReal)
+from pysmt.typing import BOOL, INT, REAL
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.neural_network import MLPClassifier
+from sklearn.tree import DecisionTreeClassifier
 
-# from loadCausalConstraints import *
+import baselines.mace.normalizedDistance as normalizedDistance
 
-from baselines.mace.debug import ipsh
+from .modelConversion import forest2formula, lr2formula, mlp2formula, tree2formula
 
-from random import seed
+# import pandas as pd
+# import copy
+# import pickle
+# from baselines.mace.debug import ipsh
+
 RANDOM_SEED = 1122334455
 seed(RANDOM_SEED)  # set the random seed so that the random permutations can be reproduced again
 np.random.seed(RANDOM_SEED)
@@ -31,13 +31,17 @@ DEBUG_FLAG = False
 
 def getModelFormula(model_symbols, model_trained):
     if isinstance(model_trained, DecisionTreeClassifier):
-        def model2formula(a, b): return tree2formula(a, b)
+        def model2formula(a, b):
+            return tree2formula(a, b)
     elif isinstance(model_trained, LogisticRegression):
-        def model2formula(a, b): return lr2formula(a, b)
+        def model2formula(a, b):
+            return lr2formula(a, b)
     elif isinstance(model_trained, RandomForestClassifier):
-        def model2formula(a, b): return forest2formula(a, b)
+        def model2formula(a, b):
+            return forest2formula(a, b)
     elif isinstance(model_trained, MLPClassifier):
-        def model2formula(a, b): return mlp2formula(a, b)
+        def model2formula(a, b):
+            return mlp2formula(a, b)
 
     return model2formula(
         model_trained,

@@ -1,7 +1,7 @@
-import pandas as pd
-from sklearn.tree import DecisionTreeClassifier
-import sklearn
-from .CounterFactualParameters import *
+import numpy as np
+from gurobipy import GRB
+
+from .CounterFactualParameters import BinaryDecisionVariables, FeatureType, TreeConstraintsType, eps
 
 
 class TreeInMilpManager:

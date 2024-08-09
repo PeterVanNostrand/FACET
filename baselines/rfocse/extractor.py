@@ -1,16 +1,18 @@
 # from cython.operator import dereference
-from math import floor
-from typing import List, Tuple
-from .extraction_problem import ExtractionContext, ConditionSide, FeatureConditions, FeatureBounds, SplitPoint, Solution
-from .extraction_problem import estimate_probability
-from .extractor_header import StepState
-from .math_utils import float_argmax, sum_vector, sub_vector
-from .observations import is_category_state, set_category_state, does_meet_split, update_to_meet_split
-from .observations import CATEGORY_ACTIVATED, CATEGORY_DEACTIVATED, CATEGORY_UNSET, CATEGORY_UNKNOWN
-from .splitter import calculate_split
-from .observations import distance as rule_distance
-from .debug import LOG_LEVEL, ExtractionContext_tostr, Solution_tostr, instance_num
 import copy
+from math import floor
+
+from baselines.rfocse.extraction_problem import (ConditionSide, ExtractionContext, FeatureBounds, FeatureConditions,
+                                                 SplitPoint, estimate_probability)
+from baselines.rfocse.extraction_problem_header import Solution
+from baselines.rfocse.extractor_header import StepState
+
+from .debug import LOG_LEVEL, ExtractionContext_tostr, Solution_tostr, instance_num
+from .math_utils import float_argmax, sub_vector, sum_vector
+from .observations import CATEGORY_ACTIVATED, CATEGORY_DEACTIVATED, CATEGORY_UNKNOWN, CATEGORY_UNSET
+from .observations import distance as rule_distance
+from .observations import does_meet_split, is_category_state, set_category_state, update_to_meet_split
+from .splitter import calculate_split
 
 
 def debug(global_state: ExtractionContext) -> None:
@@ -69,7 +71,7 @@ def deactivate_rule(global_state: ExtractionContext, rule_id: int) -> None:
 
 def early_stop(global_state: ExtractionContext) -> int:
     num_set: int = 0
-    set_probs: List[float] = [0.0 for _ in range(global_state.problem.n_labels)]
+    set_probs: list[float] = [0.0 for _ in range(global_state.problem.n_labels)]
     t_id: int = 0
     l: int = 0
     non_zero: int = -1
@@ -101,13 +103,13 @@ def early_stop(global_state: ExtractionContext) -> int:
 
 
 def can_stop(global_state: ExtractionContext) -> int:
-    labels_probs: List[float]
-    rule_prob: List[float]
+    labels_probs: list[float]
+    rule_prob: list[float]
 
     estimated_class: int = -1
 
     if global_state.num_active_rules == global_state.problem.n_trees:
-        labels_probs: List[float] = [0.0 for _ in range(global_state.problem.n_labels)]
+        labels_probs: list[float] = [0.0 for _ in range(global_state.problem.n_labels)]
 
         for i in range(len(global_state.active_rules)):
             if global_state.active_rules[i]:
@@ -147,7 +149,7 @@ def update_bounds_categorical(global_state: ExtractionContext, feature: int) -> 
                                                                  CATEGORY_UNKNOWN)
 
 
-def soft_numerical_pruning(global_state: ExtractionContext, feature: int, solution: Solution, removed_rules: List[int], deactivate: bool = True, feature_only_dist: bool = False) -> None:
+def soft_numerical_pruning(global_state: ExtractionContext, feature: int, solution: Solution, removed_rules: list[int], deactivate: bool = True, feature_only_dist: bool = False) -> None:
     feature_bounds: FeatureBounds = global_state.feature_bounds[feature]
     feature_conditions: FeatureConditions = global_state.feature_conditions_view[feature]
     side_1: ConditionSide = feature_conditions.side_1
@@ -228,7 +230,7 @@ def update_bounds_numerical(global_state: ExtractionContext, feature: int) -> No
         feature_bounds.numerical_bounds[1] = max_bucket + 1
 
 
-def soft_pruning(global_state: ExtractionContext, solution: Solution, removed_rules: List[int]) -> None:
+def soft_pruning(global_state: ExtractionContext, solution: Solution, removed_rules: list[int]) -> None:
     feature_conditions: FeatureConditions
 
     for feature in range(global_state.problem.n_features):
@@ -240,7 +242,7 @@ def soft_pruning(global_state: ExtractionContext, solution: Solution, removed_ru
 def ensure_bounds_consistency(global_state: ExtractionContext, solution: Solution) -> None:
     feature: int = 0
     feature_conditions: FeatureConditions = global_state.feature_conditions_view[feature]
-    removed: List[int] = []
+    removed: list[int] = []
 
     for feature in range(global_state.problem.n_features):
         if feature_conditions.feature_type == 4:
@@ -250,7 +252,7 @@ def ensure_bounds_consistency(global_state: ExtractionContext, solution: Solutio
             assert len(removed) == 0
 
 
-def deactivate_bucket_batch(global_state: ExtractionContext, condition_side: ConditionSide, bucket_from: int, bucket_to: int, removed_rules: List[int]) -> None:
+def deactivate_bucket_batch(global_state: ExtractionContext, condition_side: ConditionSide, bucket_from: int, bucket_to: int, removed_rules: list[int]) -> None:
     rule_id: int
     rule_pos: int
     if bucket_from <= bucket_to:
@@ -263,12 +265,12 @@ def deactivate_bucket_batch(global_state: ExtractionContext, condition_side: Con
                 removed_rules.append(rule_id)
 
 
-def deactivate_bucket(global_state: ExtractionContext, condition_side: ConditionSide, bucket: int, removed_rules: List[int]) -> None:
+def deactivate_bucket(global_state: ExtractionContext, condition_side: ConditionSide, bucket: int, removed_rules: list[int]) -> None:
     deactivate_bucket_batch(global_state, condition_side, bucket, bucket, removed_rules)
 
 
 def apply_feature_bounds_categorical(global_state: ExtractionContext, split_point: SplitPoint) -> StepState:
-    removed_rules: List[int]
+    removed_rules: list[int]
     previous_feature_bounds: FeatureBounds = global_state.feature_bounds[split_point.feature]
     feature_conditions: FeatureConditions = global_state.feature_conditions_view[split_point.feature]
     num_categories: int = len(feature_conditions.side_1.ids_values)
@@ -299,7 +301,7 @@ def apply_feature_bounds_categorical(global_state: ExtractionContext, split_poin
 
 
 def apply_feature_bounds_numerical(global_state: ExtractionContext, split_point: SplitPoint) -> StepState:
-    removed_rules: List[int] = []
+    removed_rules: list[int] = []
     previous_feature_bounds: FeatureBounds = global_state.feature_bounds[split_point.feature]
     feature_conditions: FeatureConditions = global_state.feature_conditions_view[split_point.feature]
 
@@ -344,8 +346,8 @@ def rollback_split(global_state: ExtractionContext, step_state: StepState) -> No
         activate_rule(global_state, rule_id)
 
 
-def get_set_trees_ids(global_state: ExtractionContext) -> List[int]:
-    set_rules: List[int] = []
+def get_set_trees_ids(global_state: ExtractionContext) -> list[int]:
+    set_rules: list[int] = []
     t_id: int
     for r_id in range(global_state.problem.n_rules):
         t_id = global_state.problem.rule_tree[r_id]
@@ -354,8 +356,8 @@ def get_set_trees_ids(global_state: ExtractionContext) -> List[int]:
     return set_rules
 
 
-def get_set_rules_ids(global_state: ExtractionContext) -> List[int]:
-    set_rules: List[int] = []
+def get_set_rules_ids(global_state: ExtractionContext) -> list[int]:
+    set_rules: list[int] = []
     t_id: int
     for r_id in range(global_state.problem.n_rules):
         if global_state.active_rules[r_id]:
@@ -436,7 +438,7 @@ def extract_counterfactual_impl(global_state: ExtractionContext, solution: Solut
     previous_value: float
 
     split_point: SplitPoint
-    split_point_ok: Tuple[bool, SplitPoint]
+    split_point_ok: tuple[bool, SplitPoint]
 
     if iteration > 0 and global_state.problem.log_every > 0 and (iteration % global_state.problem.log_every) == 0:
         print("Iteration number [{:d}]. Discovered foil [{:d}]. Current solution distance [{:.06f}]. Current distance [{:.06f}]. Pruned rules [{:d}] out of [{:d}]. Max distance [{:.06f}]\n".format(
@@ -464,12 +466,12 @@ def extract_counterfactual_impl(global_state: ExtractionContext, solution: Solut
             solution.num_discovered_non_foil += 1
         else:
             solution.found = True
-            solution.conditions: List[SplitPoint] = []
+            solution.conditions: list[SplitPoint] = []
             for i in range(len(global_state.splits)):
                 solution.conditions.append(copy.deepcopy(global_state.splits[i]))
             solution.set_rules = get_set_rules_ids(global_state)
             solution.distance = calculate_current_distance(global_state)
-            solution.instance: List[float] = global_state.current_obs.copy()
+            solution.instance: list[float] = global_state.current_obs.copy()
             solution.estimated_class = estimated_class
     else:
         verbose = False

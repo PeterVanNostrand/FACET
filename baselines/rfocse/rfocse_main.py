@@ -1,17 +1,20 @@
-from .debug import LOG_LEVEL, ExtractionProblem_tostr, ExtractionContext_tostr, Solution_tostr, instance_num
-from typing import List, Tuple
-import time
-import random
 import math
-import numpy as np
-from itertools import product
+import random
+import time
 from collections import Counter
-from .extraction_problem_header import ExtractionProblem
-from .observations import adapt_observation_representation
-from .observations import distance
+from itertools import product
+from typing import List, Tuple
+
+import numpy as np
+
+from baselines.rfocse.extraction_problem import (ExtractionContext, ExtractionProblem, create_extraction_state,
+                                                 make_problem)
+
 from .converter import convert_rf_format, export
+from .debug import LOG_LEVEL, ExtractionContext_tostr, ExtractionProblem_tostr, Solution_tostr, instance_num
+from .extraction_problem_header import ExtractionProblem, Solution
 from .extractor import extract_counterfactual_impl
-from .extraction_problem import make_problem, create_extraction_state, ExtractionProblem, ExtractionContext, Solution, SplitPoint
+from .observations import adapt_observation_representation, distance
 
 # from libcpp.vector cimport vector as cppvector
 # from libcpp.pair cimport pair as cpppair

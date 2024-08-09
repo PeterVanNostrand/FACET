@@ -1,31 +1,27 @@
 # handle circular imports that result from typehinting
 from __future__ import annotations
 
+# core python
 import bisect
-# core python packages
 import math
 from typing import TYPE_CHECKING
-from detectors.gradient_boosting_classifier import GradientBoostingClassifier
 
-# graph packages
-import networkx as nx
-# scientific and utility packages
+# third party packages
+import matplotlib.pyplot as plt
 import numpy as np
 from sklearn import tree
 from tqdm.auto import tqdm
-from dataset import DataInfo
 
-from detectors.random_forest import RandomForest
-# from explainers.branching import BranchIndex
-from explainers.explainer import Explainer
-from explainers.bit_vector import BitVectorIndex
-from explainers.bit_vector import LOWER, UPPER
-# custom classes
-from utilities.metrics import dist_euclidean
+# local imports
 from baselines.ocean.CounterFactualParameters import FeatureType
+from dataset import DataInfo
+from detectors.gradient_boosting_classifier import GradientBoostingClassifier
+from detectors.random_forest import RandomForest
+from explainers.bit_vector import LOWER, UPPER, BitVectorIndex
+from explainers.explainer import Explainer
+from utilities.metrics import dist_euclidean
 
-import matplotlib.pyplot as plt
-
+# for type hinting only
 if TYPE_CHECKING:
     from manager import MethodManager
 
@@ -1029,39 +1025,6 @@ class FACETIndex(Explainer):
             for feature_i in shared_features:
                 mergable = mergable and self.is_resolveable(p1, p2, feature_i)
             return mergable
-
-    def build_graphs(self, trees, nclasses):
-        self.adjacencys = self.build_adjacencys(trees, nclasses)
-        graphs = []
-        for a in self.adjacencys:
-            g = nx.Graph(a)
-            graphs.append(g)
-        self.graphs = graphs
-
-    def build_adjacencys(self, trees, nclasses):
-        ntrees = len(trees)
-        adjacencys = []
-
-        # create an adjacency matrix for each class, each matrix is the size of npaths x npaths (classwise)
-        # an entry adjancy[i][j] indicates that those two paths are sythesizeable and should be connected in the graph
-        for class_id in range(nclasses):
-            adjacencys.append(
-                np.zeros(shape=(self.npaths[class_id], self.npaths[class_id]), dtype=int))
-
-        for t1_id in range(ntrees):  # for each tree
-            for t2_id in range(ntrees):  # check every other tree pairwise
-                # for every path in t1, find the set of paths that are sythesizeable with it in t2
-                t1_t2_merges = self.sythesizable_paths[t1_id][t2_id]
-                # for each path in t1 with at least one sythesizeable path in t2
-                for p1_id in range(len(t1_t2_merges)):
-                    t1p1_index = self.treepath_to_idx[t1_id][p1_id][1]  # index is classid, pathid
-                    t1p1_class = int(self.all_paths[t1_id][p1_id][-1, 3])
-                    # iterate over each sythesizeable path and connect them
-                    for p2_id in t1_t2_merges[p1_id]:
-                        t2p2_index = self.treepath_to_idx[t2_id][p2_id][1]
-                        adjacencys[t1p1_class][t1p1_index][t2p2_index] = 1
-
-        return adjacencys
 
     def index_paths(self, nclasses):
         '''

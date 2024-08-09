@@ -1,8 +1,10 @@
-from collections import namedtuple, defaultdict
+from collections import defaultdict, namedtuple
 from operator import itemgetter
-from .datasets import DatasetInfo
+
 import numpy as np
 from sklearn.tree import DecisionTreeClassifier
+
+from .datasets import DatasetInfo
 
 Node = namedtuple('Node', ('feature', 'threshold', 'left', 'right'))
 Leaf = namedtuple('Leaf', ('values', 'node_id'))

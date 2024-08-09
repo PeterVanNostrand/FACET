@@ -1,20 +1,22 @@
+import multiprocessing as mp
+from typing import TYPE_CHECKING
+
 import numpy as np
 import pandas as pd
-from explainers.explainer import Explainer
 from sklearn.preprocessing import StandardScaler
 from tqdm.auto import tqdm
-import multiprocessing as mp
 
+from baselines.rfocse.converter import convert_rf_format
+from baselines.rfocse.datasets import DatasetInfo, DatasetInfoBuilder
+from baselines.rfocse.extraction_problem import make_problem
+from baselines.rfocse.rfocse_main import batch_extraction, extract_single_counterfactual_set
+from dataset import DataInfo
+from explainers.explainer import Explainer
 
 # from fastcrf.rfocse_main import batch_extraction, CounterfactualSetExplanation
 # from fastcrf.datasets import DatasetInfo, DatasetInfoBuilder
 
-from baselines.rfocse.rfocse_main import batch_extraction, extract_single_counterfactual_set
-from baselines.rfocse.extraction_problem import make_problem
-from baselines.rfocse.converter import convert_rf_format
-from baselines.rfocse.datasets import DatasetInfo, DatasetInfoBuilder
 
-from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from manager import MethodManager
 
@@ -58,7 +60,7 @@ class RFOCSE(Explainer):
         else:
             self.maxtime = maxtime
 
-    def prepare_dataset(self, x, y):
+    def prepare_dataset(self, x: np.ndarray, y: np.ndarray, ds_info: DataInfo) -> None:
         pass
 
     def prepare(self, xtrain=None, ytrain=None):
@@ -82,7 +84,7 @@ class RFOCSE(Explainer):
         self.dataset_info: DatasetInfo = dataset_info
         self.Xtrain: pd.DataFrame = X
 
-    def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf, opt_robust: bool = False, min_robust: float = None) -> np.ndarray:
+    def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf, opt_robust: bool = False, min_robust: float = None, return_regions: bool = False) -> np.ndarray:
         if self.perform_transform:
             x = self.float_transformer.transform(x)
         # an array for the constructed contrastive examples
@@ -91,7 +93,7 @@ class RFOCSE(Explainer):
         xprime = np.empty(shape=x.shape)
         xprime[:, :] = np.inf
         dataset_info: DatasetInfo = self.dataset_info
-        sklearn_rf = self.manager.random_forest.model
+        sklearn_rf = self.manager.model.model
         X_train = self.Xtrain
 
         # Make the RFOCSE problem
@@ -324,7 +326,7 @@ def doRFOCSEExplanationWithQueueCatch(queue,
                                      dataset,
                                      offset
                                      )
-    except:
+    except:  # noqa E722
         print("RFOCSE error")
         queue.put(None)
 

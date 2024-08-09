@@ -1,22 +1,25 @@
 # Important note: This file is given to reproduce the Benchmark of OCEAN paper. It is not part of the OCEAN package and will not be updated with new versions of OCEAN.
 
-from CuiRandomForestCounterFactual import *
-from RandomForestCounterFactual import *
-import time
-import maceUpdatedForOceanBenchmark.newLoadData
-import pickle
-import pandas as pd
-import numpy as np
-from enum import Enum
-from CounterFactualParameters import *
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
+# import time
 import copy
-
-import multiprocessing as mp
-
 import os
+import pickle
 import sys
+
+from sklearn.ensemble import RandomForestClassifier
+
+from baselines.ocean.CounterFactualParameters import (BinaryDecisionVariables, FeatureActionability, FeatureType,
+                                                      TreeConstraintsType)
+from baselines.ocean.CuiRandomForestCounterFactual import CuiRandomForestCounterFactualMilp
+from baselines.ocean.RandomForestCounterFactual import RandomForestCounterFactualMilp
+
+# import pandas as pd
+# import numpy as np
+# from enum import Enum
+# from sklearn.model_selection import train_test_split
+
+# import multiprocessing as mp
+
 sys.path.append("/home/axel/Documents/code/counterfactuals/ocean/ocean")
 
 
@@ -32,7 +35,7 @@ class MaceDatasetReader:
             return
 
         # Initialize from Mace Dataset
-        self.maceDataset: newLoadData.Dataset = pickle.load(open(maceDatasetSerializedFilename, "rb"))
+        self.maceDataset = pickle.load(open(maceDatasetSerializedFilename, "rb"))
         self.featuresActionnability = []
         featureTypeOfMaceFeature = {
             'numeric-int': FeatureType.Discrete,

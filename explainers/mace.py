@@ -6,12 +6,10 @@ import pandas as pd
 from tqdm.auto import tqdm
 
 from baselines.mace.batchTest import generateExplanations
-from baselines.mace.loadData import Dataset, DatasetAttribute, loadDataset
+from baselines.mace.loadData import Dataset, DatasetAttribute
 from baselines.ocean.CounterFactualParameters import FeatureActionability, FeatureType
+from dataset import DataInfo, rescale_discrete
 from explainers.explainer import Explainer
-from dataset import DataInfo
-from dataset import rescale_discrete
-
 
 if TYPE_CHECKING:
     from manager import MethodManager
@@ -161,7 +159,7 @@ class MACE(Explainer):
         self.dataset_obj = Dataset(data_frame=df, attributes=attributes,
                                    is_one_hot=self.ds_info.one_hot_schema, dataset_name="dataset")
 
-    def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf, opt_robust: bool = False, min_robust: float = None) -> np.ndarray:
+    def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf, opt_robust: bool = False, min_robust: float = None, return_regions: bool = False) -> np.ndarray:
         xprime = []
 
         approach_string = "MACE_eps_{}".format(self.epsilon)
