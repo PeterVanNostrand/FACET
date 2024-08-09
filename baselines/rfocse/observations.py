@@ -1,9 +1,15 @@
 import math
-import numpy as np
 from operator import itemgetter
 from typing import List, Tuple
-from .extractor_header import ExtractionProblem, FeatureConditions, SplitPoint
-from .debug import LOG_LEVEL, ExtractionProblem_tostr, DatasetInfo_tostr, instance_num
+
+import numpy as np
+
+from baselines.rfocse.extraction_problem_header import ExtractionProblem, FeatureConditions, SplitPoint
+
+from .debug import LOG_LEVEL, DatasetInfo_tostr, ExtractionProblem_tostr, instance_num
+
+# from baselines.rfocse.extractor_header import ExtractionProblem, FeatureConditions, SplitPoint
+
 
 CATEGORY_ACTIVATED = 2
 CATEGORY_DEACTIVATED = 1

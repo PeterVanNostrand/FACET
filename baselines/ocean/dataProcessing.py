@@ -1,12 +1,16 @@
-import math
-import pandas as pd
-import numpy as np
-from enum import Enum
-from .CounterFactualParameters import *
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-import pickle
 import copy
+import math
+import pickle
+
+import pandas as pd
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+
+from .CounterFactualParameters import (FeatureActionability, FeatureType, getFeatureActionnability, getFeatureType,
+                                       getFeatureType_oldDatasetsWithoutActionnability, isFeatureTypeScalable)
+
+# import numpy as np
+# from enum import Enum
 
 # apply the min-max scaling in Pandas using the .min() and .max() methods
 

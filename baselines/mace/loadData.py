@@ -1,62 +1,23 @@
-from random import seed
-import os
-import sys
 import copy
+import os
 import pickle
+import sys
+from random import seed
+
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
-from pprint import pprint
 from sklearn.model_selection import train_test_split
 
-
-import baselines.mace.utils
 from baselines.mace.debug import ipsh
-from baselines.mace.process_german_data import load_german_data
 from baselines.mace.fair_adult_data import load_adult_data_new
+from baselines.mace.process_german_data import load_german_data
 
+# from pprint import pprint
+# from tqdm import tqdm
+# import baselines.mace.utils
 
 sys.path.insert(0, '_data_main')
 
-# try:
-#   from _data_main.fair_adult_data import *
-# except:
-#   print('[ENV WARNING] fair_adult_data not available')
-
-# try:
-#   from _data_main.fair_compas_data import *
-# except:
-#   print('[ENV WARNING] fair_compas_data not available')
-
-# try:
-#   from _data_main.process_credit_data import *
-# except:
-#   print('[ENV WARNING] process_credit_data not available')
-
-# try:
-#   from _data_main.process_german_data import *
-# except:
-#   print('[ENV WARNING] process_german_data not available')
-
-# try:
-#   from _data_main.process_synthetic_data import *
-# except:
-#   print('[ENV WARNING] process_synthetic_data not available')
-
-# try:
-#   from _data_main.process_mortgage_data import *
-# except:
-#   print('[ENV WARNING] process_mortgage_data not available')
-
-# try:
-#   from _data_main.process_twomoon_data import *
-# except:
-#   print('[ENV WARNING] process_twomoon_data not available')
-
-# try:
-#   from _data_main.process_test_data import *
-# except:
-#   print('[ENV WARNING] process_test_data not available')
 
 VALID_ATTRIBUTE_DATA_TYPES = {
     'numeric-int',

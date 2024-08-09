@@ -2,9 +2,10 @@ from math import floor
 from operator import itemgetter
 from typing import List, Tuple
 
+from .extraction_problem_header import (ConditionSide, ExtractionContext, ExtractionProblem, FeatureBounds,
+                                        FeatureConditions, SplitPoint, ValueIdsRanges)
 # from .observations import adapt_observation_representation
 # from .observations cimport calculate_sorted_rule_distances
-from .extraction_problem_header import *
 from .math_utils import float_argmax, sum_vector
 from .observations import adapt_observation_representation, calculate_sorted_rule_distances
 

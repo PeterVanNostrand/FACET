@@ -5,14 +5,14 @@ import pandas as pd
 from sklearn.ensemble import IsolationForest
 from tqdm.auto import tqdm
 
-from baselines.ocean.CounterFactualParameters import (BinaryDecisionVariables, TreeConstraintsType)
+from baselines.ocean.CounterFactualParameters import BinaryDecisionVariables, TreeConstraintsType
 from baselines.ocean.RandomForestCounterFactual import RandomForestCounterFactualMilp
 # from baselines.ocean.BuildCounterFactualSeekedSet import buildCounterFactualSeekedFile
 from explainers.explainer import Explainer
 
 if TYPE_CHECKING:
-    from manager import MethodManager
     from dataset import DataInfo
+    from manager import MethodManager
 
 
 class OCEAN(Explainer):
@@ -61,7 +61,7 @@ class OCEAN(Explainer):
     def prepare_dataset(self, x: np.ndarray, y: np.ndarray, ds_info) -> None:
         self.ds_info: DataInfo = ds_info
 
-    def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf, opt_robust: bool = False, min_robust: float = None) -> np.ndarray:
+    def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None, weights: np.ndarray = None, max_dist: float = np.inf, opt_robust: bool = False, min_robust: float = None, return_regions: bool = False) -> np.ndarray:
         counterfactual_classes = ((y - 1) * -1)
         xprime = np.empty(shape=x.shape)
         xprime[:, :] = np.inf

@@ -1,4 +1,8 @@
-from .CounterFactualParameters import *
+import gurobipy as gp
+from gurobipy import GRB
+
+from .CounterFactualParameters import (BinaryDecisionVariables, FeatureActionability, FeatureType, TreeConstraintsType,
+                                       eps)
 
 
 class ClassifierCounterFactualMilp:

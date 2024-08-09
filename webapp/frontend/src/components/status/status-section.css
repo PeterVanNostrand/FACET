@@ -1,0 +1,70 @@
+/* General styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: white;
+    min-height: 100vh;
+}
+
+div {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: white;
+}
+
+/* Card title section */
+#status-header {
+    display: flow-root;
+}
+
+#status-header h2 {
+    width: fit-content;
+    float: left;
+}
+
+.status-desired {
+    color: var(--accepted-color);
+    border: 6px solid var(--accepted-color);
+}
+
+.status-undesired {
+    color: var(--rejected-color);
+    border: 6px solid var(--rejected-color);
+}
+
+#status-box {
+    width: 275px;
+    height: 1.7ex;
+    margin-left: 35px;
+    border-radius: 6px;
+    text-align: center;
+    text-indent: 0px;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 4px;
+    background-color: white;
+    display: block;
+    float: right;
+    border-width: 3px;
+}
+
+/* Instance value display */
+
+#instance-display {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    max-height: 100px;
+    overflow-y: auto;
+}
+
+#instance-display div {
+    width: 49%;
+    margin: 0px 0px 10px 0px;
+}
+
+#instance-display p {
+    margin: 0px;
+}
+
+#instance-display span {
+    font-weight: normal;
+}
