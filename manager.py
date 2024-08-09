@@ -63,5 +63,6 @@ class MethodManager():
         self.explainer.prepare(xtrain, ytrain)
 
     def explain(self, x: np.ndarray, y: np.ndarray, k: int = 1, constraints: np.ndarray = None,
-                weights: np.ndarray = None, max_dist: float = np.inf, opt_robust=False, min_robust: float = None) -> np.ndarray:
-        return self.explainer.explain(x=x, y=y, k=k, constraints=constraints, weights=weights, max_dist=max_dist, opt_robust=opt_robust, min_robust=min_robust)
+                weights: np.ndarray = None, max_dist: float = np.inf, opt_robust=False,
+                min_robust: float = None, return_regions: bool = False) -> np.ndarray:
+        return self.explainer.explain(x=x, y=y, k=k, constraints=constraints, weights=weights, max_dist=max_dist, opt_robust=opt_robust, min_robust=min_robust, return_regions=return_regions)

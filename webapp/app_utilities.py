@@ -2,6 +2,7 @@ import json
 import numpy as np
 import random
 from sklearn.model_selection import train_test_split
+from explainers.facet_index import FACETIndex
 from manager import MethodManager
 from dataset import load_data, DataInfo
 from experiments.experiments import DEFAULT_PARAMS, TUNED_FACET_SD, FACET_TUNED_M
@@ -17,8 +18,23 @@ def flask_setup_server(
     random.seed(random_state)
     np.random.seed(random_state)
 
+    if preprocessing == "Normalize":
+        normalize_numeric = True
+        normalize_discrete = True
+        do_convert = False
+        # MACE requires integer discrete features, this is fine as the RF is the same either way
+        # we will later normalize when computing the explanation distance later for comparability
+        if explainer == "MACE":
+            normalize_discrete = False
+            if dataset_name == "adult":  # will treat numeric-real as numeric-int
+                normalize_numeric = False  # this handles a pysmt bug with mixed-numeric and non-numeric
+                do_convert = True
+        if explainer == "RFOCSE":
+            normalize_discrete = False
+            normalize_numeric = True
+
     # Load and split the dataset into train/explain
-    x, y, min_value, max_value = load_data(dataset_name, preprocessing=preprocessing)
+    x, y, ds_info = load_data(dataset_name, normalize_numeric, normalize_discrete, do_convert)
     indices = np.arange(start=0, stop=x.shape[0])
     xtrain, xtest, ytrain, ytest, idx_train, idx_test = train_test_split(
         x, y, indices, test_size=0.1, shuffle=True, random_state=random_state
@@ -29,7 +45,7 @@ def flask_setup_server(
         explainer=explainer, hyperparameters=params, random_state=random_state
     )
     manager.train(xtrain, ytrain)
-    manager.explainer.prepare_dataset(x, y)
+    manager.explainer.prepare_dataset(x, y, ds_info)
     manager.prepare(xtrain=xtrain, ytrain=xtrain)
 
     # get the negative outcome samples for explanation
@@ -45,7 +61,7 @@ def run_facet(
     random_state=0,
     ntrees=10,
     max_depth=5,
-):
+) -> tuple[MethodManager, FACETIndex]:
     params = DEFAULT_PARAMS
     params["RandomForest"]["rf_ntrees"] = ntrees
     params["RandomForest"]["rf_maxdepth"] = max_depth
@@ -90,5 +106,13 @@ def parse_dataset_info(details_path):
     for col_id, name in ds_details["feature_names"].items():
         col_names[col_id] = name
 
-    ds_info = DataInfo(ncols=ncols, is_normalized=is_normalized, col_scales=col_scales, col_names=col_names)
+    # create a data info object, app treats all feature as numeric
+    ds_info = DataInfo.generic(ncols=ncols)
+    ds_info.col_names = col_names
+    ds_info.normalize_numeric = is_normalized
+    ds_info.col_scales = col_scales
+    ds_info.__post_init__()
+    ds_info._map_cols()
+
+    # ds_info = DataInfo(ncols=ncols, is_normalized=is_normalized, col_scales=col_scales, col_names=col_names)
     return ds_info
