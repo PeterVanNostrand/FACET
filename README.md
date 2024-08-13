@@ -8,7 +8,7 @@ FACET generates a novel type of explanation which we call *counterfactual region
 
 ## Installation
 
-- This repository is validated on Python 3.10, [requirements.txt](./requirements.yml) contains a list of required packages formatted for use with Anaconda
+- This repository is validated on Python 3.10, [requirements.txt](./requirements.txt) contains a list of required packages formatted for use with Anaconda
 - FACET's web user interface is built using JavaScript and uses the Node Package Manager to install and build all dependencies
 - To run experiments with OCEAN, a state-of-the-art method we compare to, you will need a license for the Gurobi optimizer. Free academic licenses are available [here](https://www.gurobi.com/academia/academic-program-and-licenses/). Setup can be done as follows
 
