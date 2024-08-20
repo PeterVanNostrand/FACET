@@ -61,7 +61,7 @@ To launch this dashboard do the following
 # launch the app
 cd webapp
 npm install
-run run dev
+npm run dev
 ```
 
 Then navigate to `[http://localhost:5175/](http://localhost:5175/) in your browser
