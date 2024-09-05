@@ -1,11 +1,13 @@
 import json
-import numpy as np
 import random
+
+import numpy as np
 from sklearn.model_selection import train_test_split
-from explainers.facet_index import FACETIndex
+
+from dataset import DataInfo, load_data
+from experiments.experiments import DEFAULT_PARAMS, FACET_TUNED_M, TUNED_FACET_SD
+from explainers.facet import FACET
 from manager import MethodManager
-from dataset import load_data, DataInfo
-from experiments.experiments import DEFAULT_PARAMS, TUNED_FACET_SD, FACET_TUNED_M
 
 
 def flask_setup_server(
@@ -57,17 +59,17 @@ def flask_setup_server(
 
 def run_facet(
     ds_name="loans",
-    explainer="FACETIndex",
+    explainer="FACET",
     random_state=0,
     ntrees=10,
     max_depth=5,
-) -> tuple[MethodManager, FACETIndex]:
+) -> tuple[MethodManager, FACET]:
     params = DEFAULT_PARAMS
     params["RandomForest"]["rf_ntrees"] = ntrees
     params["RandomForest"]["rf_maxdepth"] = max_depth
     params["RandomForest"]["rf_maxdepth"] = max_depth
-    params["FACETIndex"]["facet_sd"] = TUNED_FACET_SD[ds_name]
-    params["FACETIndex"]["rbv_num_interval"] = FACET_TUNED_M[ds_name]
+    params["FACET"]["facet_sd"] = TUNED_FACET_SD[ds_name]
+    params["FACET"]["rbv_num_interval"] = FACET_TUNED_M[ds_name]
 
     print("dataset: " + ds_name)
 

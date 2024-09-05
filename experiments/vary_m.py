@@ -33,22 +33,22 @@ def vary_m(ds_names, ms=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=None,
         csv_path = "./results/vary_m.csv"
         experiment_path = "./results/vary-m/"
 
-    explainer = "FACETIndex"
+    explainer = "FACET"
     params = {
         "RandomForest": RF_DEFAULT_PARAMS,
-        "FACETIndex": FACET_DEFAULT_PARAMS,
+        "FACET": FACET_DEFAULT_PARAMS,
     }
     params["RandomForest"]["rf_ntrees"] = ntrees
     params["RandomForest"]["rf_maxdepth"] = max_depth
-    params["FACETIndex"]["rbv_num_interval"] = ms[0]
+    params["FACET"]["rbv_num_interval"] = ms[0]
 
     total_runs = len(ds_names) * len(ms) * len(iterations)
     progress_bar = tqdm(total=total_runs, desc="Overall Progress", position=0, disable=False)
 
     for iter in iterations:
         for ds in ds_names:
-            params["FACETIndex"]["facet_sd"] = TUNED_FACET_SD[ds]
-            params["FACETIndex"]["rbv_num_interval"] = FACET_TUNED_M[ds]
+            params["FACET"]["facet_sd"] = TUNED_FACET_SD[ds]
+            params["FACET"]["rbv_num_interval"] = FACET_TUNED_M[ds]
             # configure run info
             test_size = 0.2
             n_explain = 20
@@ -96,8 +96,8 @@ def vary_m(ds_names, ms=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=None,
 
             for m in ms:
                 # update the bit vector initial radius and rebuild the indices
-                params["FACETIndex"]["rbv_num_interval"] = m
-                manager.explainer.hyperparameters["FACETIndex"]["rbv_num_interval"] = m
+                params["FACET"]["rbv_num_interval"] = m
+                manager.explainer.hyperparameters["FACET"]["rbv_num_interval"] = m
 
                 index_start = time.time()
                 manager.explainer.build_bitvectorindex()

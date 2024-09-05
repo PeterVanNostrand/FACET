@@ -6,7 +6,7 @@ from .experiments import execute_run
 from .experiments import TUNED_FACET_SD, FACET_DEFAULT_PARAMS, OCEAN_DEFAULT_PARAMS, RF_DEFAULT_PARAMS, MACE_DEFAULT_PARAMS, FACET_TUNED_M
 
 
-def vary_ntrees(ds_names, explainers=["FACETIndex", "OCEAN"], ntrees=[5, 10, 15],
+def vary_ntrees(ds_names, explainers=["FACET", "OCEAN"], ntrees=[5, 10, 15],
                 iterations=[0, 1, 2, 3, 4], fmod=None, max_depth=5):
     '''
     Experiment to observe the effect of the the number of features on explanation
@@ -26,7 +26,7 @@ def vary_ntrees(ds_names, explainers=["FACETIndex", "OCEAN"], ntrees=[5, 10, 15]
 
     params = {
         "RandomForest": RF_DEFAULT_PARAMS,
-        "FACETIndex": FACET_DEFAULT_PARAMS,
+        "FACET": FACET_DEFAULT_PARAMS,
         "OCEAN": OCEAN_DEFAULT_PARAMS,
         "MACE": MACE_DEFAULT_PARAMS
     }
@@ -42,8 +42,8 @@ def vary_ntrees(ds_names, explainers=["FACETIndex", "OCEAN"], ntrees=[5, 10, 15]
                 for ds in ds_names:
                     # set the number of trees
                     params["RandomForest"]["rf_ntrees"] = ntree
-                    params["FACETIndex"]["facet_sd"] = TUNED_FACET_SD[ds]
-                    params["FACETIndex"]["rbv_num_interval"] = FACET_TUNED_M[ds]
+                    params["FACET"]["facet_sd"] = TUNED_FACET_SD[ds]
+                    params["FACET"]["rbv_num_interval"] = FACET_TUNED_M[ds]
 
                     run_result = execute_run(
                         dataset_name=ds,

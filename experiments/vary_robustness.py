@@ -1,19 +1,21 @@
-import os
-import pandas as pd
-from tqdm.auto import tqdm
-import random
-import numpy as np
-import time
 import json
+import os
+import random
+import time
 
+import numpy as np
+import pandas as pd
 from sklearn.model_selection import train_test_split
-from .experiments import FACET_TUNED_M, RF_DEFAULT_PARAMS, FACET_DEFAULT_PARAMS, TUNED_FACET_SD
-from utilities.metrics import classification_metrics, percent_valid, average_distance
-from manager import MethodManager
+from tqdm.auto import tqdm
+
 from dataset import load_data
+from manager import MethodManager
+from utilities.metrics import average_distance, classification_metrics, percent_valid
+
+from .experiments import FACET_DEFAULT_PARAMS, FACET_TUNED_M, RF_DEFAULT_PARAMS, TUNED_FACET_SD
 
 
-def vary_robustness(ds_names, min_robust=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=None, ntrees=10, max_depth=5):
+def vary_min_robustness(ds_names, min_robust=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=None, ntrees=10, max_depth=5):
     '''
     Experiment to observe the affect of k, the number of explanations requested
     '''
@@ -29,10 +31,10 @@ def vary_robustness(ds_names, min_robust=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 
         csv_path = "./results/vary_robustness.csv"
         experiment_path = "./results/vary-robustness/"
 
-    explainer = "FACETIndex"
+    explainer = "FACET"
     params = {
         "RandomForest": RF_DEFAULT_PARAMS,
-        "FACETIndex": FACET_DEFAULT_PARAMS,
+        "FACET": FACET_DEFAULT_PARAMS,
     }
     params["RandomForest"]["rf_ntrees"] = ntrees
     params["RandomForest"]["rf_maxdepth"] = max_depth
@@ -42,8 +44,8 @@ def vary_robustness(ds_names, min_robust=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 
 
     for iter in iterations:
         for ds in ds_names:
-            params["FACETIndex"]["facet_sd"] = TUNED_FACET_SD[ds]
-            params["FACETIndex"]["facet_sd"] = FACET_TUNED_M[ds]
+            params["FACET"]["facet_sd"] = TUNED_FACET_SD[ds]
+            params["FACET"]["facet_sd"] = FACET_TUNED_M[ds]
             # configure run info
             test_size = 0.2
             n_explain = 20

@@ -4,8 +4,8 @@ import os
 import re
 
 from experiments.compare_methods import compare_methods
-from experiments.experiments import (DEFAULT_PARAMS, FACET_TUNED_M,
-                                     TUNED_FACET_SD, execute_run)
+from experiments.experiments import DEFAULT_PARAMS, FACET_TUNED_M, TUNED_FACET_SD, execute_run
+from experiments.perturbations import perturb_explanations
 from experiments.vary_enum import vary_enum
 from experiments.vary_eps import vary_eps
 from experiments.vary_k import vary_k
@@ -14,18 +14,17 @@ from experiments.vary_nconstraints import vary_nconstraints
 from experiments.vary_nrects import vary_nrects
 from experiments.vary_ntrees import vary_ntrees
 from experiments.vary_rinit import vary_rinit
+from experiments.vary_robustness import vary_min_robustness
 from experiments.vary_rstep import vary_rstep
 from experiments.vary_sigma import vary_sigma
-from experiments.perturbations import perturb_explanations
 from experiments.widths import compute_widths
-from experiments.vary_robustness import vary_robustness
-
 
 # TODO: Currently ignoring feature actionability
 # TODO: 3. Get MACE running for this data
 # TODO: 4. Implement feature typing and actionability to FACET
 # TODO: 5. Get RFOCSE working
 # TODO: 6. Get AFT working
+
 
 def check_create_directory(dir_path="./results/"):
     '''
@@ -52,7 +51,7 @@ def check_create_directory(dir_path="./results/"):
     return run_id, run_path
 
 
-def simple_run(ds_name="vertebral", explainer="FACETIndex", random_state=0, ntrees=10,
+def simple_run(ds_name="vertebral", explainer="FACET", random_state=0, ntrees=10,
                max_depth=5, model_type="RandomForest"):
     # Euclidean, FeaturesChanged
     run_id, run_path = check_create_directory("./results/simple-run/")
@@ -65,8 +64,8 @@ def simple_run(ds_name="vertebral", explainer="FACETIndex", random_state=0, ntre
         params["GradientBoostingClassifier"]["gbc_ntrees"] = ntrees
         params["GradientBoostingClassifier"]["gbc_maxdepth"] = max_depth
 
-    params["FACETIndex"]["facet_sd"] = TUNED_FACET_SD[ds_name] if ds_name in TUNED_FACET_SD else 0.01
-    params["FACETIndex"]["rbv_num_interval"] = FACET_TUNED_M[ds_name] if ds_name in FACET_TUNED_M else 16
+    params["FACET"]["facet_sd"] = TUNED_FACET_SD[ds_name] if ds_name in TUNED_FACET_SD else 0.01
+    params["FACET"]["rbv_num_interval"] = FACET_TUNED_M[ds_name] if ds_name in FACET_TUNED_M else 16
 
     preprocessing = "Normalize"
     n_explain = 20
@@ -96,14 +95,14 @@ def simple_run(ds_name="vertebral", explainer="FACETIndex", random_state=0, ntre
 if __name__ == "__main__":
 
     all_ds = ["cancer", "glass", "magic", "spambase", "vertebral", "adult", "credit", "compas"]
-    all_explaiers = ["FACETIndex", "OCEAN", "RFOCSE", "AFT", "MACE"]
+    all_explaiers = ["FACET", "OCEAN", "RFOCSE", "AFT", "MACE"]
 
     parser = argparse.ArgumentParser(description='Run FACET Experiments')
     parser.add_argument("--expr", choices=["simple", "ntrees", "nrects",
                         "eps", "sigma", "enum", "compare", "k", "rinit", "rstep",
-                                           "m", "nconstraints", "perturb", "widths", "robust"], default="simple")
+                                           "m", "nconstraints", "perturb", "widths", "minrobust"], default="simple")
     parser.add_argument("--ds", type=str, nargs="+", default=["vertebral"])
-    parser.add_argument("--method", type=str, nargs="+", choices=all_explaiers, default=["FACETIndex"])
+    parser.add_argument("--method", type=str, nargs="+", choices=all_explaiers, default=["FACET"])
     parser.add_argument("--values", type=float, nargs="+", default=None)
     parser.add_argument("--ntrees", type=int, default=10)
     parser.add_argument("--maxdepth", type=int, default=5)
@@ -139,7 +138,7 @@ if __name__ == "__main__":
             vary_ntrees(ds_names=args.ds, explainers=args.method,
                         iterations=args.it, fmod=args.fmod, max_depth=args.maxdepth)
 
-    # Vary the number of hyperrectangles for FACETIndex
+    # Vary the number of hyperrectangles for FACET
     elif args.expr == "nrects":
         if args.values is not None:
             nrects = [int(_) for _ in args.values]
@@ -157,7 +156,7 @@ if __name__ == "__main__":
         else:
             vary_eps(ds_names=args.ds, iterations=args.it, fmod=args.fmod, ntrees=args.ntrees, max_depth=args.maxdepth)
 
-    # Vary the standard deviation of HR enumeration for FACETIndex
+    # Vary the standard deviation of HR enumeration for FACET
     elif args.expr == "sigma":
         if args.values is not None:
             vary_sigma(ds_names=args.ds, sigmas=args.values, iterations=args.it,
@@ -205,11 +204,11 @@ if __name__ == "__main__":
     elif args.expr == "widths":
         compute_widths(ds_names=args.ds, iteration=args.it[0], ntrees=args.ntrees, max_depth=args.maxdepth)
 
-    elif args.expr == "robust":
+    elif args.expr == "minrobust":
         if args.values is not None:
-            vary_robustness(ds_names=args.ds, min_robust=args.values, iterations=args.it,
-                            fmod=args.fmod, ntrees=args.ntrees, max_depth=args.maxdepth)
+            vary_min_robustness(ds_names=args.ds, min_robust=args.values, iterations=args.it,
+                                fmod=args.fmod, ntrees=args.ntrees, max_depth=args.maxdepth)
         else:
             print("using default values")
-            vary_robustness(ds_names=args.ds, iterations=args.it, fmod=args.fmod,
-                            ntrees=args.ntrees, max_depth=args.maxdepth)
+            vary_min_robustness(ds_names=args.ds, iterations=args.it, fmod=args.fmod,
+                                ntrees=args.ntrees, max_depth=args.maxdepth)

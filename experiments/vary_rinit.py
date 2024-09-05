@@ -33,10 +33,10 @@ def vary_rinit(ds_names, rs=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=N
         csv_path = "./results/vary_rinit.csv"
         experiment_path = "./results/vary-rinit/"
 
-    explainer = "FACETIndex"
+    explainer = "FACET"
     params = {
         "RandomForest": RF_DEFAULT_PARAMS,
-        "FACETIndex": FACET_DEFAULT_PARAMS,
+        "FACET": FACET_DEFAULT_PARAMS,
     }
     params["RandomForest"]["rf_ntrees"] = ntrees
     params["RandomForest"]["rf_maxdepth"] = max_depth
@@ -46,8 +46,8 @@ def vary_rinit(ds_names, rs=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=N
 
     for iter in iterations:
         for ds in ds_names:
-            params["FACETIndex"]["facet_sd"] = TUNED_FACET_SD[ds]
-            params["FACETIndex"]["rbv_num_interval"] = FACET_TUNED_M[ds]
+            params["FACET"]["facet_sd"] = TUNED_FACET_SD[ds]
+            params["FACET"]["rbv_num_interval"] = FACET_TUNED_M[ds]
             # configure run info
             test_size = 0.2
             n_explain = 20
@@ -95,7 +95,7 @@ def vary_rinit(ds_names, rs=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=N
 
             for r in rs:
                 # update the bit vector initial radius
-                params["FACETIndex"]["rbv_initial_radius"] = r
+                params["FACET"]["rbv_initial_radius"] = r
                 for rbv in manager.explainer.rbvs:
                     rbv.initial_radius = r
                 run_ext = "ri{:.4f}_".format(r)
@@ -162,8 +162,8 @@ def vary_rinit(ds_names, rs=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=N
                     "explainer": explainer,
                     "n_trees": params["RandomForest"]["rf_ntrees"],
                     "max_depth": params["RandomForest"]["rf_maxdepth"],
-                    "facet_rinit": params["FACETIndex"]["rbv_initial_radius"],
-                    "facet_rstep": params["FACETIndex"]["rbv_radius_step"],
+                    "facet_rinit": params["FACET"]["rbv_initial_radius"],
+                    "facet_rstep": params["FACET"]["rbv_radius_step"],
                     "iteration": iter,
                     **run_result
                 }

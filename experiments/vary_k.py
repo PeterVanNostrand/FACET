@@ -33,10 +33,10 @@ def vary_k(ds_names, ks=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=None,
         csv_path = "./results/vary_k.csv"
         experiment_path = "./results/vary-k/"
 
-    explainer = "FACETIndex"
+    explainer = "FACET"
     params = {
         "RandomForest": RF_DEFAULT_PARAMS,
-        "FACETIndex": FACET_DEFAULT_PARAMS,
+        "FACET": FACET_DEFAULT_PARAMS,
     }
     params["RandomForest"]["rf_ntrees"] = ntrees
     params["RandomForest"]["rf_maxdepth"] = max_depth
@@ -46,8 +46,8 @@ def vary_k(ds_names, ks=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=None,
 
     for iter in iterations:
         for ds in ds_names:
-            params["FACETIndex"]["facet_sd"] = TUNED_FACET_SD[ds]
-            params["FACETIndex"]["rbv_num_interval"] = FACET_TUNED_M[ds]
+            params["FACET"]["facet_sd"] = TUNED_FACET_SD[ds]
+            params["FACET"]["rbv_num_interval"] = FACET_TUNED_M[ds]
             random_state = iter
             output_path = experiment_path
             test_size = 0.2

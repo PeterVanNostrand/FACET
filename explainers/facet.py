@@ -26,7 +26,7 @@ if TYPE_CHECKING:
     from manager import MethodManager
 
 
-class FACETIndex(Explainer):
+class FACET(Explainer):
     # TODO Implement per axis minimum robustness paramater, and minimum robustness along all axes
     def __init__(self, manager, hyperparameters: dict):
         self.manager: MethodManager = manager
@@ -906,7 +906,7 @@ class FACETIndex(Explainer):
                 xprime.append(explanation)
 
         elif self.search_type == "BitVector":
-            progress = tqdm(total=x.shape[0], desc="FACETIndex", leave=False)
+            progress = tqdm(total=x.shape[0], desc="FACET", leave=False)
             for i in range(x.shape[0]):  # for each instance
                 nearest_rect = None
                 result = self.rbvs[counterfactual_classes[i]].point_query(
@@ -1101,7 +1101,7 @@ class FACETIndex(Explainer):
 
     def parse_hyperparameters(self, hyperparameters: dict) -> None:
         self.hyperparameters = hyperparameters
-        self.params: dict = hyperparameters.get("FACETIndex")
+        self.params: dict = hyperparameters.get("FACET")
 
         # distance metric for explanation
         self.distance_fn = dist_euclidean

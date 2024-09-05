@@ -8,7 +8,7 @@ from detectors.gradient_boosting_classifier import GradientBoostingClassifier
 from detectors.random_forest import RandomForest
 # Explainer classes
 from explainers.best_candidate import AFT
-from explainers.facet_index import FACETIndex
+from explainers.facet import FACET
 from explainers.mace import MACE
 from explainers.ocean import OCEAN
 from explainers.rf_ocse import RFOCSE
@@ -41,12 +41,12 @@ class MethodManager():
             return MACE(manager=self, hyperparameters=hyperparameters)
         elif explainer == "RFOCSE":
             return RFOCSE(manager=self, hyperparameters=hyperparameters)
-        elif explainer == "FACETIndex":
-            return FACETIndex(manager=self, hyperparameters=hyperparameters)
+        elif explainer == "FACET":
+            return FACET(manager=self, hyperparameters=hyperparameters)
         else:
             print("Unknown explainer type of " + explainer)
-            print("using FACETIndex")
-            return FACETIndex(manager=self, hyperparameters=hyperparameters)
+            print("using FACET")
+            return FACET(manager=self, hyperparameters=hyperparameters)
 
     def set_explainer(self, explainer=None, random_state=None):
         random.seed(random_state)

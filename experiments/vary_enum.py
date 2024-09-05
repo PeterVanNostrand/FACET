@@ -25,15 +25,15 @@ def vary_enum(ds_names, iterations=[0, 1, 2, 3, 4], fmod=None, ntrees=10, max_de
         csv_path = "./results/vary_enum.csv"
         experiment_path = "./results/vary-enum/"
 
-    explainer = "FACETIndex"
+    explainer = "FACET"
     params = {
         "RandomForest": RF_DEFAULT_PARAMS,
-        "FACETIndex": FACET_DEFAULT_PARAMS,
+        "FACET": FACET_DEFAULT_PARAMS,
     }
     params["RandomForest"]["rf_ntrees"] = ntrees
     params["RandomForest"]["rf_maxdepth"] = max_depth
     params["RandomForest"]["rf_hardvoting"] = None
-    params["FACETIndex"]["facet_intersect_order"] = None
+    params["FACET"]["facet_intersect_order"] = None
 
     total_runs = len(ds_names) * len(hard_votings) * len(enumerations) * len(iterations)
     progress_bar = tqdm(total=total_runs, desc="Overall Progress", position=0, disable=False)
@@ -42,9 +42,9 @@ def vary_enum(ds_names, iterations=[0, 1, 2, 3, 4], fmod=None, ntrees=10, max_de
         for vote in hard_votings:
             for enum in enumerations:
                 for ds in ds_names:
-                    params["FACETIndex"]["facet_sd"] = TUNED_FACET_SD[ds]
+                    params["FACET"]["facet_sd"] = TUNED_FACET_SD[ds]
                     params["RandomForest"]["rf_hardvoting"] = vote
-                    params["FACETIndex"]["facet_intersect_order"] = enum
+                    params["FACET"]["facet_intersect_order"] = enum
                     run_result = execute_run(
                         dataset_name=ds,
                         explainer=explainer,

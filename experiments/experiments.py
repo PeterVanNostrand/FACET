@@ -10,8 +10,7 @@ from sklearn.model_selection import train_test_split
 
 from dataset import load_data, rescale_discrete, rescale_numeric
 from manager import MethodManager
-from utilities.metrics import (average_distance, classification_metrics,
-                               percent_valid)
+from utilities.metrics import average_distance, classification_metrics, percent_valid
 
 TUNED_FACET_SD = {
     "adult": 0.1,
@@ -58,7 +57,7 @@ FACET_TUNED_M = {
 
 
 MACE_DEFAULT_PARAMS = {
-    "mace_maxtime": 300,
+    "mace_maxtime": None,
     "mace_epsilon": 1e-7,
     "mace_verbose": False
 }
@@ -113,7 +112,7 @@ GBC_DEFUAULT_PARAMS = {
 DEFAULT_PARAMS = {
     "RandomForest": RF_DEFAULT_PARAMS,
     "GradientBoostingClassifier": GBC_DEFUAULT_PARAMS,
-    "FACETIndex": FACET_DEFAULT_PARAMS,
+    "FACET": FACET_DEFAULT_PARAMS,
     "MACE": MACE_DEFAULT_PARAMS,
     "RFOCSE": RFOCSE_DEFAULT_PARAMS,
     "AFT": AFT_DEFAULT_PARAMS,

@@ -14,7 +14,7 @@ from utilities.metrics import classification_metrics
 from .experiments import TUNED_FACET_SD, DEFAULT_PARAMS, FACET_TUNED_M
 
 
-def perturb_explanations(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", "AFT", "MACE"], nperts=100, pert_sizes=[0.01, 0.05], iterations=[0, 1, 2, 3, 4], fmod=None, ntrees=10, max_depth=5):
+def perturb_explanations(ds_names, explainers=["FACET", "OCEAN", "RFOCSE", "AFT", "MACE"], nperts=100, pert_sizes=[0.01, 0.05], iterations=[0, 1, 2, 3, 4], fmod=None, ntrees=10, max_depth=5):
     '''
     Experiment to compare the performance of different explainers on the same ensemble
     '''
@@ -70,8 +70,8 @@ def perturb_explanations(ds_names, explainers=["FACETIndex", "OCEAN", "RFOCSE", 
             random.seed(random_state)
             np.random.seed(random_state)
 
-            params["FACETIndex"]["facet_sd"] = TUNED_FACET_SD[ds]
-            params["FACETIndex"]["rbv_num_interval"] = FACET_TUNED_M[ds]
+            params["FACET"]["facet_sd"] = TUNED_FACET_SD[ds]
+            params["FACET"]["rbv_num_interval"] = FACET_TUNED_M[ds]
 
             x, y = load_data(ds, preprocessing=preprocessing)
             indices = np.arange(start=0, stop=x.shape[0])

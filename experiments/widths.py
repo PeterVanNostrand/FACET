@@ -32,7 +32,7 @@ def compute_widths(ds_names, iteration=0, ntrees=10, max_depth=5):
     preprocessing = "Normalize"
 
     config = {}
-    config["explainer"] = "FACETIndex"
+    config["explainer"] = "FACET"
     config["iteration"] = iteration
     config["datasets"] = ds_names
     config["preprocessing"] = preprocessing
@@ -52,8 +52,8 @@ def compute_widths(ds_names, iteration=0, ntrees=10, max_depth=5):
         random.seed(random_state)
         np.random.seed(random_state)
 
-        params["FACETIndex"]["facet_sd"] = TUNED_FACET_SD[ds]
-        params["FACETIndex"]["rbv_num_interval"] = FACET_TUNED_M[ds]
+        params["FACET"]["facet_sd"] = TUNED_FACET_SD[ds]
+        params["FACET"]["rbv_num_interval"] = FACET_TUNED_M[ds]
 
         x, y = load_data(ds, preprocessing=preprocessing)
         indices = np.arange(start=0, stop=x.shape[0])
@@ -62,7 +62,7 @@ def compute_widths(ds_names, iteration=0, ntrees=10, max_depth=5):
 
         # create the manager which handles create the RF model and explainer
         manager: MethodManager = MethodManager(
-            explainer="FACETIndex", hyperparameters=params, random_state=random_state)
+            explainer="FACET", hyperparameters=params, random_state=random_state)
         manager.train(xtrain, ytrain)
         manager.explainer.prepare_dataset(x, y)
         manager.prepare(xtrain=xtrain, ytrain=ytrain)

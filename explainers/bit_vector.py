@@ -9,7 +9,7 @@ from bitarray import bitarray
 from bitarray.util import zeros as bitzeros
 
 if TYPE_CHECKING:  # circular import avoidance
-    from explainers.facet_index import FACETIndex
+    from explainers.facet import FACET
 
 LOWER = 0
 UPPER = 1
@@ -22,7 +22,7 @@ class BitVectorIndex():
     Based on "Indexing High Dimensional Rectangles for Fast Multimedia Identification" by Jonathan Goldstein, John Platt, Christopher Burges. 2003 Microsoft Research tecnical report
     '''
 
-    def __init__(self, rects: list[np.ndarray], explainer: FACETIndex, hyperparameters: dict):
+    def __init__(self, rects: list[np.ndarray], explainer: FACET, hyperparameters: dict):
         '''
         Parameters
         ----------
@@ -438,7 +438,7 @@ class BitVectorIndex():
 
     def parse_hyperparameters(self, hyperparameters: dict) -> None:
         self.hyperparameters = hyperparameters
-        params: dict = hyperparameters.get("FACETIndex")
+        params: dict = hyperparameters.get("FACET")
 
         # Initial Radius
         if params.get("rbv_initial_radius") is None:

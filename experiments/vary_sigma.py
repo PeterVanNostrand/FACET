@@ -21,12 +21,12 @@ def vary_sigma(ds_names, sigmas=[0.01, 0.05, 0.1, 0.2, 0.3], iterations=[0, 1, 2
         csv_path = "./results/vary_sigma.csv"
         experiment_path = "./results/vary-sigma/"
 
-    explainer = "FACETIndex"
+    explainer = "FACET"
     params = {
         "RandomForest": RF_DEFAULT_PARAMS,
-        "FACETIndex": FACET_DEFAULT_PARAMS,
+        "FACET": FACET_DEFAULT_PARAMS,
     }
-    params["FACETIndex"]["facet_sd"] = -1
+    params["FACET"]["facet_sd"] = -1
     params["RandomForest"]["rf_ntrees"] = ntrees
     params["RandomForest"]["rf_maxdepth"] = max_depth
 
@@ -37,8 +37,8 @@ def vary_sigma(ds_names, sigmas=[0.01, 0.05, 0.1, 0.2, 0.3], iterations=[0, 1, 2
         for sig in sigmas:
             for ds in ds_names:
                 # set the number of trees
-                params["FACETIndex"]["facet_sd"] = sig
-                params["FACETIndex"]["rbv_num_interval"] = FACET_TUNED_M[ds]
+                params["FACET"]["facet_sd"] = sig
+                params["FACET"]["rbv_num_interval"] = FACET_TUNED_M[ds]
                 run_result = execute_run(
                     dataset_name=ds,
                     explainer=explainer,

@@ -23,12 +23,12 @@ def vary_nrects(ds_names, nrects=[5, 10, 15], iterations=[0, 1, 2, 3, 4], fmod=N
         csv_path = "./results/vary_nrects.csv"
         experiment_path = "./results/vary-nrects/"
 
-    explainer = "FACETIndex"
+    explainer = "FACET"
     params = {
         "RandomForest": RF_DEFAULT_PARAMS,
-        "FACETIndex": FACET_DEFAULT_PARAMS,
+        "FACET": FACET_DEFAULT_PARAMS,
     }
-    params["FACETIndex"]["facet_nrects"] = -1
+    params["FACET"]["facet_nrects"] = -1
     params["RandomForest"]["rf_ntrees"] = ntrees
     params["RandomForest"]["rf_maxdepth"] = max_depth
 
@@ -39,9 +39,9 @@ def vary_nrects(ds_names, nrects=[5, 10, 15], iterations=[0, 1, 2, 3, 4], fmod=N
         for nr in nrects:
             for ds in ds_names:
                 # set the number of trees
-                params["FACETIndex"]["facet_nrects"] = nr
-                params["FACETIndex"]["facet_sd"] = TUNED_FACET_SD[ds]
-                params["FACETIndex"]["rbv_num_interval"] = FACET_TUNED_M[ds]
+                params["FACET"]["facet_nrects"] = nr
+                params["FACET"]["facet_sd"] = TUNED_FACET_SD[ds]
+                params["FACET"]["rbv_num_interval"] = FACET_TUNED_M[ds]
                 run_result = execute_run(
                     dataset_name=ds,
                     explainer=explainer,
