@@ -1,14 +1,13 @@
 import copy
-from dataclasses import dataclass
 import os
+from dataclasses import dataclass
 from pathlib import Path
-
 
 import numpy as np
 import pandas as pd
 
 from baselines.mace.fair_utils_data import get_one_hot_encoding as mace_get_one_hot
-from baselines.ocean.CounterFactualParameters import (FeatureActionability, FeatureType)
+from baselines.ocean.CounterFactualParameters import FeatureActionability, FeatureType
 from explainers.bit_vector import LOWER, UPPER
 
 script_directory = os.path.dirname(os.path.abspath(__file__))

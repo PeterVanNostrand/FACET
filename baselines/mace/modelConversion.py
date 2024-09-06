@@ -1,20 +1,19 @@
 # import graphviz
 import numpy as np
-from pysmt.shortcuts import (FALSE, GE, GT, LE, TRUE, And, Bool, EqualsOrIff, Ite, Not, Or, Plus, Real, Symbol, Times,
-                             ToReal)
-from pysmt.typing import REAL
-from sklearn.tree import _tree  # , export_graphviz
+from sklearn.tree import _tree # , export_graphviz
+from pysmt.shortcuts import *
+from pysmt.typing import *
+
 
 # # Hoare triple examples:
 #     # https://www.cs.cmu.edu/~aldrich/courses/654-sp07/slides/7-hoare.pdf
 #     # https://cs.stackexchange.com/questions/86936/finding-weakest-precondition
 
 ################################################################################
-# Tree-related Methods
+##                                                         Tree-related Methods
 ################################################################################
 
-
-def tree2py(tree, feature_names, return_value='class_idx_max', tree_idx=''):
+def tree2py(tree, feature_names, return_value = 'class_idx_max', tree_idx = ''):
     tree_ = tree.tree_
     feature_name = [
         feature_names[i] if i != _tree.TREE_UNDEFINED else 'undefined!'
@@ -23,7 +22,6 @@ def tree2py(tree, feature_names, return_value='class_idx_max', tree_idx=''):
     lines = list()
     lines.append('def predict_tree{}({}):'.format(tree_idx, ', '.join(feature_names)))
     #
-
     def recurse(node, depth):
         indent = '\t' * depth
         if tree_.feature[node] != _tree.TREE_UNDEFINED:
@@ -50,7 +48,7 @@ def tree2py(tree, feature_names, return_value='class_idx_max', tree_idx=''):
     return '\n'.join(lines)
 
 
-def tree2c(tree, feature_names, return_value='class_idx_max', tree_idx=''):
+def tree2c(tree, feature_names, return_value = 'class_idx_max', tree_idx = ''):
     tree_ = tree.tree_
     feature_name = [
         feature_names[i] if i != _tree.TREE_UNDEFINED else 'undefined!'
@@ -62,7 +60,6 @@ def tree2c(tree, feature_names, return_value='class_idx_max', tree_idx=''):
     lines.append('\tvar output : int;')
     lines.append('')
     #
-
     def recurse(node, depth):
         indent = '\t' * depth
         if tree_.feature[node] != _tree.TREE_UNDEFINED:
@@ -91,7 +88,7 @@ def tree2c(tree, feature_names, return_value='class_idx_max', tree_idx=''):
     return '\n'.join(lines)
 
 
-def tree2formula(tree, model_symbols, return_value='class_idx_max', tree_idx=''):
+def tree2formula(tree, model_symbols, return_value = 'class_idx_max', tree_idx = ''):
     tree_ = tree.tree_
     feature_names = list(model_symbols['counterfactual'].keys())
     feature_name = [
@@ -129,14 +126,14 @@ def tree2formula(tree, model_symbols, return_value='class_idx_max', tree_idx='')
 
 
 ################################################################################
-# Forest-related Methods
+##                                                       Forest-related Methods
 ################################################################################
 
 def forest2py(forest, feature_names):
     lines = []
     for tree_idx in range(len(forest.estimators_)):
         tree = forest.estimators_[tree_idx]
-        lines.append(tree2py(tree, feature_names, return_value='class_prob_array', tree_idx=tree_idx))
+        lines.append(tree2py(tree, feature_names, return_value = 'class_prob_array', tree_idx = tree_idx))
         lines.append('')
         lines.append('')
     lines.append('def predict_forest({}):'.format(', '.join(feature_names)))
@@ -162,7 +159,7 @@ def forest2c(forest, feature_names):
     lines = []
     for tree_idx in range(len(forest.estimators_)):
         tree = forest.estimators_[tree_idx]
-        lines.append(tree2c(tree, feature_names, return_value='class_prob_array', tree_idx=tree_idx))
+        lines.append(tree2c(tree, feature_names, return_value = 'class_prob_array', tree_idx = tree_idx))
         lines.append('')
         lines.append('')
     lines.append('proc predict_forest({} : int) : int = {{'.format(', '.join(feature_names)))
@@ -193,7 +190,7 @@ def forest2formula(forest, model_symbols):
         model_symbols['aux'][f'p1{tree_idx}'] = {'symbol': Symbol(f'p1{tree_idx}', REAL)}
 
     tree_formulas = And([
-        tree2formula(forest.estimators_[tree_idx], model_symbols, return_value='class_prob_array', tree_idx=tree_idx)
+        tree2formula(forest.estimators_[tree_idx], model_symbols, return_value = 'class_prob_array', tree_idx = tree_idx)
         for tree_idx in range(len(forest.estimators_))
     ])
     output_formula = Ite(
@@ -212,7 +209,7 @@ def forest2formula(forest, model_symbols):
 
 
 ################################################################################
-# Logistic Regression-related Methods
+##                                          Logistic Regression-related Methods
 ################################################################################
 
 def lr2py(model, feature_names):
@@ -275,7 +272,7 @@ def lr2formula(model, model_symbols):
                     Times(
                         ToReal(model_symbols['counterfactual'][symbol_key]['symbol']),
                         Real(float(model.coef_[0][idx]))
-                    )
+                        )
                     for idx, symbol_key in enumerate(model_symbols['counterfactual'].keys())
                 ])
             ),
@@ -286,7 +283,7 @@ def lr2formula(model, model_symbols):
 
 
 ################################################################################
-# Multi-Layer Perceptron-related Methods
+##                                       Multi-Layer Perceptron-related Methods
 ################################################################################
 
 def mlp2py(model):
@@ -332,8 +329,7 @@ def mlp2c(model, feature_names):
         interlayer_weight_matrix = model.coefs_[interlayer_idx]
         for prev_layer_feature_idx in range(interlayer_weight_matrix.shape[0]):
             for curr_layer_feature_idx in range(interlayer_weight_matrix.shape[1]):
-                all_weight_variables.append('w_{}_{}_{}'.format(
-                    interlayer_idx, prev_layer_feature_idx, curr_layer_feature_idx))
+                all_weight_variables.append('w_{}_{}_{}'.format(interlayer_idx, prev_layer_feature_idx, curr_layer_feature_idx))
 
     all_feature_variables = []
     for layer_idx in range(len(layer_widths)):
@@ -361,8 +357,7 @@ def mlp2c(model, feature_names):
         interlayer_weight_matrix = model.coefs_[interlayer_idx]
         for prev_layer_feature_idx in range(interlayer_weight_matrix.shape[0]):
             for curr_layer_feature_idx in range(interlayer_weight_matrix.shape[1]):
-                lines.append('\tw_{}_{}_{} = {};'.format(interlayer_idx, prev_layer_feature_idx,
-                             curr_layer_feature_idx, interlayer_weight_matrix[prev_layer_feature_idx, curr_layer_feature_idx]))
+                lines.append('\tw_{}_{}_{} = {};'.format(interlayer_idx, prev_layer_feature_idx, curr_layer_feature_idx, interlayer_weight_matrix[prev_layer_feature_idx, curr_layer_feature_idx]))
     # TODO... why don't lines below work??
     # for layer_idx in range(len(layer_widths) - 1):
     #     for prev_layer_feature_idx in range(layer_widths[layer_idx]):
@@ -375,8 +370,7 @@ def mlp2c(model, feature_names):
     lines.append('\t%% initial value set to node bias')
     for layer_idx in range(1, len(layer_widths)):
         for feature_idx in range(layer_widths[layer_idx]):
-            lines.append('\tf_{}_{} = {};'.format(layer_idx, feature_idx,
-                         model.intercepts_[layer_idx - 1][feature_idx]))
+            lines.append('\tf_{}_{} = {};'.format(layer_idx, feature_idx, model.intercepts_[layer_idx - 1][feature_idx]))
 
     lines.append('')
 
@@ -389,8 +383,7 @@ def mlp2c(model, feature_names):
             tmp_strings = []
             for prev_layer_feature_idx in range(layer_widths[layer_idx - 1]):
                 prev_layer_feature = 'f_{}_{}'.format(layer_idx - 1, prev_layer_feature_idx)
-                tmp_strings.append('({} * w_{}_{}_{})'.format(prev_layer_feature, layer_idx -
-                                   1, prev_layer_feature_idx, curr_layer_feature_idx))
+                tmp_strings.append('({} * w_{}_{}_{})'.format(prev_layer_feature, layer_idx - 1, prev_layer_feature_idx, curr_layer_feature_idx))
             lines.append('\t{} = {} + {};'.format(curr_layer_feature, curr_layer_feature, ' + '.join(tmp_strings)))
             #
             lines.append('\tif ({} > 0) {{'.format(curr_layer_feature))
@@ -403,7 +396,7 @@ def mlp2c(model, feature_names):
 
     # using the final value set to curr_layer_feature (remember it's only 1 value because binary classification)
     lines.append('')
-    lines.append('\toutput = {};'.format(curr_layer_feature))  # TODO: if > 1, return TRUE, else FALSE
+    lines.append('\toutput = {};'.format(curr_layer_feature)) # TODO: if > 1, return TRUE, else FALSE
     lines.append('\treturn output;')
     lines.append('')
     lines.append('}')
@@ -419,12 +412,14 @@ def mlp2formula(model, model_symbols):
         layer_widths.append(model.coefs_[interlayer_idx].shape[0])
     layer_widths.append(model.coefs_[-1].shape[1])
 
+
     for layer_idx in range(1, len(layer_widths)):
         for feature_idx in range(layer_widths[layer_idx]):
             feature_string_1 = 'f_{}_{}_pre_nonlin'.format(layer_idx, feature_idx)
             feature_string_2 = 'f_{}_{}_post_nonlin'.format(layer_idx, feature_idx)
             model_symbols['aux'][feature_string_1] = {'symbol': Symbol(feature_string_1, REAL)}
             model_symbols['aux'][feature_string_2] = {'symbol': Symbol(feature_string_2, REAL)}
+
 
     formula_assign_feature_values = []
     for layer_idx in range(1, len(layer_widths)):
@@ -497,3 +492,11 @@ def mlp2formula(model, model_symbols):
     tmp.append(output_formula)
 
     return And(tmp)
+
+
+
+
+
+
+
+

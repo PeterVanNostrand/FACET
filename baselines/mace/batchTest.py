@@ -1,28 +1,29 @@
-import argparse
 import os
 import pickle
-from datetime import datetime
-from pprint import pprint
-from random import seed
-
+import argparse
 import numpy as np
 
-import baselines.mace.generateFTExplanations as generateFTExplanations
-import baselines.mace.generateMOExplanations as generateMOExplanations
-# try:
-import baselines.mace.generateSATExplanations as generateSATExplanations
+from pprint import pprint
+from datetime import datetime
+
 import baselines.mace.loadData as loadData
 import baselines.mace.loadModel as loadModel
 
+
+# try:
+import baselines.mace.generateSATExplanations as generateSATExplanations
 # except:
 #     print('[ENV WARNING] activate virtualenv to allow for testing MACE or MINT')
 
+import baselines.mace.generateMOExplanations as generateMOExplanations
+import baselines.mace.generateFTExplanations as generateFTExplanations
 # try:
 #     import baselines.mace.generateARExplanations as generateARExplanations
 # except:
 #     print('[ENV WARNING] deactivate virtualenv to allow for testing Actionable Recourse')
 
 
+from random import seed
 RANDOM_SEED = 54321
 seed(RANDOM_SEED)  # set the random seed so that the random permutations can be reproduced again
 np.random.seed(RANDOM_SEED)

@@ -1,9 +1,7 @@
-import os
 from random import seed
-
+import os
 import numpy as np
 import pandas as pd
-
 pd.options.mode.chained_assignment = None
 
 RANDOM_SEED = 54321
@@ -50,7 +48,7 @@ def load_german_data():
     processed_df = processed_df.reset_index(drop=True)
     processed_df = processed_df.dropna()  # drop all rows that include NAN (some exist in isMarried column, possibly elsewhere as well)
     processed_df.to_csv(processed_file, header=True, index=False)
-    assert (processed_df.shape[0] == 1000)
+    assert(processed_df.shape[0] == 1000)
 
     return processed_df.astype('float64')
 

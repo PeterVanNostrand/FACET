@@ -1,11 +1,10 @@
 import os
-import urllib.request
-from random import shuffle
-
+import sys
 import numpy as np
 import pandas as pd
-
+import urllib.request
 import baselines.mace.fair_utils_data as ut
+from random import seed, shuffle
 
 # SEED = 1122334455
 # seed(SEED) # set the random seed so that the random permutations can be reproduced again

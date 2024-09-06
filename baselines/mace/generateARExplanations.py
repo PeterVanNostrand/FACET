@@ -1,9 +1,12 @@
+import os
 import time
-
-import normalizedDistance
 import numpy as np
 import pandas as pd
-from recourse.builder import ActionSet, RecourseBuilder
+import normalizedDistance
+
+from pprint import pprint
+from recourse.builder import RecourseBuilder
+from recourse.builder import ActionSet
 
 
 def genExp(model_trained, factual_sample, norm_type, dataset_obj):

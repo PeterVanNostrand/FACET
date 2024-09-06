@@ -12,7 +12,7 @@ from dataset import load_data
 from manager import MethodManager
 from utilities.metrics import average_distance, classification_metrics, percent_valid
 
-from .experiments import FACET_DEFAULT_PARAMS, FACET_TUNED_M, RF_DEFAULT_PARAMS, TUNED_FACET_SD
+from .experiments import FACET_DEFAULT_PARAMS, FACET_TUNED_M, FACET_TUNED_NRECTS, RF_DEFAULT_PARAMS, TUNED_FACET_SD
 
 
 def vary_min_robustness(ds_names, min_robust=[2, 4, 6, 8, 10], iterations=[0, 1, 2, 3, 4], fmod=None, ntrees=10, max_depth=5):
@@ -45,7 +45,8 @@ def vary_min_robustness(ds_names, min_robust=[2, 4, 6, 8, 10], iterations=[0, 1,
     for iter in iterations:
         for ds in ds_names:
             params["FACET"]["facet_sd"] = TUNED_FACET_SD[ds]
-            params["FACET"]["facet_sd"] = FACET_TUNED_M[ds]
+            params["FACET"]["rbv_num_interval"] = FACET_TUNED_M[ds]
+            params["FACET"]["facet_nrects"] = FACET_TUNED_NRECTS[ds]
             # configure run info
             test_size = 0.2
             n_explain = 20
@@ -60,7 +61,22 @@ def vary_min_robustness(ds_names, min_robust=[2, 4, 6, 8, 10], iterations=[0, 1,
                 os.makedirs(output_path)
 
             # load and split the datset using random state for repeatability. Select samples to explain
-            x, y = load_data(ds, preprocessing=preprocessing)
+            if preprocessing == "Normalize":
+                normalize_numeric = True
+                normalize_discrete = True
+                do_convert = False
+                # MACE requires integer discrete features, this is fine as the RF is the same either way
+                # we will later normalize when computing the explanation distance later for comparability
+                if explainer == "MACE":
+                    normalize_discrete = False
+                    if ds == "adult":  # will treat numeric-real as numeric-int
+                        normalize_numeric = False  # this handles a pysmt bug with mixed-numeric and non-numeric
+                        do_convert = True
+                if explainer == "RFOCSE":
+                    normalize_discrete = False
+                    normalize_numeric = True
+
+            x, y, ds_info = load_data(ds, normalize_numeric, normalize_discrete, do_convert)
             indices = np.arange(start=0, stop=x.shape[0])
             xtrain, xtest, ytrain, ytest, idx_train, idx_test = train_test_split(
                 x, y, indices, test_size=test_size, shuffle=True, random_state=random_state)
@@ -84,7 +100,7 @@ def vary_min_robustness(ds_names, min_robust=[2, 4, 6, 8, 10], iterations=[0, 1,
 
             # prepare the explainer, handles any neccessary preprocessing
             prep_start = time.time()
-            manager.explainer.prepare_dataset(x, y)
+            manager.explainer.prepare_dataset(x, y, ds_info)
             manager.prepare(xtrain=xtrain, ytrain=ytrain)
             prep_end = time.time()
             prep_time = prep_end-prep_start

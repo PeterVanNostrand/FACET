@@ -10,7 +10,6 @@ http://stackoverflow.com/a/23388116/568249
 """
 
 import inspect
-
 from IPython.terminal.embed import InteractiveShellEmbed
 from traitlets.config import Config
 
@@ -25,14 +24,12 @@ prompt_config.out_template = 'N.Out<\\#>: '
 banner_msg = ["** ENTERING NESTED INTERPRETER **",
               "Hit Ctrl-D to exit interpreter and continue program.",
               "Note that if you use %kill_embedded, you can fully deactivate",
-              "This embedded instance so it will never turn on again."]
+              "This embedded instance so it will never turn on again." ]
 
 banner_msg = "\n".join(banner_msg)
 exit_msg = '** LEAVING NESTED INTERPRETER **'
 
 # Wrap it in a function for more context:
-
-
 def ipsh():
     ipshell = InteractiveShellEmbed(config=cfg, banner1=banner_msg, exit_msg=exit_msg)
     frame = inspect.currentframe().f_back

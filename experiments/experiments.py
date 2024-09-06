@@ -44,20 +44,32 @@ AVG_CF_NN_DIST = {
 # TUNED_FACET_RADII = AVG_NN_DIST
 
 FACET_TUNED_M = {
-    "adult": 16,  # TODO TUNE!
+    "adult": 16,
     "cancer": 16,
-    "compas": 16,  # TODO TUNE!
-    "credit": 16,  # TODO TUNE!
+    "compas": 16,
+    "credit": 16,
     "glass": 16,
     "magic": 16,
     "spambase": 16,
     "vertebral": 16,
-    "loans": 16,  # TODO tune on loans
+    "loans": 16,
+}
+
+FACET_TUNED_NRECTS = {
+    "adult": 50_000,
+    "cancer": 20_000,
+    "compas": 20_000,
+    "credit": 50_000,
+    "glass": 20_000,
+    "magic": 20_000,
+    "spambase": 20_000,
+    "vertebral": 20_000,
+    "loans": 20_000,
 }
 
 
 MACE_DEFAULT_PARAMS = {
-    "mace_maxtime": None,
+    "mace_maxtime": 300,
     "mace_epsilon": 1e-7,
     "mace_verbose": False
 }
@@ -87,7 +99,7 @@ FACET_DEFAULT_PARAMS = {
 RFOCSE_DEFAULT_PARAMS = {
     "rfoce_transform": False,
     "rfoce_offset": 0.0001,
-    "rfoce_maxtime": None
+    "rfoce_maxtime": 300
 }
 
 AFT_DEFAULT_PARAMS = {
@@ -183,7 +195,6 @@ def execute_run(dataset_name: str, explainer: str, params: dict, output_path: st
         f.write(json_text)
 
     # load and split the datset using random state for repeatability. Select samples to explain
-
     if preprocessing == "Normalize":
         normalize_numeric = True
         normalize_discrete = True

@@ -27,7 +27,6 @@ if TYPE_CHECKING:
 
 
 class FACET(Explainer):
-    # TODO Implement per axis minimum robustness paramater, and minimum robustness along all axes
     def __init__(self, manager, hyperparameters: dict):
         self.manager: MethodManager = manager
         self.model_type = manager.model_type
@@ -962,13 +961,13 @@ class FACET(Explainer):
         xprime[failed_explanation] = np.tile(np.inf, x.shape[1])
         # replace infinite values for invalid explanation
         xprime[idx_inf] = np.tile(np.inf, x.shape[1])
-        # convert regions to an array
-        regions = np.array(regions)
 
         if self.verbose:
             print("failed x':", failed_explanation.sum())
 
         if return_regions:
+            # convert regions to an array
+            regions = np.array(regions)
             return xprime, regions
         else:
             return xprime

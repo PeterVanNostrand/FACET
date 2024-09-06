@@ -6,6 +6,7 @@ import re
 from experiments.compare_methods import compare_methods
 from experiments.experiments import DEFAULT_PARAMS, FACET_TUNED_M, TUNED_FACET_SD, execute_run
 from experiments.perturbations import perturb_explanations
+from experiments.runall_paper import runall
 from experiments.vary_enum import vary_enum
 from experiments.vary_eps import vary_eps
 from experiments.vary_k import vary_k
@@ -18,12 +19,6 @@ from experiments.vary_robustness import vary_min_robustness
 from experiments.vary_rstep import vary_rstep
 from experiments.vary_sigma import vary_sigma
 from experiments.widths import compute_widths
-
-# TODO: Currently ignoring feature actionability
-# TODO: 3. Get MACE running for this data
-# TODO: 4. Implement feature typing and actionability to FACET
-# TODO: 5. Get RFOCSE working
-# TODO: 6. Get AFT working
 
 
 def check_create_directory(dir_path="./results/"):
@@ -98,6 +93,8 @@ if __name__ == "__main__":
     all_explaiers = ["FACET", "OCEAN", "RFOCSE", "AFT", "MACE"]
 
     parser = argparse.ArgumentParser(description='Run FACET Experiments')
+    parser.add_argument("--replicate_paper", action="store_true")
+    parser.add_argument("--replicate_paper_fast", action="store_true")
     parser.add_argument("--expr", choices=["simple", "ntrees", "nrects",
                         "eps", "sigma", "enum", "compare", "k", "rinit", "rstep",
                                            "m", "nconstraints", "perturb", "widths", "minrobust"], default="simple")
@@ -122,10 +119,16 @@ if __name__ == "__main__":
     }
     args.model = MODEL_TYPES[args.model]
 
-    print(args)
+    if not (args.replicate_paper or args.replicate_paper_fast):
+        print(args)
 
+    # recreate all the paper experiments
+    if args.replicate_paper == True:
+        runall()
+    elif args.replicate_paper_fast == True:
+        runall(FAST=True)
     # Do a single quick run with one explaienr and one dataset
-    if args.expr == "simple":
+    elif args.expr == "simple":
         simple_run(ds_name=args.ds[0], explainer=args.method[0],
                    random_state=args.it[0], ntrees=args.ntrees, max_depth=args.maxdepth, model_type=args.model)
     # Vary the number of trees and compare explaienrs
