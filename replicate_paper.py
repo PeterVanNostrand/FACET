@@ -4,8 +4,8 @@ import os
 import re
 
 from experiments.runall_paper import (runall, runall_compare_methods, runall_gradient_boosting_ensemble,
-                                      runall_index_scaling, runall_index_vs_linear, runall_personalization,
-                                      runall_perturbations)
+                                      runall_index_scaling, runall_index_vs_linear, runall_ntrees,
+                                      runall_personalization, runall_perturbations)
 
 if __name__ == "__main__":
 
@@ -21,6 +21,7 @@ if __name__ == "__main__":
     parser.add_argument("--fig10", action="store_true")
     parser.add_argument("--fig11", action="store_true")
     parser.add_argument("--fig12", action="store_true")
+    parser.add_argument("--fig13_14", action="store_true")
     # parse all args
     args = parser.parse_args()
 
@@ -52,3 +53,5 @@ if __name__ == "__main__":
             runall_index_scaling(FAST=FAST)
         if args.fig12:
             runall_index_vs_linear(FAST=FAST)
+        if args.fig13_14:
+            runall_ntrees(FAST=FAST)

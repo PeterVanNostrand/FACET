@@ -1,9 +1,10 @@
-import pandas as pd
 import os
+
+import pandas as pd
 from tqdm.auto import tqdm
 
-from .experiments import execute_run
-from .experiments import TUNED_FACET_SD, FACET_DEFAULT_PARAMS, OCEAN_DEFAULT_PARAMS, RF_DEFAULT_PARAMS, MACE_DEFAULT_PARAMS, FACET_TUNED_M
+from .experiments import (FACET_DEFAULT_PARAMS, FACET_TUNED_M, FACET_TUNED_NRECTS, MACE_DEFAULT_PARAMS,
+                          OCEAN_DEFAULT_PARAMS, RF_DEFAULT_PARAMS, TUNED_FACET_SD, execute_run)
 
 
 def vary_ntrees(ds_names, explainers=["FACET", "OCEAN"], ntrees=[5, 10, 15],
@@ -44,6 +45,7 @@ def vary_ntrees(ds_names, explainers=["FACET", "OCEAN"], ntrees=[5, 10, 15],
                     params["RandomForest"]["rf_ntrees"] = ntree
                     params["FACET"]["facet_sd"] = TUNED_FACET_SD[ds]
                     params["FACET"]["rbv_num_interval"] = FACET_TUNED_M[ds]
+                    params["FACET"]["facet_nrects"] = FACET_TUNED_NRECTS[ds]
 
                     run_result = execute_run(
                         dataset_name=ds,

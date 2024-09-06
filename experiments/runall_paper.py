@@ -6,6 +6,7 @@ from experiments.vary_k import vary_k
 from experiments.vary_m import vary_m
 from experiments.vary_nconstraints import vary_nconstraints
 from experiments.vary_nrects import vary_nrects
+from experiments.vary_ntrees import vary_ntrees
 from experiments.vary_robustness import vary_min_robustness
 
 paper_datasets = ["adult", "cancer", "compas", "credit", "glass", "magic", "spambase", "vertebral"]
@@ -368,6 +369,44 @@ def runall_index_vs_linear(FAST):
     )
 
     print("Results for figure 12 and figure 12 appendix done!")
+
+
+def runall_ntrees(FAST):
+    print("-----------------------------------------")
+    print("Generating result for figure 13/14 and figure 13/14 appendix...")
+
+    max_depth = 5
+    fmod = "fig13_14"
+
+    iterations = [0] if FAST else [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    run_ds = ["cancer", "magic", "spambase", "compas", "glass", "vertebral"]
+    run_ds = ["credit", "magic", "spambase", "compas", "glass", "vertebral"]  # !DEBUG
+
+    # FACET vs OCEAN on most datasets
+    ntrees_vals = [10, 50, 100, 200, 300, 400, 500]
+    ntrees_vals = [10, 50]  # !DEBUG
+    vary_ntrees(
+        ds_names=run_ds,
+        explainers=["FACET", "OCEAN"],
+        ntrees=ntrees_vals,
+        iterations=iterations,
+        fmod=fmod,
+        max_depth=max_depth
+    )
+
+    # OCEAN is very slow on the adult and credit datasets, so we run those for smaller ensemble sizes
+    if False:  # !DEBUG
+        slow_ds = ["adult", "credit"]
+        vary_ntrees(
+            ds_names=slow_ds,
+            explainers=["FACET", "OCEAN"],
+            ntrees=[10, 50],
+            iterations=iterations,
+            fmod=fmod,
+            max_depth=max_depth
+        )
+
+    print("Results for figure 13/14 and figure 13/14 appendix done!")
 
 
 def runall(FAST=False, SKIP_SLOW_METHODS=False):
