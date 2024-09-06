@@ -268,7 +268,7 @@ def runall_personalization(FAST):
     }
     for ds in all_ds:
         vary_nconstraints(
-            ds_names=all_ds,
+            ds_names=ds,
             nconstraints=nconstraints_vals[ds],
             iterations=iterations,
             fmod=fmod, ntrees=ntrees,
