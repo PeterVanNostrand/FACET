@@ -4,7 +4,8 @@ import os
 import re
 
 from experiments.runall_paper import (runall, runall_compare_methods, runall_gradient_boosting_ensemble,
-                                      runall_personalization, runall_perturbations)
+                                      runall_index_scaling, runall_index_vs_linear, runall_personalization,
+                                      runall_perturbations)
 
 if __name__ == "__main__":
 
@@ -18,6 +19,8 @@ if __name__ == "__main__":
     parser.add_argument("--tab4", action="store_true")
     parser.add_argument("--fig9", action="store_true")
     parser.add_argument("--fig10", action="store_true")
+    parser.add_argument("--fig11", action="store_true")
+    parser.add_argument("--fig12", action="store_true")
     # parse all args
     args = parser.parse_args()
 
@@ -28,7 +31,7 @@ if __name__ == "__main__":
     print("Replicating FACET paper results...")
     if FAST and SKIP:
         print("We've skipped some iterations and left off the slowest baseline methods to save you time!")
-        print("For 100% complete results see '--all_iterations' and 'all_baselines'")
+        print("For 100% matching results use '--all_iterations' (slow) and '--all_baselines' (VERY slow)")
     if not FAST:
         print("You've diabled 'fast' mode which runs slower experiments for 1 iteration instead of 10. This will take a long time")
     if not SKIP:
@@ -45,3 +48,7 @@ if __name__ == "__main__":
             runall_perturbations(FAST=FAST, SKIP_SLOW_METHODS=SKIP)
         if args.fig10:
             runall_personalization(FAST=FAST)
+        if args.fig11:
+            runall_index_scaling(FAST=FAST)
+        if args.fig12:
+            runall_index_vs_linear(FAST=FAST)

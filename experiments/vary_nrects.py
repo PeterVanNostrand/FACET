@@ -3,14 +3,23 @@ import os
 import pandas as pd
 from tqdm.auto import tqdm
 
-from .experiments import (FACET_DEFAULT_PARAMS, FACET_TUNED_M,
-                          RF_DEFAULT_PARAMS, TUNED_FACET_SD, execute_run)
+from .experiments import FACET_DEFAULT_PARAMS, FACET_TUNED_M, RF_DEFAULT_PARAMS, TUNED_FACET_SD, execute_run
 
 
-def vary_nrects(ds_names, nrects=[5, 10, 15], iterations=[0, 1, 2, 3, 4], fmod=None, ntrees=10, max_depth=5):
-    '''
+def vary_nrects(ds_names: list[str], nrects: list[int] = [5, 10, 15], iterations: list[int] = [0, 1, 2, 3, 4], fmod: str = None, ntrees: int = 10, max_depth: int = 5, m: int = None, facet_search: str = None):
+    """
     Experiment to observe the effect of the the number of features on explanation
-    '''
+
+    Args:
+        ds_names (list[str]): list of dataset name strings
+        nrects (list[int], optional): number of hyperrectangles for FACET to generate
+        iterations (list[int], optional): random seeds to run as iterations
+        fmod (str, optional): file path extension to move results
+        ntrees (int, optional): number of trees to use in the ensemble being explained
+        max_depth (int, optional): the maximum depth of the ensemble being explained
+        m (int, optional): the number of splits per axis to use in FACET's index
+        facet_search (str, optional): what strategy to use for searching FACET's index BitVector or Linear
+    """
     print("Varying number of hyperrectangles:")
     print("\tds_names:", ds_names)
     print("\tnrects:", nrects)
@@ -32,6 +41,9 @@ def vary_nrects(ds_names, nrects=[5, 10, 15], iterations=[0, 1, 2, 3, 4], fmod=N
     params["RandomForest"]["rf_ntrees"] = ntrees
     params["RandomForest"]["rf_maxdepth"] = max_depth
 
+    if facet_search is not None:
+        params["FACET"]["facet_search"] = facet_search
+
     total_runs = len(ds_names) * len(nrects) * len(iterations)
     progress_bar = tqdm(total=total_runs, desc="Overall Progress", position=0, disable=False)
 
@@ -41,7 +53,10 @@ def vary_nrects(ds_names, nrects=[5, 10, 15], iterations=[0, 1, 2, 3, 4], fmod=N
                 # set the number of trees
                 params["FACET"]["facet_nrects"] = nr
                 params["FACET"]["facet_sd"] = TUNED_FACET_SD[ds]
-                params["FACET"]["rbv_num_interval"] = FACET_TUNED_M[ds]
+                if m is not None:
+                    params["FACET"]["rbv_num_interval"] = m
+                else:
+                    params["FACET"]["rbv_num_interval"] = FACET_TUNED_M[ds]
                 run_result = execute_run(
                     dataset_name=ds,
                     explainer=explainer,
@@ -61,6 +76,7 @@ def vary_nrects(ds_names, nrects=[5, 10, 15], iterations=[0, 1, 2, 3, 4], fmod=N
                     "max_depth": params["RandomForest"]["rf_maxdepth"],
                     "n_rects": nr,
                     "iteration": iter,
+                    "facet_search": facet_search,
                     **run_result
                 }
                 experiment_results = pd.DataFrame([df_item])

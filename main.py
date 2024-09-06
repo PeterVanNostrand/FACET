@@ -93,11 +93,9 @@ if __name__ == "__main__":
     all_explaiers = ["FACET", "OCEAN", "RFOCSE", "AFT", "MACE"]
 
     parser = argparse.ArgumentParser(description='Run FACET Experiments')
-    parser.add_argument("--replicate_paper", action="store_true")
-    parser.add_argument("--replicate_paper_fast", action="store_true")
-    parser.add_argument("--expr", choices=["simple", "ntrees", "nrects",
-                        "eps", "sigma", "enum", "compare", "k", "rinit", "rstep",
-                                           "m", "nconstraints", "perturb", "widths", "minrobust"], default="simple")
+    expr_types = ["simple", "ntrees", "nrects", "eps", "sigma", "enum", "compare",
+                  "k", "rinit", "rstep", "m", "nconstraints", "perturb", "widths", "minrobust"]
+    parser.add_argument("--expr", choices=expr_types, default="simple")
     parser.add_argument("--ds", type=str, nargs="+", default=["vertebral"])
     parser.add_argument("--method", type=str, nargs="+", choices=all_explaiers, default=["FACET"])
     parser.add_argument("--values", type=float, nargs="+", default=None)
@@ -119,16 +117,10 @@ if __name__ == "__main__":
     }
     args.model = MODEL_TYPES[args.model]
 
-    if not (args.replicate_paper or args.replicate_paper_fast):
-        print(args)
+    print(args)
 
-    # recreate all the paper experiments
-    if args.replicate_paper == True:
-        runall()
-    elif args.replicate_paper_fast == True:
-        runall(FAST=True)
     # Do a single quick run with one explaienr and one dataset
-    elif args.expr == "simple":
+    if args.expr == "simple":
         simple_run(ds_name=args.ds[0], explainer=args.method[0],
                    random_state=args.it[0], ntrees=args.ntrees, max_depth=args.maxdepth, model_type=args.model)
     # Vary the number of trees and compare explaienrs

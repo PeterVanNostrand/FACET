@@ -3,7 +3,9 @@
 from experiments.compare_methods import compare_methods
 from experiments.perturbations import perturb_explanations
 from experiments.vary_k import vary_k
+from experiments.vary_m import vary_m
 from experiments.vary_nconstraints import vary_nconstraints
+from experiments.vary_nrects import vary_nrects
 from experiments.vary_robustness import vary_min_robustness
 
 paper_datasets = ["adult", "cancer", "compas", "credit", "glass", "magic", "spambase", "vertebral"]
@@ -243,7 +245,7 @@ def runall_personalization(FAST):
     max_depth = None
     iterations = [0] if FAST else [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
-    # ###### Subfigure (a, b ,c) - test the minimum robustness parameter for subfigures
+    # Subfigure (a, b ,c) - test the minimum robustness parameter for subfigures
     min_roubust_vals = [0.001, 0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.035, 0.04,
                         0.045, 0.05, 0.055, 0.06, 0.065, 0.07, 0.075, 0.08, 0.085, 0.09, 0.095, 0.1]
     vary_min_robustness(
@@ -288,6 +290,84 @@ def runall_personalization(FAST):
 
     print("Results for figure 10 and figure 10 appendix done!")
     pass
+
+
+def runall_index_scaling(FAST):
+    print("-----------------------------------------")
+    print("Generating result for figure 11 and figure 11 appendix...")
+
+    ntrees = 100
+    max_depth = None
+    fmod = "fig11"
+
+    # ##### Subfigures (a, b, c, d) - varying the number of FACET's hyperrectangles
+    index_splits_per_axis = 4
+    iterations = [0] if FAST else [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    all_ds = ["adult", "cancer", "credit", "magic", "spambase", "compas", "glass", "vertebral"]
+    nrects_vals = [1_000, 5_000, 10_000, 20_000, 30_000, 40_000, 50_000, 60_000, 70_000, 80_000, 90_000, 100_000]
+
+    vary_nrects(
+        ds_names=all_ds,
+        nrects=nrects_vals,
+        iterations=iterations,
+        fmod=fmod,
+        ntrees=ntrees,
+        max_depth=max_depth,
+        m=index_splits_per_axis,
+        facet_search="BitVector"
+    )
+
+    # ##### Subfigure (e) - varying the number of split values used in FACET's index
+    nsplit_vals = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
+    vary_m(
+        ds_names=all_ds,
+        ms=nsplit_vals,
+        iterations=iterations,
+        fmod=fmod,
+        ntrees=ntrees,
+        max_depth=max_depth
+    )
+
+    print("Results for figure 11 and figure 11 appendix done!")
+
+
+def runall_index_vs_linear(FAST):
+    print("-----------------------------------------")
+    print("Generating result for figure 12 and figure 12 appendix...")
+
+    ntrees = 100
+    max_depth = 5
+    fmod = "fig12"
+
+    iterations = [0] if FAST else [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    all_ds = ["adult", "cancer", "credit", "magic", "spambase", "compas", "glass", "vertebral"]
+    nrects_vals = [1_000, 5_000, 10_000, 20_000, 30_000, 40_000, 50_000, 60_000, 70_000, 80_000, 90_000, 100_000]
+
+    # vary nrects with a straight linear search
+    vary_nrects(
+        ds_names=all_ds,
+        nrects=nrects_vals,
+        iterations=iterations,
+        fmod=fmod,
+        ntrees=ntrees,
+        max_depth=max_depth,
+        m=None,
+        facet_search="Linear"
+    )
+
+    # vary nrects with a FACET's BitVector index
+    vary_nrects(
+        ds_names=all_ds,
+        nrects=nrects_vals,
+        iterations=iterations,
+        fmod=fmod,
+        ntrees=ntrees,
+        max_depth=max_depth,
+        m=None,
+        facet_search="BitVector"
+    )
+
+    print("Results for figure 12 and figure 12 appendix done!")
 
 
 def runall(FAST=False, SKIP_SLOW_METHODS=False):
