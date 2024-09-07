@@ -380,11 +380,9 @@ def runall_ntrees(FAST):
 
     iterations = [0] if FAST else [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     run_ds = ["cancer", "magic", "spambase", "compas", "glass", "vertebral"]
-    run_ds = ["credit", "magic", "spambase", "compas", "glass", "vertebral"]  # !DEBUG
 
     # FACET vs OCEAN on most datasets
     ntrees_vals = [10, 50, 100, 200, 300, 400, 500]
-    ntrees_vals = [10, 50]  # !DEBUG
     vary_ntrees(
         ds_names=run_ds,
         explainers=["FACET", "OCEAN"],
@@ -395,16 +393,15 @@ def runall_ntrees(FAST):
     )
 
     # OCEAN is very slow on the adult and credit datasets, so we run those for smaller ensemble sizes
-    if False:  # !DEBUG
-        slow_ds = ["adult", "credit"]
-        vary_ntrees(
-            ds_names=slow_ds,
-            explainers=["FACET", "OCEAN"],
-            ntrees=[10, 50],
-            iterations=iterations,
-            fmod=fmod,
-            max_depth=max_depth
-        )
+    slow_ds = ["adult", "credit"]
+    vary_ntrees(
+        ds_names=slow_ds,
+        explainers=["FACET", "OCEAN"],
+        ntrees=[10, 50],
+        iterations=iterations,
+        fmod=fmod,
+        max_depth=max_depth
+    )
 
     print("Results for figure 13/14 and figure 13/14 appendix done!")
 

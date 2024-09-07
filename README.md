@@ -1,35 +1,27 @@
 # FACET: Robust Counterfactual Explanation Analytics
 
-This repository provides FACET (Fast Actionable Counterfactuals for Ensembles of Trees) a method for generating counterfactual explanations of decisions made by tree ensembles. It is based on our papers *FACET: Robust Counterfactual Explanation Analytics* published at SIGMOD 2024 and a subsequent demo paper *Counterfactual Explanation Analytics: Empowering Lay Users to Take Action Against Consequential Automated Decisions* published at VLDB 2024. Short explainers, recorded talks, and open access to all our papers are available [here](https://petervannostrand.github.io/publications).
+This repository provides FACET (Fast Actionable Counterfactuals for Ensembles of Trees) a method for generating counterfactual explanations of decisions made by tree ensembles.
+It is based on two related papers
+
+- *[FACET: Robust Counterfactual Explanation Analytics](https://petervannostrand.github.io/publication/FACET-Robust-CFs)* published at SIGMOD 2024
+- A subsequent demonstration paper *[Counterfactual Explanation Analytics: Empowering Lay Users to Take Action Against Consequential Automated Decisions](https://petervannostrand.github.io/publication/Examining-Actionable-Recourse)* published at VLDB 2024
+- Short explainers, recorded talks, and free access to all our papers are available at [https://petervannostrand.github.io](https://petervannostrand.github.io/)
 
 ## FACET Overview
 
-FACET generates a novel type of explanation which we call *counterfactual regions* for decisions made by ensembles of trees. For an instance `x` a counterfactual region `R` defines a portions of the feature space where all points `x' in R` are guaranteed to be counterfactual to `x`, e.g. if `y=f(x)=A` then `y=f(x')=B`. We design FACET to be highly performant and support a wide variety of user parameters such that explanations can be interactively personalized to meet real users needs.
+FACET generates a novel type of explanation which we call *counterfactual regions* for decisions made by ensembles of trees.
+For an instance `x` a counterfactual region `R` defines a portions of the feature space where all points `x' in R` are guaranteed to be counterfactual to `x`,
+e.g. if `y=f(x)=A` then `y=f(x')=B` for all points `x'` in `R`.
+We design FACET to be highly performant and support a wide variety of user parameters such that explanations can be interactively personalized to meet real users needs
+and provide a demonstration of these interactions through our [demo user interface](#demo-user-interface).
 
-## Installation
+## Quick Start
 
-- This repository is validated on Python 3.10, [requirements.txt](./requirements.yml) contains a list of required packages formatted for use with Anaconda
-- FACET's web user interface is built using JavaScript and uses the Node Package Manager to install and build all dependencies
-- To run experiments with OCEAN, a state-of-the-art method we compare to, you will need a license for the Gurobi optimizer. Free academic licenses are available [here](https://www.gurobi.com/academia/academic-program-and-licenses/). Setup can be done as follows
+1. Follow our [installation guide](/instructions/INSTALLATION.md) to install require dependencies
+2. Run a quick experiment `python main.py --expr simple` or checkout one of the experiments below
+3. Launch the FACET web app `cd webapp` > `npm install` > open [http://localhost:5175/](http://localhost:5175)
 
-Download and install [Anaconda](https://www.anaconda.com/download/success) and [Node.js](https://nodejs.org/en/download/prebuilt-installer), be sure to check `Automatically install the necessary tools` during Node installation
-
-```bash
-# create the anaconda environment
-conda config --add channels https://conda.anaconda.org/gurobi
-conda create --name facet --file requirements.txt
-conda activate facet
-# if running SOTA comparison method MACE, install required solver
-pysmt-install --z3 --confirm-agreement
-# if running SOTA comparison method OCEAN install and activate the gurobi optimizer
-pip install --ignore-installed gurobipy
-grbgetkey <your_acadmic_license_key>
-# install JavaScript packages for the UI
-cd webapp
-npm install
-```
-
-Then continue with either running experiments or launching the Demo UI
+If you're reproducing the results of our paper see our comprehensive [reproducibility guide](/instructions/REPRODUCABILITY.md) for a dedicated workflow
 
 ## Running Experiments
 
@@ -39,9 +31,9 @@ For convenience [main.py](./main.py) takes a variety of command line arguments
 | ------------ | ---------------------------------------------------- | ----------------------------------------------------------------------------------------- |
 | `--expr`     | the experiment to run                                | `simple`, `ntrees`, `nrects`, `compare`, `k`, `m`, `nconstraints`, `perturb`, `minrobust` |
 | `--values`   | the experimental values to test                      | space separated list of values e.g. `10 50 100` or `0.1 0.2 0.3`                          |
-| `--ds`       | the dataset to explain                               | cancer, glass, magic, spambase, vertebral                                                 |
+| `--ds`       | the dataset to explain                               | a dataset name from the table below, e.g., `credit`                                       |
 | `--method`   | the XAI method to use                                | `FACET`, `OCEAN`, `RFOCSE`, `AFT`, `MACE`                                                 |
-| `--ntrees`   | the ensemble size to test                            | integer value, overridden in for `--expr` `ntrees`                                        |
+| `--ntrees`   | the ensemble size to test                            | integer value, overridden for `--expr` `ntrees`                                           |
 | `--maxdepth` | the max depth of ensemble trees                      | integer value, `-1` for no max depth                                                      |
 | `--it`       | the iteration to run, used as random seed            | space separated integer values                                                            |
 | `--fmod`     | a filename modifier append to append to results file | string value                                                                              |
@@ -53,7 +45,7 @@ All results are output to `./results/<expr_name>.csv`. Generated explanations, a
 
 Code for generating all figures from the paper are available in Jupyter Notebooks at `./figures/<expr_name>.ipynb` and should be pointed to a matching results csv file of your choice
 
-## Demo UI
+## Demo User Interface
 
 We develop a WebUI demonstrating FACET through a visual dashboard interface which we published at VLDB 2024's Demo Track
 
@@ -63,10 +55,10 @@ To launch this dashboard do the following
 # launch the app
 cd webapp
 npm install
-run run dev
+npm run dev
 ```
 
-Then navigate to `[http://localhost:5175/](http://localhost:5175/) in your browser
+Then navigate to [http://localhost:5175/](http://localhost:5175/) in your browser
 
 ## Datasets
 
