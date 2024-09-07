@@ -5,7 +5,7 @@ It is based on two related papers
 
 - *[FACET: Robust Counterfactual Explanation Analytics](https://petervannostrand.github.io/publication/FACET-Robust-CFs)* published at SIGMOD 2024
 - A subsequent demonstration paper *[Counterfactual Explanation Analytics: Empowering Lay Users to Take Action Against Consequential Automated Decisions](https://petervannostrand.github.io/publication/Examining-Actionable-Recourse)* published at VLDB 2024
-- Short explainers, recorded talks, and free access to all our papers are available at [https://petervannostrand.github.io](https://petervannostrand.github.io/)
+- Short explainers, recorded talks, and free access to all our papers are available at [petervannostrand.github.io](https://petervannostrand.github.io/)
 
 ## FACET Overview
 
