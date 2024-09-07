@@ -28,6 +28,11 @@ if __name__ == "__main__":
     FAST = not args.all_iterations
     SKIP = not args.all_baselines
 
+    # if we haven't gotten any arguements
+    if not any(vars(args).values()):
+        print("Please specify --all to replicate all experiments or --<expr-flag> for a specific experiment")
+        exit(0)
+
     print("-----------------------------------------")
     print("Replicating FACET paper results...")
     if FAST and SKIP:
@@ -41,6 +46,7 @@ if __name__ == "__main__":
         print("You've enabled 'fig_only' mode, this skips running the experiments and only remake the figs(s)/table(s)")
         print("'fig_only' mode assumes you already have the results CSVs and will error if they are are missing")
 
+    # if we're running all experiments
     if args.all_results:
         if not args.fig_only:
             runall(FAST=FAST, SKIP_SLOW_METHODS=SKIP)
@@ -53,7 +59,7 @@ if __name__ == "__main__":
         nb_index_evaluation()
         nb_vary_ntrees()
         print("All figures and tables saved!")
-
+    # if we're running a specific experiment(s)
     else:
         if args.tab3:
             if not args.fig_only:
