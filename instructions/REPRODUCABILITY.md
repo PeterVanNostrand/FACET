@@ -60,12 +60,12 @@ As the complete set of experiments for our paper took >100 hours to run, we take
 - By default we run most experiments for only 1 iteration rather than 10
   - To disable this add the `--all_iterations` flag (roughly 10x the runtime)
 - By default we skip running the INCREDIBLY slow MACE and RFOCSE comparison methods
-  - To disable this add the `--all_datasets` flag
+  - To disable this add the `--all_baselines` flag
   - This will HUGELY increase runtime for experiments containing these methods (Table 3 and Figure 9)
 - If you have sufficient excess hardware available you can safely launch multiple experiments in parallel using separate terminals
   - E.g., in one terminal `python requirements.py --tab3` and in another `python requirements.py --tab4`
   - This will save you time overall but may somewhat effect the accuracy of per sample explanation time metrics
-- Adding multiple experiment flags one execution is supported
+- Adding multiple experiment flags in one execution is supported
   - E.g., `python requirement.py --fig11 --fig12 --all_iterations`
 - Due to space limits in our paper we moved results for three dataset to [additional_results](/results/additional_results.md) here on GitHub
   - Figures and tables for these datasets are thus reproduced and saved separately as `<figname>_apdx` in reproduction
