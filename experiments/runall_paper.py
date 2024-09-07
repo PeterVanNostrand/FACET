@@ -417,7 +417,10 @@ def runall_ntrees(FAST):
 
 def runall(FAST=False, SKIP_SLOW_METHODS=False):
     print("Executing all paper experiments, this may take a while...")
-    runall_compare_methods(FAST=FAST, SKIP_SLOW_METHODS=SKIP_SLOW_METHODS)
-    runall_gradient_boosting_ensemble(FAST=FAST)
-    runall_perturbations(FAST=FAST, SKIP_SLOW_METHODS=SKIP_SLOW_METHODS)
-    runall_personalization(FAST=FAST)
+    runall_compare_methods(FAST=FAST, SKIP_SLOW_METHODS=SKIP_SLOW_METHODS)  # tab3
+    runall_gradient_boosting_ensemble(FAST=FAST)  # tab4
+    runall_perturbations(FAST=FAST, SKIP_SLOW_METHODS=SKIP_SLOW_METHODS)  # fi9
+    runall_personalization(FAST=FAST)  # fig 10
+    runall_index_scaling(FAST=FAST)  # fig 11
+    runall_index_vs_linear(FAST=FAST)  # fig 12
+    runall_ntrees(FAST=FAST)  # fig13_14
