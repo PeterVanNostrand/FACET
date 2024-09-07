@@ -9,7 +9,7 @@ This overview follows the layout of the SIGMOD'24 [ARI quick guide](https://docs
 1. Author's source code
    1. Available in this repository [https://github.com/PeterVanNostrand/FACET](https://github.com/PeterVanNostrand/FACET)
 2. Description of software/library dependencies
-   1. FACET is implemented in python3, [requirements.txt](requirements.txt) contains a full list of required packages
+   1. FACET is implemented in python3, [requirements.txt](/requirements.txt) contains a full list of required packages
    2. This is formatted for use with the [Anaconda](https://www.anaconda.com/download/success) virtual environment and package manager
 3. Description of hardware needed
    1. A modern quad-core CPU and 16GB of RAM are sufficient for all experiments
@@ -29,7 +29,7 @@ This overview follows the layout of the SIGMOD'24 [ARI quick guide](https://docs
 
 ### Step 1: Install Dependencies
 
-- Follow the steps in [installation.md](./installation.md) to install the required dependencies, then return here
+- Follow the steps in [installation.md](/instructions/INSTALLATION.md) to install the required dependencies, then return here
 - For reproducing the FACET paper you can skip the optional demo UI installation steps as marked
 
 ### Step 2: Run Experiments
