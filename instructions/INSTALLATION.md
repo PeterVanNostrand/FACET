@@ -2,7 +2,7 @@
 
 Follow the directions below to install the core FACET system (published at SIGMOD'24) and optionally our WebUI (published at VLDB'24)
 
-This repository is validated on Python 3.10, [requirements.txt](/instructions/requirements.yml) contains a list of required packages formatted for use with Anaconda
+This repository is validated on Python 3.10, [requirements.txt](/requirements.txt) contains a list of required packages formatted for use with Anaconda
 
 ## Core System (Required)
 
