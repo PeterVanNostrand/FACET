@@ -36,18 +36,18 @@ This overview follows the layout of the SIGMOD'24 [ARI quick guide](https://docs
 
 For your convenience we provide a two options for reproducing the experiments in our paper
 
-- **Option 1:** Run every experiment sequentially with `python requirements.py --all` (approx XX hours total)
+- **Option 1:** Run every experiment sequentially with `python requirements.py --all` (approx 12.5 hours total)
 - **Option 2** Run the experiments for specific table(s) or figure(s) with `python requirements.py <expr-flag>` using the flags below
 
 | Table/Figure | Content                                | Flag         | Estimated Time | Paper   |
 | ------------ | -------------------------------------- | ------------ | -------------- | ------- |
-| Table 3      | CF Example Quality - Random Forest     | `--tab3`     | XX hrs         | Sec 7.3 |
-| Table 4      | CF Example Quality - Gradient Boosting | `--tab4`     | XX hrs         | Sec 7.4 |
-| Figure 9     | Explanation Robustness                 | `--fig9`     | XX hrs         | Sec 7.5 |
-| Figure 10    | Explanation Personalization            | `--fig10`    | XX hrs         | Sec 7.5 |
-| Figure 11    | FACET's COREX Index Evaluation         | `--fig11`    | XX hrs         | Sec 7.6 |
-| Figure 12    | FACET's COREX Index Evaluation         | `--fig12`    | XX hrs         | Sec 7.6 |
-| Figure 13/14 | Model Scalability Evaluation           | `--fig13_14` | XX hrs         | Sec 7.7 |
+| Table 3      | CF Example Quality - Random Forest     | `--tab3`     | ~10 mins       | Sec 7.3 |
+| Table 4      | CF Example Quality - Gradient Boosting | `--tab4`     | ~15 mins       | Sec 7.4 |
+| Figure 9     | Explanation Robustness                 | `--fig9`     | ~10 mins       | Sec 7.5 |
+| Figure 10    | Explanation Personalization            | `--fig10`    | ~40 mins       | Sec 7.5 |
+| Figure 11    | FACET's COREX Index Evaluation         | `--fig11`    | ~2 hrs 30 mins | Sec 7.6 |
+| Figure 12    | FACET's COREX Index Evaluation         | `--fig12`    | ~3 hrs 15 mins | Sec 7.6 |
+| Figure 13/14 | Model Scalability Evaluation           | `--fig13_14` | ~5 hrs 15 mins | Sec 7.7 |
 
 After running the desired experiment(s) the results will be saved as CSVs in the [results/](/results/) directory
 
