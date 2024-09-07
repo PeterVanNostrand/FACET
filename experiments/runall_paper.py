@@ -396,8 +396,17 @@ def runall_ntrees(FAST):
     slow_ds = ["adult", "credit"]
     vary_ntrees(
         ds_names=slow_ds,
-        explainers=["FACET", "OCEAN"],
+        explainers=["OCEAN"],
         ntrees=[10, 50],
+        iterations=iterations,
+        fmod=fmod,
+        max_depth=max_depth
+    )
+    # run FACET for the full set of iterations
+    vary_ntrees(
+        ds_names=slow_ds,
+        explainers=["FACET"],
+        ntrees=ntrees_vals,
         iterations=iterations,
         fmod=fmod,
         max_depth=max_depth
