@@ -1294,7 +1294,7 @@ def nb_vary_ntrees() -> None:
 
     # path to output the figure
     export_figures = True
-    output_dir = "./final/reproducibility/"
+    output_dir = "figures/reproducibility/"
     fig_save_name_1 = "vary_ntrees_time_fig13_14"
     fig_save_name_2 = "vary_ntrees_dist_fig13_14"
     fig_type = ".pdf"
