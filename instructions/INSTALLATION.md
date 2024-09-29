@@ -12,6 +12,7 @@ This repository is validated on Python 3.10, [requirements.txt](/requirements.tx
 
 ```bash
 # create a new anaconda environment
+conda config --append channels conda-forge
 conda config --add channels https://conda.anaconda.org/gurobi
 conda create --name facet --file requirements.txt
 conda activate facet
