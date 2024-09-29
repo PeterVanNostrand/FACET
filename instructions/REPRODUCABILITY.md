@@ -36,7 +36,7 @@ This overview follows the layout of the SIGMOD'24 [ARI quick guide](https://docs
 
 For your convenience we provide a two options for reproducing the experiments in our paper
 
-- **Option 1:** Run every experiment sequentially with `python requirements.py --all` (approx 12.5 hours total)
+- **Option 1:** Run every experiment sequentially with `python replicate_paper.py --all_results` (approx 12.5 hours total)
 - **Option 2** Run the experiments for specific table(s) or figure(s) with `python requirements.py <expr-flag>` using the flags below
 
 | Table/Figure | Content                                | Flag         | Estimated Time | Paper   |
