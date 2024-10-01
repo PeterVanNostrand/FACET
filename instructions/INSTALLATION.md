@@ -14,7 +14,7 @@ This repository is validated on Python 3.10, [requirements.txt](/requirements.tx
 # create a new anaconda environment
 conda config --append channels conda-forge
 conda config --append channels https://conda.anaconda.org/gurobi
-conda create --name facet --file requirements.txt
+conda create --name facet --file requirements.txt python=3.10
 conda activate facet
 # if running SOTA comparison method MACE, install required solver
 pysmt-install --z3 --confirm-agreement
