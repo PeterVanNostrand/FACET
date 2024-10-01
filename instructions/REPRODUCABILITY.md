@@ -37,7 +37,7 @@ This overview follows the layout of the SIGMOD'24 [ARI quick guide](https://docs
 For your convenience we provide a two options for reproducing the experiments in our paper
 
 - **Option 1:** Run every experiment sequentially with `python replicate_paper.py --all_results` (approx 12.5 hours total)
-- **Option 2** Run the experiments for specific table(s) or figure(s) with `python requirements.py <expr-flag>` using the flags below
+- **Option 2** Run the experiments for specific table(s) or figure(s) with `python replicate_paper.py <expr-flag>` using the flags below
 
 | Table/Figure | Content                                | Flag         | Estimated Time | Paper   |
 | ------------ | -------------------------------------- | ------------ | -------------- | ------- |
@@ -63,9 +63,9 @@ As the complete set of experiments for our paper took >100 hours to run, we take
   - To disable this add the `--all_baselines` flag
   - This will HUGELY increase runtime for experiments containing these methods (Table 3 and Figure 9)
 - If you have sufficient excess hardware available you can safely launch multiple experiments in parallel using separate terminals
-  - E.g., in one terminal `python requirements.py --tab3` and in another `python requirements.py --tab4`
+  - E.g., in one terminal `python replicate_paper.py --tab3` and in another `python replicate_paper.py --tab4`
   - This will save you time overall but may somewhat effect the accuracy of per sample explanation time metrics
 - Adding multiple experiment flags in one execution is supported
-  - E.g., `python requirement.py --fig11 --fig12 --all_iterations`
+  - E.g., `python replicate_paper.py --fig11 --fig12 --all_iterations`
 - Due to space limits in our paper we moved results for three dataset to [additional_results](/results/additional_results.md) here on GitHub
   - Figures and tables for these datasets are thus reproduced and saved separately as `<figname>_apdx` in reproduction
