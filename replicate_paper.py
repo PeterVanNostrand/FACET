@@ -56,7 +56,6 @@ if __name__ == "__main__":
         nb_perturbation_robustness()
         nb_user_workbooks()
         nb_index_evaluation()
-        nb_index_evaluation()
         nb_vary_ntrees()
         print("All figures and tables saved!")
     # if we're running a specific experiment(s)
