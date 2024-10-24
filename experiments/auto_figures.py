@@ -648,13 +648,13 @@ def nb_index_evaluation() -> None:
     Results used in the paper are provided in "../results/final" if generating new results run each experiment and update the results paths below
     '''
     # path to each result file
-    path_nrects = '../results/vary_nrects_fig11.csv'
-    path_nrects_vs_linear = '../results/vary_nrects_fig12.csv'
-    path_m = "../results/vary_m_fig11.csv"
+    path_nrects = 'results/vary_nrects_fig11.csv'
+    path_nrects_vs_linear = 'results/vary_nrects_fig12.csv'
+    path_m = "results/vary_m_fig11.csv"
 
     # path to output the figure
     export_figures = True
-    output_dir = "./reproducibility/"
+    output_dir = "figures/reproducibility/"
     fig_save_name_1 = "index_evaluation_line_fig11"
     fig_save_name_2 = "index_evaluation_bar_fig12"
     fig_type = ".pdf"
@@ -896,7 +896,7 @@ def nb_index_evaluation() -> None:
         # yrange_multi = [[0.0, 5.0001], [0.0, 1.01], [0.0, 1.61], [0.0, 1], [0.0, 1.2]]
         yticks_multi = None
         yrange_multi = None
-        render_bar_ax(datasets, xfeature="n_rects", yfeature="sample_time", xlabel="N Regions (thousands)", ylabel="Explanation Time (sec)", title="Explanation Time vs NRegions", save_name=fig_save_name_2, yrange_multi=yrange_multi, yticks_multi=yticks_multi)
+        render_bar_ax(datasets, xfeature="n_rects", yfeature="sample_time", xlabel="N Regions (thousands)", ylabel="Explanation Time (sec)", title="Explanation Time vs NRegions", save_name=fig_save_name_2 + "_apdx", yrange_multi=yrange_multi, yticks_multi=yticks_multi)
 
 
 
