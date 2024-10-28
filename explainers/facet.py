@@ -962,7 +962,6 @@ class FACET(Explainer):
         # replace infinite values for invalid explanation
         xprime[idx_inf] = np.tile(np.inf, x.shape[1])
         # convert regions to an array
-        regions = np.array(regions)
 
         if self.verbose:
             print("failed x':", failed_explanation.sum())
