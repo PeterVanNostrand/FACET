@@ -243,7 +243,7 @@ def runall_personalization(FAST):
     all_ds = ["adult", "cancer", "credit", "magic", "spambase", "compas", "glass", "vertebral",]
     fmod = "fig10"
     ntrees = 100
-    max_depth = None
+    max_depth = 5
     iterations = [0] if FAST else [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
     # Subfigure (a, b ,c) - test the minimum robustness parameter for subfigures
@@ -257,6 +257,9 @@ def runall_personalization(FAST):
         ntrees=ntrees,
         max_depth=max_depth
     )
+
+    # use maxdepth None for Subfigure (d) and (e)
+    max_depth = None
 
     # ###### Subfigure (d) - varying number of constraints
     nconstraints_vals = {
